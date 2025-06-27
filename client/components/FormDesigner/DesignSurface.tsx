@@ -408,14 +408,14 @@ const ComponentRenderer: React.FC<{
         {renderComponent()}
       </div>
 
-      {/* Selection overlay with thin dashed border */}
+      {/* Selection overlay with thin dashed border - 1px margin from component */}
       <div
         style={{
           position: "absolute",
-          top: isSelected ? -1 : 0,
-          left: isSelected ? -1 : 0,
-          right: isSelected ? -1 : 0,
-          bottom: isSelected ? -1 : 0,
+          top: isSelected ? -2 : 0,
+          left: isSelected ? -2 : 0,
+          right: isSelected ? -2 : 0,
+          bottom: isSelected ? -2 : 0,
           backgroundColor: "transparent",
           border: isSelected ? "1px dashed #0078d4" : "none",
           cursor: isSelected ? "move" : "pointer",
@@ -430,126 +430,23 @@ const ComponentRenderer: React.FC<{
           if (!isSelected) {
             e.currentTarget.style.backgroundColor = "rgba(0, 120, 212, 0.05)";
             e.currentTarget.style.border = "1px dashed rgba(0, 120, 212, 0.3)";
+            e.currentTarget.style.top = "-2px";
+            e.currentTarget.style.left = "-2px";
+            e.currentTarget.style.right = "-2px";
+            e.currentTarget.style.bottom = "-2px";
           }
         }}
         onMouseLeave={(e) => {
           if (!isSelected) {
             e.currentTarget.style.backgroundColor = "transparent";
             e.currentTarget.style.border = "none";
+            e.currentTarget.style.top = "0px";
+            e.currentTarget.style.left = "0px";
+            e.currentTarget.style.right = "0px";
+            e.currentTarget.style.bottom = "0px";
           }
         }}
       />
-
-      {/* Visual resize handles when selected - for display only since RND handles the actual resizing */}
-      {isSelected && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            pointerEvents: "none",
-            zIndex: 15,
-          }}
-        >
-          {/* Corner handles */}
-          <div
-            className="resize-handle"
-            style={{
-              position: "absolute",
-              top: -4,
-              left: -4,
-              width: 8,
-              height: 8,
-              cursor: "nw-resize",
-            }}
-          />
-          <div
-            className="resize-handle"
-            style={{
-              position: "absolute",
-              top: -4,
-              right: -4,
-              width: 8,
-              height: 8,
-              cursor: "ne-resize",
-            }}
-          />
-          <div
-            className="resize-handle"
-            style={{
-              position: "absolute",
-              bottom: -4,
-              left: -4,
-              width: 8,
-              height: 8,
-              cursor: "sw-resize",
-            }}
-          />
-          <div
-            className="resize-handle"
-            style={{
-              position: "absolute",
-              bottom: -4,
-              right: -4,
-              width: 8,
-              height: 8,
-              cursor: "se-resize",
-            }}
-          />
-
-          {/* Edge handles */}
-          <div
-            className="resize-handle"
-            style={{
-              position: "absolute",
-              top: -4,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 8,
-              height: 8,
-              cursor: "n-resize",
-            }}
-          />
-          <div
-            className="resize-handle"
-            style={{
-              position: "absolute",
-              bottom: -4,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 8,
-              height: 8,
-              cursor: "s-resize",
-            }}
-          />
-          <div
-            className="resize-handle"
-            style={{
-              position: "absolute",
-              left: -4,
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: 8,
-              height: 8,
-              cursor: "w-resize",
-            }}
-          />
-          <div
-            className="resize-handle"
-            style={{
-              position: "absolute",
-              right: -4,
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: 8,
-              height: 8,
-              cursor: "e-resize",
-            }}
-          />
-        </div>
-      )}
     </Rnd>
   );
 };
