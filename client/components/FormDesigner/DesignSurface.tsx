@@ -163,6 +163,23 @@ const ComponentRenderer: React.FC<{
     }
   };
 
+  const getCheckboxColor = (colorScheme: string) => {
+    switch (colorScheme) {
+      case "blue":
+        return "#0078d4";
+      case "red":
+        return "#d32f2f";
+      case "green":
+        return "#2e7d32";
+      case "orange":
+        return "#f57c00";
+      case "purple":
+        return "#7b1fa2";
+      default:
+        return "#0078d4";
+    }
+  };
+
   const renderComponent = () => {
     const props = { ...component.props };
     const style: React.CSSProperties = {
@@ -343,8 +360,12 @@ const ComponentRenderer: React.FC<{
               type="range"
               min={props.min || 0}
               max={props.max || 100}
+              step={props.step || 1}
               defaultValue={props.defaultValue || 50}
-              style={{ width: "100%" }}
+              style={{
+                width: "100%",
+                accentColor: getCheckboxColor(props.colorScheme),
+              }}
               disabled
               tabIndex={-1}
             />
