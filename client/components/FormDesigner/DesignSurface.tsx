@@ -40,6 +40,8 @@ const ComponentRenderer: React.FC<{
       backgroundColor: "#fff",
       fontSize: "14px",
       fontFamily: '"Segoe UI", sans-serif',
+      pointerEvents: "none", // Make components non-interactive
+      userSelect: "none", // Prevent text selection
     };
 
     switch (component.type) {
@@ -283,16 +285,44 @@ const ComponentRenderer: React.FC<{
       enableResizing={isSelected}
       disableDragging={!isSelected}
       className={`component-instance ${isSelected ? "selected" : ""}`}
-      onClick={(e) => {
-        e.stopPropagation();
-        onSelect();
-      }}
       onKeyDown={handleKeyDown}
       tabIndex={0}
+      style={{
+        cursor: isSelected ? "move" : "pointer",
+      }}
     >
+      {/* Component content - non-interactive */}
       <div style={{ width: "100%", height: "100%", padding: "4px" }}>
         {renderComponent()}
       </div>
+
+      {/* Invisible overlay for selection - covers the entire component */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "transparent",
+          cursor: isSelected ? "move" : "pointer",
+          zIndex: 10,
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSelect();
+        }}
+        onMouseEnter={(e) => {
+          if (!isSelected) {
+            e.currentTarget.style.backgroundColor = "rgba(0, 120, 212, 0.1)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isSelected) {
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
+      />
     </Rnd>
   );
 };
