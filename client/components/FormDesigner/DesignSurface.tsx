@@ -182,17 +182,26 @@ const ComponentRenderer: React.FC<{
 
   const renderComponent = () => {
     const props = { ...component.props };
+
+    // Build border style from component props
+    const borderStyle: React.CSSProperties = {};
+    if (props.border?.enabled) {
+      borderStyle.border = `${props.border.width || 1}px ${props.border.style || "solid"} ${props.border.color || "#ccc"}`;
+      if (props.border.radius) {
+        borderStyle.borderRadius = `${props.border.radius}px`;
+      }
+    }
+
     const style: React.CSSProperties = {
       width: "100%",
       height: "100%",
       padding: "4px",
-      border: "1px solid #ccc",
-      borderRadius: "4px",
       backgroundColor: "#fff",
       fontSize: "14px",
       fontFamily: '"Segoe UI", sans-serif',
       pointerEvents: "none", // Make components non-interactive
       userSelect: "none", // Prevent text selection
+      ...borderStyle, // Apply border if enabled
     };
 
     switch (component.type) {
@@ -622,14 +631,14 @@ const ComponentRenderer: React.FC<{
         {renderComponent()}
       </div>
 
-      {/* Selection overlay with thin dashed border - 1px margin from component */}
+      {/* Selection overlay positioned exactly where borders would be */}
       <div
         style={{
           position: "absolute",
-          top: isSelected ? -2 : 0,
-          left: isSelected ? -2 : 0,
-          right: isSelected ? -2 : 0,
-          bottom: isSelected ? -2 : 0,
+          top: isSelected ? 0 : 0,
+          left: isSelected ? 0 : 0,
+          right: isSelected ? 0 : 0,
+          bottom: isSelected ? 0 : 0,
           backgroundColor: "transparent",
           border: isSelected ? "1px dashed #0078d4" : "none",
           cursor: isSelected ? "move" : "pointer",
@@ -644,20 +653,12 @@ const ComponentRenderer: React.FC<{
           if (!isSelected) {
             e.currentTarget.style.backgroundColor = "rgba(0, 120, 212, 0.05)";
             e.currentTarget.style.border = "1px dashed rgba(0, 120, 212, 0.3)";
-            e.currentTarget.style.top = "-2px";
-            e.currentTarget.style.left = "-2px";
-            e.currentTarget.style.right = "-2px";
-            e.currentTarget.style.bottom = "-2px";
           }
         }}
         onMouseLeave={(e) => {
           if (!isSelected) {
             e.currentTarget.style.backgroundColor = "transparent";
             e.currentTarget.style.border = "none";
-            e.currentTarget.style.top = "0px";
-            e.currentTarget.style.left = "0px";
-            e.currentTarget.style.right = "0px";
-            e.currentTarget.style.bottom = "0px";
           }
         }}
       />
