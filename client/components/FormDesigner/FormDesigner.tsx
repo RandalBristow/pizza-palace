@@ -1,14 +1,15 @@
 import React, { useState, useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import Toolbox from "./Toolbox";
 import DesignSurface from "./DesignSurface";
 import PropertiesPanel from "./PropertiesPanel";
 import ResizablePanel from "./ResizablePanel";
 import "./FormDesigner.css";
 
-const theme = extendTheme({
+// Simple theme configuration for Chakra UI
+const theme = {
   config: {
     initialColorMode: "light",
     useSystemColorMode: false,
@@ -24,7 +25,7 @@ const theme = extendTheme({
       secondary: "#666666",
     },
   },
-});
+};
 
 export interface ComponentInstance {
   id: string;
