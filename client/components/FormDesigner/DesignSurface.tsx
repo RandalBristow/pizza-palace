@@ -100,6 +100,69 @@ const ComponentRenderer: React.FC<{
     }
   };
 
+  // Helper functions for property mappings
+  const getButtonColor = (colorScheme: string, variant: string = "solid") => {
+    if (variant === "outline") return "transparent";
+    if (variant === "ghost") return "transparent";
+
+    switch (colorScheme) {
+      case "blue":
+        return "#0078d4";
+      case "red":
+        return "#d32f2f";
+      case "green":
+        return "#2e7d32";
+      case "orange":
+        return "#f57c00";
+      case "purple":
+        return "#7b1fa2";
+      default:
+        return "#f0f0f0";
+    }
+  };
+
+  const getButtonTextColor = (
+    colorScheme: string,
+    variant: string = "solid",
+  ) => {
+    if (variant === "outline" || variant === "ghost") {
+      switch (colorScheme) {
+        case "blue":
+          return "#0078d4";
+        case "red":
+          return "#d32f2f";
+        case "green":
+          return "#2e7d32";
+        case "orange":
+          return "#f57c00";
+        case "purple":
+          return "#7b1fa2";
+        default:
+          return "#333";
+      }
+    }
+    return colorScheme && colorScheme !== "gray" ? "#fff" : "#333";
+  };
+
+  const getFontSize = (fontSize: string) => {
+    switch (fontSize) {
+      case "xs":
+        return "12px";
+      case "sm":
+        return "14px";
+      case "md":
+        return "16px";
+      case "lg":
+        return "18px";
+      case "xl":
+        return "20px";
+      case "2xl":
+        return "24px";
+      default:
+        return fontSize || "14px";
+    }
+  };
+
   const renderComponent = () => {
     const props = { ...component.props };
     const style: React.CSSProperties = {
