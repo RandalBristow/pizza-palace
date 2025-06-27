@@ -210,9 +210,26 @@ const ComponentRenderer: React.FC<{
       case "Input":
         return (
           <input
-            type="text"
+            type={props.type || "text"}
             placeholder={props.placeholder || "Enter text..."}
-            style={style}
+            style={{
+              ...style,
+              fontSize:
+                props.size === "sm"
+                  ? "12px"
+                  : props.size === "lg"
+                    ? "16px"
+                    : "14px",
+              padding:
+                props.size === "sm"
+                  ? "4px 8px"
+                  : props.size === "lg"
+                    ? "8px 12px"
+                    : "6px 10px",
+              opacity: props.isDisabled ? 0.6 : 1,
+              borderStyle: props.variant === "filled" ? "none" : "solid",
+              backgroundColor: props.variant === "filled" ? "#f5f5f5" : "#fff",
+            }}
             readOnly
             tabIndex={-1}
           />
@@ -277,11 +294,21 @@ const ComponentRenderer: React.FC<{
         );
       case "Checkbox":
         return (
-          <label style={{ ...style, display: "flex", alignItems: "center" }}>
+          <label
+            style={{
+              ...style,
+              display: "flex",
+              alignItems: "center",
+              opacity: props.isDisabled ? 0.6 : 1,
+            }}
+          >
             <input
               type="checkbox"
-              defaultChecked={props.defaultChecked}
-              style={{ marginRight: "8px" }}
+              defaultChecked={props.isChecked || props.defaultChecked}
+              style={{
+                marginRight: "8px",
+                accentColor: getCheckboxColor(props.colorScheme),
+              }}
               disabled
               tabIndex={-1}
             />
