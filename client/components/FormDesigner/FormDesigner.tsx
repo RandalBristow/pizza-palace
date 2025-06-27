@@ -135,29 +135,79 @@ const FormDesigner: React.FC = () => {
 };
 
 const getDefaultProps = (type: string): Record<string, any> => {
+  const defaultBorder = {
+    enabled: false,
+    width: 1,
+    style: "solid",
+    color: "#cccccc",
+    radius: 4,
+  };
+
   switch (type) {
     case "Button":
-      return { children: "Button", colorScheme: "blue", size: "md" };
+      return {
+        children: "Button",
+        colorScheme: "blue",
+        size: "md",
+        border: defaultBorder,
+      };
     case "Input":
-      return { placeholder: "Enter text...", size: "md" };
+      return {
+        placeholder: "Enter text...",
+        size: "md",
+        border: { ...defaultBorder, enabled: true },
+      };
     case "Text":
-      return { children: "Sample text", fontSize: "md" };
+      return {
+        children: "Sample text",
+        fontSize: "md",
+        border: defaultBorder,
+      };
     case "Box":
-      return { bg: "gray.100", p: 4 };
+      return {
+        bg: "gray.100",
+        p: 4,
+        border: { ...defaultBorder, enabled: true },
+      };
     case "Heading":
-      return { children: "Heading", size: "md" };
+      return {
+        children: "Heading",
+        size: "md",
+        border: defaultBorder,
+      };
     case "Select":
-      return { placeholder: "Select option...", size: "md" };
+      return {
+        placeholder: "Select option...",
+        size: "md",
+        border: { ...defaultBorder, enabled: true },
+      };
     case "Checkbox":
-      return { children: "Checkbox", defaultChecked: false };
+      return {
+        children: "Checkbox",
+        defaultChecked: false,
+        border: defaultBorder,
+      };
     case "Switch":
-      return { size: "md" };
+      return {
+        size: "md",
+        border: defaultBorder,
+      };
     case "Slider":
-      return { defaultValue: 50, min: 0, max: 100 };
+      return {
+        defaultValue: 50,
+        min: 0,
+        max: 100,
+        border: defaultBorder,
+      };
     case "Textarea":
-      return { placeholder: "Enter text...", size: "md", resize: "vertical" };
+      return {
+        placeholder: "Enter text...",
+        size: "md",
+        resize: "vertical",
+        border: { ...defaultBorder, enabled: true },
+      };
     default:
-      return {};
+      return { border: defaultBorder };
   }
 };
 
