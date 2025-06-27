@@ -253,8 +253,8 @@ const ComponentRenderer: React.FC<{
                     ? "8px 12px"
                     : "6px 10px",
               opacity: props.isDisabled ? 0.6 : 1,
-              borderStyle: props.variant === "filled" ? "none" : "solid",
-              backgroundColor: props.variant === "filled" ? "#f5f5f5" : "#fff",
+              backgroundColor:
+                props.variant === "filled" ? "#f5f5f5" : style.backgroundColor,
             }}
             readOnly
             tabIndex={-1}
@@ -265,7 +265,6 @@ const ComponentRenderer: React.FC<{
           <div
             style={{
               ...style,
-              border: "none",
               backgroundColor: "transparent",
               fontSize: getFontSize(props.fontSize),
               fontWeight: props.fontWeight || "normal",
@@ -282,10 +281,6 @@ const ComponentRenderer: React.FC<{
               ...style,
               backgroundColor: props.bg || "#f0f0f0",
               padding: props.p ? `${props.p * 4}px` : "16px",
-              borderRadius: props.borderRadius
-                ? `${props.borderRadius}px`
-                : "4px",
-              borderWidth: props.borderWidth ? `${props.borderWidth}px` : "1px",
             }}
           >
             Box Container
@@ -297,7 +292,6 @@ const ComponentRenderer: React.FC<{
           <HeadingTag
             style={{
               ...style,
-              border: "none",
               backgroundColor: "transparent",
               fontSize:
                 getFontSize(props.fontSize) ||
