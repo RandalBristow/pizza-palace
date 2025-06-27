@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { ChakraProvider } from "@chakra-ui/react";
 import Toolbox from "./Toolbox";
 import DesignSurface from "./DesignSurface";
 import PropertiesPanel from "./PropertiesPanel";
@@ -67,75 +66,71 @@ const FormDesigner: React.FC = () => {
   }, []);
 
   return (
-    <ChakraProvider>
-      <DndProvider backend={HTML5Backend}>
-        <div className="form-designer">
-          <div className="designer-header">
-            <h1>Form Designer</h1>
-            <div className="header-actions">
-              <button
-                className="collapse-btn"
-                onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
-                title={
-                  leftPanelCollapsed ? "Expand Toolbox" : "Collapse Toolbox"
-                }
-              >
-                ☰
-              </button>
-              <button
-                className="collapse-btn"
-                onClick={() => setRightPanelCollapsed(!rightPanelCollapsed)}
-                title={
-                  rightPanelCollapsed
-                    ? "Expand Properties"
-                    : "Collapse Properties"
-                }
-              >
-                ⚙
-              </button>
-            </div>
-          </div>
-
-          <div className="designer-body">
-            {!leftPanelCollapsed && (
-              <ResizablePanel
-                width={leftPanelWidth}
-                onResize={setLeftPanelWidth}
-                side="left"
-                className="toolbox-panel"
-              >
-                <Toolbox onAddComponent={addComponent} />
-              </ResizablePanel>
-            )}
-
-            <div className="design-surface-container">
-              <DesignSurface
-                components={components}
-                selectedComponent={selectedComponent}
-                onSelectComponent={selectComponent}
-                onUpdateComponent={updateComponent}
-                onDeleteComponent={deleteComponent}
-                onAddComponent={addComponent}
-              />
-            </div>
-
-            {!rightPanelCollapsed && (
-              <ResizablePanel
-                width={rightPanelWidth}
-                onResize={setRightPanelWidth}
-                side="right"
-                className="properties-panel"
-              >
-                <PropertiesPanel
-                  selectedComponent={selectedComponent}
-                  onUpdateComponent={updateComponent}
-                />
-              </ResizablePanel>
-            )}
+    <DndProvider backend={HTML5Backend}>
+      <div className="form-designer">
+        <div className="designer-header">
+          <h1>Form Designer</h1>
+          <div className="header-actions">
+            <button
+              className="collapse-btn"
+              onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
+              title={leftPanelCollapsed ? "Expand Toolbox" : "Collapse Toolbox"}
+            >
+              ☰
+            </button>
+            <button
+              className="collapse-btn"
+              onClick={() => setRightPanelCollapsed(!rightPanelCollapsed)}
+              title={
+                rightPanelCollapsed
+                  ? "Expand Properties"
+                  : "Collapse Properties"
+              }
+            >
+              ⚙
+            </button>
           </div>
         </div>
-      </DndProvider>
-    </ChakraProvider>
+
+        <div className="designer-body">
+          {!leftPanelCollapsed && (
+            <ResizablePanel
+              width={leftPanelWidth}
+              onResize={setLeftPanelWidth}
+              side="left"
+              className="toolbox-panel"
+            >
+              <Toolbox onAddComponent={addComponent} />
+            </ResizablePanel>
+          )}
+
+          <div className="design-surface-container">
+            <DesignSurface
+              components={components}
+              selectedComponent={selectedComponent}
+              onSelectComponent={selectComponent}
+              onUpdateComponent={updateComponent}
+              onDeleteComponent={deleteComponent}
+              onAddComponent={addComponent}
+            />
+          </div>
+
+          {!rightPanelCollapsed && (
+            <ResizablePanel
+              width={rightPanelWidth}
+              onResize={setRightPanelWidth}
+              side="right"
+              className="properties-panel"
+            >
+              <PropertiesPanel
+                selectedComponent={selectedComponent}
+                onUpdateComponent={updateComponent}
+              />
+            </ResizablePanel>
+          )}
+        </div>
+      </div>
+    </DndProvider>
   );
 };
 
