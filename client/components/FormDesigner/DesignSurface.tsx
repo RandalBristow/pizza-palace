@@ -440,7 +440,7 @@ const ComponentRenderer: React.FC<{
         }}
       />
 
-      {/* Resize handles when selected */}
+      {/* Visual resize handles when selected - for display only since RND handles the actual resizing */}
       {isSelected && (
         <div
           style={{
@@ -455,60 +455,53 @@ const ComponentRenderer: React.FC<{
         >
           {/* Corner handles */}
           <div
+            className="resize-handle"
             style={{
               position: "absolute",
               top: -4,
               left: -4,
               width: 8,
               height: 8,
-              backgroundColor: "#0078d4",
-              border: "1px solid #fff",
               cursor: "nw-resize",
-              pointerEvents: "all",
             }}
           />
           <div
+            className="resize-handle"
             style={{
               position: "absolute",
               top: -4,
               right: -4,
               width: 8,
               height: 8,
-              backgroundColor: "#0078d4",
-              border: "1px solid #fff",
               cursor: "ne-resize",
-              pointerEvents: "all",
             }}
           />
           <div
+            className="resize-handle"
             style={{
               position: "absolute",
               bottom: -4,
               left: -4,
               width: 8,
               height: 8,
-              backgroundColor: "#0078d4",
-              border: "1px solid #fff",
               cursor: "sw-resize",
-              pointerEvents: "all",
             }}
           />
           <div
+            className="resize-handle"
             style={{
               position: "absolute",
               bottom: -4,
               right: -4,
               width: 8,
               height: 8,
-              backgroundColor: "#0078d4",
-              border: "1px solid #fff",
               cursor: "se-resize",
-              pointerEvents: "all",
             }}
           />
 
           {/* Edge handles */}
           <div
+            className="resize-handle"
             style={{
               position: "absolute",
               top: -4,
@@ -516,13 +509,11 @@ const ComponentRenderer: React.FC<{
               transform: "translateX(-50%)",
               width: 8,
               height: 8,
-              backgroundColor: "#0078d4",
-              border: "1px solid #fff",
               cursor: "n-resize",
-              pointerEvents: "all",
             }}
           />
           <div
+            className="resize-handle"
             style={{
               position: "absolute",
               bottom: -4,
@@ -530,13 +521,11 @@ const ComponentRenderer: React.FC<{
               transform: "translateX(-50%)",
               width: 8,
               height: 8,
-              backgroundColor: "#0078d4",
-              border: "1px solid #fff",
               cursor: "s-resize",
-              pointerEvents: "all",
             }}
           />
           <div
+            className="resize-handle"
             style={{
               position: "absolute",
               left: -4,
@@ -544,13 +533,11 @@ const ComponentRenderer: React.FC<{
               transform: "translateY(-50%)",
               width: 8,
               height: 8,
-              backgroundColor: "#0078d4",
-              border: "1px solid #fff",
               cursor: "w-resize",
-              pointerEvents: "all",
             }}
           />
           <div
+            className="resize-handle"
             style={{
               position: "absolute",
               right: -4,
@@ -558,10 +545,7 @@ const ComponentRenderer: React.FC<{
               transform: "translateY(-50%)",
               width: 8,
               height: 8,
-              backgroundColor: "#0078d4",
-              border: "1px solid #fff",
               cursor: "e-resize",
-              pointerEvents: "all",
             }}
           />
         </div>
