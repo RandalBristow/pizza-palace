@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ComponentInstance } from "./FormDesigner";
 
 interface PropertiesPanelProps {
@@ -10,6 +10,14 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   selectedComponent,
   onUpdateComponent,
 }) => {
+  const [expandedSections, setExpandedSections] = useState<
+    Record<string, boolean>
+  >({
+    layout: true,
+    properties: true,
+    border: false,
+  });
+
   if (!selectedComponent) {
     return (
       <div className="properties-panel-content">
@@ -47,6 +55,14 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     });
   };
 
+  const updateBorderProp = (borderProp: string, value: any) => {
+    const currentBorder = selectedComponent.props.border || {};
+    updateProp("border", {
+      ...currentBorder,
+      [borderProp]: value,
+    });
+  };
+
   const updatePosition = (axis: "x" | "y", value: number) => {
     onUpdateComponent(selectedComponent.id, {
       position: {
@@ -63,6 +79,13 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         [dimension]: value,
       },
     });
+  };
+
+  const toggleSection = (section: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
   };
 
   const renderPropertyInput = (
@@ -114,12 +137,123 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       );
     }
 
+    if (propType === "color") {
+      return (
+        <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+          <input
+            type="color"
+            value={propValue || "#000000"}
+            onChange={(e) => updateProp(propName, e.target.value)}
+            style={{
+              width: "30px",
+              height: "20px",
+              border: "none",
+              borderRadius: "2px",
+            }}
+          />
+          <input
+            type="text"
+            className="property-input"
+            value={propValue || ""}
+            onChange={(e) => updateProp(propName, e.target.value)}
+            style={{ flex: 1 }}
+          />
+        </div>
+      );
+    }
+
     return (
       <input
         type="text"
         className="property-input"
         value={propValue || ""}
         onChange={(e) => updateProp(propName, e.target.value)}
+      />
+    );
+  };
+
+  const renderBorderInput = (
+    borderProp: string,
+    propValue: any,
+    propType: string = "text",
+  ) => {
+    if (propType === "boolean") {
+      return (
+        <label
+          style={{ display: "flex", alignItems: "center", fontSize: "11px" }}
+        >
+          <input
+            type="checkbox"
+            className="property-checkbox"
+            checked={propValue || false}
+            onChange={(e) => updateBorderProp(borderProp, e.target.checked)}
+          />
+          {borderProp}
+        </label>
+      );
+    }
+
+    if (propType === "select") {
+      const options = getBorderSelectOptions(borderProp);
+      return (
+        <select
+          className="property-select"
+          value={propValue || ""}
+          onChange={(e) => updateBorderProp(borderProp, e.target.value)}
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    if (propType === "number") {
+      return (
+        <input
+          type="number"
+          className="property-input"
+          value={propValue || 0}
+          onChange={(e) =>
+            updateBorderProp(borderProp, parseInt(e.target.value) || 0)
+          }
+        />
+      );
+    }
+
+    if (propType === "color") {
+      return (
+        <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+          <input
+            type="color"
+            value={propValue || "#000000"}
+            onChange={(e) => updateBorderProp(borderProp, e.target.value)}
+            style={{
+              width: "30px",
+              height: "20px",
+              border: "none",
+              borderRadius: "2px",
+            }}
+          />
+          <input
+            type="text"
+            className="property-input"
+            value={propValue || ""}
+            onChange={(e) => updateBorderProp(borderProp, e.target.value)}
+            style={{ flex: 1 }}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <input
+        type="text"
+        className="property-input"
+        value={propValue || ""}
+        onChange={(e) => updateBorderProp(borderProp, e.target.value)}
       />
     );
   };
@@ -151,6 +285,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       "defaultValue",
       "p",
       "borderWidth",
+      "borderRadius",
     ];
     const selectProps = [
       "colorScheme",
@@ -161,12 +296,24 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       "as",
       "resize",
     ];
+    const colorProps = ["color", "bg"];
 
     if (booleanProps.includes(propName)) return "boolean";
     if (numberProps.includes(propName)) return "number";
     if (selectProps.includes(propName)) return "select";
+    if (colorProps.includes(propName)) return "color";
     return "text";
   };
+
+  const getBorderPropertyType = (propName: string): string => {
+    if (propName === "enabled") return "boolean";
+    if (propName === "width" || propName === "radius") return "number";
+    if (propName === "style") return "select";
+    if (propName === "color") return "color";
+    return "text";
+  };
+
+  const currentBorder = selectedComponent.props.border || {};
 
   return (
     <div className="properties-panel-content">
@@ -192,74 +339,197 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         </div>
       </div>
 
+      {/* Layout Section */}
       <div className="property-group">
-        <div className="property-group-title">Layout</div>
-
-        <div className="property-item">
-          <label className="property-label">X Position</label>
-          <input
-            type="number"
-            className="property-input"
-            value={selectedComponent.position.x}
-            onChange={(e) => updatePosition("x", parseInt(e.target.value) || 0)}
-          />
+        <div
+          className="property-group-title expandable"
+          onClick={() => toggleSection("layout")}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            userSelect: "none",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "10px",
+              marginRight: "4px",
+              transform: expandedSections.layout
+                ? "rotate(90deg)"
+                : "rotate(0deg)",
+              transition: "transform 0.2s",
+            }}
+          >
+            ▶
+          </span>
+          Layout
         </div>
 
-        <div className="property-item">
-          <label className="property-label">Y Position</label>
-          <input
-            type="number"
-            className="property-input"
-            value={selectedComponent.position.y}
-            onChange={(e) => updatePosition("y", parseInt(e.target.value) || 0)}
-          />
-        </div>
+        {expandedSections.layout && (
+          <>
+            <div className="property-item">
+              <label className="property-label">X Position</label>
+              <input
+                type="number"
+                className="property-input"
+                value={selectedComponent.position.x}
+                onChange={(e) =>
+                  updatePosition("x", parseInt(e.target.value) || 0)
+                }
+              />
+            </div>
 
-        <div className="property-item">
-          <label className="property-label">Width</label>
-          <input
-            type="number"
-            className="property-input"
-            value={selectedComponent.size.width}
-            onChange={(e) => updateSize("width", parseInt(e.target.value) || 0)}
-          />
-        </div>
+            <div className="property-item">
+              <label className="property-label">Y Position</label>
+              <input
+                type="number"
+                className="property-input"
+                value={selectedComponent.position.y}
+                onChange={(e) =>
+                  updatePosition("y", parseInt(e.target.value) || 0)
+                }
+              />
+            </div>
 
-        <div className="property-item">
-          <label className="property-label">Height</label>
-          <input
-            type="number"
-            className="property-input"
-            value={selectedComponent.size.height}
-            onChange={(e) =>
-              updateSize("height", parseInt(e.target.value) || 0)
-            }
-          />
-        </div>
+            <div className="property-item">
+              <label className="property-label">Width</label>
+              <input
+                type="number"
+                className="property-input"
+                value={selectedComponent.size.width}
+                onChange={(e) =>
+                  updateSize("width", parseInt(e.target.value) || 0)
+                }
+              />
+            </div>
+
+            <div className="property-item">
+              <label className="property-label">Height</label>
+              <input
+                type="number"
+                className="property-input"
+                value={selectedComponent.size.height}
+                onChange={(e) =>
+                  updateSize("height", parseInt(e.target.value) || 0)
+                }
+              />
+            </div>
+          </>
+        )}
       </div>
 
+      {/* Border Section */}
       <div className="property-group">
-        <div className="property-group-title">Component Properties</div>
+        <div
+          className="property-group-title expandable"
+          onClick={() => toggleSection("border")}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            userSelect: "none",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "10px",
+              marginRight: "4px",
+              transform: expandedSections.border
+                ? "rotate(90deg)"
+                : "rotate(0deg)",
+              transition: "transform 0.2s",
+            }}
+          >
+            ▶
+          </span>
+          Border
+        </div>
 
-        {getComponentProperties().map((propName) => {
-          const propValue = selectedComponent.props[propName];
-          const propType = getPropertyType(propName);
-
-          if (propType === "boolean") {
-            return (
-              <div key={propName} className="property-item">
-                {renderPropertyInput(propName, propValue, propType)}
-              </div>
-            );
-          }
-
-          return (
-            <div key={propName} className="property-item">
-              <label className="property-label">{propName}</label>
-              {renderPropertyInput(propName, propValue, propType)}
+        {expandedSections.border && (
+          <>
+            <div className="property-item">
+              <label className="property-label">Enabled</label>
+              {renderBorderInput("enabled", currentBorder.enabled, "boolean")}
             </div>
-          );
-        })}
+
+            {currentBorder.enabled && (
+              <>
+                <div className="property-item">
+                  <label className="property-label">Width</label>
+                  {renderBorderInput("width", currentBorder.width, "number")}
+                </div>
+
+                <div className="property-item">
+                  <label className="property-label">Style</label>
+                  {renderBorderInput("style", currentBorder.style, "select")}
+                </div>
+
+                <div className="property-item">
+                  <label className="property-label">Color</label>
+                  {renderBorderInput("color", currentBorder.color, "color")}
+                </div>
+
+                <div className="property-item">
+                  <label className="property-label">Radius</label>
+                  {renderBorderInput("radius", currentBorder.radius, "number")}
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Component Properties Section */}
+      <div className="property-group">
+        <div
+          className="property-group-title expandable"
+          onClick={() => toggleSection("properties")}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            userSelect: "none",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "10px",
+              marginRight: "4px",
+              transform: expandedSections.properties
+                ? "rotate(90deg)"
+                : "rotate(0deg)",
+              transition: "transform 0.2s",
+            }}
+          >
+            ▶
+          </span>
+          Component Properties
+        </div>
+
+        {expandedSections.properties && (
+          <>
+            {getComponentProperties().map((propName) => {
+              const propValue = selectedComponent.props[propName];
+              const propType = getPropertyType(propName);
+
+              if (propType === "boolean") {
+                return (
+                  <div key={propName} className="property-item">
+                    {renderPropertyInput(propName, propValue, propType)}
+                  </div>
+                );
+              }
+
+              return (
+                <div key={propName} className="property-item">
+                  <label className="property-label">{propName}</label>
+                  {renderPropertyInput(propName, propValue, propType)}
+                </div>
+              );
+            })}
+          </>
+        )}
       </div>
     </div>
   );
@@ -332,6 +602,26 @@ const getSelectOptions = (componentType: string, propName: string) => {
 
   // Default empty options
   return [{ value: "", label: "Select..." }];
+};
+
+const getBorderSelectOptions = (propName: string) => {
+  const borderOptionsMap: Record<
+    string,
+    Array<{ value: string; label: string }>
+  > = {
+    style: [
+      { value: "solid", label: "Solid" },
+      { value: "dashed", label: "Dashed" },
+      { value: "dotted", label: "Dotted" },
+      { value: "double", label: "Double" },
+      { value: "groove", label: "Groove" },
+      { value: "ridge", label: "Ridge" },
+      { value: "inset", label: "Inset" },
+      { value: "outset", label: "Outset" },
+    ],
+  };
+
+  return borderOptionsMap[propName] || [{ value: "", label: "Select..." }];
 };
 
 export default PropertiesPanel;
