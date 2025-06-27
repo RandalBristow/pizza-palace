@@ -172,7 +172,6 @@
 .component-instance {
   position: absolute;
   border: 2px solid transparent;
-  cursor: pointer;
   transition: border-color 0.2s;
 }
 
@@ -182,6 +181,7 @@
 
 .component-instance.selected {
   border-color: #0078d4;
+  box-shadow: 0 0 0 1px #0078d4;
 }
 
 .component-instance.selected::after {
@@ -193,6 +193,27 @@
   bottom: -2px;
   border: 1px dashed #0078d4;
   pointer-events: none;
+  z-index: 15;
+}
+
+/* Component overlay styles */
+.component-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.component-overlay:hover {
+  background-color: rgba(0, 120, 212, 0.08);
+}
+
+.component-overlay.selected {
+  cursor: move;
 }
 
 /* Selection Handles */
