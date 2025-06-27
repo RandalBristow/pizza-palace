@@ -308,17 +308,19 @@ const ComponentRenderer: React.FC<{
         {renderComponent()}
       </div>
 
-      {/* Invisible overlay for selection - covers the entire component */}
+      {/* Selection overlay with thin dashed border */}
       <div
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          top: isSelected ? -1 : 0,
+          left: isSelected ? -1 : 0,
+          right: isSelected ? -1 : 0,
+          bottom: isSelected ? -1 : 0,
           backgroundColor: "transparent",
+          border: isSelected ? "1px dashed #0078d4" : "none",
           cursor: isSelected ? "move" : "pointer",
           zIndex: 10,
+          pointerEvents: "all",
         }}
         onClick={(e) => {
           e.stopPropagation();
@@ -326,15 +328,144 @@ const ComponentRenderer: React.FC<{
         }}
         onMouseEnter={(e) => {
           if (!isSelected) {
-            e.currentTarget.style.backgroundColor = "rgba(0, 120, 212, 0.1)";
+            e.currentTarget.style.backgroundColor = "rgba(0, 120, 212, 0.05)";
+            e.currentTarget.style.border = "1px dashed rgba(0, 120, 212, 0.3)";
           }
         }}
         onMouseLeave={(e) => {
           if (!isSelected) {
             e.currentTarget.style.backgroundColor = "transparent";
+            e.currentTarget.style.border = "none";
           }
         }}
       />
+
+      {/* Resize handles when selected */}
+      {isSelected && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: "none",
+            zIndex: 15,
+          }}
+        >
+          {/* Corner handles */}
+          <div
+            style={{
+              position: "absolute",
+              top: -4,
+              left: -4,
+              width: 8,
+              height: 8,
+              backgroundColor: "#0078d4",
+              border: "1px solid #fff",
+              cursor: "nw-resize",
+              pointerEvents: "all",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: -4,
+              right: -4,
+              width: 8,
+              height: 8,
+              backgroundColor: "#0078d4",
+              border: "1px solid #fff",
+              cursor: "ne-resize",
+              pointerEvents: "all",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: -4,
+              left: -4,
+              width: 8,
+              height: 8,
+              backgroundColor: "#0078d4",
+              border: "1px solid #fff",
+              cursor: "sw-resize",
+              pointerEvents: "all",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: -4,
+              right: -4,
+              width: 8,
+              height: 8,
+              backgroundColor: "#0078d4",
+              border: "1px solid #fff",
+              cursor: "se-resize",
+              pointerEvents: "all",
+            }}
+          />
+
+          {/* Edge handles */}
+          <div
+            style={{
+              position: "absolute",
+              top: -4,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 8,
+              height: 8,
+              backgroundColor: "#0078d4",
+              border: "1px solid #fff",
+              cursor: "n-resize",
+              pointerEvents: "all",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: -4,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 8,
+              height: 8,
+              backgroundColor: "#0078d4",
+              border: "1px solid #fff",
+              cursor: "s-resize",
+              pointerEvents: "all",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              left: -4,
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 8,
+              height: 8,
+              backgroundColor: "#0078d4",
+              border: "1px solid #fff",
+              cursor: "w-resize",
+              pointerEvents: "all",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              right: -4,
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 8,
+              height: 8,
+              backgroundColor: "#0078d4",
+              border: "1px solid #fff",
+              cursor: "e-resize",
+              pointerEvents: "all",
+            }}
+          />
+        </div>
+      )}
     </Rnd>
   );
 };
