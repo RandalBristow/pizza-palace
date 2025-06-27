@@ -53,8 +53,10 @@ const ComponentRenderer: React.FC<{
               backgroundColor:
                 props.colorScheme === "blue" ? "#0078d4" : "#f0f0f0",
               color: props.colorScheme === "blue" ? "#fff" : "#333",
-              cursor: "pointer",
+              cursor: "default",
             }}
+            disabled
+            tabIndex={-1}
           >
             {props.children || "Button"}
           </button>
@@ -65,6 +67,8 @@ const ComponentRenderer: React.FC<{
             type="text"
             placeholder={props.placeholder || "Enter text..."}
             style={style}
+            readOnly
+            tabIndex={-1}
           />
         );
       case "Text":
@@ -104,7 +108,7 @@ const ComponentRenderer: React.FC<{
         );
       case "Select":
         return (
-          <select style={style}>
+          <select style={style} disabled tabIndex={-1}>
             <option value="">Select option...</option>
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
@@ -117,6 +121,8 @@ const ComponentRenderer: React.FC<{
               type="checkbox"
               defaultChecked={props.defaultChecked}
               style={{ marginRight: "8px" }}
+              disabled
+              tabIndex={-1}
             />
             {props.children || "Checkbox"}
           </label>
@@ -134,8 +140,10 @@ const ComponentRenderer: React.FC<{
                 backgroundColor: "#ccc",
                 borderRadius: "10px",
                 position: "relative",
-                cursor: "pointer",
+                cursor: "default",
               }}
+              disabled
+              tabIndex={-1}
             />
             Switch
           </label>
@@ -149,6 +157,8 @@ const ComponentRenderer: React.FC<{
               max={props.max || 100}
               defaultValue={props.defaultValue || 50}
               style={{ width: "100%" }}
+              disabled
+              tabIndex={-1}
             />
           </div>
         );
@@ -157,6 +167,8 @@ const ComponentRenderer: React.FC<{
           <textarea
             placeholder={props.placeholder || "Enter text..."}
             style={{ ...style, resize: "none", minHeight: "60px" }}
+            readOnly
+            tabIndex={-1}
           />
         );
       case "Alert":
