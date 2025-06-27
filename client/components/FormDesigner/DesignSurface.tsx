@@ -29,6 +29,77 @@ const ComponentRenderer: React.FC<{
     [isSelected, onDelete],
   );
 
+  // Get resize constraints based on component type
+  const getResizeConstraints = () => {
+    switch (component.type) {
+      case "Checkbox":
+      case "Switch":
+        return {
+          minWidth: 120,
+          maxWidth: 300,
+          minHeight: 24,
+          maxHeight: 40,
+        };
+      case "Button":
+        return {
+          minWidth: 60,
+          maxWidth: 400,
+          minHeight: 32,
+          maxHeight: 60,
+        };
+      case "Input":
+        return {
+          minWidth: 100,
+          maxWidth: 600,
+          minHeight: 32,
+          maxHeight: 48,
+        };
+      case "Select":
+        return {
+          minWidth: 120,
+          maxWidth: 400,
+          minHeight: 32,
+          maxHeight: 48,
+        };
+      case "Text":
+      case "Heading":
+        return {
+          minWidth: 50,
+          maxWidth: 800,
+          minHeight: 20,
+          maxHeight: 200,
+        };
+      case "Slider":
+        return {
+          minWidth: 100,
+          maxWidth: 600,
+          minHeight: 24,
+          maxHeight: 48,
+        };
+      case "Progress":
+        return {
+          minWidth: 100,
+          maxWidth: 600,
+          minHeight: 8,
+          maxHeight: 24,
+        };
+      case "Spinner":
+        return {
+          minWidth: 24,
+          maxWidth: 80,
+          minHeight: 24,
+          maxHeight: 80,
+        };
+      default:
+        return {
+          minWidth: 50,
+          maxWidth: 1000,
+          minHeight: 30,
+          maxHeight: 800,
+        };
+    }
+  };
+
   const renderComponent = () => {
     const props = { ...component.props };
     const style: React.CSSProperties = {
@@ -275,6 +346,8 @@ const ComponentRenderer: React.FC<{
     }
   };
 
+  const constraints = getResizeConstraints();
+
   return (
     <Rnd
       size={{ width: component.size.width, height: component.size.height }}
@@ -294,13 +367,40 @@ const ComponentRenderer: React.FC<{
         });
       }}
       bounds="parent"
-      enableResizing={isSelected}
+      enableResizing={
+        isSelected
+          ? {
+              top: true,
+              right: true,
+              bottom: true,
+              left: true,
+              topRight: true,
+              bottomRight: true,
+              bottomLeft: true,
+              topLeft: true,
+            }
+          : false
+      }
       disableDragging={!isSelected}
+      minWidth={constraints.minWidth}
+      maxWidth={constraints.maxWidth}
+      minHeight={constraints.minHeight}
+      maxHeight={constraints.maxHeight}
       className={`component-instance ${isSelected ? "selected" : ""}`}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       style={{
         cursor: isSelected ? "move" : "pointer",
+      }}
+      resizeHandleStyles={{
+        top: { display: "none" },
+        right: { display: "none" },
+        bottom: { display: "none" },
+        left: { display: "none" },
+        topRight: { display: "none" },
+        bottomRight: { display: "none" },
+        bottomLeft: { display: "none" },
+        topLeft: { display: "none" },
       }}
     >
       {/* Component content - non-interactive */}
