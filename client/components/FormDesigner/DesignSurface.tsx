@@ -121,10 +121,22 @@ const ComponentRenderer: React.FC<{
           <button
             style={{
               ...style,
-              backgroundColor:
-                props.colorScheme === "blue" ? "#0078d4" : "#f0f0f0",
-              color: props.colorScheme === "blue" ? "#fff" : "#333",
+              backgroundColor: getButtonColor(props.colorScheme, props.variant),
+              color: getButtonTextColor(props.colorScheme, props.variant),
               cursor: "default",
+              fontSize:
+                props.size === "sm"
+                  ? "12px"
+                  : props.size === "lg"
+                    ? "16px"
+                    : "14px",
+              padding:
+                props.size === "sm"
+                  ? "4px 8px"
+                  : props.size === "lg"
+                    ? "8px 16px"
+                    : "6px 12px",
+              opacity: props.isDisabled ? 0.6 : 1,
             }}
             disabled
             tabIndex={-1}
@@ -145,7 +157,14 @@ const ComponentRenderer: React.FC<{
       case "Text":
         return (
           <div
-            style={{ ...style, border: "none", backgroundColor: "transparent" }}
+            style={{
+              ...style,
+              border: "none",
+              backgroundColor: "transparent",
+              fontSize: getFontSize(props.fontSize),
+              fontWeight: props.fontWeight || "normal",
+              color: props.color || "#333",
+            }}
           >
             {props.children || "Sample text"}
           </div>
@@ -157,25 +176,33 @@ const ComponentRenderer: React.FC<{
               ...style,
               backgroundColor: props.bg || "#f0f0f0",
               padding: props.p ? `${props.p * 4}px` : "16px",
+              borderRadius: props.borderRadius
+                ? `${props.borderRadius}px`
+                : "4px",
+              borderWidth: props.borderWidth ? `${props.borderWidth}px` : "1px",
             }}
           >
             Box Container
           </div>
         );
       case "Heading":
+        const HeadingTag = props.as || "h2";
         return (
-          <h2
+          <HeadingTag
             style={{
               ...style,
               border: "none",
               backgroundColor: "transparent",
-              fontSize: props.size === "lg" ? "24px" : "18px",
-              fontWeight: "600",
+              fontSize:
+                getFontSize(props.fontSize) ||
+                (props.size === "lg" ? "24px" : "18px"),
+              fontWeight: props.fontWeight || "600",
+              color: props.color || "#333",
               margin: 0,
             }}
           >
             {props.children || "Heading"}
-          </h2>
+          </HeadingTag>
         );
       case "Select":
         return (
