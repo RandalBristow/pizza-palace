@@ -171,49 +171,47 @@
 /* Component Instance Styles */
 .component-instance {
   position: absolute;
-  border: 2px solid transparent;
-  transition: border-color 0.2s;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 
+/* Remove old hover styles since overlay handles it now */
 .component-instance:hover {
-  border-color: #cccccc;
+  /* No styles - overlay handles hover */
 }
 
 .component-instance.selected {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 1px #0078d4;
-}
-
-.component-instance.selected::after {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 1px dashed #0078d4;
-  pointer-events: none;
-  z-index: 15;
+  /* Minimal styles - overlay and handles provide visual feedback */
 }
 
 /* Component overlay styles */
 .component-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   z-index: 10;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .component-overlay:hover {
-  background-color: rgba(0, 120, 212, 0.08);
+  background-color: rgba(0, 120, 212, 0.05);
 }
 
 .component-overlay.selected {
   cursor: move;
+}
+
+/* Resize handle styles */
+.resize-handle {
+  position: absolute;
+  background-color: #0078d4;
+  border: 1px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.resize-handle:hover {
+  background-color: #106ebe;
+  transform: scale(1.1);
 }
 
 /* Selection Handles */
