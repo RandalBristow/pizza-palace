@@ -8,25 +8,6 @@ import PropertiesPanel from "./PropertiesPanel";
 import ResizablePanel from "./ResizablePanel";
 import "./FormDesigner.css";
 
-// Simple theme configuration for Chakra UI
-const theme = {
-  config: {
-    initialColorMode: "light",
-    useSystemColorMode: false,
-  },
-  colors: {
-    vs: {
-      background: "#f3f3f3",
-      panel: "#ffffff",
-      border: "#cccccc",
-      toolbox: "#f6f6f6",
-      selected: "#0078d4",
-      text: "#000000",
-      secondary: "#666666",
-    },
-  },
-};
-
 export interface ComponentInstance {
   id: string;
   type: string;
@@ -86,7 +67,7 @@ const FormDesigner: React.FC = () => {
   }, []);
 
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider>
       <DndProvider backend={HTML5Backend}>
         <div className="form-designer">
           <div className="designer-header">
