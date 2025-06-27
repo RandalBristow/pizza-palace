@@ -299,6 +299,20 @@
   border-bottom: 1px solid #e0e0e0;
 }
 
+.property-group-title.expandable {
+  background: linear-gradient(to bottom, #f8f8f8 0%, #f0f0f0 100%);
+  border: 1px solid #d0d0d0;
+  border-radius: 3px;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  transition: background-color 0.2s;
+}
+
+.property-group-title.expandable:hover {
+  background: linear-gradient(to bottom, #e8f4ff 0%, #d0e7ff 100%);
+  border-color: #0078d4;
+}
+
 .property-item {
   margin-bottom: 8px;
 }
