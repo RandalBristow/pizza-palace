@@ -1,24 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useDrop } from "react-dnd";
 import { Rnd } from "react-rnd";
-import {
-  Button,
-  Input,
-  Text,
-  Box,
-  Heading,
-  Select,
-  Checkbox,
-  Switch,
-  Slider,
-  Textarea,
-  Alert,
-  Progress,
-  Spinner,
-  Stack,
-  Grid,
-  Flex,
-} from "@chakra-ui/react";
 import { ComponentInstance } from "./FormDesigner";
 
 interface DesignSurfaceProps {
@@ -49,75 +31,233 @@ const ComponentRenderer: React.FC<{
 
   const renderComponent = () => {
     const props = { ...component.props };
+    const style: React.CSSProperties = {
+      width: "100%",
+      height: "100%",
+      padding: "4px",
+      border: "1px solid #ccc",
+      borderRadius: "4px",
+      backgroundColor: "#fff",
+      fontSize: "14px",
+      fontFamily: '"Segoe UI", sans-serif',
+    };
 
     switch (component.type) {
       case "Button":
-        return <Button {...props} />;
+        return (
+          <button
+            style={{
+              ...style,
+              backgroundColor:
+                props.colorScheme === "blue" ? "#0078d4" : "#f0f0f0",
+              color: props.colorScheme === "blue" ? "#fff" : "#333",
+              cursor: "pointer",
+            }}
+          >
+            {props.children || "Button"}
+          </button>
+        );
       case "Input":
-        return <Input {...props} />;
+        return (
+          <input
+            type="text"
+            placeholder={props.placeholder || "Enter text..."}
+            style={style}
+          />
+        );
       case "Text":
-        return <Text {...props} />;
+        return (
+          <div
+            style={{ ...style, border: "none", backgroundColor: "transparent" }}
+          >
+            {props.children || "Sample text"}
+          </div>
+        );
       case "Box":
-        return <Box {...props} />;
+        return (
+          <div
+            style={{
+              ...style,
+              backgroundColor: props.bg || "#f0f0f0",
+              padding: props.p ? `${props.p * 4}px` : "16px",
+            }}
+          >
+            Box Container
+          </div>
+        );
       case "Heading":
-        return <Heading {...props} />;
+        return (
+          <h2
+            style={{
+              ...style,
+              border: "none",
+              backgroundColor: "transparent",
+              fontSize: props.size === "lg" ? "24px" : "18px",
+              fontWeight: "600",
+              margin: 0,
+            }}
+          >
+            {props.children || "Heading"}
+          </h2>
+        );
       case "Select":
         return (
-          <Select {...props}>
+          <select style={style}>
             <option value="">Select option...</option>
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
-          </Select>
+          </select>
         );
       case "Checkbox":
-        return <Checkbox {...props} />;
+        return (
+          <label style={{ ...style, display: "flex", alignItems: "center" }}>
+            <input
+              type="checkbox"
+              defaultChecked={props.defaultChecked}
+              style={{ marginRight: "8px" }}
+            />
+            {props.children || "Checkbox"}
+          </label>
+        );
       case "Switch":
-        return <Switch {...props} />;
+        return (
+          <label style={{ ...style, display: "flex", alignItems: "center" }}>
+            <input
+              type="checkbox"
+              style={{
+                marginRight: "8px",
+                width: "40px",
+                height: "20px",
+                appearance: "none",
+                backgroundColor: "#ccc",
+                borderRadius: "10px",
+                position: "relative",
+                cursor: "pointer",
+              }}
+            />
+            Switch
+          </label>
+        );
       case "Slider":
-        return <Slider {...props} />;
+        return (
+          <div style={style}>
+            <input
+              type="range"
+              min={props.min || 0}
+              max={props.max || 100}
+              defaultValue={props.defaultValue || 50}
+              style={{ width: "100%" }}
+            />
+          </div>
+        );
       case "Textarea":
-        return <Textarea {...props} />;
+        return (
+          <textarea
+            placeholder={props.placeholder || "Enter text..."}
+            style={{ ...style, resize: "none", minHeight: "60px" }}
+          />
+        );
       case "Alert":
         return (
-          <Alert {...props} status="info">
-            Sample alert message
-          </Alert>
+          <div
+            style={{
+              ...style,
+              backgroundColor: "#e3f2fd",
+              borderColor: "#2196f3",
+              color: "#1976d2",
+            }}
+          >
+            ℹ Sample alert message
+          </div>
         );
       case "Progress":
-        return <Progress {...props} value={50} />;
+        return (
+          <div style={style}>
+            <div
+              style={{
+                width: "100%",
+                height: "8px",
+                backgroundColor: "#e0e0e0",
+                borderRadius: "4px",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  width: "50%",
+                  height: "100%",
+                  backgroundColor: "#0078d4",
+                }}
+              />
+            </div>
+          </div>
+        );
       case "Spinner":
-        return <Spinner {...props} />;
+        return (
+          <div
+            style={{
+              ...style,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="spinner" />
+          </div>
+        );
       case "Stack":
         return (
-          <Stack {...props}>
-            <Text fontSize="sm">Stack Item 1</Text>
-            <Text fontSize="sm">Stack Item 2</Text>
-          </Stack>
+          <div
+            style={{
+              ...style,
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+            }}
+          >
+            <div style={{ padding: "4px", backgroundColor: "#f0f0f0" }}>
+              Stack Item 1
+            </div>
+            <div style={{ padding: "4px", backgroundColor: "#f0f0f0" }}>
+              Stack Item 2
+            </div>
+          </div>
         );
       case "Grid":
         return (
-          <Grid {...props} templateColumns="repeat(2, 1fr)" gap={2}>
-            <Box bg="gray.100" p={2}>
+          <div
+            style={{
+              ...style,
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "8px",
+            }}
+          >
+            <div style={{ padding: "8px", backgroundColor: "#f0f0f0" }}>
               Grid Item 1
-            </Box>
-            <Box bg="gray.100" p={2}>
+            </div>
+            <div style={{ padding: "8px", backgroundColor: "#f0f0f0" }}>
               Grid Item 2
-            </Box>
-          </Grid>
+            </div>
+          </div>
         );
       case "Flex":
         return (
-          <Flex {...props}>
-            <Box bg="gray.100" p={2} flex={1}>
+          <div style={{ ...style, display: "flex", gap: "8px" }}>
+            <div
+              style={{ padding: "8px", backgroundColor: "#f0f0f0", flex: 1 }}
+            >
               Flex Item 1
-            </Box>
-            <Box bg="gray.100" p={2} flex={1}>
+            </div>
+            <div
+              style={{ padding: "8px", backgroundColor: "#f0f0f0", flex: 1 }}
+            >
               Flex Item 2
-            </Box>
-          </Flex>
+            </div>
+          </div>
         );
       default:
-        return <Box {...props}>Unknown Component</Box>;
+        return <div style={style}>Unknown Component: {component.type}</div>;
     }
   };
 
