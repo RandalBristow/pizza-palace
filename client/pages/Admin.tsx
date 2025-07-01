@@ -1385,14 +1385,29 @@ export default function Admin() {
                         </div>
                       )}
 
-                      {/* Right Column - Affected Menu Items by Category */}
-                      <div>
-                        <Label className="text-lg font-semibold">
-                          Affected Menu Items
-                        </Label>
-                        <p className="text-sm text-gray-500 mb-4">
-                          Select which menu items this special applies to
-                        </p>
+                      {/* Action Buttons */}
+                      <div className="flex justify-end space-x-2 pt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsAddingSpecial(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={handleAddSpecial}>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Special
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Right Column - Affected Menu Items by Category */}
+                    <div>
+                      <Label className="text-lg font-semibold">
+                        Affected Menu Items
+                      </Label>
+                      <p className="text-sm text-gray-500 mb-4">
+                        Select which menu items this special applies to
+                      </p>
 
                         <div className="space-y-2 max-h-96 overflow-y-auto">
                           {categories
