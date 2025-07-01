@@ -1048,6 +1048,89 @@ export default function Admin() {
                   </div>
                 </DialogContent>
               </Dialog>
+
+              {/* Edit Topping Dialog */}
+              <Dialog
+                open={!!editingTopping}
+                onOpenChange={() => setEditingTopping(null)}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Topping</DialogTitle>
+                    <DialogDescription>
+                      Update the topping details
+                    </DialogDescription>
+                  </DialogHeader>
+                  {editingTopping && (
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="editToppingName">Topping Name</Label>
+                        <Input
+                          id="editToppingName"
+                          value={editingTopping.name}
+                          onChange={(e) =>
+                            setEditingTopping({
+                              ...editingTopping,
+                              name: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="editToppingPrice">Price</Label>
+                        <Input
+                          id="editToppingPrice"
+                          type="number"
+                          step="0.01"
+                          value={editingTopping.price}
+                          onChange={(e) =>
+                            setEditingTopping({
+                              ...editingTopping,
+                              price: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="editToppingCategory">Category</Label>
+                        <Select
+                          value={editingTopping.category}
+                          onValueChange={(
+                            value: "sauce" | "cheese" | "meat" | "veggie",
+                          ) =>
+                            setEditingTopping({
+                              ...editingTopping,
+                              category: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="sauce">Sauce</SelectItem>
+                            <SelectItem value="cheese">Cheese</SelectItem>
+                            <SelectItem value="meat">Meat</SelectItem>
+                            <SelectItem value="veggie">Vegetables</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setEditingTopping(null)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={handleSaveTopping}>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Changes
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="grid gap-4">
