@@ -161,8 +161,23 @@ export default function Index() {
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
-                <Pizza className="h-20 w-20 text-white" />
+              <div className="h-48 bg-gradient-to-br from-red-400 to-red-600 relative overflow-hidden">
+                {/* Pizza illustration */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative">
+                    {/* Pizza base */}
+                    <div className="w-32 h-32 bg-yellow-200 rounded-full border-4 border-yellow-300 shadow-lg">
+                      {/* Pepperoni spots */}
+                      <div className="absolute top-4 left-6 w-4 h-4 bg-red-700 rounded-full"></div>
+                      <div className="absolute top-8 right-4 w-4 h-4 bg-red-700 rounded-full"></div>
+                      <div className="absolute bottom-6 left-8 w-4 h-4 bg-red-700 rounded-full"></div>
+                      <div className="absolute bottom-4 right-8 w-4 h-4 bg-red-700 rounded-full"></div>
+                      {/* Basil leaves */}
+                      <div className="absolute top-10 left-10 w-3 h-2 bg-green-600 rounded-full transform rotate-45"></div>
+                      <div className="absolute bottom-8 right-6 w-3 h-2 bg-green-600 rounded-full transform -rotate-45"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -188,8 +203,31 @@ export default function Index() {
             </Card>
 
             <Card className="overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-                <Coffee className="h-20 w-20 text-white" />
+              <div className="h-48 bg-gradient-to-br from-amber-400 to-amber-600 relative overflow-hidden">
+                {/* Coffee cup illustration */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative">
+                    {/* Coffee cup */}
+                    <div className="w-20 h-24 bg-white rounded-b-2xl border-4 border-amber-200 shadow-lg">
+                      {/* Coffee inside */}
+                      <div className="w-full h-16 bg-amber-900 rounded-b-xl mt-2"></div>
+                      {/* Foam/cream */}
+                      <div className="absolute top-2 left-1 right-1 h-4 bg-amber-100 rounded-t-xl"></div>
+                    </div>
+                    {/* Handle */}
+                    <div className="absolute right-0 top-4 w-4 h-8 border-4 border-amber-200 rounded-r-full"></div>
+                    {/* Steam */}
+                    <div className="absolute -top-2 left-6 w-1 h-6 bg-white opacity-60 rounded-full animate-pulse"></div>
+                    <div
+                      className="absolute -top-1 left-8 w-1 h-4 bg-white opacity-60 rounded-full animate-pulse"
+                      style={{ animationDelay: "0.5s" }}
+                    ></div>
+                    <div
+                      className="absolute -top-2 left-10 w-1 h-5 bg-white opacity-60 rounded-full animate-pulse"
+                      style={{ animationDelay: "1s" }}
+                    ></div>
+                  </div>
+                </div>
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -214,8 +252,32 @@ export default function Index() {
             </Card>
 
             <Card className="overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
-                <Pizza className="h-20 w-20 text-white" />
+              <div className="h-48 bg-gradient-to-br from-orange-400 to-orange-600 relative overflow-hidden">
+                {/* Supreme pizza illustration */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative">
+                    {/* Pizza base */}
+                    <div className="w-32 h-32 bg-yellow-200 rounded-full border-4 border-yellow-300 shadow-lg">
+                      {/* Multiple toppings */}
+                      <div className="absolute top-3 left-4 w-3 h-3 bg-red-700 rounded-full"></div>
+                      <div className="absolute top-6 right-3 w-3 h-3 bg-red-700 rounded-full"></div>
+                      <div className="absolute bottom-5 left-6 w-3 h-3 bg-red-700 rounded-full"></div>
+                      <div className="absolute bottom-3 right-6 w-3 h-3 bg-red-700 rounded-full"></div>
+                      {/* Sausage pieces */}
+                      <div className="absolute top-8 left-8 w-4 h-2 bg-amber-800 rounded-full"></div>
+                      <div className="absolute bottom-8 right-4 w-4 h-2 bg-amber-800 rounded-full"></div>
+                      {/* Bell peppers */}
+                      <div className="absolute top-5 right-8 w-2 h-3 bg-green-500 rounded"></div>
+                      <div className="absolute bottom-6 left-10 w-2 h-3 bg-green-500 rounded"></div>
+                      {/* Mushrooms */}
+                      <div className="absolute top-10 right-6 w-3 h-2 bg-amber-600 rounded-t-full"></div>
+                      <div className="absolute bottom-10 left-4 w-3 h-2 bg-amber-600 rounded-t-full"></div>
+                      {/* Olives */}
+                      <div className="absolute top-12 left-12 w-2 h-2 bg-gray-800 rounded-full"></div>
+                      <div className="absolute bottom-4 right-10 w-2 h-2 bg-gray-800 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
