@@ -958,43 +958,122 @@ export default function Admin() {
                       </div>
                     )}
 
-                    {/* Menu Items Selection */}
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsAddingSpecial(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={handleAddSpecial}>
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Special
+                      </Button>
+                    </div>
+                    </div>
+
+                    {/* Right Column - Affected Menu Items by Category */}
                     <div>
-                      <Label>Affected Menu Items</Label>
-                      <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto border rounded-md p-3">
-                        {menuItems.filter(item => item.isActive).map((item) => (
-                          <div key={item.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`special-item-${item.id}`}
-                              checked={newSpecial.menuItems?.includes(item.id) || false}
-                              onCheckedChange={(checked) => {
-                                const currentItems = newSpecial.menuItems || [];
-                                if (checked) {
-                                  setNewSpecial({
-                                    ...newSpecial,
-                                    menuItems: [...currentItems, item.id]
-                                  });
-                                } else {
-                                  setNewSpecial({
-                                    ...newSpecial,
-                                    menuItems: currentItems.filter(id => id !== item.id)
-                                  });
-                                }
-                              }}
-                            />
-                            <Label
-                              htmlFor={`special-item-${item.id}`}
-                              className="text-sm cursor-pointer"
-                            >
-                              {item.name} - ${item.price.toFixed(2)} ({item.category})
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <Label className="text-lg font-semibold">Affected Menu Items</Label>
+                      <p className="text-sm text-gray-500 mb-4">
                         Select which menu items this special applies to
                       </p>
+
+                      <div className="space-y-2 max-h-96 overflow-y-auto">
+                        {categories.filter(cat => cat.isActive).map((category) => {
+                          const categoryItems = menuItems.filter(
+                            item => item.isActive && item.category === category.id
+                          );
+
+                          if (categoryItems.length === 0) return null;
+
+                          return (
+                            <div key={category.id} className="border rounded-md">
+                              <button
+                                type="button"
+                                className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50"
+                                onClick={() => {
+                                  // Toggle all items in this category
+                                  const currentItems = newSpecial.menuItems || [];
+                                  const categoryItemIds = categoryItems.map(item => item.id);
+                                  const allSelected = categoryItemIds.every(id => currentItems.includes(id));
+
+                                  if (allSelected) {
+                                    // Remove all category items
+                                    setNewSpecial({
+                                      ...newSpecial,
+                                      menuItems: currentItems.filter(id => !categoryItemIds.includes(id))
+                                    });
+                                  } else {
+                                    // Add all category items
+                                    const newItems = [...currentItems];
+                                    categoryItemIds.forEach(id => {
+                                      if (!newItems.includes(id)) {
+                                        newItems.push(id);
+                                      }
+                                    });
+                                    setNewSpecial({
+                                      ...newSpecial,
+                                      menuItems: newItems
+                                    });
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <Checkbox
+                                    checked={
+                                      categoryItems.length > 0 &&
+                                      categoryItems.every(item =>
+                                        newSpecial.menuItems?.includes(item.id) || false
+                                      )
+                                    }
+                                    readOnly
+                                  />
+                                  <span className="font-medium">{category.name}</span>
+                                </div>
+                                <span className="text-sm text-gray-500">
+                                  {categoryItems.filter(item =>
+                                    newSpecial.menuItems?.includes(item.id) || false
+                                  ).length}/{categoryItems.length} selected
+                                </span>
+                              </button>
+
+                              <div className="border-t bg-gray-50 p-3 space-y-2">
+                                {categoryItems.map((item) => (
+                                  <div key={item.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                      id={`special-item-${item.id}`}
+                                      checked={newSpecial.menuItems?.includes(item.id) || false}
+                                      onCheckedChange={(checked) => {
+                                        const currentItems = newSpecial.menuItems || [];
+                                        if (checked) {
+                                          setNewSpecial({
+                                            ...newSpecial,
+                                            menuItems: [...currentItems, item.id]
+                                          });
+                                        } else {
+                                          setNewSpecial({
+                                            ...newSpecial,
+                                            menuItems: currentItems.filter(id => id !== item.id)
+                                          });
+                                        }
+                                      }}
+                                    />
+                                    <Label
+                                      htmlFor={`special-item-${item.id}`}
+                                      className="text-sm cursor-pointer flex-1"
+                                    >
+                                      {item.name} - ${item.price.toFixed(2)}
+                                    </Label>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
+                  </div>
 
                     <div className="flex justify-end space-x-2">
                       <Button
