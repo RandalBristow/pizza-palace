@@ -406,6 +406,71 @@ export default function Order() {
                 <CardTitle>Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Pizza Visualization */}
+                {pizzaOrder.size && (
+                  <div className="flex justify-center mb-4">
+                    <div className="relative w-24 h-24 bg-yellow-200 rounded-full border-4 border-yellow-300 shadow-lg">
+                      {/* Show selected toppings visually */}
+                      {pizzaOrder.toppings.map((topping, index) => {
+                        if (
+                          topping.category === "meat" &&
+                          topping.name.toLowerCase().includes("pepperoni")
+                        ) {
+                          return (
+                            <div key={index}>
+                              {topping.placement === "left" && (
+                                <div className="absolute top-4 left-3 w-3 h-3 bg-red-700 rounded-full"></div>
+                              )}
+                              {topping.placement === "right" && (
+                                <div className="absolute top-4 right-3 w-3 h-3 bg-red-700 rounded-full"></div>
+                              )}
+                              {topping.placement === "whole" && (
+                                <>
+                                  <div className="absolute top-4 left-3 w-3 h-3 bg-red-700 rounded-full"></div>
+                                  <div className="absolute top-4 right-3 w-3 h-3 bg-red-700 rounded-full"></div>
+                                  <div className="absolute bottom-4 left-6 w-3 h-3 bg-red-700 rounded-full"></div>
+                                </>
+                              )}
+                            </div>
+                          );
+                        }
+                        if (
+                          topping.category === "veggie" &&
+                          topping.name.toLowerCase().includes("mushroom")
+                        ) {
+                          return (
+                            <div key={index}>
+                              {topping.placement === "left" && (
+                                <div className="absolute top-6 left-4 w-2 h-2 bg-amber-600 rounded-t-full"></div>
+                              )}
+                              {topping.placement === "right" && (
+                                <div className="absolute top-6 right-4 w-2 h-2 bg-amber-600 rounded-t-full"></div>
+                              )}
+                              {topping.placement === "whole" && (
+                                <>
+                                  <div className="absolute top-6 left-4 w-2 h-2 bg-amber-600 rounded-t-full"></div>
+                                  <div className="absolute bottom-6 right-4 w-2 h-2 bg-amber-600 rounded-t-full"></div>
+                                </>
+                              )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                      {/* Crust indicator */}
+                      <div
+                        className={`absolute inset-0 rounded-full ${
+                          pizzaOrder.crust === "thin"
+                            ? "border-2 border-amber-400"
+                            : pizzaOrder.crust === "thick"
+                              ? "border-8 border-amber-600"
+                              : "border-4 border-amber-500"
+                        }`}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Pizza Base */}
                 {pizzaOrder.size && (
                   <div className="flex justify-between">
