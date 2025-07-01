@@ -312,6 +312,67 @@ export default function Admin() {
     }
   };
 
+  // Edit handlers
+  const handleEditMenuItem = (item: MenuItem) => {
+    setEditingMenuItem(item);
+  };
+
+  const handleSaveMenuItem = () => {
+    if (editingMenuItem) {
+      setMenuItems(
+        menuItems.map((item) =>
+          item.id === editingMenuItem.id ? editingMenuItem : item,
+        ),
+      );
+      setEditingMenuItem(null);
+    }
+  };
+
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category);
+  };
+
+  const handleSaveCategory = () => {
+    if (editingCategory) {
+      setCategories(
+        categories.map((cat) =>
+          cat.id === editingCategory.id ? editingCategory : cat,
+        ),
+      );
+      setEditingCategory(null);
+    }
+  };
+
+  const handleEditTopping = (topping: Topping) => {
+    setEditingTopping(topping);
+  };
+
+  const handleSaveTopping = () => {
+    if (editingTopping) {
+      setToppings(
+        toppings.map((topping) =>
+          topping.id === editingTopping.id ? editingTopping : topping,
+        ),
+      );
+      setEditingTopping(null);
+    }
+  };
+
+  const handleEditToppingCategory = (toppingCategory: ToppingCategory) => {
+    setEditingToppingCategory(toppingCategory);
+  };
+
+  const handleSaveToppingCategory = () => {
+    if (editingToppingCategory) {
+      setToppingCategories(
+        toppingCategories.map((tc) =>
+          tc.id === editingToppingCategory.id ? editingToppingCategory : tc,
+        ),
+      );
+      setEditingToppingCategory(null);
+    }
+  };
+
   const toggleItemActive = (id: string) => {
     setMenuItems(
       menuItems.map((item) =>
