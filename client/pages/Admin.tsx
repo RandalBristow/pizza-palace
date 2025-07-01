@@ -157,9 +157,7 @@ export default function Admin() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(mockMenuItems);
   const [categories, setCategories] = useState<Category[]>(mockCategories);
   const [toppings, setToppings] = useState<Topping[]>(mockToppings);
-  const [toppingCategories, setToppingCategories] = useState<ToppingCategory[]>(
-    mockToppingCategories,
-  );
+  const [toppingCategories, setToppingCategories] = useState<ToppingCategory[]>(mockToppingCategories);
   const [specials, setSpecials] = useState<Special[]>(mockSpecials);
   const [selectedTab, setSelectedTab] = useState("menu");
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
@@ -345,9 +343,7 @@ export default function Admin() {
             <TabsTrigger value="menu">Menu Items</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="toppings">Toppings</TabsTrigger>
-            <TabsTrigger value="topping-categories">
-              Topping Categories
-            </TabsTrigger>
+            <TabsTrigger value="topping-categories">Topping Categories</TabsTrigger>
             <TabsTrigger value="specials">Specials</TabsTrigger>
           </TabsList>
 
@@ -514,10 +510,7 @@ export default function Admin() {
           <TabsContent value="categories" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Categories</h2>
-              <Dialog
-                open={isAddingCategory}
-                onOpenChange={setIsAddingCategory}
-              >
+              <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
@@ -538,10 +531,7 @@ export default function Admin() {
                         id="categoryName"
                         value={newCategory.name}
                         onChange={(e) =>
-                          setNewCategory({
-                            ...newCategory,
-                            name: e.target.value,
-                          })
+                          setNewCategory({ ...newCategory, name: e.target.value })
                         }
                         placeholder="e.g., Appetizers"
                       />
@@ -606,10 +596,7 @@ export default function Admin() {
           <TabsContent value="topping-categories" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Topping Categories</h2>
-              <Dialog
-                open={isAddingToppingCategory}
-                onOpenChange={setIsAddingToppingCategory}
-              >
+              <Dialog open={isAddingToppingCategory} onOpenChange={setIsAddingToppingCategory}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
@@ -630,18 +617,13 @@ export default function Admin() {
                         id="toppingCategoryName"
                         value={newToppingCategory.name}
                         onChange={(e) =>
-                          setNewToppingCategory({
-                            ...newToppingCategory,
-                            name: e.target.value,
-                          })
+                          setNewToppingCategory({ ...newToppingCategory, name: e.target.value })
                         }
                         placeholder="e.g., Premium Toppings"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="toppingCategoryOrder">
-                        Display Order
-                      </Label>
+                      <Label htmlFor="toppingCategoryOrder">Display Order</Label>
                       <Input
                         id="toppingCategoryOrder"
                         type="number"
@@ -678,28 +660,16 @@ export default function Admin() {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="flex items-center space-x-2">
-                          <h3 className="font-semibold">
-                            {toppingCategory.name}
-                          </h3>
-                          <Badge variant="outline">
-                            Order: {toppingCategory.order}
-                          </Badge>
+                          <h3 className="font-semibold">{toppingCategory.name}</h3>
+                          <Badge variant="outline">Order: {toppingCategory.order}</Badge>
                           <Badge
-                            variant={
-                              toppingCategory.isActive ? "default" : "secondary"
-                            }
+                            variant={toppingCategory.isActive ? "default" : "secondary"}
                           >
                             {toppingCategory.isActive ? "Active" : "Inactive"}
                           </Badge>
                         </div>
                         <p className="text-sm text-gray-600 mt-1">
-                          {
-                            toppings.filter(
-                              (t) =>
-                                t.category === toppingCategory.id && t.isActive,
-                            ).length
-                          }{" "}
-                          active toppings
+                          {toppings.filter(t => t.category === toppingCategory.id && t.isActive).length} active toppings
                         </p>
                       </div>
                       <div className="flex space-x-2">
@@ -710,12 +680,12 @@ export default function Admin() {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            setToppingCategories((prev) =>
-                              prev.map((tc) =>
+                            setToppingCategories(prev =>
+                              prev.map(tc =>
                                 tc.id === toppingCategory.id
                                   ? { ...tc, isActive: !tc.isActive }
-                                  : tc,
-                              ),
+                                  : tc
+                              )
                             );
                           }}
                         >
@@ -779,9 +749,9 @@ export default function Admin() {
                       <Label htmlFor="toppingCategory">Category</Label>
                       <Select
                         value={newTopping.category}
-                        onValueChange={(
-                          value: "sauce" | "cheese" | "meat" | "veggie",
-                        ) => setNewTopping({ ...newTopping, category: value })}
+                        onValueChange={(value: "sauce" | "cheese" | "meat" | "veggie") =>
+                          setNewTopping({ ...newTopping, category: value })
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -863,14 +833,16 @@ export default function Admin() {
                     Add Special
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Add New Special</DialogTitle>
                     <DialogDescription>
                       Create a new daily or weekly special offer
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-6">
+                    {/* Left Column - Special Details */}
+                    <div className="space-y-4">
                     <div>
                       <Label htmlFor="specialName">Special Name</Label>
                       <Input
@@ -896,6 +868,20 @@ export default function Admin() {
                         placeholder="Describe the special offer"
                         rows={3}
                       />
+                    </div>
+
+                    {/* Image Upload */}
+                    <div>
+                      <Label htmlFor="specialImage">Special Image</Label>
+                      <div className="flex items-center space-x-2">
+                        <Button variant="outline" className="w-full">
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload Image
+                        </Button>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Upload an image to showcase this special offer
+                      </p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -976,46 +962,34 @@ export default function Admin() {
                     <div>
                       <Label>Affected Menu Items</Label>
                       <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto border rounded-md p-3">
-                        {menuItems
-                          .filter((item) => item.isActive)
-                          .map((item) => (
-                            <div
-                              key={item.id}
-                              className="flex items-center space-x-2"
-                            >
-                              <Checkbox
-                                id={`special-item-${item.id}`}
-                                checked={
-                                  newSpecial.menuItems?.includes(item.id) ||
-                                  false
+                        {menuItems.filter(item => item.isActive).map((item) => (
+                          <div key={item.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`special-item-${item.id}`}
+                              checked={newSpecial.menuItems?.includes(item.id) || false}
+                              onCheckedChange={(checked) => {
+                                const currentItems = newSpecial.menuItems || [];
+                                if (checked) {
+                                  setNewSpecial({
+                                    ...newSpecial,
+                                    menuItems: [...currentItems, item.id]
+                                  });
+                                } else {
+                                  setNewSpecial({
+                                    ...newSpecial,
+                                    menuItems: currentItems.filter(id => id !== item.id)
+                                  });
                                 }
-                                onCheckedChange={(checked) => {
-                                  const currentItems =
-                                    newSpecial.menuItems || [];
-                                  if (checked) {
-                                    setNewSpecial({
-                                      ...newSpecial,
-                                      menuItems: [...currentItems, item.id],
-                                    });
-                                  } else {
-                                    setNewSpecial({
-                                      ...newSpecial,
-                                      menuItems: currentItems.filter(
-                                        (id) => id !== item.id,
-                                      ),
-                                    });
-                                  }
-                                }}
-                              />
-                              <Label
-                                htmlFor={`special-item-${item.id}`}
-                                className="text-sm cursor-pointer"
-                              >
-                                {item.name} - ${item.price.toFixed(2)} (
-                                {item.category})
-                              </Label>
-                            </div>
-                          ))}
+                              }}
+                            />
+                            <Label
+                              htmlFor={`special-item-${item.id}`}
+                              className="text-sm cursor-pointer"
+                            >
+                              {item.name} - ${item.price.toFixed(2)} ({item.category})
+                            </Label>
+                          </div>
+                        ))}
                       </div>
                       <p className="text-sm text-gray-500 mt-1">
                         Select which menu items this special applies to
