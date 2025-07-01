@@ -1409,7 +1409,7 @@ export default function Admin() {
                         Select which menu items this special applies to
                       </p>
 
-                        <div className="space-y-2 max-h-96 overflow-y-auto">
+                        <Accordion type="multiple" className="w-full max-h-96 overflow-y-auto">
                           {categories
                             .filter((cat) => cat.isActive)
                             .map((category) => {
