@@ -473,6 +473,74 @@ export default function Admin() {
             </div>
           </TabsContent>
 
+          {/* Topping Categories Tab */}
+          <TabsContent value="topping-categories" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Topping Categories</h2>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Topping Category
+              </Button>
+            </div>
+
+            <div className="grid gap-4">
+              {toppingCategories.map((toppingCategory) => (
+                <Card key={toppingCategory.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-semibold">
+                            {toppingCategory.name}
+                          </h3>
+                          <Badge variant="outline">
+                            Order: {toppingCategory.order}
+                          </Badge>
+                          <Badge
+                            variant={
+                              toppingCategory.isActive ? "default" : "secondary"
+                            }
+                          >
+                            {toppingCategory.isActive ? "Active" : "Inactive"}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {
+                            toppings.filter(
+                              (t) =>
+                                t.category === toppingCategory.id && t.isActive,
+                            ).length
+                          }{" "}
+                          active toppings
+                        </p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setToppingCategories((prev) =>
+                              prev.map((tc) =>
+                                tc.id === toppingCategory.id
+                                  ? { ...tc, isActive: !tc.isActive }
+                                  : tc,
+                              ),
+                            );
+                          }}
+                        >
+                          {toppingCategory.isActive ? "Deactivate" : "Activate"}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
           {/* Toppings Tab */}
           <TabsContent value="toppings" className="space-y-6">
             <div className="flex justify-between items-center">
@@ -643,6 +711,57 @@ export default function Admin() {
                         </Select>
                       </div>
                     )}
+
+                    {/* Menu Items Selection */}
+                    <div>
+                      <Label>Affected Menu Items</Label>
+                      <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto border rounded-md p-3">
+                        {menuItems
+                          .filter((item) => item.isActive)
+                          .map((item) => (
+                            <div
+                              key={item.id}
+                              className="flex items-center space-x-2"
+                            >
+                              <Checkbox
+                                id={`special-item-${item.id}`}
+                                checked={
+                                  newSpecial.menuItems?.includes(item.id) ||
+                                  false
+                                }
+                                onCheckedChange={(checked) => {
+                                  const currentItems =
+                                    newSpecial.menuItems || [];
+                                  if (checked) {
+                                    setNewSpecial({
+                                      ...newSpecial,
+                                      menuItems: [...currentItems, item.id],
+                                    });
+                                  } else {
+                                    setNewSpecial({
+                                      ...newSpecial,
+                                      menuItems: currentItems.filter(
+                                        (id) => id !== item.id,
+                                      ),
+                                    });
+                                  }
+                                }}
+                              />
+                              <Label
+                                htmlFor={`special-item-${item.id}`}
+                                className="text-sm cursor-pointer"
+                              >
+                                {item.name} - ${item.price.toFixed(2)} (
+                                {item.category})
+                              </Label>
+                            </div>
+                          ))}
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Select which menu items this special applies to
+                      </p>
+                    </div>
+
                     <div className="flex justify-end space-x-2">
                       <Button
                         variant="outline"
