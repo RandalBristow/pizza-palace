@@ -65,6 +65,7 @@ interface Category {
   id: string;
   name: string;
   isActive: boolean;
+  order: number;
 }
 
 interface Topping {
@@ -82,17 +83,17 @@ interface Special {
   type: "daily" | "weekly";
   startDate: string;
   endDate: string;
-  dayOfWeek?: number; // 0-6 for weekly specials
+  dayOfWeek?: number;
   menuItems: string[];
   isActive: boolean;
 }
 
-const mockCategories: Category[] = [
-  { id: "pizza", name: "Pizza", isActive: true },
-  { id: "coffee", name: "Coffee", isActive: true },
-  { id: "calzone", name: "Calzones", isActive: true },
-  { id: "drinks", name: "Drinks", isActive: true },
-];
+interface ToppingCategory {
+  id: string;
+  name: string;
+  order: number;
+  isActive: boolean;
+}
 
 const mockMenuItems: MenuItem[] = [
   {
@@ -119,6 +120,14 @@ const mockMenuItems: MenuItem[] = [
   },
 ];
 
+const mockCategories: Category[] = [
+  { id: "pizza", name: "Pizza", isActive: true, order: 1 },
+  { id: "wings", name: "Wings", isActive: true, order: 2 },
+  { id: "coffee", name: "Coffee", isActive: true, order: 3 },
+  { id: "calzone", name: "Calzones", isActive: true, order: 4 },
+  { id: "drinks", name: "Drinks", isActive: true, order: 5 },
+];
+
 const mockToppings: Topping[] = [
   { id: "t1", name: "Pepperoni", price: 2.0, category: "meat", isActive: true },
   {
@@ -128,7 +137,13 @@ const mockToppings: Topping[] = [
     category: "veggie",
     isActive: true,
   },
-  { id: "t3", name: "Bacon", price: 2.5, category: "meat", isActive: false },
+  {
+    id: "t3",
+    name: "Extra Cheese",
+    price: 2.0,
+    category: "cheese",
+    isActive: true,
+  },
 ];
 
 const mockSpecials: Special[] = [
@@ -144,13 +159,6 @@ const mockSpecials: Special[] = [
     isActive: true,
   },
 ];
-
-interface ToppingCategory {
-  id: string;
-  name: string;
-  order: number;
-  isActive: boolean;
-}
 
 const mockToppingCategories: ToppingCategory[] = [
   { id: "sauce", name: "Sauce", order: 1, isActive: true },
@@ -168,6 +176,8 @@ export default function Admin() {
   );
   const [specials, setSpecials] = useState<Special[]>(mockSpecials);
   const [selectedTab, setSelectedTab] = useState("menu");
+
+  // Add states
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
   const [isAddingSpecial, setIsAddingSpecial] = useState(false);
   const [isAddingTopping, setIsAddingTopping] = useState(false);
@@ -180,8 +190,8 @@ export default function Admin() {
   const [editingTopping, setEditingTopping] = useState<Topping | null>(null);
   const [editingToppingCategory, setEditingToppingCategory] =
     useState<ToppingCategory | null>(null);
-  const [editingSpecial, setEditingSpecial] = useState<Special | null>(null);
 
+  // Form states
   const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({
     name: "",
     description: "",
@@ -216,6 +226,7 @@ export default function Admin() {
     order: toppingCategories.length + 1,
   });
 
+  // Handlers
   const handleAddMenuItem = () => {
     if (newMenuItem.name && newMenuItem.category) {
       const item: MenuItem = {
@@ -1310,6 +1321,7 @@ export default function Admin() {
                           Upload an image to showcase this special offer
                         </p>
                       </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="startDate">Start Date</Label>
@@ -1340,6 +1352,7 @@ export default function Admin() {
                           />
                         </div>
                       </div>
+
                       <div>
                         <Label htmlFor="specialType">Special Type</Label>
                         <Select
@@ -1357,6 +1370,7 @@ export default function Admin() {
                           </SelectContent>
                         </Select>
                       </div>
+
                       {newSpecial.type === "weekly" && (
                         <div>
                           <Label htmlFor="dayOfWeek">Day of Week</Label>
@@ -1409,57 +1423,27 @@ export default function Admin() {
                         Select which menu items this special applies to
                       </p>
 
-                        <Accordion type="multiple" className="w-full max-h-96 overflow-y-auto">
-                          {categories
-                            .filter((cat) => cat.isActive)
-                            .map((category) => {
-                              const categoryItems = menuItems.filter(
-                                (item) =>
-                                  item.isActive &&
-                                  item.category === category.id,
-                              );
+                      <Accordion
+                        type="multiple"
+                        className="w-full max-h-96 overflow-y-auto"
+                      >
+                        {categories
+                          .filter((cat) => cat.isActive)
+                          .map((category) => {
+                            const categoryItems = menuItems.filter(
+                              (item) =>
+                                item.isActive && item.category === category.id,
+                            );
 
-                              if (categoryItems.length === 0) return null;
+                            if (categoryItems.length === 0) return null;
 
-                              return (
-                                <AccordionItem key={category.id} value={category.id}>
-                                  <div
-                                    className="w-full flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer"
-                                    onClick={() => {
-                                      // Toggle all items in this category
-                                      const currentItems =
-                                        newSpecial.menuItems || [];
-                                      const categoryItemIds = categoryItems.map(
-                                        (item) => item.id,
-                                      );
-                                      const allSelected = categoryItemIds.every(
-                                        (id) => currentItems.includes(id),
-                                      );
-
-                                      if (allSelected) {
-                                        // Remove all category items
-                                        setNewSpecial({
-                                          ...newSpecial,
-                                          menuItems: currentItems.filter(
-                                            (id) =>
-                                              !categoryItemIds.includes(id),
-                                          ),
-                                        });
-                                      } else {
-                                        // Add all category items
-                                        const newItems = [...currentItems];
-                                        categoryItemIds.forEach((id) => {
-                                          if (!newItems.includes(id)) {
-                                            newItems.push(id);
-                                          }
-                                        });
-                                        setNewSpecial({
-                                          ...newSpecial,
-                                          menuItems: newItems,
-                                        });
-                                      }
-                                    }}
-                                  >
+                            return (
+                              <AccordionItem
+                                key={category.id}
+                                value={category.id}
+                              >
+                                <AccordionTrigger className="hover:no-underline">
+                                  <div className="flex items-center justify-between w-full mr-4">
                                     <div className="flex items-center space-x-2">
                                       <Checkbox
                                         checked={
@@ -1471,9 +1455,38 @@ export default function Admin() {
                                               ) || false,
                                           )
                                         }
-                                        onCheckedChange={() => {
-                                          // Handle the click through the parent div instead
+                                        onCheckedChange={(checked) => {
+                                          const currentItems =
+                                            newSpecial.menuItems || [];
+                                          const categoryItemIds =
+                                            categoryItems.map(
+                                              (item) => item.id,
+                                            );
+
+                                          if (checked) {
+                                            // Add all category items
+                                            const newItems = [...currentItems];
+                                            categoryItemIds.forEach((id) => {
+                                              if (!newItems.includes(id)) {
+                                                newItems.push(id);
+                                              }
+                                            });
+                                            setNewSpecial({
+                                              ...newSpecial,
+                                              menuItems: newItems,
+                                            });
+                                          } else {
+                                            // Remove all category items
+                                            setNewSpecial({
+                                              ...newSpecial,
+                                              menuItems: currentItems.filter(
+                                                (id) =>
+                                                  !categoryItemIds.includes(id),
+                                              ),
+                                            });
+                                          }
                                         }}
+                                        onClick={(e) => e.stopPropagation()}
                                       />
                                       <span className="font-medium">
                                         {category.name}
@@ -1491,8 +1504,9 @@ export default function Admin() {
                                       /{categoryItems.length} selected
                                     </span>
                                   </div>
-
-                                  <div className="border-t bg-gray-50 p-3 space-y-2">
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="space-y-2 pt-2">
                                     {categoryItems.map((item) => (
                                       <div
                                         key={item.id}
@@ -1535,13 +1549,12 @@ export default function Admin() {
                                       </div>
                                     ))}
                                   </div>
-                                </div>
-                              );
-                            })}
-                        </Accordion>
-                      </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            );
+                          })}
+                      </Accordion>
                     </div>
-
                   </div>
                 </DialogContent>
               </Dialog>
