@@ -139,10 +139,27 @@ const mockSpecials: Special[] = [
   },
 ];
 
+interface ToppingCategory {
+  id: string;
+  name: string;
+  order: number;
+  isActive: boolean;
+}
+
+const mockToppingCategories: ToppingCategory[] = [
+  { id: "sauce", name: "Sauce", order: 1, isActive: true },
+  { id: "cheese", name: "Cheese", order: 2, isActive: true },
+  { id: "meat", name: "Meat", order: 3, isActive: true },
+  { id: "veggie", name: "Vegetables", order: 4, isActive: true },
+];
+
 export default function Admin() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(mockMenuItems);
   const [categories, setCategories] = useState<Category[]>(mockCategories);
   const [toppings, setToppings] = useState<Topping[]>(mockToppings);
+  const [toppingCategories, setToppingCategories] = useState<ToppingCategory[]>(
+    mockToppingCategories,
+  );
   const [specials, setSpecials] = useState<Special[]>(mockSpecials);
   const [selectedTab, setSelectedTab] = useState("menu");
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
@@ -252,10 +269,13 @@ export default function Admin() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="menu">Menu Items</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="toppings">Toppings</TabsTrigger>
+            <TabsTrigger value="topping-categories">
+              Topping Categories
+            </TabsTrigger>
             <TabsTrigger value="specials">Specials</TabsTrigger>
           </TabsList>
 
