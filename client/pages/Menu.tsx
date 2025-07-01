@@ -302,14 +302,33 @@ export default function Menu() {
                     <div
                       className="h-48 relative overflow-hidden bg-cover bg-center"
                       style={{
-                        backgroundImage:
-                          category.id === "pizza" || category.id === "calzone"
-                            ? `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`
-                            : category.id === "coffee"
-                              ? `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/10303534/pexels-photo-10303534.jpeg')`
-                              : category.id === "wings"
-                                ? `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/6369302/pexels-photo-6369302.jpeg')`
-                                : `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`,
+                        backgroundImage: (() => {
+                          if (category.id === "pizza") {
+                            if (
+                              item.name.toLowerCase().includes("margherita")
+                            ) {
+                              return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
+                            } else if (
+                              item.name.toLowerCase().includes("pepperoni")
+                            ) {
+                              return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/2762939/pexels-photo-2762939.jpeg')`;
+                            } else if (
+                              item.name.toLowerCase().includes("supreme")
+                            ) {
+                              return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/5903312/pexels-photo-5903312.jpeg')`;
+                            } else {
+                              return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
+                            }
+                          } else if (category.id === "calzone") {
+                            return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/5903094/pexels-photo-5903094.jpeg')`;
+                          } else if (category.id === "coffee") {
+                            return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/10303534/pexels-photo-10303534.jpeg')`;
+                          } else if (category.id === "wings") {
+                            return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/6369302/pexels-photo-6369302.jpeg')`;
+                          } else {
+                            return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
+                          }
+                        })(),
                       }}
                     >
                       <div className="absolute inset-0 flex items-center justify-center">
