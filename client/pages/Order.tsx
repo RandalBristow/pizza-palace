@@ -276,9 +276,11 @@ export default function Order() {
                 <span className="text-lg font-semibold">Build Your Pizza</span>
               </div>
             </div>
-            <Button variant="outline" className="relative">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              View Cart
+            <Button variant="outline" className="relative" asChild>
+              <Link to="/cart">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                View Cart
+              </Link>
             </Button>
           </div>
         </div>
