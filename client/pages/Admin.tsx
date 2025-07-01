@@ -533,6 +533,104 @@ export default function Admin() {
                   </div>
                 </DialogContent>
               </Dialog>
+
+              {/* Edit Menu Item Dialog */}
+              <Dialog
+                open={!!editingMenuItem}
+                onOpenChange={() => setEditingMenuItem(null)}
+              >
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Edit Menu Item</DialogTitle>
+                    <DialogDescription>
+                      Update the menu item details
+                    </DialogDescription>
+                  </DialogHeader>
+                  {editingMenuItem && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="editName">Name</Label>
+                          <Input
+                            id="editName"
+                            value={editingMenuItem.name}
+                            onChange={(e) =>
+                              setEditingMenuItem({
+                                ...editingMenuItem,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="editPrice">Price</Label>
+                          <Input
+                            id="editPrice"
+                            type="number"
+                            step="0.01"
+                            value={editingMenuItem.price}
+                            onChange={(e) =>
+                              setEditingMenuItem({
+                                ...editingMenuItem,
+                                price: parseFloat(e.target.value),
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="editCategory">Category</Label>
+                        <Select
+                          value={editingMenuItem.category}
+                          onValueChange={(value) =>
+                            setEditingMenuItem({
+                              ...editingMenuItem,
+                              category: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="editDescription">Description</Label>
+                        <Textarea
+                          id="editDescription"
+                          value={editingMenuItem.description}
+                          onChange={(e) =>
+                            setEditingMenuItem({
+                              ...editingMenuItem,
+                              description: e.target.value,
+                            })
+                          }
+                          rows={3}
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setEditingMenuItem(null)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={handleSaveMenuItem}>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Changes
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="grid gap-4">
