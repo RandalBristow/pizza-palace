@@ -141,6 +141,40 @@ const mockMenuItems: MenuItem[] = [
     rating: 4.8,
   },
 
+  // Wings
+  {
+    id: "w1",
+    name: "Buffalo Wings",
+    description: "Classic buffalo wings with celery and blue cheese (8 pieces)",
+    price: 9.99,
+    category: "wings",
+    rating: 4.7,
+  },
+  {
+    id: "w2",
+    name: "BBQ Wings",
+    description: "Smoky BBQ glazed wings with ranch dressing (8 pieces)",
+    price: 9.99,
+    category: "wings",
+    rating: 4.6,
+  },
+  {
+    id: "w3",
+    name: "Garlic Parmesan Wings",
+    description: "Wings tossed in garlic parmesan sauce (8 pieces)",
+    price: 10.99,
+    category: "wings",
+    rating: 4.8,
+  },
+  {
+    id: "w4",
+    name: "Honey Hot Wings",
+    description: "Sweet and spicy honey hot sauce wings (8 pieces)",
+    price: 10.99,
+    category: "wings",
+    rating: 4.5,
+  },
+
   // Drinks
   {
     id: "d1",
@@ -171,6 +205,7 @@ export default function Menu() {
 
   const categories = [
     { id: "pizza", name: "Pizza", icon: Pizza },
+    { id: "wings", name: "Wings", icon: Pizza },
     { id: "coffee", name: "Coffee", icon: Coffee },
     { id: "calzone", name: "Calzones", icon: Pizza },
     { id: "drinks", name: "Drinks", icon: Coffee },
@@ -243,7 +278,7 @@ export default function Menu() {
           onValueChange={setSelectedCategory}
           className="mb-8"
         >
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-none lg:inline-flex">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-none lg:inline-flex">
             {categories.map((category) => (
               <TabsTrigger
                 key={category.id}
@@ -308,6 +343,44 @@ export default function Menu() {
                                 </>
                               )}
                           </div>
+                        </div>
+                      )}
+                      {category.id === "wings" && (
+                        <div className="relative">
+                          {/* Wings illustration */}
+                          <div className="flex space-x-2">
+                            {/* Wing 1 */}
+                            <div className="relative">
+                              <div className="w-8 h-4 bg-orange-400 rounded-full shadow-md"></div>
+                              <div className="absolute top-1 left-1 w-2 h-1 bg-red-500 rounded-full"></div>
+                              <div className="absolute bottom-0 right-1 w-1 h-2 bg-orange-600 rounded-full"></div>
+                            </div>
+                            {/* Wing 2 */}
+                            <div className="relative">
+                              <div className="w-8 h-4 bg-orange-400 rounded-full shadow-md"></div>
+                              <div className="absolute top-1 left-1 w-2 h-1 bg-red-500 rounded-full"></div>
+                              <div className="absolute bottom-0 right-1 w-1 h-2 bg-orange-600 rounded-full"></div>
+                            </div>
+                            {/* Wing 3 */}
+                            <div className="relative">
+                              <div className="w-8 h-4 bg-orange-400 rounded-full shadow-md"></div>
+                              <div className="absolute top-1 left-1 w-2 h-1 bg-red-500 rounded-full"></div>
+                              <div className="absolute bottom-0 right-1 w-1 h-2 bg-orange-600 rounded-full"></div>
+                            </div>
+                          </div>
+                          {/* Sauce drips for different wing types */}
+                          {item.name.toLowerCase().includes("buffalo") && (
+                            <div className="absolute bottom-0 left-2 w-6 h-1 bg-red-600 opacity-70 rounded-full"></div>
+                          )}
+                          {item.name.toLowerCase().includes("bbq") && (
+                            <div className="absolute bottom-0 left-2 w-6 h-1 bg-amber-800 opacity-70 rounded-full"></div>
+                          )}
+                          {item.name.toLowerCase().includes("garlic") && (
+                            <div className="absolute bottom-0 left-2 w-6 h-1 bg-yellow-400 opacity-70 rounded-full"></div>
+                          )}
+                          {item.name.toLowerCase().includes("honey") && (
+                            <div className="absolute bottom-0 left-2 w-6 h-1 bg-orange-500 opacity-70 rounded-full"></div>
+                          )}
                         </div>
                       )}
                       {category.id === "coffee" && (
