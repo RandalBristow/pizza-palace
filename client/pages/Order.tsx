@@ -100,6 +100,52 @@ const toppings: Topping[] = [
   { id: "v9", name: "Pineapple", price: 1.5, category: "veggie" },
 ];
 
+const PlacementButton = ({
+  placement,
+  isSelected,
+  onClick,
+  label,
+}: {
+  placement: "left" | "right" | "whole";
+  isSelected: boolean;
+  onClick: () => void;
+  label: string;
+}) => {
+  const getCircleContent = () => {
+    switch (placement) {
+      case "left":
+        return (
+          <div className="relative w-10 h-10 border-2 border-amber-600 rounded-full bg-yellow-100 overflow-hidden">
+            <div className="absolute left-0 top-0 w-5 h-10 bg-red-500 rounded-l-full"></div>
+          </div>
+        );
+      case "right":
+        return (
+          <div className="relative w-10 h-10 border-2 border-amber-600 rounded-full bg-yellow-100 overflow-hidden">
+            <div className="absolute right-0 top-0 w-5 h-10 bg-red-500 rounded-r-full"></div>
+          </div>
+        );
+      case "whole":
+        return (
+          <div className="relative w-10 h-10 border-2 border-amber-600 rounded-full bg-red-500"></div>
+        );
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all hover:bg-gray-50 ${
+        isSelected ? "bg-blue-50 ring-2 ring-blue-500" : ""
+      }`}
+    >
+      {getCircleContent()}
+      <span className="text-xs text-center font-medium">{label}</span>
+    </button>
+  );
+};
+
 const ToppingSelector = ({
   topping,
   selectedToppings,
@@ -112,17 +158,14 @@ const ToppingSelector = ({
   const selectedTopping = selectedToppings.find((t) => t.id === topping.id);
   const isSelected = !!selectedTopping;
 
-  const handleToppingToggle = (checked: boolean) => {
-    if (checked) {
-      onToppingChange(topping, "whole");
-    } else {
-      onToppingChange(topping, null);
-    }
+  const handlePlacementClick = (placement: "left" | "right" | "whole") => {
+    console.log(`Changing placement for ${topping.name} to ${placement}`);
+    onToppingChange(topping, placement);
   };
 
-  const handlePlacementChange = (value: string) => {
-    console.log(`Changing placement for ${topping.name} to ${value}`);
-    onToppingChange(topping, value);
+  const handleRemoveTopping = () => {
+    console.log(`Removing topping ${topping.name}`);
+    onToppingChange(topping, null);
   };
 
   return (
@@ -136,56 +179,41 @@ const ToppingSelector = ({
             </p>
           )}
         </div>
-        <Checkbox checked={isSelected} onCheckedChange={handleToppingToggle} />
+        {isSelected && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRemoveTopping}
+            className="text-red-600 hover:text-red-700"
+          >
+            Remove
+          </Button>
+        )}
       </div>
 
-      {isSelected && (
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Placement:</Label>
-          <RadioGroup
-            value={selectedTopping?.placement || "whole"}
-            onValueChange={handlePlacementChange}
-            className="grid grid-cols-3 gap-2"
-          >
-            <div className="flex flex-col items-center space-y-2">
-              <RadioGroupItem value="left" id={`${topping.id}-left`} />
-              <Label
-                htmlFor={`${topping.id}-left`}
-                className="text-xs text-center"
-              >
-                Left Half
-              </Label>
-              <div className="relative w-8 h-8 border-2 border-yellow-400 rounded-full bg-yellow-100">
-                <div className="absolute left-0 top-0 w-4 h-8 bg-red-400 opacity-60 rounded-l-full"></div>
-              </div>
-            </div>
-            <div className="flex flex-col items-center space-y-2">
-              <RadioGroupItem value="whole" id={`${topping.id}-whole`} />
-              <Label
-                htmlFor={`${topping.id}-whole`}
-                className="text-xs text-center"
-              >
-                Whole Pizza
-              </Label>
-              <div className="relative w-8 h-8 border-2 border-yellow-400 rounded-full bg-yellow-100">
-                <div className="absolute inset-0 bg-red-400 opacity-60 rounded-full"></div>
-              </div>
-            </div>
-            <div className="flex flex-col items-center space-y-2">
-              <RadioGroupItem value="right" id={`${topping.id}-right`} />
-              <Label
-                htmlFor={`${topping.id}-right`}
-                className="text-xs text-center"
-              >
-                Right Half
-              </Label>
-              <div className="relative w-8 h-8 border-2 border-yellow-400 rounded-full bg-yellow-100">
-                <div className="absolute right-0 top-0 w-4 h-8 bg-red-400 opacity-60 rounded-r-full"></div>
-              </div>
-            </div>
-          </RadioGroup>
+      <div className="space-y-3">
+        <Label className="text-sm font-medium">Choose placement:</Label>
+        <div className="grid grid-cols-3 gap-2">
+          <PlacementButton
+            placement="left"
+            isSelected={selectedTopping?.placement === "left"}
+            onClick={() => handlePlacementClick("left")}
+            label="Left Half"
+          />
+          <PlacementButton
+            placement="whole"
+            isSelected={selectedTopping?.placement === "whole"}
+            onClick={() => handlePlacementClick("whole")}
+            label="Whole Pizza"
+          />
+          <PlacementButton
+            placement="right"
+            isSelected={selectedTopping?.placement === "right"}
+            onClick={() => handlePlacementClick("right")}
+            label="Right Half"
+          />
         </div>
-      )}
+      </div>
     </Card>
   );
 };
