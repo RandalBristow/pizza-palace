@@ -164,6 +164,9 @@ export default function Admin() {
   const [selectedTab, setSelectedTab] = useState("menu");
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
   const [isAddingSpecial, setIsAddingSpecial] = useState(false);
+  const [isAddingTopping, setIsAddingTopping] = useState(false);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [isAddingToppingCategory, setIsAddingToppingCategory] = useState(false);
 
   const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({
     name: "",
@@ -181,6 +184,22 @@ export default function Admin() {
     endDate: "",
     menuItems: [],
     isActive: true,
+  });
+
+  const [newTopping, setNewTopping] = useState({
+    name: "",
+    price: 0,
+    category: "meat" as "sauce" | "cheese" | "meat" | "veggie",
+  });
+
+  const [newCategory, setNewCategory] = useState({
+    name: "",
+    order: categories.length + 1,
+  });
+
+  const [newToppingCategory, setNewToppingCategory] = useState({
+    name: "",
+    order: toppingCategories.length + 1,
   });
 
   const handleAddMenuItem = () => {
