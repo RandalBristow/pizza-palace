@@ -157,7 +157,9 @@ export default function Admin() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(mockMenuItems);
   const [categories, setCategories] = useState<Category[]>(mockCategories);
   const [toppings, setToppings] = useState<Topping[]>(mockToppings);
-  const [toppingCategories, setToppingCategories] = useState<ToppingCategory[]>(mockToppingCategories);
+  const [toppingCategories, setToppingCategories] = useState<ToppingCategory[]>(
+    mockToppingCategories,
+  );
   const [specials, setSpecials] = useState<Special[]>(mockSpecials);
   const [selectedTab, setSelectedTab] = useState("menu");
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
@@ -343,7 +345,9 @@ export default function Admin() {
             <TabsTrigger value="menu">Menu Items</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="toppings">Toppings</TabsTrigger>
-            <TabsTrigger value="topping-categories">Topping Categories</TabsTrigger>
+            <TabsTrigger value="topping-categories">
+              Topping Categories
+            </TabsTrigger>
             <TabsTrigger value="specials">Specials</TabsTrigger>
           </TabsList>
 
@@ -510,7 +514,10 @@ export default function Admin() {
           <TabsContent value="categories" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Categories</h2>
-              <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+              <Dialog
+                open={isAddingCategory}
+                onOpenChange={setIsAddingCategory}
+              >
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
@@ -531,7 +538,10 @@ export default function Admin() {
                         id="categoryName"
                         value={newCategory.name}
                         onChange={(e) =>
-                          setNewCategory({ ...newCategory, name: e.target.value })
+                          setNewCategory({
+                            ...newCategory,
+                            name: e.target.value,
+                          })
                         }
                         placeholder="e.g., Appetizers"
                       />
@@ -596,7 +606,10 @@ export default function Admin() {
           <TabsContent value="topping-categories" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Topping Categories</h2>
-              <Dialog open={isAddingToppingCategory} onOpenChange={setIsAddingToppingCategory}>
+              <Dialog
+                open={isAddingToppingCategory}
+                onOpenChange={setIsAddingToppingCategory}
+              >
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
@@ -617,13 +630,18 @@ export default function Admin() {
                         id="toppingCategoryName"
                         value={newToppingCategory.name}
                         onChange={(e) =>
-                          setNewToppingCategory({ ...newToppingCategory, name: e.target.value })
+                          setNewToppingCategory({
+                            ...newToppingCategory,
+                            name: e.target.value,
+                          })
                         }
                         placeholder="e.g., Premium Toppings"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="toppingCategoryOrder">Display Order</Label>
+                      <Label htmlFor="toppingCategoryOrder">
+                        Display Order
+                      </Label>
                       <Input
                         id="toppingCategoryOrder"
                         type="number"
@@ -660,16 +678,28 @@ export default function Admin() {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="flex items-center space-x-2">
-                          <h3 className="font-semibold">{toppingCategory.name}</h3>
-                          <Badge variant="outline">Order: {toppingCategory.order}</Badge>
+                          <h3 className="font-semibold">
+                            {toppingCategory.name}
+                          </h3>
+                          <Badge variant="outline">
+                            Order: {toppingCategory.order}
+                          </Badge>
                           <Badge
-                            variant={toppingCategory.isActive ? "default" : "secondary"}
+                            variant={
+                              toppingCategory.isActive ? "default" : "secondary"
+                            }
                           >
                             {toppingCategory.isActive ? "Active" : "Inactive"}
                           </Badge>
                         </div>
                         <p className="text-sm text-gray-600 mt-1">
-                          {toppings.filter(t => t.category === toppingCategory.id && t.isActive).length} active toppings
+                          {
+                            toppings.filter(
+                              (t) =>
+                                t.category === toppingCategory.id && t.isActive,
+                            ).length
+                          }{" "}
+                          active toppings
                         </p>
                       </div>
                       <div className="flex space-x-2">
@@ -680,12 +710,12 @@ export default function Admin() {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            setToppingCategories(prev =>
-                              prev.map(tc =>
+                            setToppingCategories((prev) =>
+                              prev.map((tc) =>
                                 tc.id === toppingCategory.id
                                   ? { ...tc, isActive: !tc.isActive }
-                                  : tc
-                              )
+                                  : tc,
+                              ),
                             );
                           }}
                         >
@@ -749,9 +779,9 @@ export default function Admin() {
                       <Label htmlFor="toppingCategory">Category</Label>
                       <Select
                         value={newTopping.category}
-                        onValueChange={(value: "sauce" | "cheese" | "meat" | "veggie") =>
-                          setNewTopping({ ...newTopping, category: value })
-                        }
+                        onValueChange={(
+                          value: "sauce" | "cheese" | "meat" | "veggie",
+                        ) => setNewTopping({ ...newTopping, category: value })}
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -843,237 +873,267 @@ export default function Admin() {
                   <div className="grid grid-cols-2 gap-6">
                     {/* Left Column - Special Details */}
                     <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="specialName">Special Name</Label>
-                      <Input
-                        id="specialName"
-                        value={newSpecial.name}
-                        onChange={(e) =>
-                          setNewSpecial({ ...newSpecial, name: e.target.value })
-                        }
-                        placeholder="e.g., Pizza Monday"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="specialDescription">Description</Label>
-                      <Textarea
-                        id="specialDescription"
-                        value={newSpecial.description}
-                        onChange={(e) =>
-                          setNewSpecial({
-                            ...newSpecial,
-                            description: e.target.value,
-                          })
-                        }
-                        placeholder="Describe the special offer"
-                        rows={3}
-                      />
-                    </div>
+                      <div>
+                        <Label htmlFor="specialName">Special Name</Label>
+                        <Input
+                          id="specialName"
+                          value={newSpecial.name}
+                          onChange={(e) =>
+                            setNewSpecial({
+                              ...newSpecial,
+                              name: e.target.value,
+                            })
+                          }
+                          placeholder="e.g., Pizza Monday"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="specialDescription">Description</Label>
+                        <Textarea
+                          id="specialDescription"
+                          value={newSpecial.description}
+                          onChange={(e) =>
+                            setNewSpecial({
+                              ...newSpecial,
+                              description: e.target.value,
+                            })
+                          }
+                          placeholder="Describe the special offer"
+                          rows={3}
+                        />
+                      </div>
 
-                    {/* Image Upload */}
-                    <div>
-                      <Label htmlFor="specialImage">Special Image</Label>
-                      <div className="flex items-center space-x-2">
-                        <Button variant="outline" className="w-full">
-                          <Upload className="h-4 w-4 mr-2" />
-                          Upload Image
-                        </Button>
-                      </div>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Upload an image to showcase this special offer
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+                      {/* Image Upload */}
                       <div>
-                        <Label htmlFor="startDate">Start Date</Label>
-                        <Input
-                          id="startDate"
-                          type="date"
-                          value={newSpecial.startDate}
-                          onChange={(e) =>
-                            setNewSpecial({
-                              ...newSpecial,
-                              startDate: e.target.value,
-                            })
-                          }
-                        />
+                        <Label htmlFor="specialImage">Special Image</Label>
+                        <div className="flex items-center space-x-2">
+                          <Button variant="outline" className="w-full">
+                            <Upload className="h-4 w-4 mr-2" />
+                            Upload Image
+                          </Button>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Upload an image to showcase this special offer
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="startDate">Start Date</Label>
+                          <Input
+                            id="startDate"
+                            type="date"
+                            value={newSpecial.startDate}
+                            onChange={(e) =>
+                              setNewSpecial({
+                                ...newSpecial,
+                                startDate: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="endDate">End Date</Label>
+                          <Input
+                            id="endDate"
+                            type="date"
+                            value={newSpecial.endDate}
+                            onChange={(e) =>
+                              setNewSpecial({
+                                ...newSpecial,
+                                endDate: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
                       </div>
                       <div>
-                        <Label htmlFor="endDate">End Date</Label>
-                        <Input
-                          id="endDate"
-                          type="date"
-                          value={newSpecial.endDate}
-                          onChange={(e) =>
-                            setNewSpecial({
-                              ...newSpecial,
-                              endDate: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="specialType">Special Type</Label>
-                      <Select
-                        value={newSpecial.type}
-                        onValueChange={(value: "daily" | "weekly") =>
-                          setNewSpecial({ ...newSpecial, type: value })
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {newSpecial.type === "weekly" && (
-                      <div>
-                        <Label htmlFor="dayOfWeek">Day of Week</Label>
+                        <Label htmlFor="specialType">Special Type</Label>
                         <Select
-                          value={newSpecial.dayOfWeek?.toString()}
-                          onValueChange={(value) =>
-                            setNewSpecial({
-                              ...newSpecial,
-                              dayOfWeek: parseInt(value),
-                            })
+                          value={newSpecial.type}
+                          onValueChange={(value: "daily" | "weekly") =>
+                            setNewSpecial({ ...newSpecial, type: value })
                           }
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select day" />
+                            <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="1">Monday</SelectItem>
-                            <SelectItem value="2">Tuesday</SelectItem>
-                            <SelectItem value="3">Wednesday</SelectItem>
-                            <SelectItem value="4">Thursday</SelectItem>
-                            <SelectItem value="5">Friday</SelectItem>
-                            <SelectItem value="6">Saturday</SelectItem>
-                            <SelectItem value="0">Sunday</SelectItem>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
-                    )}
+                      {newSpecial.type === "weekly" && (
+                        <div>
+                          <Label htmlFor="dayOfWeek">Day of Week</Label>
+                          <Select
+                            value={newSpecial.dayOfWeek?.toString()}
+                            onValueChange={(value) =>
+                              setNewSpecial({
+                                ...newSpecial,
+                                dayOfWeek: parseInt(value),
+                              })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select day" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">Monday</SelectItem>
+                              <SelectItem value="2">Tuesday</SelectItem>
+                              <SelectItem value="3">Wednesday</SelectItem>
+                              <SelectItem value="4">Thursday</SelectItem>
+                              <SelectItem value="5">Friday</SelectItem>
+                              <SelectItem value="6">Saturday</SelectItem>
+                              <SelectItem value="0">Sunday</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
 
-                    <div className="flex justify-end space-x-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => setIsAddingSpecial(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button onClick={handleAddSpecial}>
-                        <Save className="h-4 w-4 mr-2" />
-                        Save Special
-                      </Button>
-                    </div>
-                    </div>
+                      {/* Right Column - Affected Menu Items by Category */}
+                      <div>
+                        <Label className="text-lg font-semibold">
+                          Affected Menu Items
+                        </Label>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Select which menu items this special applies to
+                        </p>
 
-                    {/* Right Column - Affected Menu Items by Category */}
-                    <div>
-                      <Label className="text-lg font-semibold">Affected Menu Items</Label>
-                      <p className="text-sm text-gray-500 mb-4">
-                        Select which menu items this special applies to
-                      </p>
+                        <div className="space-y-2 max-h-96 overflow-y-auto">
+                          {categories
+                            .filter((cat) => cat.isActive)
+                            .map((category) => {
+                              const categoryItems = menuItems.filter(
+                                (item) =>
+                                  item.isActive &&
+                                  item.category === category.id,
+                              );
 
-                      <div className="space-y-2 max-h-96 overflow-y-auto">
-                        {categories.filter(cat => cat.isActive).map((category) => {
-                          const categoryItems = menuItems.filter(
-                            item => item.isActive && item.category === category.id
-                          );
+                              if (categoryItems.length === 0) return null;
 
-                          if (categoryItems.length === 0) return null;
+                              return (
+                                <div
+                                  key={category.id}
+                                  className="border rounded-md"
+                                >
+                                  <button
+                                    type="button"
+                                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50"
+                                    onClick={() => {
+                                      // Toggle all items in this category
+                                      const currentItems =
+                                        newSpecial.menuItems || [];
+                                      const categoryItemIds = categoryItems.map(
+                                        (item) => item.id,
+                                      );
+                                      const allSelected = categoryItemIds.every(
+                                        (id) => currentItems.includes(id),
+                                      );
 
-                          return (
-                            <div key={category.id} className="border rounded-md">
-                              <button
-                                type="button"
-                                className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50"
-                                onClick={() => {
-                                  // Toggle all items in this category
-                                  const currentItems = newSpecial.menuItems || [];
-                                  const categoryItemIds = categoryItems.map(item => item.id);
-                                  const allSelected = categoryItemIds.every(id => currentItems.includes(id));
-
-                                  if (allSelected) {
-                                    // Remove all category items
-                                    setNewSpecial({
-                                      ...newSpecial,
-                                      menuItems: currentItems.filter(id => !categoryItemIds.includes(id))
-                                    });
-                                  } else {
-                                    // Add all category items
-                                    const newItems = [...currentItems];
-                                    categoryItemIds.forEach(id => {
-                                      if (!newItems.includes(id)) {
-                                        newItems.push(id);
+                                      if (allSelected) {
+                                        // Remove all category items
+                                        setNewSpecial({
+                                          ...newSpecial,
+                                          menuItems: currentItems.filter(
+                                            (id) =>
+                                              !categoryItemIds.includes(id),
+                                          ),
+                                        });
+                                      } else {
+                                        // Add all category items
+                                        const newItems = [...currentItems];
+                                        categoryItemIds.forEach((id) => {
+                                          if (!newItems.includes(id)) {
+                                            newItems.push(id);
+                                          }
+                                        });
+                                        setNewSpecial({
+                                          ...newSpecial,
+                                          menuItems: newItems,
+                                        });
                                       }
-                                    });
-                                    setNewSpecial({
-                                      ...newSpecial,
-                                      menuItems: newItems
-                                    });
-                                  }
-                                }}
-                              >
-                                <div className="flex items-center space-x-2">
-                                  <Checkbox
-                                    checked={
-                                      categoryItems.length > 0 &&
-                                      categoryItems.every(item =>
-                                        newSpecial.menuItems?.includes(item.id) || false
-                                      )
-                                    }
-                                    readOnly
-                                  />
-                                  <span className="font-medium">{category.name}</span>
-                                </div>
-                                <span className="text-sm text-gray-500">
-                                  {categoryItems.filter(item =>
-                                    newSpecial.menuItems?.includes(item.id) || false
-                                  ).length}/{categoryItems.length} selected
-                                </span>
-                              </button>
-
-                              <div className="border-t bg-gray-50 p-3 space-y-2">
-                                {categoryItems.map((item) => (
-                                  <div key={item.id} className="flex items-center space-x-2">
-                                    <Checkbox
-                                      id={`special-item-${item.id}`}
-                                      checked={newSpecial.menuItems?.includes(item.id) || false}
-                                      onCheckedChange={(checked) => {
-                                        const currentItems = newSpecial.menuItems || [];
-                                        if (checked) {
-                                          setNewSpecial({
-                                            ...newSpecial,
-                                            menuItems: [...currentItems, item.id]
-                                          });
-                                        } else {
-                                          setNewSpecial({
-                                            ...newSpecial,
-                                            menuItems: currentItems.filter(id => id !== item.id)
-                                          });
+                                    }}
+                                  >
+                                    <div className="flex items-center space-x-2">
+                                      <Checkbox
+                                        checked={
+                                          categoryItems.length > 0 &&
+                                          categoryItems.every(
+                                            (item) =>
+                                              newSpecial.menuItems?.includes(
+                                                item.id,
+                                              ) || false,
+                                          )
                                         }
-                                      }}
-                                    />
-                                    <Label
-                                      htmlFor={`special-item-${item.id}`}
-                                      className="text-sm cursor-pointer flex-1"
-                                    >
-                                      {item.name} - ${item.price.toFixed(2)}
-                                    </Label>
+                                        readOnly
+                                      />
+                                      <span className="font-medium">
+                                        {category.name}
+                                      </span>
+                                    </div>
+                                    <span className="text-sm text-gray-500">
+                                      {
+                                        categoryItems.filter(
+                                          (item) =>
+                                            newSpecial.menuItems?.includes(
+                                              item.id,
+                                            ) || false,
+                                        ).length
+                                      }
+                                      /{categoryItems.length} selected
+                                    </span>
+                                  </button>
+
+                                  <div className="border-t bg-gray-50 p-3 space-y-2">
+                                    {categoryItems.map((item) => (
+                                      <div
+                                        key={item.id}
+                                        className="flex items-center space-x-2"
+                                      >
+                                        <Checkbox
+                                          id={`special-item-${item.id}`}
+                                          checked={
+                                            newSpecial.menuItems?.includes(
+                                              item.id,
+                                            ) || false
+                                          }
+                                          onCheckedChange={(checked) => {
+                                            const currentItems =
+                                              newSpecial.menuItems || [];
+                                            if (checked) {
+                                              setNewSpecial({
+                                                ...newSpecial,
+                                                menuItems: [
+                                                  ...currentItems,
+                                                  item.id,
+                                                ],
+                                              });
+                                            } else {
+                                              setNewSpecial({
+                                                ...newSpecial,
+                                                menuItems: currentItems.filter(
+                                                  (id) => id !== item.id,
+                                                ),
+                                              });
+                                            }
+                                          }}
+                                        />
+                                        <Label
+                                          htmlFor={`special-item-${item.id}`}
+                                          className="text-sm cursor-pointer flex-1"
+                                        >
+                                          {item.name} - ${item.price.toFixed(2)}
+                                        </Label>
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        })}
+                                </div>
+                              );
+                            })}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
                     <div className="flex justify-end space-x-2">
                       <Button
