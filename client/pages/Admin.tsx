@@ -1017,9 +1017,8 @@ export default function Admin() {
                                   key={category.id}
                                   className="border rounded-md"
                                 >
-                                  <button
-                                    type="button"
-                                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50"
+                                  <div
+                                    className="w-full flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer"
                                     onClick={() => {
                                       // Toggle all items in this category
                                       const currentItems =
@@ -1066,7 +1065,9 @@ export default function Admin() {
                                               ) || false,
                                           )
                                         }
-                                        readOnly
+                                        onCheckedChange={() => {
+                                          // Handle the click through the parent div instead
+                                        }}
                                       />
                                       <span className="font-medium">
                                         {category.name}
@@ -1083,7 +1084,7 @@ export default function Admin() {
                                       }
                                       /{categoryItems.length} selected
                                     </span>
-                                  </button>
+                                  </div>
 
                                   <div className="border-t bg-gray-50 p-3 space-y-2">
                                     {categoryItems.map((item) => (
