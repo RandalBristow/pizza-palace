@@ -120,8 +120,9 @@ const ToppingSelector = ({
     }
   };
 
-  const handlePlacementChange = (placement: string) => {
-    onToppingChange(topping, placement);
+  const handlePlacementChange = (value: string) => {
+    console.log(`Changing placement for ${topping.name} to ${value}`);
+    onToppingChange(topping, value);
   };
 
   return (
