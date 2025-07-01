@@ -1442,68 +1442,66 @@ export default function Admin() {
                                 key={category.id}
                                 value={category.id}
                               >
-                                <AccordionTrigger className="hover:no-underline">
-                                  <div className="flex items-center justify-between w-full mr-4">
-                                    <div className="flex items-center space-x-2">
-                                      <Checkbox
-                                        checked={
-                                          categoryItems.length > 0 &&
-                                          categoryItems.every(
-                                            (item) =>
-                                              newSpecial.menuItems?.includes(
-                                                item.id,
-                                              ) || false,
-                                          )
-                                        }
-                                        onCheckedChange={(checked) => {
-                                          const currentItems =
-                                            newSpecial.menuItems || [];
-                                          const categoryItemIds =
-                                            categoryItems.map(
-                                              (item) => item.id,
-                                            );
+                                {/* Category header with separate checkbox */}
+                                <div className="flex items-center space-x-2 p-3 border-b">
+                                  <Checkbox
+                                    checked={
+                                      categoryItems.length > 0 &&
+                                      categoryItems.every(
+                                        (item) =>
+                                          newSpecial.menuItems?.includes(
+                                            item.id,
+                                          ) || false,
+                                      )
+                                    }
+                                    onCheckedChange={(checked) => {
+                                      const currentItems =
+                                        newSpecial.menuItems || [];
+                                      const categoryItemIds = categoryItems.map(
+                                        (item) => item.id,
+                                      );
 
-                                          if (checked) {
-                                            // Add all category items
-                                            const newItems = [...currentItems];
-                                            categoryItemIds.forEach((id) => {
-                                              if (!newItems.includes(id)) {
-                                                newItems.push(id);
-                                              }
-                                            });
-                                            setNewSpecial({
-                                              ...newSpecial,
-                                              menuItems: newItems,
-                                            });
-                                          } else {
-                                            // Remove all category items
-                                            setNewSpecial({
-                                              ...newSpecial,
-                                              menuItems: currentItems.filter(
-                                                (id) =>
-                                                  !categoryItemIds.includes(id),
-                                              ),
-                                            });
+                                      if (checked) {
+                                        // Add all category items
+                                        const newItems = [...currentItems];
+                                        categoryItemIds.forEach((id) => {
+                                          if (!newItems.includes(id)) {
+                                            newItems.push(id);
                                           }
-                                        }}
-                                        onClick={(e) => e.stopPropagation()}
-                                      />
-                                      <span className="font-medium">
-                                        {category.name}
-                                      </span>
-                                    </div>
-                                    <span className="text-sm text-gray-500">
-                                      {
-                                        categoryItems.filter(
-                                          (item) =>
-                                            newSpecial.menuItems?.includes(
-                                              item.id,
-                                            ) || false,
-                                        ).length
+                                        });
+                                        setNewSpecial({
+                                          ...newSpecial,
+                                          menuItems: newItems,
+                                        });
+                                      } else {
+                                        // Remove all category items
+                                        setNewSpecial({
+                                          ...newSpecial,
+                                          menuItems: currentItems.filter(
+                                            (id) =>
+                                              !categoryItemIds.includes(id),
+                                          ),
+                                        });
                                       }
-                                      /{categoryItems.length} selected
-                                    </span>
-                                  </div>
+                                    }}
+                                  />
+                                  <span className="font-medium flex-1">
+                                    {category.name}
+                                  </span>
+                                  <span className="text-sm text-gray-500">
+                                    {
+                                      categoryItems.filter(
+                                        (item) =>
+                                          newSpecial.menuItems?.includes(
+                                            item.id,
+                                          ) || false,
+                                      ).length
+                                    }
+                                    /{categoryItems.length} selected
+                                  </span>
+                                </div>
+                                <AccordionTrigger className="hover:no-underline px-3 py-2">
+                                  <span className="text-sm">View Items</span>
                                 </AccordionTrigger>
                                 <AccordionContent>
                                   <div className="space-y-2 pt-2">
