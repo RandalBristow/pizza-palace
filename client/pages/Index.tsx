@@ -161,20 +161,17 @@ export default function Index() {
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-red-400 to-red-600 relative overflow-hidden">
-                {/* Pizza illustration */}
+              <div
+                className="h-48 relative overflow-hidden bg-cover bg-center"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`,
+                }}
+              >
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative">
-                    {/* Pizza base */}
-                    <div className="w-32 h-32 bg-yellow-200 rounded-full border-4 border-yellow-300 shadow-lg">
-                      {/* Pepperoni spots */}
-                      <div className="absolute top-4 left-6 w-4 h-4 bg-red-700 rounded-full"></div>
-                      <div className="absolute top-8 right-4 w-4 h-4 bg-red-700 rounded-full"></div>
-                      <div className="absolute bottom-6 left-8 w-4 h-4 bg-red-700 rounded-full"></div>
-                      <div className="absolute bottom-4 right-8 w-4 h-4 bg-red-700 rounded-full"></div>
-                      {/* Basil leaves */}
-                      <div className="absolute top-10 left-10 w-3 h-2 bg-green-600 rounded-full transform rotate-45"></div>
-                      <div className="absolute bottom-8 right-6 w-3 h-2 bg-green-600 rounded-full transform -rotate-45"></div>
+                  <div className="text-white text-center">
+                    <div className="bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+                      <h3 className="font-bold text-lg">Fresh Margherita</h3>
+                      <p className="text-sm">Hand-crafted daily</p>
                     </div>
                   </div>
                 </div>
@@ -203,29 +200,18 @@ export default function Index() {
             </Card>
 
             <Card className="overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-amber-400 to-amber-600 relative overflow-hidden">
-                {/* Coffee cup illustration */}
+              <div
+                className="h-48 relative overflow-hidden bg-cover bg-center"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.pexels.com/photos/10303534/pexels-photo-10303534.jpeg')`,
+                }}
+              >
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative">
-                    {/* Coffee cup */}
-                    <div className="w-20 h-24 bg-white rounded-b-2xl border-4 border-amber-200 shadow-lg">
-                      {/* Coffee inside */}
-                      <div className="w-full h-16 bg-amber-900 rounded-b-xl mt-2"></div>
-                      {/* Foam/cream */}
-                      <div className="absolute top-2 left-1 right-1 h-4 bg-amber-100 rounded-t-xl"></div>
+                  <div className="text-white text-center">
+                    <div className="bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+                      <h3 className="font-bold text-lg">Premium Coffee</h3>
+                      <p className="text-sm">House blend perfection</p>
                     </div>
-                    {/* Handle */}
-                    <div className="absolute right-0 top-4 w-4 h-8 border-4 border-amber-200 rounded-r-full"></div>
-                    {/* Steam */}
-                    <div className="absolute -top-2 left-6 w-1 h-6 bg-white opacity-60 rounded-full animate-pulse"></div>
-                    <div
-                      className="absolute -top-1 left-8 w-1 h-4 bg-white opacity-60 rounded-full animate-pulse"
-                      style={{ animationDelay: "0.5s" }}
-                    ></div>
-                    <div
-                      className="absolute -top-2 left-10 w-1 h-5 bg-white opacity-60 rounded-full animate-pulse"
-                      style={{ animationDelay: "1s" }}
-                    ></div>
                   </div>
                 </div>
               </div>
