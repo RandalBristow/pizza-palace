@@ -514,10 +514,67 @@ export default function Admin() {
           <TabsContent value="categories" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Categories</h2>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Category
-              </Button>
+              <Dialog
+                open={isAddingCategory}
+                onOpenChange={setIsAddingCategory}
+              >
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Category
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Category</DialogTitle>
+                    <DialogDescription>
+                      Create a new menu category
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="categoryName">Category Name</Label>
+                      <Input
+                        id="categoryName"
+                        value={newCategory.name}
+                        onChange={(e) =>
+                          setNewCategory({
+                            ...newCategory,
+                            name: e.target.value,
+                          })
+                        }
+                        placeholder="e.g., Appetizers"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="categoryOrder">Display Order</Label>
+                      <Input
+                        id="categoryOrder"
+                        type="number"
+                        value={newCategory.order}
+                        onChange={(e) =>
+                          setNewCategory({
+                            ...newCategory,
+                            order: parseInt(e.target.value) || 1,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsAddingCategory(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={handleAddCategory}>
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Category
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="grid gap-4">
@@ -549,10 +606,69 @@ export default function Admin() {
           <TabsContent value="topping-categories" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Topping Categories</h2>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Topping Category
-              </Button>
+              <Dialog
+                open={isAddingToppingCategory}
+                onOpenChange={setIsAddingToppingCategory}
+              >
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Topping Category
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Topping Category</DialogTitle>
+                    <DialogDescription>
+                      Create a new topping category
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="toppingCategoryName">Category Name</Label>
+                      <Input
+                        id="toppingCategoryName"
+                        value={newToppingCategory.name}
+                        onChange={(e) =>
+                          setNewToppingCategory({
+                            ...newToppingCategory,
+                            name: e.target.value,
+                          })
+                        }
+                        placeholder="e.g., Premium Toppings"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="toppingCategoryOrder">
+                        Display Order
+                      </Label>
+                      <Input
+                        id="toppingCategoryOrder"
+                        type="number"
+                        value={newToppingCategory.order}
+                        onChange={(e) =>
+                          setNewToppingCategory({
+                            ...newToppingCategory,
+                            order: parseInt(e.target.value) || 1,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsAddingToppingCategory(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={handleAddToppingCategory}>
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Topping Category
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="grid gap-4">
@@ -617,10 +733,82 @@ export default function Admin() {
           <TabsContent value="toppings" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Toppings</h2>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Topping
-              </Button>
+              <Dialog open={isAddingTopping} onOpenChange={setIsAddingTopping}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Topping
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Topping</DialogTitle>
+                    <DialogDescription>
+                      Create a new topping for pizzas
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="toppingName">Topping Name</Label>
+                      <Input
+                        id="toppingName"
+                        value={newTopping.name}
+                        onChange={(e) =>
+                          setNewTopping({ ...newTopping, name: e.target.value })
+                        }
+                        placeholder="e.g., Pepperoni"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="toppingPrice">Price</Label>
+                      <Input
+                        id="toppingPrice"
+                        type="number"
+                        step="0.01"
+                        value={newTopping.price}
+                        onChange={(e) =>
+                          setNewTopping({
+                            ...newTopping,
+                            price: parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        placeholder="0.00"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="toppingCategory">Category</Label>
+                      <Select
+                        value={newTopping.category}
+                        onValueChange={(
+                          value: "sauce" | "cheese" | "meat" | "veggie",
+                        ) => setNewTopping({ ...newTopping, category: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sauce">Sauce</SelectItem>
+                          <SelectItem value="cheese">Cheese</SelectItem>
+                          <SelectItem value="meat">Meat</SelectItem>
+                          <SelectItem value="veggie">Vegetables</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsAddingTopping(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={handleAddTopping}>
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Topping
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="grid gap-4">
