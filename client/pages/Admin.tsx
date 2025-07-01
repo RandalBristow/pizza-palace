@@ -1004,7 +1004,13 @@ export default function Admin() {
                         </p>
                       </div>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleEditToppingCategory(toppingCategory)
+                          }
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
