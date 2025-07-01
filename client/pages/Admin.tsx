@@ -908,6 +908,68 @@ export default function Admin() {
                   </div>
                 </DialogContent>
               </Dialog>
+
+              {/* Edit Topping Category Dialog */}
+              <Dialog
+                open={!!editingToppingCategory}
+                onOpenChange={() => setEditingToppingCategory(null)}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Topping Category</DialogTitle>
+                    <DialogDescription>
+                      Update the topping category details
+                    </DialogDescription>
+                  </DialogHeader>
+                  {editingToppingCategory && (
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="editToppingCategoryName">
+                          Category Name
+                        </Label>
+                        <Input
+                          id="editToppingCategoryName"
+                          value={editingToppingCategory.name}
+                          onChange={(e) =>
+                            setEditingToppingCategory({
+                              ...editingToppingCategory,
+                              name: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="editToppingCategoryOrder">
+                          Display Order
+                        </Label>
+                        <Input
+                          id="editToppingCategoryOrder"
+                          type="number"
+                          value={editingToppingCategory.order}
+                          onChange={(e) =>
+                            setEditingToppingCategory({
+                              ...editingToppingCategory,
+                              order: parseInt(e.target.value) || 1,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setEditingToppingCategory(null)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={handleSaveToppingCategory}>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Changes
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="grid gap-4">
