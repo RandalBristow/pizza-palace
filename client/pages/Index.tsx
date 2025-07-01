@@ -238,29 +238,17 @@ export default function Index() {
             </Card>
 
             <Card className="overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-orange-400 to-orange-600 relative overflow-hidden">
-                {/* Supreme pizza illustration */}
+              <div
+                className="h-48 relative overflow-hidden bg-cover bg-center"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.pexels.com/photos/5903312/pexels-photo-5903312.jpeg')`,
+                }}
+              >
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative">
-                    {/* Pizza base */}
-                    <div className="w-32 h-32 bg-yellow-200 rounded-full border-4 border-yellow-300 shadow-lg">
-                      {/* Multiple toppings */}
-                      <div className="absolute top-3 left-4 w-3 h-3 bg-red-700 rounded-full"></div>
-                      <div className="absolute top-6 right-3 w-3 h-3 bg-red-700 rounded-full"></div>
-                      <div className="absolute bottom-5 left-6 w-3 h-3 bg-red-700 rounded-full"></div>
-                      <div className="absolute bottom-3 right-6 w-3 h-3 bg-red-700 rounded-full"></div>
-                      {/* Sausage pieces */}
-                      <div className="absolute top-8 left-8 w-4 h-2 bg-amber-800 rounded-full"></div>
-                      <div className="absolute bottom-8 right-4 w-4 h-2 bg-amber-800 rounded-full"></div>
-                      {/* Bell peppers */}
-                      <div className="absolute top-5 right-8 w-2 h-3 bg-green-500 rounded"></div>
-                      <div className="absolute bottom-6 left-10 w-2 h-3 bg-green-500 rounded"></div>
-                      {/* Mushrooms */}
-                      <div className="absolute top-10 right-6 w-3 h-2 bg-amber-600 rounded-t-full"></div>
-                      <div className="absolute bottom-10 left-4 w-3 h-2 bg-amber-600 rounded-t-full"></div>
-                      {/* Olives */}
-                      <div className="absolute top-12 left-12 w-2 h-2 bg-gray-800 rounded-full"></div>
-                      <div className="absolute bottom-4 right-10 w-2 h-2 bg-gray-800 rounded-full"></div>
+                  <div className="text-white text-center">
+                    <div className="bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+                      <h3 className="font-bold text-lg">Supreme Loaded</h3>
+                      <p className="text-sm">All your favorites</p>
                     </div>
                   </div>
                 </div>
