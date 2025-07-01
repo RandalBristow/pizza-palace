@@ -1545,18 +1545,6 @@ export default function Admin() {
                       </div>
                     </div>
 
-                    <div className="flex justify-end space-x-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => setIsAddingSpecial(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button onClick={handleAddSpecial}>
-                        <Save className="h-4 w-4 mr-2" />
-                        Save Special
-                      </Button>
-                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
