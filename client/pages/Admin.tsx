@@ -752,6 +752,64 @@ export default function Admin() {
                   </div>
                 </DialogContent>
               </Dialog>
+
+              {/* Edit Category Dialog */}
+              <Dialog
+                open={!!editingCategory}
+                onOpenChange={() => setEditingCategory(null)}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Category</DialogTitle>
+                    <DialogDescription>
+                      Update the category details
+                    </DialogDescription>
+                  </DialogHeader>
+                  {editingCategory && (
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="editCategoryName">Category Name</Label>
+                        <Input
+                          id="editCategoryName"
+                          value={editingCategory.name}
+                          onChange={(e) =>
+                            setEditingCategory({
+                              ...editingCategory,
+                              name: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="editCategoryOrder">Display Order</Label>
+                        <Input
+                          id="editCategoryOrder"
+                          type="number"
+                          value={editingCategory.order}
+                          onChange={(e) =>
+                            setEditingCategory({
+                              ...editingCategory,
+                              order: parseInt(e.target.value) || 1,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setEditingCategory(null)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={handleSaveCategory}>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Changes
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="grid gap-4">
@@ -768,7 +826,11 @@ export default function Admin() {
                         </Badge>
                       </div>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditCategory(category)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
                       </div>
