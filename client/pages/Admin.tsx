@@ -168,6 +168,14 @@ export default function Admin() {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [isAddingToppingCategory, setIsAddingToppingCategory] = useState(false);
 
+  // Edit states
+  const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingTopping, setEditingTopping] = useState<Topping | null>(null);
+  const [editingToppingCategory, setEditingToppingCategory] =
+    useState<ToppingCategory | null>(null);
+  const [editingSpecial, setEditingSpecial] = useState<Special | null>(null);
+
   const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({
     name: "",
     description: "",
