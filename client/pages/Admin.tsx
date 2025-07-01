@@ -251,6 +251,59 @@ export default function Admin() {
     }
   };
 
+  const handleAddTopping = () => {
+    if (newTopping.name) {
+      const topping: Topping = {
+        id: `topping_${Date.now()}`,
+        name: newTopping.name,
+        price: newTopping.price,
+        category: newTopping.category,
+        isActive: true,
+      };
+      setToppings([...toppings, topping]);
+      setNewTopping({
+        name: "",
+        price: 0,
+        category: "meat",
+      });
+      setIsAddingTopping(false);
+    }
+  };
+
+  const handleAddCategory = () => {
+    if (newCategory.name) {
+      const category: Category = {
+        id: `cat_${Date.now()}`,
+        name: newCategory.name,
+        isActive: true,
+        order: newCategory.order,
+      };
+      setCategories([...categories, category]);
+      setNewCategory({
+        name: "",
+        order: categories.length + 2,
+      });
+      setIsAddingCategory(false);
+    }
+  };
+
+  const handleAddToppingCategory = () => {
+    if (newToppingCategory.name) {
+      const toppingCategory: ToppingCategory = {
+        id: `topcat_${Date.now()}`,
+        name: newToppingCategory.name,
+        order: newToppingCategory.order,
+        isActive: true,
+      };
+      setToppingCategories([...toppingCategories, toppingCategory]);
+      setNewToppingCategory({
+        name: "",
+        order: toppingCategories.length + 2,
+      });
+      setIsAddingToppingCategory(false);
+    }
+  };
+
   const toggleItemActive = (id: string) => {
     setMenuItems(
       menuItems.map((item) =>
