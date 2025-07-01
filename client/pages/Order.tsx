@@ -508,6 +508,16 @@ export default function Order() {
                   </div>
                 )}
 
+                {/* Debug Info */}
+                <div className="text-xs text-gray-400 border-t pt-2">
+                  <p>Debug: {pizzaOrder.toppings.length} toppings selected</p>
+                  {pizzaOrder.toppings.map((t, i) => (
+                    <p key={i}>
+                      {t.name}: {t.placement}
+                    </p>
+                  ))}
+                </div>
+
                 {/* Total */}
                 <div className="border-t pt-4">
                   <div className="flex justify-between font-bold text-lg">
