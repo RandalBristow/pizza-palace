@@ -17,6 +17,12 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../components/ui/accordion";
+import {
   Select,
   SelectContent,
   SelectItem,
