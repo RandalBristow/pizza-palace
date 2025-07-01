@@ -1422,10 +1422,7 @@ export default function Admin() {
                               if (categoryItems.length === 0) return null;
 
                               return (
-                                <div
-                                  key={category.id}
-                                  className="border rounded-md"
-                                >
+                                <AccordionItem key={category.id} value={category.id}>
                                   <div
                                     className="w-full flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer"
                                     onClick={() => {
