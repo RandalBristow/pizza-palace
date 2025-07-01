@@ -221,10 +221,15 @@ export default function Order() {
   };
 
   const handleToppingChange = (topping: Topping, placement: string | null) => {
+    console.log(
+      `handleToppingChange called: ${topping.name}, placement: ${placement}`,
+    );
+
     setPizzaOrder((prev) => {
       const existingToppings = prev.toppings.filter((t) => t.id !== topping.id);
 
       if (placement === null) {
+        console.log(`Removing topping ${topping.name}`);
         return { ...prev, toppings: existingToppings };
       }
 
@@ -233,7 +238,10 @@ export default function Order() {
         placement: placement as "left" | "right" | "whole",
       };
 
-      return { ...prev, toppings: [...existingToppings, newTopping] };
+      console.log(`Adding/updating topping:`, newTopping);
+      const newState = { ...prev, toppings: [...existingToppings, newTopping] };
+      console.log(`New toppings array:`, newState.toppings);
+      return newState;
     });
   };
 
