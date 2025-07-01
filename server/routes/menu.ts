@@ -82,13 +82,41 @@ let mockMenuItems: MenuItem[] = [
     isActive: true,
     rating: 4.7,
   },
+  {
+    id: "w1",
+    name: "Buffalo Wings",
+    description: "Classic buffalo wings with celery and blue cheese (8 pieces)",
+    price: 9.99,
+    category: "wings",
+    isActive: true,
+    rating: 4.7,
+  },
+  {
+    id: "w2",
+    name: "BBQ Wings",
+    description: "Smoky BBQ glazed wings with ranch dressing (8 pieces)",
+    price: 9.99,
+    category: "wings",
+    isActive: true,
+    rating: 4.6,
+  },
+  {
+    id: "w3",
+    name: "Garlic Parmesan Wings",
+    description: "Wings tossed in garlic parmesan sauce (8 pieces)",
+    price: 10.99,
+    category: "wings",
+    isActive: true,
+    rating: 4.8,
+  },
 ];
 
 let mockCategories: Category[] = [
   { id: "pizza", name: "Pizza", isActive: true, order: 1 },
-  { id: "coffee", name: "Coffee", isActive: true, order: 2 },
-  { id: "calzone", name: "Calzones", isActive: true, order: 3 },
-  { id: "drinks", name: "Drinks", isActive: true, order: 4 },
+  { id: "wings", name: "Wings", isActive: true, order: 2 },
+  { id: "coffee", name: "Coffee", isActive: true, order: 3 },
+  { id: "calzone", name: "Calzones", isActive: true, order: 4 },
+  { id: "drinks", name: "Drinks", isActive: true, order: 5 },
 ];
 
 let mockToppings: Topping[] = [
