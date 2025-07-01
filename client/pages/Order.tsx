@@ -143,44 +143,47 @@ const ToppingSelector = ({
         <div className="space-y-2">
           <Label className="text-sm font-medium">Placement:</Label>
           <RadioGroup
-            value={selectedTopping.placement}
+            value={selectedTopping?.placement || "whole"}
             onValueChange={handlePlacementChange}
-            className="flex space-x-4"
+            className="grid grid-cols-3 gap-2"
           >
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col items-center space-y-2">
               <RadioGroupItem value="left" id={`${topping.id}-left`} />
-              <Label htmlFor={`${topping.id}-left`} className="text-sm">
+              <Label
+                htmlFor={`${topping.id}-left`}
+                className="text-xs text-center"
+              >
                 Left Half
               </Label>
+              <div className="relative w-8 h-8 border-2 border-yellow-400 rounded-full bg-yellow-100">
+                <div className="absolute left-0 top-0 w-4 h-8 bg-red-400 opacity-60 rounded-l-full"></div>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="right" id={`${topping.id}-right`} />
-              <Label htmlFor={`${topping.id}-right`} className="text-sm">
-                Right Half
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col items-center space-y-2">
               <RadioGroupItem value="whole" id={`${topping.id}-whole`} />
-              <Label htmlFor={`${topping.id}-whole`} className="text-sm">
+              <Label
+                htmlFor={`${topping.id}-whole`}
+                className="text-xs text-center"
+              >
                 Whole Pizza
               </Label>
+              <div className="relative w-8 h-8 border-2 border-yellow-400 rounded-full bg-yellow-100">
+                <div className="absolute inset-0 bg-red-400 opacity-60 rounded-full"></div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center space-y-2">
+              <RadioGroupItem value="right" id={`${topping.id}-right`} />
+              <Label
+                htmlFor={`${topping.id}-right`}
+                className="text-xs text-center"
+              >
+                Right Half
+              </Label>
+              <div className="relative w-8 h-8 border-2 border-yellow-400 rounded-full bg-yellow-100">
+                <div className="absolute right-0 top-0 w-4 h-8 bg-red-400 opacity-60 rounded-r-full"></div>
+              </div>
             </div>
           </RadioGroup>
-
-          {/* Visual Pizza Representation */}
-          <div className="flex justify-center mt-2">
-            <div className="relative w-12 h-12 border-2 border-yellow-400 rounded-full bg-yellow-100">
-              {selectedTopping.placement === "left" && (
-                <div className="absolute left-0 top-0 w-6 h-12 bg-red-400 opacity-60 rounded-l-full"></div>
-              )}
-              {selectedTopping.placement === "right" && (
-                <div className="absolute right-0 top-0 w-6 h-12 bg-red-400 opacity-60 rounded-r-full"></div>
-              )}
-              {selectedTopping.placement === "whole" && (
-                <div className="absolute inset-0 bg-red-400 opacity-60 rounded-full"></div>
-              )}
-            </div>
-          </div>
         </div>
       )}
     </Card>

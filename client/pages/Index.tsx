@@ -51,6 +51,12 @@ export default function Index() {
                 About
               </Link>
               <Link
+                to="/admin"
+                className="text-gray-700 hover:text-red-600 font-medium text-sm"
+              >
+                Admin
+              </Link>
+              <Link
                 to="/login"
                 className="text-gray-700 hover:text-red-600 font-medium"
               >
