@@ -1541,7 +1541,7 @@ export default function Admin() {
                                 </div>
                               );
                             })}
-                        </div>
+                        </Accordion>
                       </div>
                     </div>
 
