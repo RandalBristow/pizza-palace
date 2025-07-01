@@ -264,11 +264,84 @@ export default function Menu() {
                     key={item.id}
                     className="overflow-hidden hover:shadow-lg transition-shadow"
                   >
-                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                      {category.id === "pizza" || category.id === "calzone" ? (
-                        <Pizza className="h-20 w-20 text-red-400" />
-                      ) : (
-                        <Coffee className="h-20 w-20 text-amber-400" />
+                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden flex items-center justify-center">
+                      {(category.id === "pizza" ||
+                        category.id === "calzone") && (
+                        <div className="relative">
+                          {/* Pizza illustration */}
+                          <div className="w-28 h-28 bg-yellow-200 rounded-full border-4 border-yellow-300 shadow-lg">
+                            {/* Different toppings based on item name */}
+                            {item.name.toLowerCase().includes("margherita") && (
+                              <>
+                                <div className="absolute top-6 left-8 w-3 h-2 bg-green-600 rounded-full transform rotate-45"></div>
+                                <div className="absolute bottom-8 right-6 w-3 h-2 bg-green-600 rounded-full transform -rotate-45"></div>
+                                <div className="absolute top-10 right-8 w-3 h-2 bg-green-600 rounded-full"></div>
+                              </>
+                            )}
+                            {item.name.toLowerCase().includes("pepperoni") && (
+                              <>
+                                <div className="absolute top-4 left-6 w-4 h-4 bg-red-700 rounded-full"></div>
+                                <div className="absolute top-8 right-4 w-4 h-4 bg-red-700 rounded-full"></div>
+                                <div className="absolute bottom-6 left-8 w-4 h-4 bg-red-700 rounded-full"></div>
+                                <div className="absolute bottom-4 right-8 w-4 h-4 bg-red-700 rounded-full"></div>
+                                <div className="absolute top-12 left-12 w-4 h-4 bg-red-700 rounded-full"></div>
+                              </>
+                            )}
+                            {item.name.toLowerCase().includes("supreme") && (
+                              <>
+                                <div className="absolute top-3 left-4 w-3 h-3 bg-red-700 rounded-full"></div>
+                                <div className="absolute top-6 right-3 w-3 h-3 bg-red-700 rounded-full"></div>
+                                <div className="absolute bottom-5 left-6 w-3 h-3 bg-red-700 rounded-full"></div>
+                                <div className="absolute top-8 left-8 w-4 h-2 bg-amber-800 rounded-full"></div>
+                                <div className="absolute top-5 right-8 w-2 h-3 bg-green-500 rounded"></div>
+                                <div className="absolute bottom-6 left-10 w-2 h-3 bg-green-500 rounded"></div>
+                                <div className="absolute top-10 right-6 w-3 h-2 bg-amber-600 rounded-t-full"></div>
+                                <div className="absolute bottom-4 right-10 w-2 h-2 bg-gray-800 rounded-full"></div>
+                              </>
+                            )}
+                            {!item.name.toLowerCase().includes("margherita") &&
+                              !item.name.toLowerCase().includes("pepperoni") &&
+                              !item.name.toLowerCase().includes("supreme") && (
+                                <>
+                                  <div className="absolute top-6 left-8 w-3 h-3 bg-red-600 rounded-full"></div>
+                                  <div className="absolute bottom-8 right-6 w-3 h-3 bg-green-500 rounded"></div>
+                                </>
+                              )}
+                          </div>
+                        </div>
+                      )}
+                      {category.id === "coffee" && (
+                        <div className="relative">
+                          {/* Coffee cup illustration */}
+                          <div className="w-16 h-20 bg-white rounded-b-2xl border-4 border-amber-200 shadow-lg">
+                            <div className="w-full h-14 bg-amber-900 rounded-b-xl mt-1"></div>
+                            <div className="absolute top-1 left-1 right-1 h-3 bg-amber-100 rounded-t-xl"></div>
+                          </div>
+                          <div className="absolute right-0 top-3 w-3 h-6 border-4 border-amber-200 rounded-r-full"></div>
+                          {/* Steam lines */}
+                          <div className="absolute -top-1 left-4 w-1 h-4 bg-gray-400 opacity-60 rounded-full animate-pulse"></div>
+                          <div
+                            className="absolute -top-1 left-6 w-1 h-3 bg-gray-400 opacity-60 rounded-full animate-pulse"
+                            style={{ animationDelay: "0.5s" }}
+                          ></div>
+                          <div
+                            className="absolute -top-1 left-8 w-1 h-4 bg-gray-400 opacity-60 rounded-full animate-pulse"
+                            style={{ animationDelay: "1s" }}
+                          ></div>
+                        </div>
+                      )}
+                      {category.id === "drinks" && (
+                        <div className="relative">
+                          {/* Drink glass */}
+                          <div className="w-12 h-20 bg-blue-100 rounded-b-lg border-4 border-blue-200 shadow-lg">
+                            <div className="w-full h-16 bg-blue-300 rounded-b-md mt-1"></div>
+                            {/* Ice cubes */}
+                            <div className="absolute top-3 left-2 w-2 h-2 bg-white opacity-80 rounded"></div>
+                            <div className="absolute top-6 right-2 w-2 h-2 bg-white opacity-80 rounded"></div>
+                          </div>
+                          {/* Straw */}
+                          <div className="absolute top-0 right-2 w-1 h-24 bg-red-400 rounded-full"></div>
+                        </div>
                       )}
                     </div>
 
