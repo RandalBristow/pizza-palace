@@ -397,6 +397,12 @@ export default function Index() {
                 >
                   About Us
                 </Link>
+                <Link
+                  to="/admin"
+                  className="block text-gray-400 hover:text-white text-sm"
+                >
+                  Admin Panel
+                </Link>
               </div>
             </div>
             <div>
