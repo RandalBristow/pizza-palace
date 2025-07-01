@@ -112,12 +112,16 @@ const ToppingSelector = ({
   const selectedTopping = selectedToppings.find((t) => t.id === topping.id);
   const isSelected = !!selectedTopping;
 
-  const handlePlacementChange = (placement: string) => {
-    if (placement === "none") {
-      onToppingChange(topping, null);
+  const handleToppingToggle = (checked: boolean) => {
+    if (checked) {
+      onToppingChange(topping, "whole");
     } else {
-      onToppingChange(topping, placement);
+      onToppingChange(topping, null);
     }
+  };
+
+  const handlePlacementChange = (placement: string) => {
+    onToppingChange(topping, placement);
   };
 
   return (
@@ -131,12 +135,7 @@ const ToppingSelector = ({
             </p>
           )}
         </div>
-        <Checkbox
-          checked={isSelected}
-          onCheckedChange={(checked) =>
-            onToppingChange(topping, checked ? "whole" : null)
-          }
-        />
+        <Checkbox checked={isSelected} onCheckedChange={handleToppingToggle} />
       </div>
 
       {isSelected && (
