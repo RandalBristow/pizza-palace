@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -48,6 +49,8 @@ import {
   Settings,
   Calendar,
   DollarSign,
+  Home,
+  FileText,
 } from "lucide-react";
 
 interface MenuItem {
@@ -408,19 +411,96 @@ export default function Admin() {
     );
   };
 
+  const generateMenuPDF = async () => {
+    try {
+      const jsPDF = (await import("jspdf")).default;
+      const doc = new jsPDF();
+
+      // Title
+      doc.setFontSize(20);
+      doc.text("Pronto Pizza Cafe Menu", 20, 30);
+
+      doc.setFontSize(12);
+      doc.text("914 Ashland Rd, Mansfield, OH 44905", 20, 40);
+      doc.text("Phone: (419) 589-7777", 20, 50);
+      doc.text("Website: https://getprontos.com/", 20, 60);
+
+      let yPosition = 80;
+
+      // Group items by category
+      const itemsByCategory = menuItems.reduce(
+        (acc, item) => {
+          if (!acc[item.category]) acc[item.category] = [];
+          acc[item.category].push(item);
+          return acc;
+        },
+        {} as Record<string, MenuItem[]>,
+      );
+
+      // Add categories and items
+      Object.entries(itemsByCategory).forEach(([categoryId, items]) => {
+        const category = categories.find((c) => c.id === categoryId);
+        if (category) {
+          doc.setFontSize(16);
+          doc.text(category.name.toUpperCase(), 20, yPosition);
+          yPosition += 10;
+
+          items.forEach((item) => {
+            doc.setFontSize(12);
+            doc.text(`${item.name} - $${item.price.toFixed(2)}`, 30, yPosition);
+            yPosition += 6;
+            if (item.description) {
+              doc.setFontSize(10);
+              doc.text(item.description, 30, yPosition);
+              yPosition += 6;
+            }
+            yPosition += 4;
+
+            // Add new page if needed
+            if (yPosition > 250) {
+              doc.addPage();
+              yPosition = 30;
+            }
+          });
+
+          yPosition += 10;
+        }
+      });
+
+      doc.save("pronto-pizza-menu.pdf");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Error generating PDF. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-transparent">
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Admin Dashboard
-            </h1>
-            <Button variant="outline">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
+            <div className="flex items-center space-x-4">
+              <h1 className="text-2xl font-bold text-gray-900">
+                Admin Dashboard
+              </h1>
+              <Button variant="outline" asChild>
+                <Link to="/">
+                  <Home className="h-4 w-4 mr-2" />
+                  Home
+                </Link>
+              </Button>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" onClick={generateMenuPDF}>
+                <FileText className="h-4 w-4 mr-2" />
+                Print Menu PDF
+              </Button>
+              <Button variant="outline">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -428,8 +508,8 @@ export default function Admin() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="categories">Menu Item Categories</TabsTrigger>
             <TabsTrigger value="menu">Menu Items</TabsTrigger>
-            <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="toppings">Toppings</TabsTrigger>
             <TabsTrigger value="topping-categories">
               Topping Categories

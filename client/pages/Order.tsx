@@ -100,53 +100,7 @@ const toppings: Topping[] = [
   { id: "v9", name: "Pineapple", price: 1.5, category: "veggie" },
 ];
 
-const PlacementButton = ({
-  placement,
-  isSelected,
-  onClick,
-  label,
-}: {
-  placement: "left" | "right" | "whole";
-  isSelected: boolean;
-  onClick: () => void;
-  label: string;
-}) => {
-  const getCircleContent = () => {
-    switch (placement) {
-      case "left":
-        return (
-          <div className="relative w-10 h-10 border-2 border-amber-600 rounded-full bg-yellow-100 overflow-hidden">
-            <div className="absolute left-0 top-0 w-5 h-10 bg-red-500 rounded-l-full"></div>
-          </div>
-        );
-      case "right":
-        return (
-          <div className="relative w-10 h-10 border-2 border-amber-600 rounded-full bg-yellow-100 overflow-hidden">
-            <div className="absolute right-0 top-0 w-5 h-10 bg-red-500 rounded-r-full"></div>
-          </div>
-        );
-      case "whole":
-        return (
-          <div className="relative w-10 h-10 border-2 border-amber-600 rounded-full bg-red-500"></div>
-        );
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all hover:bg-gray-50 ${
-        isSelected ? "bg-blue-50 ring-2 ring-blue-500" : ""
-      }`}
-    >
-      {getCircleContent()}
-      <span className="text-xs text-center font-medium">{label}</span>
-    </button>
-  );
-};
-
-const ToppingSelector = ({
+const ToppingRow = ({
   topping,
   selectedToppings,
   onToppingChange,
@@ -156,7 +110,6 @@ const ToppingSelector = ({
   onToppingChange: (topping: Topping, placement: string | null) => void;
 }) => {
   const selectedTopping = selectedToppings.find((t) => t.id === topping.id);
-  const isSelected = !!selectedTopping;
 
   const handlePlacementClick = (placement: "left" | "right" | "whole") => {
     console.log(`Changing placement for ${topping.name} to ${placement}`);
@@ -168,53 +121,89 @@ const ToppingSelector = ({
     onToppingChange(topping, null);
   };
 
+  const getCircle = (
+    placement: "left" | "right" | "whole",
+    isActive: boolean,
+  ) => {
+    const baseClasses =
+      "w-6 h-6 rounded-full border-2 cursor-pointer transition-all hover:scale-110";
+    const borderColor = isActive ? "border-red-500" : "border-gray-300";
+
+    switch (placement) {
+      case "left":
+        return (
+          <div
+            className={`${baseClasses} ${borderColor} bg-white relative overflow-hidden`}
+            onClick={() => handlePlacementClick("left")}
+          >
+            <div
+              className={`absolute left-0 top-0 w-3 h-6 rounded-l-full ${isActive ? "bg-red-500" : "bg-gray-200"}`}
+            ></div>
+          </div>
+        );
+      case "right":
+        return (
+          <div
+            className={`${baseClasses} ${borderColor} bg-white relative overflow-hidden`}
+            onClick={() => handlePlacementClick("right")}
+          >
+            <div
+              className={`absolute right-0 top-0 w-3 h-6 rounded-r-full ${isActive ? "bg-red-500" : "bg-gray-200"}`}
+            ></div>
+          </div>
+        );
+      case "whole":
+        return (
+          <div
+            className={`${baseClasses} ${borderColor} ${isActive ? "bg-red-500" : "bg-gray-200"}`}
+            onClick={() => handlePlacementClick("whole")}
+          ></div>
+        );
+    }
+  };
+
   return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <h4 className="font-medium">{topping.name}</h4>
-          {topping.price > 0 && (
-            <p className="text-sm text-gray-600">
-              +${topping.price.toFixed(2)}
-            </p>
-          )}
-        </div>
-        {isSelected && (
+    <div className="flex items-center justify-between py-2 px-4 hover:bg-gray-50">
+      <div className="flex-1">
+        <span className="text-sm font-medium text-gray-700">
+          {topping.name}
+        </span>
+      </div>
+
+      {/* Placement circles */}
+      <div className="flex items-center space-x-3 mx-6">
+        {getCircle("left", selectedTopping?.placement === "left")}
+        {getCircle("whole", selectedTopping?.placement === "whole")}
+        {getCircle("right", selectedTopping?.placement === "right")}
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex items-center space-x-2">
+        {selectedTopping && (
+          <Button size="sm" variant="outline" className="text-xs px-2 py-1 h-7">
+            Extra
+          </Button>
+        )}
+        {selectedTopping ? (
           <Button
-            variant="outline"
             size="sm"
+            className="text-xs px-2 py-1 h-7 bg-red-500 hover:bg-red-600 text-white"
+          >
+            Normal
+          </Button>
+        ) : null}
+        {selectedTopping && (
+          <Button
+            size="sm"
+            variant="outline"
             onClick={handleRemoveTopping}
-            className="text-red-600 hover:text-red-700"
+            className="text-xs px-2 py-1 h-7 text-red-600 hover:text-red-700"
           >
             Remove
           </Button>
         )}
       </div>
-
-      <div className="space-y-3">
-        <Label className="text-sm font-medium">Choose placement:</Label>
-        <div className="grid grid-cols-3 gap-2">
-          <PlacementButton
-            placement="left"
-            isSelected={selectedTopping?.placement === "left"}
-            onClick={() => handlePlacementClick("left")}
-            label="Left Half"
-          />
-          <PlacementButton
-            placement="whole"
-            isSelected={selectedTopping?.placement === "whole"}
-            onClick={() => handlePlacementClick("whole")}
-            label="Whole Pizza"
-          />
-          <PlacementButton
-            placement="right"
-            isSelected={selectedTopping?.placement === "right"}
-            onClick={() => handlePlacementClick("right")}
-            label="Right Half"
-          />
-        </div>
-      </div>
-    </Card>
+    </div>
   );
 };
 
@@ -400,29 +389,44 @@ export default function Order() {
                 <Tabs
                   value={selectedToppingCategory}
                   onValueChange={setSelectedToppingCategory}
+                  className="w-full"
                 >
-                  <TabsList className="grid w-full grid-cols-4">
-                    {toppingCategories.map((category) => (
-                      <TabsTrigger
-                        key={category.id}
-                        value={category.id}
-                        className="text-sm"
-                      >
-                        <span className="mr-1">{category.icon}</span>
-                        {category.name}
-                      </TabsTrigger>
-                    ))}
+                  <TabsList className="grid w-full grid-cols-4 h-auto p-1 bg-gray-100">
+                    <TabsTrigger
+                      value="meat"
+                      className="text-sm py-2 data-[state=active]:bg-black data-[state=active]:text-white"
+                    >
+                      Meats
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="veggie"
+                      className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
+                    >
+                      Veggies
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="cheese"
+                      className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
+                    >
+                      Cheese
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="sauce"
+                      className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
+                    >
+                      Sauce
+                    </TabsTrigger>
                   </TabsList>
 
                   {toppingCategories.map((category) => (
                     <TabsContent
                       key={category.id}
                       value={category.id}
-                      className="mt-4"
+                      className="mt-0 bg-white border border-t-0 rounded-b-lg"
                     >
-                      <div className="grid gap-4 md:grid-cols-2">
+                      <div className="divide-y divide-gray-200">
                         {filteredToppings.map((topping) => (
-                          <ToppingSelector
+                          <ToppingRow
                             key={topping.id}
                             topping={topping}
                             selectedToppings={pizzaOrder.toppings}
