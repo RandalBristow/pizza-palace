@@ -215,7 +215,7 @@ export default function Order() {
     basePrice: 0,
   });
   const [selectedToppingCategory, setSelectedToppingCategory] =
-    useState("sauce");
+    useState("meat");
 
   const toppingCategories = [
     { id: "sauce", name: "Sauce", icon: "🍅" },
