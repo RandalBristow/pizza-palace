@@ -1353,33 +1353,6 @@ export default function Admin() {
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="toppingName">Topping Name</Label>
-                      <Input
-                        id="toppingName"
-                        value={newTopping.name}
-                        onChange={(e) =>
-                          setNewTopping({ ...newTopping, name: e.target.value })
-                        }
-                        placeholder="e.g., Pepperoni"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="toppingPrice">Price</Label>
-                      <Input
-                        id="toppingPrice"
-                        type="number"
-                        step="0.01"
-                        value={newTopping.price}
-                        onChange={(e) =>
-                          setNewTopping({
-                            ...newTopping,
-                            price: parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        placeholder="0.00"
-                      />
-                    </div>
-                    <div>
                       <Label htmlFor="menuItemCategory">Menu Item Type</Label>
                       <Select
                         value={newTopping.menuItemCategory}
@@ -1420,6 +1393,38 @@ export default function Admin() {
                           <SelectItem value="veggie">Vegetables</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="toppingName">Topping Name</Label>
+                        <Input
+                          id="toppingName"
+                          value={newTopping.name}
+                          onChange={(e) =>
+                            setNewTopping({
+                              ...newTopping,
+                              name: e.target.value,
+                            })
+                          }
+                          placeholder="e.g., Pepperoni"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="toppingPrice">Price</Label>
+                        <Input
+                          id="toppingPrice"
+                          type="number"
+                          step="0.01"
+                          value={newTopping.price}
+                          onChange={(e) =>
+                            setNewTopping({
+                              ...newTopping,
+                              price: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          placeholder="0.00"
+                        />
+                      </div>
                     </div>
                     <div className="flex justify-end space-x-2">
                       <Button
