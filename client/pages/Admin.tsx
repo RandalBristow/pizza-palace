@@ -1457,35 +1457,34 @@ export default function Admin() {
                   {editingTopping && (
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="editToppingName">Topping Name</Label>
-                        <Input
-                          id="editToppingName"
-                          value={editingTopping.name}
-                          onChange={(e) =>
+                        <Label htmlFor="editMenuItemCategory">
+                          Menu Item Type
+                        </Label>
+                        <Select
+                          value={editingTopping.menuItemCategory}
+                          onValueChange={(value) =>
                             setEditingTopping({
                               ...editingTopping,
-                              name: e.target.value,
+                              menuItemCategory: value,
                             })
                           }
-                        />
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select menu item type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div>
-                        <Label htmlFor="editToppingPrice">Price</Label>
-                        <Input
-                          id="editToppingPrice"
-                          type="number"
-                          step="0.01"
-                          value={editingTopping.price}
-                          onChange={(e) =>
-                            setEditingTopping({
-                              ...editingTopping,
-                              price: parseFloat(e.target.value) || 0,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="editToppingCategory">Category</Label>
+                        <Label htmlFor="editToppingCategory">
+                          Topping Category
+                        </Label>
                         <Select
                           value={editingTopping.category}
                           onValueChange={(
