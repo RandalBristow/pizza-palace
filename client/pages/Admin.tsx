@@ -864,21 +864,21 @@ export default function Admin() {
                           </div>
                         )}
                       </div>
-
-                      {/* Buttons fixed at bottom right */}
-                      <div className="flex justify-end space-x-2 pt-4 border-t">
-                        <Button
-                          variant="outline"
-                          onClick={() => setIsAddingMenuItem(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button onClick={handleAddMenuItem}>
-                          <Save className="h-4 w-4 mr-2" />
-                          Save Item
-                        </Button>
-                      </div>
                     </div>
+                  </div>
+
+                  {/* Buttons fixed at bottom of entire dialog */}
+                  <div className="flex justify-end space-x-2 p-6 border-t bg-gray-50">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsAddingMenuItem(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddMenuItem}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Item
+                    </Button>
                   </div>
                 </DialogContent>
               </Dialog>
