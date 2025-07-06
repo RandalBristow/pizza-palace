@@ -745,99 +745,116 @@ export default function Admin() {
                       {/* Toppings content that grows to fill space */}
                       <div className="flex-1">
                         {newMenuItem.category ? (
-                          <Tabs
-                            defaultValue={toppingCategories[0]?.id}
-                            className="w-full h-full"
-                            key={newMenuItem.category}
-                          >
-                            <TabsList className="grid w-full grid-cols-4">
-                              {toppingCategories.map((toppingCategory) => (
-                                <TabsTrigger
-                                  key={toppingCategory.id}
-                                  value={toppingCategory.id}
-                                  className="text-sm"
-                                >
-                                  {toppingCategory.name}
-                                </TabsTrigger>
-                              ))}
-                            </TabsList>
-
-                            {toppingCategories.map((toppingCategory) => {
-                              const categoryToppings = toppings.filter(
-                                (topping) =>
-                                  topping.category === toppingCategory.id &&
-                                  topping.menuItemCategory ===
-                                    newMenuItem.category &&
-                                  topping.isActive,
+                          (() => {
+                            const availableCategories =
+                              toppingCategories.filter(
+                                (tc) =>
+                                  tc.menuItemCategory ===
+                                    newMenuItem.category && tc.isActive,
                               );
-
-                              return (
-                                <TabsContent
-                                  key={toppingCategory.id}
-                                  value={toppingCategory.id}
-                                  className="mt-4"
+                            return (
+                              <Tabs
+                                defaultValue={availableCategories[0]?.id}
+                                className="w-full h-full"
+                                key={newMenuItem.category}
+                              >
+                                <TabsList
+                                  className={`grid w-full grid-cols-${Math.min(availableCategories.length, 4)}`}
                                 >
-                                  <div className="max-h-80 overflow-y-auto border rounded-lg p-4 space-y-2">
-                                    {categoryToppings.length > 0 ? (
-                                      categoryToppings.map((topping) => (
-                                        <div
-                                          key={topping.id}
-                                          className="flex items-center space-x-2"
-                                        >
-                                          <Checkbox
-                                            id={`topping-${topping.id}`}
-                                            checked={
-                                              newMenuItem.defaultToppings?.includes(
-                                                topping.id,
-                                              ) || false
-                                            }
-                                            onCheckedChange={(checked) => {
-                                              const currentToppings =
-                                                newMenuItem.defaultToppings ||
-                                                [];
-                                              if (checked) {
-                                                setNewMenuItem({
-                                                  ...newMenuItem,
-                                                  defaultToppings: [
-                                                    ...currentToppings,
+                                  {availableCategories.map(
+                                    (toppingCategory) => (
+                                      <TabsTrigger
+                                        key={toppingCategory.id}
+                                        value={toppingCategory.id}
+                                        className="text-sm"
+                                      >
+                                        {toppingCategory.name}
+                                      </TabsTrigger>
+                                    ),
+                                  )}
+                                </TabsList>
+
+                                {availableCategories.map((toppingCategory) => {
+                                  const categoryToppings = toppings.filter(
+                                    (topping) =>
+                                      topping.category === toppingCategory.id &&
+                                      topping.menuItemCategory ===
+                                        newMenuItem.category &&
+                                      topping.isActive,
+                                  );
+
+                                  return (
+                                    <TabsContent
+                                      key={toppingCategory.id}
+                                      value={toppingCategory.id}
+                                      className="mt-4"
+                                    >
+                                      <div className="max-h-80 overflow-y-auto border rounded-lg p-4 space-y-2">
+                                        {categoryToppings.length > 0 ? (
+                                          categoryToppings.map((topping) => (
+                                            <div
+                                              key={topping.id}
+                                              className="flex items-center space-x-2"
+                                            >
+                                              <Checkbox
+                                                id={`topping-${topping.id}`}
+                                                checked={
+                                                  newMenuItem.defaultToppings?.includes(
                                                     topping.id,
-                                                  ],
-                                                });
-                                              } else {
-                                                setNewMenuItem({
-                                                  ...newMenuItem,
-                                                  defaultToppings:
-                                                    currentToppings.filter(
-                                                      (id) => id !== topping.id,
-                                                    ),
-                                                });
-                                              }
-                                            }}
-                                          />
-                                          <Label
-                                            htmlFor={`topping-${topping.id}`}
-                                            className="text-sm cursor-pointer flex-1"
-                                          >
-                                            {topping.name}
-                                            {topping.price > 0 && (
-                                              <span className="text-gray-500 ml-1">
-                                                (+${topping.price.toFixed(2)})
-                                              </span>
-                                            )}
-                                          </Label>
-                                        </div>
-                                      ))
-                                    ) : (
-                                      <p className="text-gray-500 text-center py-4">
-                                        No {toppingCategory.name.toLowerCase()}{" "}
-                                        toppings available for this category
-                                      </p>
-                                    )}
-                                  </div>
-                                </TabsContent>
-                              );
-                            })}
-                          </Tabs>
+                                                  ) || false
+                                                }
+                                                onCheckedChange={(checked) => {
+                                                  const currentToppings =
+                                                    newMenuItem.defaultToppings ||
+                                                    [];
+                                                  if (checked) {
+                                                    setNewMenuItem({
+                                                      ...newMenuItem,
+                                                      defaultToppings: [
+                                                        ...currentToppings,
+                                                        topping.id,
+                                                      ],
+                                                    });
+                                                  } else {
+                                                    setNewMenuItem({
+                                                      ...newMenuItem,
+                                                      defaultToppings:
+                                                        currentToppings.filter(
+                                                          (id) =>
+                                                            id !== topping.id,
+                                                        ),
+                                                    });
+                                                  }
+                                                }}
+                                              />
+                                              <Label
+                                                htmlFor={`topping-${topping.id}`}
+                                                className="text-sm cursor-pointer flex-1"
+                                              >
+                                                {topping.name}
+                                                {topping.price > 0 && (
+                                                  <span className="text-gray-500 ml-1">
+                                                    (+$
+                                                    {topping.price.toFixed(2)})
+                                                  </span>
+                                                )}
+                                              </Label>
+                                            </div>
+                                          ))
+                                        ) : (
+                                          <p className="text-gray-500 text-center py-4">
+                                            No{" "}
+                                            {toppingCategory.name.toLowerCase()}{" "}
+                                            toppings available for this category
+                                          </p>
+                                        )}
+                                      </div>
+                                    </TabsContent>
+                                  );
+                                })}
+                              </Tabs>
+                            );
+                          })()
                         ) : (
                           <div className="border rounded-lg p-8 text-center h-64 flex items-center justify-center">
                             <p className="text-gray-500">
