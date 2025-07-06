@@ -226,8 +226,14 @@ export default function Order() {
     useState("cheese");
 
   useEffect(() => {
+    // Only redirect if user tries to access order page directly without delivery details
+    // Don't redirect if they're coming through the proper flow (will be handled by Menu page)
     if (!hasDeliveryDetails) {
-      navigate("/menu");
+      // Add a small delay to allow the delivery selection modal to appear first
+      const timer = setTimeout(() => {
+        navigate("/menu");
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [hasDeliveryDetails, navigate]);
 
