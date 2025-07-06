@@ -614,7 +614,7 @@ export default function Admin() {
                   </DialogHeader>
                   <div className="grid grid-cols-2 gap-6 min-h-[56vh]">
                     {/* Left Column - Item Details */}
-                    <div className="space-y-4">
+                    <div className="space-y-4 flex flex-col">
                       {/* Category moved to top */}
                       <div>
                         <Label htmlFor="category" className="text-red-600">
