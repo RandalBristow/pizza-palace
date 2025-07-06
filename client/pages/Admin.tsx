@@ -306,6 +306,7 @@ export default function Admin() {
         name: newTopping.name,
         price: newTopping.price,
         category: newTopping.category,
+        menuItemCategory: newTopping.menuItemCategory,
         isActive: true,
       };
       setToppings([...toppings, topping]);
@@ -313,6 +314,7 @@ export default function Admin() {
         name: "",
         price: 0,
         category: "meat",
+        menuItemCategory: "pizza",
       });
       setIsAddingTopping(false);
     }
