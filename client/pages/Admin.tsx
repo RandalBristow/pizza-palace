@@ -603,9 +603,9 @@ export default function Admin() {
                       Create a new menu item for your restaurant
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid grid-cols-2 gap-6 min-h-[56vh]">
+                  <div className="grid grid-cols-2 gap-6 min-h-[56vh] items-start">
                     {/* Left Column - Item Details */}
-                    <div className="space-y-4 flex flex-col">
+                    <div className="space-y-4">
                       {/* Category moved to top */}
                       <div>
                         <Label htmlFor="category" className="text-red-600">
