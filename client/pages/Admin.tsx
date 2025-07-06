@@ -203,6 +203,7 @@ export default function Admin() {
     description: "",
     price: 0,
     category: "",
+    defaultToppings: [],
     isActive: true,
   });
 
@@ -220,6 +221,7 @@ export default function Admin() {
     name: "",
     price: 0,
     category: "meat" as "sauce" | "cheese" | "meat" | "veggie",
+    menuItemCategory: "pizza",
   });
 
   const [newCategory, setNewCategory] = useState({
@@ -241,6 +243,7 @@ export default function Admin() {
         description: newMenuItem.description || "",
         price: newMenuItem.price || 0,
         category: newMenuItem.category!,
+        defaultToppings: newMenuItem.defaultToppings || [],
         isActive: true,
       };
       setMenuItems([...menuItems, item]);
@@ -249,6 +252,7 @@ export default function Admin() {
         description: "",
         price: 0,
         category: "",
+        defaultToppings: [],
         isActive: true,
       });
       setIsAddingMenuItem(false);
