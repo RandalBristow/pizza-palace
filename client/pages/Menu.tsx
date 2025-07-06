@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import DeliverySelection from "../components/DeliverySelection";
+import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import { useOrder } from "../context/OrderContext";
 import {
   Card,
@@ -223,7 +224,17 @@ export default function Menu() {
 
   const addToCart = (item: MenuItem, size?: string) => {
     if (!hasDeliveryDetails) {
-      setPendingAction(() => () => addToCart(item, size));
+      setPendingAction({
+        action: () => {
+          const cartItem = {
+            ...item,
+            selectedSize: size,
+            cartId: `${item.id}-${size || "default"}-${Date.now()}`,
+          };
+          setCart((prev) => [...prev, cartItem]);
+        },
+        type: "addToCart",
+      });
       setShowDeliverySelection(true);
       return;
     }
@@ -238,11 +249,14 @@ export default function Menu() {
 
   const handleOrderStart = () => {
     if (!hasDeliveryDetails) {
+      setPendingAction({
+        action: () => navigate("/order"),
+        type: "startOrder",
+      });
       setShowDeliverySelection(true);
       return;
     }
-    // Navigate to order page
-    window.location.href = "/order";
+    navigate("/order");
   };
 
   const handleDeliveryConfirm = (details: any) => {
@@ -250,8 +264,8 @@ export default function Menu() {
     setShowDeliverySelection(false);
     // Execute pending action if any
     if (pendingAction) {
-      pendingAction();
-      setPendingAction(() => {});
+      pendingAction.action();
+      setPendingAction(null);
     }
   };
 
@@ -311,11 +325,24 @@ export default function Menu() {
       {/* Menu Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Our Menu</h1>
-          <p className="text-gray-600">
-            Fresh ingredients, made to order. All pizzas available on regular,
-            thin, or thick crust.
-          </p>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Our Menu
+              </h1>
+              <p className="text-gray-600">
+                Fresh ingredients, made to order. All pizzas available on
+                regular, thin, or thick crust.
+              </p>
+            </div>
+            <Button
+              onClick={handleOrderStart}
+              size="lg"
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Start Order
+            </Button>
+          </div>
         </div>
 
         {/* Category Tabs */}

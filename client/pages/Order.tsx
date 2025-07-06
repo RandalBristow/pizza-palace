@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useOrder } from "../context/OrderContext";
+import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -292,32 +293,12 @@ export default function Order() {
 
   return (
     <div className="min-h-screen bg-transparent">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/menu"
-                className="flex items-center text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Back to Menu
-              </Link>
-              <div className="flex items-center space-x-2">
-                <Pizza className="h-6 w-6 text-red-600" />
-                <span className="text-lg font-semibold">Build Your Pizza</span>
-              </div>
-            </div>
-            <Button variant="outline" className="relative" asChild>
-              <Link to="/cart">
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                View Cart
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <HeaderWithDelivery
+        title="Build Your Pizza"
+        showBackButton={true}
+        backTo="/menu"
+        cart={[]}
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
