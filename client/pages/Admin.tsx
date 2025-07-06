@@ -193,6 +193,7 @@ export default function Admin() {
   const [editingTopping, setEditingTopping] = useState<Topping | null>(null);
   const [editingToppingCategory, setEditingToppingCategory] =
     useState<ToppingCategory | null>(null);
+  const [editingSpecial, setEditingSpecial] = useState<Special | null>(null);
 
   // Form states
   const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({
