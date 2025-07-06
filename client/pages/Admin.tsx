@@ -684,6 +684,121 @@ export default function Admin() {
                           Optional: Add item image
                         </span>
                       </div>
+                    </div>
+
+                    {/* Right Column - Default Toppings */}
+                    <div className="space-y-4">
+                      <div>
+                        <Label className="text-lg font-semibold">
+                          Default Toppings
+                        </Label>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Select which toppings should come with this item by
+                          default
+                        </p>
+                      </div>
+
+                      {newMenuItem.category ? (
+                        <Tabs
+                          defaultValue={toppingCategories[0]?.id}
+                          className="w-full"
+                        >
+                          <TabsList className="grid w-full grid-cols-4">
+                            {toppingCategories.map((toppingCategory) => (
+                              <TabsTrigger
+                                key={toppingCategory.id}
+                                value={toppingCategory.id}
+                                className="text-sm"
+                              >
+                                {toppingCategory.name}
+                              </TabsTrigger>
+                            ))}
+                          </TabsList>
+
+                          {toppingCategories.map((toppingCategory) => {
+                            const categoryToppings = toppings.filter(
+                              (topping) =>
+                                topping.category === toppingCategory.id &&
+                                topping.menuItemCategory ===
+                                  newMenuItem.category &&
+                                topping.isActive,
+                            );
+
+                            return (
+                              <TabsContent
+                                key={toppingCategory.id}
+                                value={toppingCategory.id}
+                                className="mt-4"
+                              >
+                                <div className="max-h-64 overflow-y-auto border rounded-lg p-4 space-y-2">
+                                  {categoryToppings.length > 0 ? (
+                                    categoryToppings.map((topping) => (
+                                      <div
+                                        key={topping.id}
+                                        className="flex items-center space-x-2"
+                                      >
+                                        <Checkbox
+                                          id={`topping-${topping.id}`}
+                                          checked={
+                                            newMenuItem.defaultToppings?.includes(
+                                              topping.id,
+                                            ) || false
+                                          }
+                                          onCheckedChange={(checked) => {
+                                            const currentToppings =
+                                              newMenuItem.defaultToppings || [];
+                                            if (checked) {
+                                              setNewMenuItem({
+                                                ...newMenuItem,
+                                                defaultToppings: [
+                                                  ...currentToppings,
+                                                  topping.id,
+                                                ],
+                                              });
+                                            } else {
+                                              setNewMenuItem({
+                                                ...newMenuItem,
+                                                defaultToppings:
+                                                  currentToppings.filter(
+                                                    (id) => id !== topping.id,
+                                                  ),
+                                              });
+                                            }
+                                          }}
+                                        />
+                                        <Label
+                                          htmlFor={`topping-${topping.id}`}
+                                          className="text-sm cursor-pointer flex-1"
+                                        >
+                                          {topping.name}
+                                          {topping.price > 0 && (
+                                            <span className="text-gray-500 ml-1">
+                                              (+${topping.price.toFixed(2)})
+                                            </span>
+                                          )}
+                                        </Label>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-gray-500 text-center py-4">
+                                      No {toppingCategory.name.toLowerCase()}{" "}
+                                      toppings available for this category
+                                    </p>
+                                  )}
+                                </div>
+                              </TabsContent>
+                            );
+                          })}
+                        </Tabs>
+                      ) : (
+                        <div className="border rounded-lg p-8 text-center">
+                          <p className="text-gray-500">
+                            Select a category first to see available toppings
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Buttons moved to right side */}
                       <div className="flex justify-end space-x-2 pt-4">
                         <Button
                           variant="outline"
@@ -696,96 +811,6 @@ export default function Admin() {
                           Save Item
                         </Button>
                       </div>
-                    </div>
-
-                    {/* Right Column - Default Toppings */}
-                    <div>
-                      <Label className="text-lg font-semibold">
-                        Default Toppings
-                      </Label>
-                      <p className="text-sm text-gray-500 mb-4">
-                        Select which toppings should come with this item by
-                        default
-                      </p>
-
-                      {newMenuItem.category && (
-                        <div className="max-h-96 overflow-y-auto border rounded-lg p-4 space-y-3">
-                          {toppingCategories.map((toppingCategory) => {
-                            const categoryToppings = toppings.filter(
-                              (topping) =>
-                                topping.category === toppingCategory.id &&
-                                topping.menuItemCategory ===
-                                  newMenuItem.category &&
-                                topping.isActive,
-                            );
-
-                            if (categoryToppings.length === 0) return null;
-
-                            return (
-                              <div key={toppingCategory.id}>
-                                <h4 className="font-medium text-gray-800 mb-2">
-                                  {toppingCategory.name}
-                                </h4>
-                                <div className="space-y-2 pl-4">
-                                  {categoryToppings.map((topping) => (
-                                    <div
-                                      key={topping.id}
-                                      className="flex items-center space-x-2"
-                                    >
-                                      <Checkbox
-                                        id={`topping-${topping.id}`}
-                                        checked={
-                                          newMenuItem.defaultToppings?.includes(
-                                            topping.id,
-                                          ) || false
-                                        }
-                                        onCheckedChange={(checked) => {
-                                          const currentToppings =
-                                            newMenuItem.defaultToppings || [];
-                                          if (checked) {
-                                            setNewMenuItem({
-                                              ...newMenuItem,
-                                              defaultToppings: [
-                                                ...currentToppings,
-                                                topping.id,
-                                              ],
-                                            });
-                                          } else {
-                                            setNewMenuItem({
-                                              ...newMenuItem,
-                                              defaultToppings:
-                                                currentToppings.filter(
-                                                  (id) => id !== topping.id,
-                                                ),
-                                            });
-                                          }
-                                        }}
-                                      />
-                                      <Label
-                                        htmlFor={`topping-${topping.id}`}
-                                        className="text-sm cursor-pointer flex-1"
-                                      >
-                                        {topping.name}
-                                        {topping.price > 0 && (
-                                          <span className="text-gray-500 ml-1">
-                                            (+${topping.price.toFixed(2)})
-                                          </span>
-                                        )}
-                                      </Label>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            );
-                          })}
-
-                          {!newMenuItem.category && (
-                            <p className="text-gray-500 text-center py-8">
-                              Select a category first to see available toppings
-                            </p>
-                          )}
-                        </div>
-                      )}
                     </div>
                   </div>
                 </DialogContent>
