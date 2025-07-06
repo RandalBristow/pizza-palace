@@ -107,6 +107,7 @@ const mockMenuItems: MenuItem[] = [
     description: "Fresh mozzarella, tomato sauce, and basil",
     price: 12.99,
     category: "pizza",
+    defaultToppings: ["ch1", "s1"], // Default mozzarella and marinara
     isActive: true,
     sizes: [
       { size: '10"', price: 12.99 },
