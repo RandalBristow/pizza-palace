@@ -608,12 +608,19 @@ export default function Admin() {
                     <div className="space-y-4">
                       {/* Category moved to top */}
                       <div>
-                        <Label htmlFor="category">Category</Label>
+                        <Label htmlFor="category" className="text-red-600">
+                          * Category
+                        </Label>
                         <Select
                           value={newMenuItem.category}
-                          onValueChange={(value) =>
-                            setNewMenuItem({ ...newMenuItem, category: value })
-                          }
+                          onValueChange={(value) => {
+                            setNewMenuItem({
+                              ...newMenuItem,
+                              category: value,
+                              defaultToppings: [], // Reset toppings when category changes
+                            });
+                          }}
+                          required
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select category" />
@@ -630,7 +637,9 @@ export default function Admin() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="name">Name</Label>
+                          <Label htmlFor="name" className="text-red-600">
+                            * Name
+                          </Label>
                           <Input
                             id="name"
                             value={newMenuItem.name}
@@ -641,10 +650,13 @@ export default function Admin() {
                               })
                             }
                             placeholder="Item name"
+                            required
                           />
                         </div>
                         <div>
-                          <Label htmlFor="price">Price</Label>
+                          <Label htmlFor="price" className="text-red-600">
+                            * Price
+                          </Label>
                           <Input
                             id="price"
                             type="number"
@@ -657,6 +669,7 @@ export default function Admin() {
                               })
                             }
                             placeholder="0.00"
+                            required
                           />
                         </div>
                       </div>
