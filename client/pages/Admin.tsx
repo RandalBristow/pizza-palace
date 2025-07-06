@@ -122,6 +122,7 @@ const mockMenuItems: MenuItem[] = [
     description: "Our signature roast",
     price: 2.99,
     category: "coffee",
+    defaultToppings: [],
     isActive: true,
   },
 ];
@@ -135,12 +136,20 @@ const mockCategories: Category[] = [
 ];
 
 const mockToppings: Topping[] = [
-  { id: "t1", name: "Pepperoni", price: 2.0, category: "meat", isActive: true },
+  {
+    id: "t1",
+    name: "Pepperoni",
+    price: 2.0,
+    category: "meat",
+    menuItemCategory: "pizza",
+    isActive: true,
+  },
   {
     id: "t2",
     name: "Mushrooms",
     price: 1.5,
     category: "veggie",
+    menuItemCategory: "pizza",
     isActive: true,
   },
   {
@@ -148,6 +157,39 @@ const mockToppings: Topping[] = [
     name: "Extra Cheese",
     price: 2.0,
     category: "cheese",
+    menuItemCategory: "pizza",
+    isActive: true,
+  },
+  {
+    id: "ch1",
+    name: "Mozzarella",
+    price: 0,
+    category: "cheese",
+    menuItemCategory: "pizza",
+    isActive: true,
+  },
+  {
+    id: "s1",
+    name: "Marinara Sauce",
+    price: 0,
+    category: "sauce",
+    menuItemCategory: "pizza",
+    isActive: true,
+  },
+  {
+    id: "t4",
+    name: "Turkey",
+    price: 2.5,
+    category: "meat",
+    menuItemCategory: "sandwich",
+    isActive: true,
+  },
+  {
+    id: "t5",
+    name: "Lettuce",
+    price: 0.5,
+    category: "veggie",
+    menuItemCategory: "sandwich",
     isActive: true,
   },
 ];
