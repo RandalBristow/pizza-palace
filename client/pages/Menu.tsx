@@ -330,7 +330,7 @@ export default function Menu() {
                 {filteredItems.map((item) => (
                   <Card
                     key={item.id}
-                    className="overflow-hidden hover:shadow-lg transition-shadow bg-white rounded-lg h-fit"
+                    className="overflow-hidden hover:shadow-lg transition-shadow bg-white rounded-lg flex flex-col h-full"
                   >
                     {/* Pizza Image */}
                     <div
@@ -367,7 +367,7 @@ export default function Menu() {
                     />
 
                     {/* Card Content */}
-                    <div className="p-3">
+                    <div className="p-3 flex flex-col flex-1">
                       <h3 className="font-bold text-lg text-blue-600 mb-1 line-clamp-2">
                         {item.name}
                       </h3>
@@ -393,12 +393,12 @@ export default function Menu() {
                       </div>
 
                       {/* Description - truncated for smaller cards */}
-                      <p className="text-gray-700 text-xs mb-3 leading-relaxed line-clamp-2">
+                      <p className="text-gray-700 text-xs mb-3 leading-relaxed line-clamp-2 flex-1">
                         {item.description}
                       </p>
 
-                      {/* Buttons */}
-                      <div className="space-y-1">
+                      {/* Buttons - positioned at bottom */}
+                      <div className="space-y-1 mt-auto">
                         {category.id === "pizza" ? (
                           <>
                             <Button

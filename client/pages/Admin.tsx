@@ -62,6 +62,7 @@ interface MenuItem {
   image?: string;
   isActive: boolean;
   sizes?: { size: string; price: number }[];
+  defaultToppings?: string[]; // topping IDs
 }
 
 interface Category {
@@ -76,6 +77,7 @@ interface Topping {
   name: string;
   price: number;
   category: string;
+  menuItemCategory: string; // pizza, sandwich, etc.
   isActive: boolean;
 }
 
