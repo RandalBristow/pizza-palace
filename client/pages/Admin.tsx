@@ -596,14 +596,14 @@ export default function Admin() {
                     Add Menu Item
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-6xl h-[85vh] overflow-y-auto">
+                <DialogContent className="max-w-6xl h-[68vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Add New Menu Item</DialogTitle>
                     <DialogDescription>
                       Create a new menu item for your restaurant
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid grid-cols-2 gap-6 min-h-[70vh]">
+                  <div className="grid grid-cols-2 gap-6 min-h-[56vh]">
                     {/* Left Column - Item Details */}
                     <div className="space-y-4">
                       {/* Category moved to top */}
@@ -703,8 +703,8 @@ export default function Admin() {
                     </div>
 
                     {/* Right Column - Default Toppings */}
-                    <div className="space-y-4 flex flex-col">
-                      <div>
+                    <div className="flex flex-col">
+                      <div className="mb-4">
                         <Label className="text-lg font-semibold">
                           Default Toppings
                         </Label>
