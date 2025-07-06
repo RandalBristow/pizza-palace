@@ -703,7 +703,7 @@ export default function Admin() {
                     </div>
 
                     {/* Right Column - Default Toppings */}
-                    <div className="space-y-4">
+                    <div className="space-y-4 flex flex-col">
                       <div>
                         <Label className="text-lg font-semibold">
                           Default Toppings
