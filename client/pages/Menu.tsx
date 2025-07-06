@@ -206,9 +206,13 @@ export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("pizza");
   const [cart, setCart] = useState<any[]>([]);
   const [showDeliverySelection, setShowDeliverySelection] = useState(false);
-  const [pendingAction, setPendingAction] = useState<() => void>(() => {});
+  const [pendingAction, setPendingAction] = useState<{
+    action: () => void;
+    type: string;
+  } | null>(null);
   const { deliveryDetails, setDeliveryDetails, hasDeliveryDetails } =
     useOrder();
+  const navigate = useNavigate();
 
   const categories = [
     { id: "pizza", name: "Pizza", icon: Pizza },
