@@ -625,6 +625,9 @@ export default function Admin() {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-6xl h-[68vh] flex flex-col p-0">
+                  <DialogHeader className="sr-only">
+                    <DialogTitle>Add New Menu Item</DialogTitle>
+                  </DialogHeader>
                   <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
                     {/* Left Column - Item Details */}
                     <div className="p-6 border-r space-y-4">
