@@ -1,6 +1,7 @@
 import "./global.css";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { OrderProvider } from "./context/OrderContext";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
 import Order from "./pages/Order";
@@ -14,22 +15,24 @@ import Specials from "./pages/Specials";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/menu" element={<Menu />} />
-      <Route path="/order" element={<Order />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/specials" element={<Specials />} />
-      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  </BrowserRouter>
+  <OrderProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/order" element={<Order />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/specials" element={<Specials />} />
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  </OrderProvider>
 );
 
 createRoot(document.getElementById("root")!).render(<App />);
