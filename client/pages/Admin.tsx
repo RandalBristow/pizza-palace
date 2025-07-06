@@ -708,7 +708,7 @@ export default function Admin() {
                         <Label className="text-lg font-semibold">
                           Default Toppings
                         </Label>
-                        <p className="text-sm text-gray-500 mb-4">
+                        <p className="text-sm text-gray-500">
                           Select which toppings should come with this item by
                           default
                         </p>
