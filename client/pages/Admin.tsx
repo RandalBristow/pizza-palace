@@ -1300,7 +1300,7 @@ export default function Admin() {
                   <DialogHeader>
                     <DialogTitle>Add New Topping</DialogTitle>
                     <DialogDescription>
-                      Create a new topping for pizzas
+                      Create a new topping for your menu items
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
@@ -1332,7 +1332,30 @@ export default function Admin() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="toppingCategory">Category</Label>
+                      <Label htmlFor="menuItemCategory">Menu Item Type</Label>
+                      <Select
+                        value={newTopping.menuItemCategory}
+                        onValueChange={(value) =>
+                          setNewTopping({
+                            ...newTopping,
+                            menuItemCategory: value,
+                          })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select menu item type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="toppingCategory">Topping Category</Label>
                       <Select
                         value={newTopping.category}
                         onValueChange={(
@@ -1340,7 +1363,7 @@ export default function Admin() {
                         ) => setNewTopping({ ...newTopping, category: value })}
                       >
                         <SelectTrigger>
-                          <SelectValue />
+                          <SelectValue placeholder="Select topping category" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="sauce">Sauce</SelectItem>
