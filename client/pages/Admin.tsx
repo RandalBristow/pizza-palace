@@ -624,14 +624,14 @@ export default function Admin() {
                     Add Menu Item
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-6xl h-[68vh] overflow-y-auto">
+                <DialogContent className="max-w-6xl h-[68vh] flex flex-col">
                   <DialogHeader>
                     <DialogTitle>Add New Menu Item</DialogTitle>
                     <DialogDescription>
                       Create a new menu item for your restaurant
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid grid-cols-2 gap-6 min-h-[56vh] items-start">
+                  <div className="grid grid-cols-2 gap-6 flex-1 overflow-hidden">
                     {/* Left Column - Item Details */}
                     <div className="space-y-4">
                       {/* Category moved to top */}
@@ -731,19 +731,19 @@ export default function Admin() {
                     </div>
 
                     {/* Right Column - Default Toppings */}
-                    <div className="space-y-4">
+                    <div className="flex flex-col h-full">
                       <div>
                         <Label className="text-lg font-semibold">
                           Default Toppings
                         </Label>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 mb-4">
                           Select which toppings should come with this item by
                           default
                         </p>
                       </div>
 
                       {/* Toppings content that grows to fill space */}
-                      <div className="flex-1">
+                      <div className="flex-1 overflow-hidden">
                         {newMenuItem.category ? (
                           (() => {
                             const availableCategories =
@@ -758,9 +758,7 @@ export default function Admin() {
                                 className="w-full h-full"
                                 key={newMenuItem.category}
                               >
-                                <TabsList
-                                  className={`grid w-full grid-cols-${Math.min(availableCategories.length, 4)}`}
-                                >
+                                <TabsList className="w-full justify-start">
                                   {availableCategories.map(
                                     (toppingCategory) => (
                                       <TabsTrigger
@@ -856,7 +854,7 @@ export default function Admin() {
                             );
                           })()
                         ) : (
-                          <div className="border rounded-lg p-8 text-center h-64 flex items-center justify-center">
+                          <div className="border rounded-lg p-8 text-center flex items-center justify-center h-full">
                             <p className="text-gray-500">
                               Select a category first to see available toppings
                             </p>
@@ -865,7 +863,7 @@ export default function Admin() {
                       </div>
 
                       {/* Buttons fixed at bottom right */}
-                      <div className="flex justify-end space-x-2 pt-4 mt-auto">
+                      <div className="flex justify-end space-x-2 pt-4 border-t">
                         <Button
                           variant="outline"
                           onClick={() => setIsAddingMenuItem(false)}
