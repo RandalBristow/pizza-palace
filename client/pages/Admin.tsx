@@ -280,6 +280,19 @@ export default function Admin() {
     }
   };
 
+  const handleEditSpecial = (special: Special) => {
+    setEditingSpecial(special);
+  };
+
+  const handleSaveSpecial = () => {
+    if (editingSpecial) {
+      setSpecials(
+        specials.map((s) => (s.id === editingSpecial.id ? editingSpecial : s)),
+      );
+      setEditingSpecial(null);
+    }
+  };
+
   const handleAddTopping = () => {
     if (newTopping.name) {
       const topping: Topping = {
@@ -1635,6 +1648,183 @@ export default function Admin() {
                       </Accordion>
                     </div>
                   </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Edit Special Dialog */}
+              <Dialog
+                open={!!editingSpecial}
+                onOpenChange={() => setEditingSpecial(null)}
+              >
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Edit Special</DialogTitle>
+                    <DialogDescription>
+                      Update the special offer details and affected menu items
+                    </DialogDescription>
+                  </DialogHeader>
+                  {editingSpecial && (
+                    <div className="grid grid-cols-2 gap-6">
+                      {/* Left Column - Special Details */}
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="editSpecialName">Special Name</Label>
+                          <Input
+                            id="editSpecialName"
+                            value={editingSpecial.name}
+                            onChange={(e) =>
+                              setEditingSpecial({
+                                ...editingSpecial,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="editSpecialDescription">
+                            Description
+                          </Label>
+                          <Textarea
+                            id="editSpecialDescription"
+                            value={editingSpecial.description}
+                            onChange={(e) =>
+                              setEditingSpecial({
+                                ...editingSpecial,
+                                description: e.target.value,
+                              })
+                            }
+                            rows={3}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="editStartDate">Start Date</Label>
+                            <Input
+                              id="editStartDate"
+                              type="date"
+                              value={editingSpecial.startDate}
+                              onChange={(e) =>
+                                setEditingSpecial({
+                                  ...editingSpecial,
+                                  startDate: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="editEndDate">End Date</Label>
+                            <Input
+                              id="editEndDate"
+                              type="date"
+                              value={editingSpecial.endDate}
+                              onChange={(e) =>
+                                setEditingSpecial({
+                                  ...editingSpecial,
+                                  endDate: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2 pt-4">
+                          <Button
+                            variant="outline"
+                            onClick={() => setEditingSpecial(null)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button onClick={handleSaveSpecial}>
+                            <Save className="h-4 w-4 mr-2" />
+                            Save Changes
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Right Column - Affected Menu Items */}
+                      <div>
+                        <Label className="text-lg font-semibold">
+                          Affected Menu Items
+                        </Label>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Select which menu items this special applies to
+                        </p>
+                        <Accordion
+                          type="multiple"
+                          className="w-full max-h-96 overflow-y-auto"
+                        >
+                          {categories
+                            .filter((cat) => cat.isActive)
+                            .map((category) => {
+                              const categoryItems = menuItems.filter(
+                                (item) =>
+                                  item.isActive &&
+                                  item.category === category.id,
+                              );
+                              if (categoryItems.length === 0) return null;
+                              return (
+                                <AccordionItem
+                                  key={category.id}
+                                  value={category.id}
+                                >
+                                  <AccordionTrigger className="hover:no-underline px-3 py-2">
+                                    <span className="font-medium">
+                                      {category.name}
+                                    </span>
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    <div className="space-y-2 pt-2">
+                                      {categoryItems.map((item) => (
+                                        <div
+                                          key={item.id}
+                                          className="flex items-center space-x-2"
+                                        >
+                                          <Checkbox
+                                            id={`edit-special-item-${item.id}`}
+                                            checked={
+                                              editingSpecial.menuItems?.includes(
+                                                item.id,
+                                              ) || false
+                                            }
+                                            onCheckedChange={(checked) => {
+                                              const currentItems =
+                                                editingSpecial.menuItems || [];
+                                              if (checked) {
+                                                setEditingSpecial({
+                                                  ...editingSpecial,
+                                                  menuItems: [
+                                                    ...currentItems,
+                                                    item.id,
+                                                  ],
+                                                });
+                                              } else {
+                                                setEditingSpecial({
+                                                  ...editingSpecial,
+                                                  menuItems:
+                                                    currentItems.filter(
+                                                      (id) => id !== item.id,
+                                                    ),
+                                                });
+                                              }
+                                            }}
+                                          />
+                                          <Label
+                                            htmlFor={`edit-special-item-${item.id}`}
+                                            className="text-sm cursor-pointer flex-1"
+                                          >
+                                            {item.name} - $
+                                            {item.price.toFixed(2)}
+                                          </Label>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              );
+                            })}
+                        </Accordion>
+                      </div>
+                    </div>
+                  )}
                 </DialogContent>
               </Dialog>
             </div>
