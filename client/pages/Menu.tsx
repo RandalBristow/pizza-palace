@@ -275,56 +275,12 @@ export default function Menu() {
 
   return (
     <div className="min-h-screen bg-transparent">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/"
-                className="flex items-center text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Back to Home
-              </Link>
-              <div className="flex items-center space-x-2">
-                <Pizza className="h-6 w-6 text-red-600" />
-                <Coffee className="h-5 w-5 text-amber-700" />
-                <span className="text-lg font-semibold">Menu</span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              {hasDeliveryDetails && (
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeliverySelection(true)}
-                  className="text-sm"
-                >
-                  {deliveryDetails?.method === "carryout"
-                    ? "CARRYOUT FROM"
-                    : "DELIVERY TO"}
-                  <br />
-                  <span className="text-xs">
-                    {deliveryDetails?.method === "carryout"
-                      ? "914 Ashland Rd"
-                      : deliveryDetails?.address?.city || ""}
-                  </span>
-                </Button>
-              )}
-              <Button variant="outline" className="relative">
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Cart
-                {cart.length > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                    {cart.length}
-                  </Badge>
-                )}
-              </Button>
-              <Button onClick={handleOrderStart}>Start Order</Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <HeaderWithDelivery
+        title="Menu"
+        showBackButton={true}
+        backTo="/"
+        cart={cart}
+      />
 
       {/* Menu Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
