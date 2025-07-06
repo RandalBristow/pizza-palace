@@ -97,6 +97,7 @@ interface ToppingCategory {
   id: string;
   name: string;
   order: number;
+  menuItemCategory: string;
   isActive: boolean;
 }
 
