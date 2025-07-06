@@ -624,16 +624,19 @@ export default function Admin() {
                     Add Menu Item
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-6xl h-[68vh] flex flex-col">
-                  <DialogHeader>
-                    <DialogTitle>Add New Menu Item</DialogTitle>
-                    <DialogDescription>
-                      Create a new menu item for your restaurant
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid grid-cols-2 gap-6 flex-1 overflow-hidden">
+                <DialogContent className="max-w-6xl h-[68vh] flex flex-col p-0">
+                  <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
                     {/* Left Column - Item Details */}
-                    <div className="space-y-4">
+                    <div className="p-6 border-r space-y-4">
+                      <div className="mb-6">
+                        <h2 className="text-lg font-semibold text-gray-900">
+                          Add New Menu Item
+                        </h2>
+                        <p className="text-sm text-gray-500">
+                          Create a new menu item for your restaurant
+                        </p>
+                      </div>
+
                       {/* Category moved to top */}
                       <div>
                         <Label htmlFor="category" className="text-red-600">
@@ -731,12 +734,12 @@ export default function Admin() {
                     </div>
 
                     {/* Right Column - Default Toppings */}
-                    <div className="flex flex-col h-full">
-                      <div>
-                        <Label className="text-lg font-semibold">
+                    <div className="p-6 flex flex-col h-full">
+                      <div className="mb-6">
+                        <h2 className="text-lg font-semibold text-gray-900">
                           Default Toppings
-                        </Label>
-                        <p className="text-sm text-gray-500 mb-4">
+                        </h2>
+                        <p className="text-sm text-gray-500">
                           Select which toppings should come with this item by
                           default
                         </p>
