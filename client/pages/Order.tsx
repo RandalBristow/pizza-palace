@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useOrder } from "../context/OrderContext";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -210,6 +211,9 @@ const ToppingRow = ({
 };
 
 export default function Order() {
+  const navigate = useNavigate();
+  const { hasDeliveryDetails } = useOrder();
+
   const [pizzaOrder, setPizzaOrder] = useState<PizzaOrder>({
     size: "",
     crust: "",
@@ -219,6 +223,12 @@ export default function Order() {
   });
   const [selectedToppingCategory, setSelectedToppingCategory] =
     useState("cheese");
+
+  useEffect(() => {
+    if (!hasDeliveryDetails) {
+      navigate("/menu");
+    }
+  }, [hasDeliveryDetails, navigate]);
 
   const toppingCategories = [
     { id: "cheese", name: "Cheese", icon: "🧀" },

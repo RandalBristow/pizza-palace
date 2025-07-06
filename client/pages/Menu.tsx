@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
+import DeliverySelection from "../components/DeliverySelection";
+import { useOrder } from "../context/OrderContext";
 import {
   Card,
   CardContent,
@@ -202,6 +204,10 @@ const mockMenuItems: MenuItem[] = [
 export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("pizza");
   const [cart, setCart] = useState<any[]>([]);
+  const [showDeliverySelection, setShowDeliverySelection] = useState(false);
+  const [pendingAction, setPendingAction] = useState<() => void>(() => {});
+  const { deliveryDetails, setDeliveryDetails, hasDeliveryDetails } =
+    useOrder();
 
   const categories = [
     { id: "pizza", name: "Pizza", icon: Pizza },
@@ -216,12 +222,37 @@ export default function Menu() {
   );
 
   const addToCart = (item: MenuItem, size?: string) => {
+    if (!hasDeliveryDetails) {
+      setPendingAction(() => () => addToCart(item, size));
+      setShowDeliverySelection(true);
+      return;
+    }
+
     const cartItem = {
       ...item,
       selectedSize: size,
       cartId: `${item.id}-${size || "default"}-${Date.now()}`,
     };
     setCart((prev) => [...prev, cartItem]);
+  };
+
+  const handleOrderStart = () => {
+    if (!hasDeliveryDetails) {
+      setShowDeliverySelection(true);
+      return;
+    }
+    // Navigate to order page
+    window.location.href = "/order";
+  };
+
+  const handleDeliveryConfirm = (details: any) => {
+    setDeliveryDetails(details);
+    setShowDeliverySelection(false);
+    // Execute pending action if any
+    if (pendingAction) {
+      pendingAction();
+      setPendingAction(() => {});
+    }
   };
 
   return (
@@ -245,6 +276,23 @@ export default function Menu() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              {hasDeliveryDetails && (
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeliverySelection(true)}
+                  className="text-sm"
+                >
+                  {deliveryDetails?.method === "carryout"
+                    ? "CARRYOUT FROM"
+                    : "DELIVERY TO"}
+                  <br />
+                  <span className="text-xs">
+                    {deliveryDetails?.method === "carryout"
+                      ? "914 Ashland Rd"
+                      : deliveryDetails?.address?.city || ""}
+                  </span>
+                </Button>
+              )}
               <Button variant="outline" className="relative">
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Cart
@@ -254,9 +302,7 @@ export default function Menu() {
                   </Badge>
                 )}
               </Button>
-              <Button asChild>
-                <Link to="/order">Start Order</Link>
-              </Button>
+              <Button onClick={handleOrderStart}>Start Order</Button>
             </div>
           </div>
         </div>
@@ -293,15 +339,15 @@ export default function Menu() {
 
           {categories.map((category) => (
             <TabsContent key={category.id} value={category.id} className="mt-6">
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {filteredItems.map((item) => (
                   <Card
                     key={item.id}
-                    className="overflow-hidden hover:shadow-lg transition-shadow bg-white rounded-lg"
+                    className="overflow-hidden hover:shadow-lg transition-shadow bg-white rounded-lg h-fit"
                   >
                     {/* Pizza Image */}
                     <div
-                      className="h-48 relative overflow-hidden bg-cover bg-center"
+                      className="h-32 relative overflow-hidden bg-cover bg-center"
                       style={{
                         backgroundImage: (() => {
                           if (category.id === "pizza") {
@@ -424,6 +470,14 @@ export default function Menu() {
             </TabsContent>
           ))}
         </Tabs>
+
+        {/* Delivery Selection Modal */}
+        <DeliverySelection
+          isOpen={showDeliverySelection}
+          onClose={() => setShowDeliverySelection(false)}
+          onConfirm={handleDeliveryConfirm}
+          currentDetails={deliveryDetails || undefined}
+        />
       </main>
     </div>
   );
