@@ -363,6 +363,15 @@ export default function Admin() {
     }
   };
 
+  const handleSaveTopping = () => {
+    if (editingTopping) {
+      setToppings(
+        toppings.map((t) => (t.id === editingTopping.id ? editingTopping : t)),
+      );
+      setEditingTopping(null);
+    }
+  };
+
   const handleAddCategory = () => {
     if (newCategory.name) {
       const category: Category = {
