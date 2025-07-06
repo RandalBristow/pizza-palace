@@ -703,12 +703,12 @@ export default function Admin() {
                     </div>
 
                     {/* Right Column - Default Toppings */}
-                    <div className="flex flex-col">
+                    <div className="space-y-4">
                       <div>
                         <Label className="text-lg font-semibold">
                           Default Toppings
                         </Label>
-                        <p className="text-sm text-gray-500 mb-4">
+                        <p className="text-sm text-gray-500">
                           Select which toppings should come with this item by
                           default
                         </p>
