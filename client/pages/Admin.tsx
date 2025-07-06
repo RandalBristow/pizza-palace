@@ -1274,6 +1274,31 @@ export default function Admin() {
                   {editingToppingCategory && (
                     <div className="space-y-4">
                       <div>
+                        <Label htmlFor="editToppingCategoryMenuItemType">
+                          Menu Item Type
+                        </Label>
+                        <Select
+                          value={editingToppingCategory.menuItemCategory}
+                          onValueChange={(value) =>
+                            setEditingToppingCategory({
+                              ...editingToppingCategory,
+                              menuItemCategory: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select menu item type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
                         <Label htmlFor="editToppingCategoryName">
                           Category Name
                         </Label>
