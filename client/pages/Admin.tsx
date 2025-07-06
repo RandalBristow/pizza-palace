@@ -1678,24 +1678,25 @@ export default function Admin() {
               </Dialog>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {toppings.map((topping) => (
                 <Card key={topping.id}>
-                  <CardContent className="p-4">
+                  <CardContent className="p-3">
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <h3 className="font-semibold">{topping.name}</h3>
-                          <Badge variant="outline">{topping.category}</Badge>
-                          <Badge
-                            variant={topping.isActive ? "default" : "secondary"}
-                          >
-                            {topping.isActive ? "Active" : "Inactive"}
-                          </Badge>
-                        </div>
-                        <p className="font-semibold text-green-600 mt-1">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-semibold">{topping.name}</h3>
+                        <Badge variant="outline">{topping.category}</Badge>
+                        <Badge
+                          variant={topping.isActive ? "default" : "secondary"}
+                        >
+                          {topping.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="bg-green-50 text-green-700"
+                        >
                           +${topping.price.toFixed(2)}
-                        </p>
+                        </Badge>
                       </div>
                       <div className="flex space-x-2">
                         <Button
