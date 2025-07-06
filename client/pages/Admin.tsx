@@ -1507,6 +1507,36 @@ export default function Admin() {
                           </SelectContent>
                         </Select>
                       </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="editToppingName">Topping Name</Label>
+                          <Input
+                            id="editToppingName"
+                            value={editingTopping.name}
+                            onChange={(e) =>
+                              setEditingTopping({
+                                ...editingTopping,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="editToppingPrice">Price</Label>
+                          <Input
+                            id="editToppingPrice"
+                            type="number"
+                            step="0.01"
+                            value={editingTopping.price}
+                            onChange={(e) =>
+                              setEditingTopping({
+                                ...editingTopping,
+                                price: parseFloat(e.target.value) || 0,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
                       <div className="flex justify-end space-x-2">
                         <Button
                           variant="outline"
