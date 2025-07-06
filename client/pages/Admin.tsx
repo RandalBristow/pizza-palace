@@ -674,7 +674,9 @@ export default function Admin() {
                         </div>
                       </div>
                       <div>
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description" className="text-red-600">
+                          * Description
+                        </Label>
                         <Textarea
                           id="description"
                           value={newMenuItem.description}
@@ -686,6 +688,7 @@ export default function Admin() {
                           }
                           placeholder="Item description"
                           rows={3}
+                          required
                         />
                       </div>
                       <div className="flex items-center space-x-2">
