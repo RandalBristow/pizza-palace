@@ -1453,6 +1453,7 @@ export default function Admin() {
                           setNewTopping({
                             ...newTopping,
                             menuItemCategory: value,
+                            category: "meat", // Reset category when menu item type changes
                           })
                         }
                       >
@@ -1480,10 +1481,20 @@ export default function Admin() {
                           <SelectValue placeholder="Select topping category" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="sauce">Sauce</SelectItem>
-                          <SelectItem value="cheese">Cheese</SelectItem>
-                          <SelectItem value="meat">Meat</SelectItem>
-                          <SelectItem value="veggie">Vegetables</SelectItem>
+                          {toppingCategories
+                            .filter(
+                              (tc) =>
+                                tc.menuItemCategory ===
+                                  newTopping.menuItemCategory && tc.isActive,
+                            )
+                            .map((toppingCategory) => (
+                              <SelectItem
+                                key={toppingCategory.id}
+                                value={toppingCategory.id}
+                              >
+                                {toppingCategory.name}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -1555,12 +1566,18 @@ export default function Admin() {
                         </Label>
                         <Select
                           value={editingTopping.menuItemCategory}
-                          onValueChange={(value) =>
+                          onValueChange={(value) => {
+                            const availableCategories =
+                              toppingCategories.filter(
+                                (tc) =>
+                                  tc.menuItemCategory === value && tc.isActive,
+                              );
                             setEditingTopping({
                               ...editingTopping,
                               menuItemCategory: value,
-                            })
-                          }
+                              category: availableCategories[0]?.id || "meat", // Reset to first available category
+                            });
+                          }}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select menu item type" />
@@ -1593,10 +1610,21 @@ export default function Admin() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="sauce">Sauce</SelectItem>
-                            <SelectItem value="cheese">Cheese</SelectItem>
-                            <SelectItem value="meat">Meat</SelectItem>
-                            <SelectItem value="veggie">Vegetables</SelectItem>
+                            {toppingCategories
+                              .filter(
+                                (tc) =>
+                                  tc.menuItemCategory ===
+                                    editingTopping.menuItemCategory &&
+                                  tc.isActive,
+                              )
+                              .map((toppingCategory) => (
+                                <SelectItem
+                                  key={toppingCategory.id}
+                                  value={toppingCategory.id}
+                                >
+                                  {toppingCategory.name}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                       </div>
