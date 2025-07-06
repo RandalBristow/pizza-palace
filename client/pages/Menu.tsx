@@ -297,8 +297,9 @@ export default function Menu() {
                 {filteredItems.map((item) => (
                   <Card
                     key={item.id}
-                    className="overflow-hidden hover:shadow-lg transition-shadow"
+                    className="overflow-hidden hover:shadow-lg transition-shadow bg-white rounded-lg"
                   >
+                    {/* Pizza Image */}
                     <div
                       className="h-48 relative overflow-hidden bg-cover bg-center"
                       style={{
@@ -307,74 +308,93 @@ export default function Menu() {
                             if (
                               item.name.toLowerCase().includes("margherita")
                             ) {
-                              return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
+                              return `url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
                             } else if (
                               item.name.toLowerCase().includes("pepperoni")
                             ) {
-                              return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/2762939/pexels-photo-2762939.jpeg')`;
+                              return `url('https://images.pexels.com/photos/2762939/pexels-photo-2762939.jpeg')`;
                             } else if (
                               item.name.toLowerCase().includes("supreme")
                             ) {
-                              return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/5903312/pexels-photo-5903312.jpeg')`;
+                              return `url('https://images.pexels.com/photos/5903312/pexels-photo-5903312.jpeg')`;
                             } else {
-                              return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
+                              return `url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
                             }
                           } else if (category.id === "calzone") {
-                            return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/5903094/pexels-photo-5903094.jpeg')`;
+                            return `url('https://images.pexels.com/photos/5903094/pexels-photo-5903094.jpeg')`;
                           } else if (category.id === "coffee") {
-                            return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/10303534/pexels-photo-10303534.jpeg')`;
+                            return `url('https://images.pexels.com/photos/10303534/pexels-photo-10303534.jpeg')`;
                           } else if (category.id === "wings") {
-                            return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/6369302/pexels-photo-6369302.jpeg')`;
+                            return `url('https://images.pexels.com/photos/6369302/pexels-photo-6369302.jpeg')`;
                           } else {
-                            return `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
+                            return `url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
                           }
                         })(),
                       }}
-                    >
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-white text-center">
-                          <div className="bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
-                            <h4 className="font-bold text-sm">{item.name}</h4>
-                            <p className="text-xs opacity-90">
-                              ${item.price.toFixed(2)}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    />
 
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">{item.name}</CardTitle>
-                          <div className="flex items-center space-x-2 mt-1">
-                            {item.rating && (
-                              <div className="flex items-center">
-                                <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                <span className="text-sm text-gray-600 ml-1">
-                                  {item.rating}
-                                </span>
-                              </div>
-                            )}
-                            {item.isGlutenFree && (
-                              <Badge variant="secondary" className="text-xs">
-                                Gluten Free
-                              </Badge>
-                            )}
-                            {item.isVegetarian && (
-                              <Badge variant="outline" className="text-xs">
-                                Vegetarian
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <CardDescription>{item.description}</CardDescription>
-                    </CardHeader>
+                    {/* Card Content */}
+                    <div className="p-4">
+                      <h3 className="font-bold text-xl text-blue-600 mb-2">
+                        {item.name}
+                      </h3>
 
-                    <CardContent>
-                      {item.sizes ? (
-                        <div className="space-y-2">
+                      {/* Badges */}
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {item.isGlutenFree && (
+                          <Badge
+                            variant="secondary"
+                            className="text-xs bg-green-100 text-green-800"
+                          >
+                            Gluten Free
+                          </Badge>
+                        )}
+                        {item.isVegetarian && (
+                          <Badge
+                            variant="outline"
+                            className="text-xs border-green-500 text-green-700"
+                          >
+                            Vegetarian
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-gray-700 text-sm mb-4 leading-relaxed">
+                        {item.description}
+                      </p>
+
+                      {/* Buttons */}
+                      <div className="space-y-2">
+                        {category.id === "pizza" ? (
+                          <>
+                            <Button
+                              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2"
+                              asChild
+                            >
+                              <Link to="/order">ADD TO ORDER</Link>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-2"
+                              asChild
+                            >
+                              <Link to="/order">CUSTOMIZE</Link>
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2"
+                            onClick={() => addToCart(item)}
+                          >
+                            ADD TO ORDER - ${item.price.toFixed(2)}
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Size options for non-pizza items */}
+                      {item.sizes && category.id !== "pizza" && (
+                        <div className="mt-4 space-y-2">
                           <p className="text-sm font-medium text-gray-700">
                             Choose Size:
                           </p>
@@ -396,17 +416,8 @@ export default function Menu() {
                             </div>
                           ))}
                         </div>
-                      ) : (
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-red-600">
-                            ${item.price.toFixed(2)}
-                          </span>
-                          <Button onClick={() => addToCart(item)}>
-                            Add to Cart
-                          </Button>
-                        </div>
                       )}
-                    </CardContent>
+                    </div>
                   </Card>
                 ))}
               </div>

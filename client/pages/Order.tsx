@@ -48,6 +48,7 @@ interface PizzaTopping extends Topping {
 interface PizzaOrder {
   size: string;
   crust: string;
+  sauce: string;
   toppings: PizzaTopping[];
   basePrice: number;
 }
@@ -66,13 +67,14 @@ const crustTypes = [
   { id: "thick", name: "Thick Crust" },
 ];
 
-const toppings: Topping[] = [
-  // Sauces
-  { id: "s1", name: "Marinara Sauce", price: 0, category: "sauce" },
-  { id: "s2", name: "White Sauce", price: 1.0, category: "sauce" },
-  { id: "s3", name: "BBQ Sauce", price: 1.0, category: "sauce" },
-  { id: "s4", name: "Pesto Sauce", price: 1.5, category: "sauce" },
+const sauceTypes = [
+  { id: "marinara", name: "Marinara Sauce" },
+  { id: "white", name: "White Sauce" },
+  { id: "bbq", name: "BBQ Sauce" },
+  { id: "pesto", name: "Pesto Sauce" },
+];
 
+const toppings: Topping[] = [
   // Cheese
   { id: "ch1", name: "Mozzarella", price: 0, category: "cheese" },
   { id: "ch2", name: "Extra Mozzarella", price: 2.0, category: "cheese" },
@@ -211,14 +213,14 @@ export default function Order() {
   const [pizzaOrder, setPizzaOrder] = useState<PizzaOrder>({
     size: "",
     crust: "",
+    sauce: "",
     toppings: [],
     basePrice: 0,
   });
   const [selectedToppingCategory, setSelectedToppingCategory] =
-    useState("meat");
+    useState("cheese");
 
   const toppingCategories = [
-    { id: "sauce", name: "Sauce", icon: "🍅" },
     { id: "cheese", name: "Cheese", icon: "🧀" },
     { id: "meat", name: "Meat", icon: "🥓" },
     { id: "veggie", name: "Vegetables", icon: "🥬" },
@@ -235,6 +237,10 @@ export default function Order() {
 
   const handleCrustChange = (crust: string) => {
     setPizzaOrder((prev) => ({ ...prev, crust }));
+  };
+
+  const handleSauceChange = (sauce: string) => {
+    setPizzaOrder((prev) => ({ ...prev, sauce }));
   };
 
   const handleToppingChange = (topping: Topping, placement: string | null) => {
@@ -376,10 +382,40 @@ export default function Order() {
               </CardContent>
             </Card>
 
+            {/* Sauce Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle>3. Choose Sauce</CardTitle>
+                <CardDescription>Select your sauce type</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RadioGroup
+                  value={pizzaOrder.sauce}
+                  onValueChange={handleSauceChange}
+                  className="space-y-3"
+                >
+                  {sauceTypes.map((sauce) => (
+                    <div
+                      key={sauce.id}
+                      className="flex items-center space-x-2 p-3 border rounded hover:bg-gray-50"
+                    >
+                      <RadioGroupItem value={sauce.id} id={sauce.id} />
+                      <Label
+                        htmlFor={sauce.id}
+                        className="flex-1 cursor-pointer"
+                      >
+                        {sauce.name}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </CardContent>
+            </Card>
+
             {/* Toppings Selection */}
             <Card>
               <CardHeader>
-                <CardTitle>3. Add Toppings</CardTitle>
+                <CardTitle>4. Add Toppings</CardTitle>
                 <CardDescription>
                   Choose toppings and specify placement (left half, right half,
                   or whole pizza)
@@ -391,10 +427,16 @@ export default function Order() {
                   onValueChange={setSelectedToppingCategory}
                   className="w-full"
                 >
-                  <TabsList className="grid w-full grid-cols-4 h-auto p-1 bg-gray-100">
+                  <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-gray-100">
+                    <TabsTrigger
+                      value="cheese"
+                      className="text-sm py-2 data-[state=active]:bg-black data-[state=active]:text-white"
+                    >
+                      Cheese
+                    </TabsTrigger>
                     <TabsTrigger
                       value="meat"
-                      className="text-sm py-2 data-[state=active]:bg-black data-[state=active]:text-white"
+                      className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
                     >
                       Meats
                     </TabsTrigger>
@@ -403,18 +445,6 @@ export default function Order() {
                       className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
                     >
                       Veggies
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="cheese"
-                      className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
-                    >
-                      Cheese
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="sauce"
-                      className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
-                    >
-                      Sauce
                     </TabsTrigger>
                   </TabsList>
 
@@ -523,6 +553,17 @@ export default function Order() {
                   </div>
                 )}
 
+                {/* Sauce */}
+                {pizzaOrder.sauce && (
+                  <div className="flex justify-between text-sm">
+                    <span>
+                      Sauce:{" "}
+                      {sauceTypes.find((s) => s.id === pizzaOrder.sauce)?.name}
+                    </span>
+                    <span>Included</span>
+                  </div>
+                )}
+
                 {/* Toppings */}
                 {pizzaOrder.toppings.length > 0 && (
                   <div className="space-y-2">
@@ -561,7 +602,9 @@ export default function Order() {
                 {/* Add to Cart Button */}
                 <Button
                   className="w-full"
-                  disabled={!pizzaOrder.size || !pizzaOrder.crust}
+                  disabled={
+                    !pizzaOrder.size || !pizzaOrder.crust || !pizzaOrder.sauce
+                  }
                 >
                   Add to Cart
                 </Button>
