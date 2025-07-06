@@ -1158,12 +1158,12 @@ export default function Admin() {
               </Dialog>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {categories.map((category) => (
                 <Card key={category.id}>
-                  <CardContent className="p-4">
+                  <CardContent className="p-3">
                     <div className="flex items-center justify-between">
-                      <div>
+                      <div className="flex items-center space-x-2">
                         <h3 className="font-semibold">{category.name}</h3>
                         <Badge
                           variant={category.isActive ? "default" : "secondary"}
@@ -1171,15 +1171,13 @@ export default function Admin() {
                           {category.isActive ? "Active" : "Inactive"}
                         </Badge>
                       </div>
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditCategory(category)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditCategory(category)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
