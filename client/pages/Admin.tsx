@@ -1366,36 +1366,34 @@ export default function Admin() {
               </Dialog>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {toppingCategories.map((toppingCategory) => (
                 <Card key={toppingCategory.id}>
-                  <CardContent className="p-4">
+                  <CardContent className="p-3">
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <h3 className="font-semibold">
-                            {toppingCategory.name}
-                          </h3>
-                          <Badge variant="outline">
-                            Order: {toppingCategory.order}
-                          </Badge>
-                          <Badge
-                            variant={
-                              toppingCategory.isActive ? "default" : "secondary"
-                            }
-                          >
-                            {toppingCategory.isActive ? "Active" : "Inactive"}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600 mt-1">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-semibold">
+                          {toppingCategory.name}
+                        </h3>
+                        <Badge variant="outline">
+                          Order: {toppingCategory.order}
+                        </Badge>
+                        <Badge
+                          variant={
+                            toppingCategory.isActive ? "default" : "secondary"
+                          }
+                        >
+                          {toppingCategory.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                        <Badge variant="outline">
                           {
                             toppings.filter(
                               (t) =>
                                 t.category === toppingCategory.id && t.isActive,
                             ).length
                           }{" "}
-                          active toppings
-                        </p>
+                          toppings
+                        </Badge>
                       </div>
                       <div className="flex space-x-2">
                         <Button
