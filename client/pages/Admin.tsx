@@ -412,12 +412,14 @@ export default function Admin() {
         id: `topcat_${Date.now()}`,
         name: newToppingCategory.name,
         order: newToppingCategory.order,
+        menuItemCategory: newToppingCategory.menuItemCategory,
         isActive: true,
       };
       setToppingCategories([...toppingCategories, toppingCategory]);
       setNewToppingCategory({
         name: "",
         order: toppingCategories.length + 2,
+        menuItemCategory: "pizza",
       });
       setIsAddingToppingCategory(false);
     }
@@ -1186,6 +1188,31 @@ export default function Admin() {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="toppingCategoryMenuItemType">
+                        Menu Item Type
+                      </Label>
+                      <Select
+                        value={newToppingCategory.menuItemCategory}
+                        onValueChange={(value) =>
+                          setNewToppingCategory({
+                            ...newToppingCategory,
+                            menuItemCategory: value,
+                          })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select menu item type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <div>
                       <Label htmlFor="toppingCategoryName">Category Name</Label>
                       <Input
