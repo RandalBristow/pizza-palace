@@ -606,6 +606,28 @@ export default function Admin() {
                   <div className="grid grid-cols-2 gap-6">
                     {/* Left Column - Item Details */}
                     <div className="space-y-4">
+                      {/* Category moved to top */}
+                      <div>
+                        <Label htmlFor="category">Category</Label>
+                        <Select
+                          value={newMenuItem.category}
+                          onValueChange={(value) =>
+                            setNewMenuItem({ ...newMenuItem, category: value })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="name">Name</Label>
@@ -637,26 +659,6 @@ export default function Admin() {
                             placeholder="0.00"
                           />
                         </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="category">Category</Label>
-                        <Select
-                          value={newMenuItem.category}
-                          onValueChange={(value) =>
-                            setNewMenuItem({ ...newMenuItem, category: value })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.map((category) => (
-                              <SelectItem key={category.id} value={category.id}>
-                                {category.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
                       </div>
                       <div>
                         <Label htmlFor="description">Description</Label>
