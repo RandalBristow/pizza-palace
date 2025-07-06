@@ -300,6 +300,7 @@ export default function Admin() {
   const [newToppingCategory, setNewToppingCategory] = useState({
     name: "",
     order: toppingCategories.length + 1,
+    menuItemCategory: "pizza",
   });
 
   // Handlers
