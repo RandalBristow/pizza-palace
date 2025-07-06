@@ -985,29 +985,27 @@ export default function Admin() {
               </Dialog>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {menuItems.map((item) => (
                 <Card key={item.id}>
-                  <CardContent className="p-4">
+                  <CardContent className="p-3">
                     <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2">
-                          <h3 className="font-semibold">{item.name}</h3>
-                          <Badge variant="outline">{item.category}</Badge>
-                          <Badge
-                            variant={item.isActive ? "default" : "secondary"}
-                          >
-                            {item.isActive ? "Active" : "Inactive"}
-                          </Badge>
-                        </div>
-                        <p className="text-gray-600 text-sm mt-1">
-                          {item.description}
-                        </p>
-                        <p className="font-semibold text-green-600 mt-1">
+                      <div className="flex items-center space-x-2 flex-1 min-w-0">
+                        <h3 className="font-semibold truncate">{item.name}</h3>
+                        <Badge variant="outline">{item.category}</Badge>
+                        <Badge
+                          variant={item.isActive ? "default" : "secondary"}
+                        >
+                          {item.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="bg-green-50 text-green-700"
+                        >
                           ${item.price.toFixed(2)}
-                        </p>
+                        </Badge>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 flex-shrink-0">
                         <Button
                           variant="outline"
                           size="sm"
