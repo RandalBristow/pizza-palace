@@ -380,19 +380,19 @@ export default function Menu() {
                     />
 
                     {/* Card Content */}
-                    <div className="p-4">
-                      <h3 className="font-bold text-xl text-blue-600 mb-2">
+                    <div className="p-3">
+                      <h3 className="font-bold text-lg text-blue-600 mb-1 line-clamp-2">
                         {item.name}
                       </h3>
 
                       {/* Badges */}
-                      <div className="flex flex-wrap gap-1 mb-3">
+                      <div className="flex flex-wrap gap-1 mb-2">
                         {item.isGlutenFree && (
                           <Badge
                             variant="secondary"
                             className="text-xs bg-green-100 text-green-800"
                           >
-                            Gluten Free
+                            GF
                           </Badge>
                         )}
                         {item.isVegetarian && (
@@ -400,40 +400,40 @@ export default function Menu() {
                             variant="outline"
                             className="text-xs border-green-500 text-green-700"
                           >
-                            Vegetarian
+                            V
                           </Badge>
                         )}
                       </div>
 
-                      {/* Description */}
-                      <p className="text-gray-700 text-sm mb-4 leading-relaxed">
+                      {/* Description - truncated for smaller cards */}
+                      <p className="text-gray-700 text-xs mb-3 leading-relaxed line-clamp-2">
                         {item.description}
                       </p>
 
                       {/* Buttons */}
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                         {category.id === "pizza" ? (
                           <>
                             <Button
-                              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2"
-                              asChild
+                              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 text-sm"
+                              onClick={handleOrderStart}
                             >
-                              <Link to="/order">ADD TO ORDER</Link>
+                              ADD TO ORDER
                             </Button>
                             <Button
                               variant="outline"
-                              className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-2"
-                              asChild
+                              className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-1.5 text-sm"
+                              onClick={handleOrderStart}
                             >
-                              <Link to="/order">CUSTOMIZE</Link>
+                              CUSTOMIZE
                             </Button>
                           </>
                         ) : (
                           <Button
-                            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2"
+                            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 text-sm"
                             onClick={() => addToCart(item)}
                           >
-                            ADD TO ORDER - ${item.price.toFixed(2)}
+                            ADD - ${item.price.toFixed(2)}
                           </Button>
                         )}
                       </div>
