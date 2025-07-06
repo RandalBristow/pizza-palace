@@ -210,10 +210,34 @@ const mockSpecials: Special[] = [
 ];
 
 const mockToppingCategories: ToppingCategory[] = [
-  { id: "sauce", name: "Sauce", order: 1, isActive: true },
-  { id: "cheese", name: "Cheese", order: 2, isActive: true },
-  { id: "meat", name: "Meat", order: 3, isActive: true },
-  { id: "veggie", name: "Vegetables", order: 4, isActive: true },
+  {
+    id: "sauce",
+    name: "Sauce",
+    order: 1,
+    menuItemCategory: "pizza",
+    isActive: true,
+  },
+  {
+    id: "cheese",
+    name: "Cheese",
+    order: 2,
+    menuItemCategory: "pizza",
+    isActive: true,
+  },
+  {
+    id: "meat",
+    name: "Meat",
+    order: 3,
+    menuItemCategory: "pizza",
+    isActive: true,
+  },
+  {
+    id: "veggie",
+    name: "Vegetables",
+    order: 4,
+    menuItemCategory: "pizza",
+    isActive: true,
+  },
 ];
 
 export default function Admin() {
