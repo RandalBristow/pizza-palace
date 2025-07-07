@@ -205,6 +205,7 @@ export default function Wings() {
   return (
     <div className="min-h-screen bg-gray-50">
       <HeaderWithDelivery
+        cart={cart}
         breadcrumbs={[
           { label: "Menu", href: "/menu" },
           { label: "Customize Your Wings" },
