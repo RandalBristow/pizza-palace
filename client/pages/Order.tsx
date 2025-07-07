@@ -612,6 +612,20 @@ export default function Order() {
           </div>
         </div>
       </main>
+
+      {/* Delivery Selection Modal */}
+      <DeliverySelection
+        isOpen={showDeliverySelection}
+        onClose={() => {
+          setShowDeliverySelection(false);
+          navigate("/menu");
+        }}
+        onConfirm={(details) => {
+          setDeliveryDetails(details);
+          setShowDeliverySelection(false);
+        }}
+        currentDetails={deliveryDetails}
+      />
     </div>
   );
 }
