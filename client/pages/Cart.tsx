@@ -194,30 +194,13 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/menu"
-                className="flex items-center text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Back to Menu
-              </Link>
-              <div className="flex items-center space-x-2">
-                <ShoppingCart className="h-6 w-6 text-red-600" />
-                <span className="text-lg font-semibold">Shopping Cart</span>
-                <Badge>{cartItems.length} items</Badge>
-              </div>
-            </div>
-            <Button variant="outline" asChild>
-              <Link to="/menu">Continue Shopping</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <HeaderWithDelivery
+        cart={cartItems}
+        breadcrumbs={[
+          { label: "Menu", href: "/menu" },
+          { label: "Shopping Cart" },
+        ]}
+      />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
