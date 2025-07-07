@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { ArrowLeft, ShoppingCart, Plus, Minus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 
 interface WingsOrder {
   size: string;
