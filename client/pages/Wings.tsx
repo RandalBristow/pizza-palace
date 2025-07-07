@@ -471,12 +471,9 @@ export default function Wings() {
         isOpen={showDeliverySelection}
         onClose={() => {
           setShowDeliverySelection(false);
-          navigate("/menu");
+          setPendingAction(null);
         }}
-        onConfirm={(details) => {
-          setDeliveryDetails(details);
-          setShowDeliverySelection(false);
-        }}
+        onConfirm={handleDeliveryConfirm}
         currentDetails={deliveryDetails}
       />
     </div>
