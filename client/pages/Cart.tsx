@@ -256,14 +256,6 @@ export default function Cart() {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeItem(item.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
                     </div>
                     <div className="text-right ml-4">
