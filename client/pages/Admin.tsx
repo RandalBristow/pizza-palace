@@ -985,50 +985,83 @@ export default function Admin() {
               </Dialog>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              {menuItems.map((item) => (
-                <Card key={item.id}>
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2 flex-1 min-w-0">
-                        <h3 className="font-semibold truncate">{item.name}</h3>
-                        <Badge variant="outline">{item.category}</Badge>
-                        <Badge
-                          variant={item.isActive ? "default" : "secondary"}
-                        >
-                          {item.isActive ? "Active" : "Inactive"}
-                        </Badge>
-                        <Badge
-                          variant="outline"
-                          className="bg-green-50 text-green-700"
-                        >
-                          ${item.price.toFixed(2)}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center space-x-1 flex-shrink-0">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleItemActive(item.id)}
-                        >
-                          {item.isActive ? "Deactivate" : "Activate"}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditMenuItem(item)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </div>
+            <Tabs defaultValue={categories[0]?.id} className="w-full">
+              <TabsList className="w-full justify-start">
+                {categories
+                  .filter((cat) => cat.isActive)
+                  .map((category) => (
+                    <TabsTrigger key={category.id} value={category.id}>
+                      {category.name}
+                    </TabsTrigger>
+                  ))}
+              </TabsList>
+
+              {categories
+                .filter((cat) => cat.isActive)
+                .map((category) => (
+                  <TabsContent
+                    key={category.id}
+                    value={category.id}
+                    className="mt-4"
+                  >
+                    <div className="grid grid-cols-2 gap-4">
+                      {menuItems
+                        .filter((item) => item.category === category.id)
+                        .map((item) => (
+                          <Card key={item.id}>
+                            <CardContent className="p-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2 flex-1 min-w-0">
+                                  <h3 className="font-semibold truncate">
+                                    {item.name}
+                                  </h3>
+                                  <Badge
+                                    variant={
+                                      item.isActive ? "default" : "secondary"
+                                    }
+                                  >
+                                    {item.isActive ? "Active" : "Inactive"}
+                                  </Badge>
+                                  <Badge
+                                    variant="outline"
+                                    className="bg-green-50 text-green-700"
+                                  >
+                                    ${item.price.toFixed(2)}
+                                  </Badge>
+                                </div>
+                                <div className="flex items-center space-x-1 flex-shrink-0">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => toggleItemActive(item.id)}
+                                  >
+                                    {item.isActive ? "Deactivate" : "Activate"}
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleEditMenuItem(item)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                  <Button variant="outline" size="sm">
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    {menuItems.filter((item) => item.category === category.id)
+                      .length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        No menu items in this category yet.
+                      </div>
+                    )}
+                  </TabsContent>
+                ))}
+            </Tabs>
           </TabsContent>
 
           {/* Categories Tab */}
