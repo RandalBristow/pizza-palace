@@ -217,6 +217,7 @@ export default function Order() {
   const navigate = useNavigate();
   const { hasDeliveryDetails, deliveryDetails, setDeliveryDetails } =
     useOrder();
+  const [searchParams] = useSearchParams();
 
   const [pizzaOrder, setPizzaOrder] = useState<PizzaOrder>({
     size: "",
@@ -234,7 +235,61 @@ export default function Order() {
     if (!hasDeliveryDetails) {
       setShowDeliverySelection(true);
     }
-  }, [hasDeliveryDetails]);
+
+    // Load default toppings if customizing a specific menu item
+    const itemId = searchParams.get("item");
+    const size = searchParams.get("size");
+
+    if (itemId) {
+      const menuItem = mockMenuItems.find((item) => item.id === itemId);
+      if (menuItem && menuItem.defaultToppings) {
+        // Load default toppings
+        const defaultPizzaToppings: PizzaTopping[] = menuItem.defaultToppings
+          .map((toppingId) => {
+            const topping = mockToppings.find((t) => t.id === toppingId);
+            if (topping) {
+              return {
+                id: topping.id,
+                name: topping.name,
+                price: topping.price,
+                category: topping.category as
+                  | "sauce"
+                  | "cheese"
+                  | "meat"
+                  | "veggie",
+                placement: "whole" as const,
+              };
+            }
+            return null;
+          })
+          .filter(Boolean) as PizzaTopping[];
+
+        // Set default size if provided
+        if (size) {
+          const sizeInfo = pizzaSizes.find((s) => s.size === size);
+          setPizzaOrder((prev) => ({
+            ...prev,
+            size: size,
+            basePrice: sizeInfo?.price || 0,
+            toppings: defaultPizzaToppings,
+          }));
+        } else {
+          setPizzaOrder((prev) => ({
+            ...prev,
+            toppings: defaultPizzaToppings,
+          }));
+        }
+      } else if (size) {
+        // Just set size if no default toppings
+        const sizeInfo = pizzaSizes.find((s) => s.size === size);
+        setPizzaOrder((prev) => ({
+          ...prev,
+          size: size,
+          basePrice: sizeInfo?.price || 0,
+        }));
+      }
+    }
+  }, [hasDeliveryDetails, searchParams]);
 
   const toppingCategories = [
     { id: "cheese", name: "Cheese", icon: "🧀" },
