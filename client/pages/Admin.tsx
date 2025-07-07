@@ -1709,50 +1709,98 @@ export default function Admin() {
               </Dialog>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              {toppings.map((topping) => (
-                <Card key={topping.id}>
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-semibold">{topping.name}</h3>
-                        <Badge variant="outline">{topping.category}</Badge>
-                        <Badge
-                          variant={topping.isActive ? "default" : "secondary"}
-                        >
-                          {topping.isActive ? "Active" : "Inactive"}
-                        </Badge>
-                        <Badge
-                          variant="outline"
-                          className="bg-green-50 text-green-700"
-                        >
-                          +${topping.price.toFixed(2)}
-                        </Badge>
-                      </div>
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleToppingActive(topping.id)}
-                        >
-                          {topping.isActive ? "Deactivate" : "Activate"}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditTopping(topping)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </div>
+            <Tabs
+              defaultValue={
+                toppingCategories.filter((tc) => tc.isActive)[0]?.id
+              }
+              className="w-full"
+            >
+              <TabsList className="w-full justify-start">
+                {toppingCategories
+                  .filter((tc) => tc.isActive)
+                  .map((toppingCategory) => (
+                    <TabsTrigger
+                      key={toppingCategory.id}
+                      value={toppingCategory.id}
+                    >
+                      {toppingCategory.name}
+                    </TabsTrigger>
+                  ))}
+              </TabsList>
+
+              {toppingCategories
+                .filter((tc) => tc.isActive)
+                .map((toppingCategory) => (
+                  <TabsContent
+                    key={toppingCategory.id}
+                    value={toppingCategory.id}
+                    className="mt-4"
+                  >
+                    <div className="grid grid-cols-2 gap-4">
+                      {toppings
+                        .filter(
+                          (topping) => topping.category === toppingCategory.id,
+                        )
+                        .map((topping) => (
+                          <Card key={topping.id}>
+                            <CardContent className="p-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <h3 className="font-semibold">
+                                    {topping.name}
+                                  </h3>
+                                  <Badge
+                                    variant={
+                                      topping.isActive ? "default" : "secondary"
+                                    }
+                                  >
+                                    {topping.isActive ? "Active" : "Inactive"}
+                                  </Badge>
+                                  <Badge
+                                    variant="outline"
+                                    className="bg-green-50 text-green-700"
+                                  >
+                                    +${topping.price.toFixed(2)}
+                                  </Badge>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                      toggleToppingActive(topping.id)
+                                    }
+                                  >
+                                    {topping.isActive
+                                      ? "Deactivate"
+                                      : "Activate"}
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleEditTopping(topping)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                  <Button variant="outline" size="sm">
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    {toppings.filter(
+                      (topping) => topping.category === toppingCategory.id,
+                    ).length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        No toppings in this category yet.
+                      </div>
+                    )}
+                  </TabsContent>
+                ))}
+            </Tabs>
           </TabsContent>
 
           {/* Specials Tab */}
