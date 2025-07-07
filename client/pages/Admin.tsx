@@ -602,11 +602,11 @@ export default function Admin() {
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="categories">Menu Item Categories</TabsTrigger>
-            <TabsTrigger value="menu">Menu Items</TabsTrigger>
-            <TabsTrigger value="toppings">Toppings</TabsTrigger>
             <TabsTrigger value="topping-categories">
               Topping Categories
             </TabsTrigger>
+            <TabsTrigger value="toppings">Toppings</TabsTrigger>
+            <TabsTrigger value="menu">Menu Items</TabsTrigger>
             <TabsTrigger value="specials">Specials</TabsTrigger>
           </TabsList>
 
