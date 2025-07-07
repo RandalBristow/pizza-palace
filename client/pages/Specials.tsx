@@ -133,29 +133,7 @@ export default function Specials() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/"
-                className="flex items-center text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Back to Home
-              </Link>
-              <div className="flex items-center space-x-2">
-                <Percent className="h-6 w-6 text-red-600" />
-                <span className="text-lg font-semibold">Daily Specials</span>
-              </div>
-            </div>
-            <Button asChild>
-              <Link to="/order">Start Order</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <HeaderWithDelivery breadcrumbs={[{ label: "Specials" }]} />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
