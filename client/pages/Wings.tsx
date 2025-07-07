@@ -78,7 +78,12 @@ export default function Wings() {
     dippingSauces: {},
     basePrice: 0,
   });
+  const [cart, setCart] = useState<any[]>([]);
   const [showDeliverySelection, setShowDeliverySelection] = useState(false);
+  const [pendingAction, setPendingAction] = useState<{
+    action: () => void;
+    type: string;
+  } | null>(null);
 
   useEffect(() => {
     // Show delivery selection modal if delivery details are not set
