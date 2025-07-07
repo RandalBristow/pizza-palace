@@ -21,175 +21,6 @@ import {
 import { Pizza, Coffee, ArrowLeft, ShoppingCart, Star } from "lucide-react";
 import { mockCategories, mockMenuItems, type MenuItem } from "../data/mockData";
 
-const mockMenuItems: MenuItem[] = [
-  // Pizzas
-  {
-    id: "p1",
-    name: "Margherita Pizza",
-    description:
-      "Fresh mozzarella, tomato sauce, and basil on our signature crust",
-    price: 12.99,
-    category: "pizza",
-    rating: 4.8,
-    isVegetarian: true,
-    sizes: [
-      { size: '10"', price: 12.99 },
-      { size: '12"', price: 15.99 },
-      { size: '14"', price: 18.99 },
-      { size: '16"', price: 21.99 },
-    ],
-  },
-  {
-    id: "p2",
-    name: "Pepperoni Classic",
-    description:
-      "Traditional pepperoni with mozzarella cheese and our signature sauce",
-    price: 14.99,
-    category: "pizza",
-    rating: 4.9,
-    sizes: [
-      { size: '10"', price: 14.99 },
-      { size: '12"', price: 17.99 },
-      { size: '14"', price: 20.99 },
-      { size: '16"', price: 23.99 },
-    ],
-  },
-  {
-    id: "p3",
-    name: "Supreme Pizza",
-    description: "Pepperoni, sausage, peppers, onions, mushrooms, and olives",
-    price: 18.99,
-    category: "pizza",
-    rating: 4.7,
-    sizes: [
-      { size: '10"', price: 18.99 },
-      { size: '12"', price: 21.99 },
-      { size: '14"', price: 24.99 },
-      { size: '16"', price: 27.99 },
-    ],
-  },
-  {
-    id: "p4",
-    name: "Gluten-Free Margherita",
-    description: 'Classic margherita on our gluten-free crust (10" only)',
-    price: 15.99,
-    category: "pizza",
-    rating: 4.6,
-    isGlutenFree: true,
-    isVegetarian: true,
-    sizes: [{ size: '10"', price: 15.99 }],
-  },
-
-  // Coffee
-  {
-    id: "c1",
-    name: "Pronto House Blend",
-    description: "Our signature roast with notes of chocolate and caramel",
-    price: 2.99,
-    category: "coffee",
-    rating: 4.9,
-  },
-  {
-    id: "c2",
-    name: "Espresso",
-    description: "Rich, bold shot of pure Italian-style espresso",
-    price: 2.49,
-    category: "coffee",
-    rating: 4.8,
-  },
-  {
-    id: "c3",
-    name: "Cappuccino",
-    description: "Espresso with steamed milk and foam, dusted with cocoa",
-    price: 4.49,
-    category: "coffee",
-    rating: 4.7,
-  },
-  {
-    id: "c4",
-    name: "Cafe Latte",
-    description: "Smooth espresso with steamed milk and light foam",
-    price: 4.99,
-    category: "coffee",
-    rating: 4.8,
-  },
-
-  // Calzones
-  {
-    id: "cal1",
-    name: "Classic Calzone",
-    description: "Ricotta, mozzarella, and your choice of two toppings",
-    price: 11.99,
-    category: "calzone",
-    rating: 4.6,
-  },
-  {
-    id: "cal2",
-    name: "Meat Lovers Calzone",
-    description: "Pepperoni, sausage, ham, and bacon with mozzarella",
-    price: 14.99,
-    category: "calzone",
-    rating: 4.8,
-  },
-
-  // Wings
-  {
-    id: "w1",
-    name: "Buffalo Wings",
-    description: "Classic buffalo wings with celery and blue cheese (8 pieces)",
-    price: 9.99,
-    category: "wings",
-    rating: 4.7,
-  },
-  {
-    id: "w2",
-    name: "BBQ Wings",
-    description: "Smoky BBQ glazed wings with ranch dressing (8 pieces)",
-    price: 9.99,
-    category: "wings",
-    rating: 4.6,
-  },
-  {
-    id: "w3",
-    name: "Garlic Parmesan Wings",
-    description: "Wings tossed in garlic parmesan sauce (8 pieces)",
-    price: 10.99,
-    category: "wings",
-    rating: 4.8,
-  },
-  {
-    id: "w4",
-    name: "Honey Hot Wings",
-    description: "Sweet and spicy honey hot sauce wings (8 pieces)",
-    price: 10.99,
-    category: "wings",
-    rating: 4.5,
-  },
-
-  // Drinks
-  {
-    id: "d1",
-    name: "Soft Drinks",
-    description: "Coke, Pepsi, Sprite, Dr. Pepper (16oz)",
-    price: 2.49,
-    category: "drinks",
-  },
-  {
-    id: "d2",
-    name: "Bottled Water",
-    description: "Pure spring water (16.9oz)",
-    price: 1.99,
-    category: "drinks",
-  },
-  {
-    id: "d3",
-    name: "Fresh Juice",
-    description: "Orange, Apple, or Cranberry (12oz)",
-    price: 3.49,
-    category: "drinks",
-  },
-];
-
 export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("pizza");
   const [cart, setCart] = useState<any[]>([]);
@@ -202,16 +33,19 @@ export default function Menu() {
     useOrder();
   const navigate = useNavigate();
 
-  const categories = [
-    { id: "pizza", name: "Pizza", icon: Pizza },
-    { id: "wings", name: "Wings", icon: Pizza },
-    { id: "coffee", name: "Coffee", icon: Coffee },
-    { id: "calzone", name: "Calzones", icon: Pizza },
-    { id: "drinks", name: "Drinks", icon: Coffee },
-  ];
+  // Use shared categories and filter active ones
+  const categories = mockCategories
+    .filter((cat) => cat.isActive)
+    .sort((a, b) => a.order - b.order)
+    .map((cat) => ({
+      id: cat.id,
+      name: cat.name,
+      icon: cat.id === "coffee" || cat.id === "drinks" ? Coffee : Pizza,
+    }));
 
+  // Filter menu items by category and only show active items
   const filteredItems = mockMenuItems.filter(
-    (item) => item.category === selectedCategory,
+    (item) => item.category === selectedCategory && item.isActive,
   );
 
   const addToCart = (item: MenuItem, size?: string) => {
@@ -239,22 +73,22 @@ export default function Menu() {
     setCart((prev) => [...prev, cartItem]);
   };
 
-  const handleOrderStart = () => {
+  const customizeItem = (item: MenuItem, size?: string) => {
     if (!hasDeliveryDetails) {
       setPendingAction({
-        action: () => navigate("/order"),
-        type: "startOrder",
+        action: () => navigate(`/order?item=${item.id}&size=${size || ""}`),
+        type: "customize",
       });
       setShowDeliverySelection(true);
       return;
     }
-    navigate("/order");
+
+    navigate(`/order?item=${item.id}&size=${size || ""}`);
   };
 
   const handleDeliveryConfirm = (details: any) => {
     setDeliveryDetails(details);
     setShowDeliverySelection(false);
-    // Execute pending action if any
     if (pendingAction) {
       pendingAction.action();
       setPendingAction(null);
@@ -262,198 +96,171 @@ export default function Menu() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent">
-      <HeaderWithDelivery
-        title="Menu"
-        showBackButton={true}
-        backTo="/"
-        cart={cart}
-      />
+    <div className="min-h-screen bg-gray-50">
+      <HeaderWithDelivery />
 
-      {/* Menu Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Our Menu
-              </h1>
-              <p className="text-gray-600">
-                Fresh ingredients, made to order. All pizzas available on
-                regular, thin, or thick crust.
-              </p>
-            </div>
-            <Button
-              onClick={handleOrderStart}
-              size="lg"
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Start Order
-            </Button>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center space-x-4 mb-8">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Home
+            </Link>
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-gray-900">Our Menu</h1>
+            <p className="text-gray-600 mt-1">
+              Fresh ingredients, authentic flavors
+            </p>
           </div>
+          <Button variant="outline" size="sm" className="flex items-center">
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            Cart ({cart.length})
+          </Button>
         </div>
 
-        {/* Category Tabs */}
-        <Tabs
-          value={selectedCategory}
-          onValueChange={setSelectedCategory}
-          className="mb-8"
-        >
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-none lg:inline-flex">
-            {categories.map((category) => (
-              <TabsTrigger
-                key={category.id}
-                value={category.id}
-                className="flex items-center space-x-2"
-              >
-                <category.icon className="h-4 w-4" />
-                <span>{category.name}</span>
-              </TabsTrigger>
-            ))}
+        <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
+          <TabsList className="grid w-full grid-cols-6 mb-8">
+            {categories.map((category) => {
+              const Icon = category.icon;
+              return (
+                <TabsTrigger
+                  key={category.id}
+                  value={category.id}
+                  className="flex items-center space-x-2"
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{category.name}</span>
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
 
           {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id} className="mt-6">
-              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                {filteredItems.map((item) => (
-                  <Card
-                    key={item.id}
-                    className="overflow-hidden hover:shadow-lg transition-shadow bg-white rounded-lg flex flex-col h-full"
-                  >
-                    {/* Pizza Image */}
-                    <div
-                      className="h-32 relative overflow-hidden bg-cover bg-center"
-                      style={{
-                        backgroundImage: (() => {
-                          if (category.id === "pizza") {
-                            if (
-                              item.name.toLowerCase().includes("margherita")
-                            ) {
-                              return `url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
-                            } else if (
-                              item.name.toLowerCase().includes("pepperoni")
-                            ) {
-                              return `url('https://images.pexels.com/photos/2762939/pexels-photo-2762939.jpeg')`;
-                            } else if (
-                              item.name.toLowerCase().includes("supreme")
-                            ) {
-                              return `url('https://images.pexels.com/photos/5903312/pexels-photo-5903312.jpeg')`;
-                            } else {
-                              return `url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
-                            }
-                          } else if (category.id === "calzone") {
-                            return `url('https://images.pexels.com/photos/5903094/pexels-photo-5903094.jpeg')`;
-                          } else if (category.id === "coffee") {
-                            return `url('https://images.pexels.com/photos/10303534/pexels-photo-10303534.jpeg')`;
-                          } else if (category.id === "wings") {
-                            return `url('https://images.pexels.com/photos/6369302/pexels-photo-6369302.jpeg')`;
-                          } else {
-                            return `url('https://images.pexels.com/photos/8471703/pexels-photo-8471703.jpeg')`;
-                          }
-                        })(),
-                      }}
-                    />
-
-                    {/* Card Content */}
-                    <div className="p-3 flex flex-col flex-1">
-                      <h3 className="font-bold text-lg text-blue-600 mb-1 line-clamp-2">
-                        {item.name}
-                      </h3>
-
-                      {/* Badges */}
-                      <div className="flex flex-wrap gap-1 mb-2">
-                        {item.isGlutenFree && (
-                          <Badge
-                            variant="secondary"
-                            className="text-xs bg-green-100 text-green-800"
-                          >
-                            GF
-                          </Badge>
-                        )}
-                        {item.isVegetarian && (
-                          <Badge
-                            variant="outline"
-                            className="text-xs border-green-500 text-green-700"
-                          >
-                            V
-                          </Badge>
-                        )}
-                      </div>
-
-                      {/* Description - truncated for smaller cards */}
-                      <p className="text-gray-700 text-xs mb-3 leading-relaxed line-clamp-2 flex-1">
-                        {item.description}
-                      </p>
-
-                      {/* Buttons - positioned at bottom */}
-                      <div className="space-y-1 mt-auto">
-                        {category.id === "pizza" ? (
-                          <>
-                            <Button
-                              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 text-sm"
-                              onClick={handleOrderStart}
-                            >
-                              ADD TO ORDER
-                            </Button>
-                            <Button
-                              variant="outline"
-                              className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-1.5 text-sm"
-                              onClick={handleOrderStart}
-                            >
-                              CUSTOMIZE
-                            </Button>
-                          </>
+            <TabsContent key={category.id} value={category.id}>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item) => (
+                    <Card key={item.id} className="flex flex-col h-full">
+                      <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
-                          <Button
-                            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 text-sm"
-                            onClick={() => addToCart(item)}
-                          >
-                            ADD - ${item.price.toFixed(2)}
-                          </Button>
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            <Pizza className="h-16 w-16" />
+                          </div>
                         )}
                       </div>
-
-                      {/* Size options for non-pizza items */}
-                      {item.sizes && category.id !== "pizza" && (
-                        <div className="mt-4 space-y-2">
-                          <p className="text-sm font-medium text-gray-700">
-                            Choose Size:
+                      <CardContent className="flex flex-col flex-1 p-4">
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 className="font-semibold text-lg text-blue-600">
+                              {item.name}
+                            </h3>
+                            <div className="flex items-center text-sm text-gray-500">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                              <span>4.8</span>
+                            </div>
+                          </div>
+                          <p className="text-gray-600 text-sm mb-3">
+                            {item.description}
                           </p>
-                          {item.sizes.map((sizeOption) => (
-                            <div
-                              key={sizeOption.size}
-                              className="flex items-center justify-between p-2 border rounded hover:bg-gray-50"
-                            >
-                              <span className="text-sm">
-                                {sizeOption.size} - $
-                                {sizeOption.price.toFixed(2)}
-                              </span>
+                          <div className="flex items-center space-x-2 mb-3">
+                            <Badge variant="outline">
+                              ${item.price.toFixed(2)}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div className="mt-auto space-y-2">
+                          {item.sizes && item.sizes.length > 1 ? (
+                            <div className="space-y-2">
+                              {item.sizes.map((sizeOption) => (
+                                <div
+                                  key={sizeOption.size}
+                                  className="flex items-center justify-between"
+                                >
+                                  <span className="text-sm font-medium">
+                                    {sizeOption.size} - $
+                                    {sizeOption.price.toFixed(2)}
+                                  </span>
+                                  <div className="flex space-x-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() =>
+                                        customizeItem(item, sizeOption.size)
+                                      }
+                                      className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                                    >
+                                      CUSTOMIZE
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      onClick={() =>
+                                        addToCart(item, sizeOption.size)
+                                      }
+                                      className="bg-red-600 hover:bg-red-700"
+                                    >
+                                      ADD TO ORDER
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="flex space-x-2">
                               <Button
-                                size="sm"
-                                onClick={() => addToCart(item, sizeOption.size)}
+                                variant="outline"
+                                className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
+                                onClick={() => customizeItem(item)}
                               >
-                                Add
+                                CUSTOMIZE
+                              </Button>
+                              <Button
+                                className="flex-1 bg-red-600 hover:bg-red-700"
+                                onClick={() => addToCart(item)}
+                              >
+                                ADD TO ORDER
                               </Button>
                             </div>
-                          ))}
+                          )}
                         </div>
-                      )}
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12">
+                    <div className="text-gray-400 mb-4">
+                      <Pizza className="h-16 w-16 mx-auto" />
                     </div>
-                  </Card>
-                ))}
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No items available
+                    </h3>
+                    <p className="text-gray-500">
+                      We're working on adding items to this category.
+                    </p>
+                  </div>
+                )}
               </div>
             </TabsContent>
           ))}
         </Tabs>
-
-        {/* Delivery Selection Modal */}
-        <DeliverySelection
-          isOpen={showDeliverySelection}
-          onClose={() => setShowDeliverySelection(false)}
-          onConfirm={handleDeliveryConfirm}
-          currentDetails={deliveryDetails || undefined}
-        />
       </main>
+
+      <DeliverySelection
+        isOpen={showDeliverySelection}
+        onClose={() => {
+          setShowDeliverySelection(false);
+          setPendingAction(null);
+        }}
+        onConfirm={handleDeliveryConfirm}
+        currentDetails={deliveryDetails}
+      />
     </div>
   );
 }
