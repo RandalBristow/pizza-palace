@@ -248,15 +248,21 @@ export default function Order() {
           .map((toppingId) => {
             const topping = mockToppings.find((t) => t.id === toppingId);
             if (topping) {
+              // Map category names to match Order interface
+              let category: "sauce" | "cheese" | "meat" | "veggie" = "cheese";
+              if (topping.category === "veggies") {
+                category = "veggie";
+              } else if (
+                ["sauce", "cheese", "meat"].includes(topping.category)
+              ) {
+                category = topping.category as "sauce" | "cheese" | "meat";
+              }
+
               return {
                 id: topping.id,
                 name: topping.name,
                 price: topping.price,
-                category: topping.category as
-                  | "sauce"
-                  | "cheese"
-                  | "meat"
-                  | "veggie",
+                category,
                 placement: "whole" as const,
               };
             }
