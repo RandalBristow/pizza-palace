@@ -22,14 +22,7 @@ import {
 } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
-import {
-  ArrowLeft,
-  Plus,
-  Minus,
-  Trash2,
-  ShoppingCart,
-  CreditCard,
-} from "lucide-react";
+import { ArrowLeft, Plus, Minus, ShoppingCart, CreditCard } from "lucide-react";
 
 interface CartItem {
   id: string;
