@@ -31,6 +31,44 @@ export default function Index() {
     <div className="min-h-screen bg-transparent">
       <HeaderWithDelivery />
 
+      {/* Secondary Navigation */}
+      <nav className="bg-gray-100 border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center space-x-8 py-3">
+            <Link
+              to="/menu"
+              className="text-gray-700 hover:text-red-600 font-medium"
+            >
+              Menu
+            </Link>
+            <Link
+              to="/specials"
+              className="text-gray-700 hover:text-red-600 font-medium"
+            >
+              Specials
+            </Link>
+            <Link
+              to="/about"
+              className="text-gray-700 hover:text-red-600 font-medium"
+            >
+              About
+            </Link>
+            <Link
+              to="/admin"
+              className="text-gray-700 hover:text-red-600 font-medium text-sm"
+            >
+              Admin
+            </Link>
+            <Link
+              to="/login"
+              className="text-gray-700 hover:text-red-600 font-medium"
+            >
+              Sign In
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section
         className={`py-20 px-4 text-center transition-all duration-1000 ${isLoaded ? "animate-fade-in-up" : "opacity-0"}`}
