@@ -582,36 +582,22 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-transparent">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Admin Dashboard
-              </h1>
-              <Button variant="outline" asChild>
-                <Link to="/">
-                  <Home className="h-4 w-4 mr-2" />
-                  Home
-                </Link>
-              </Button>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" onClick={generateMenuPDF}>
-                <FileText className="h-4 w-4 mr-2" />
-                Print Menu PDF
-              </Button>
-              <Button variant="outline">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <HeaderWithDelivery breadcrumbs={[{ label: "Admin Dashboard" }]} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" onClick={generateMenuPDF}>
+              <FileText className="h-4 w-4 mr-2" />
+              Print Menu PDF
+            </Button>
+            <Button variant="outline">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+          </div>
+        </div>
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="categories">Menu Item Categories</TabsTrigger>
