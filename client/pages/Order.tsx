@@ -352,12 +352,12 @@ export default function Order() {
   );
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-gray-50">
       <HeaderWithDelivery
-        title="Build Your Pizza"
-        showBackButton={true}
-        backTo="/menu"
-        cart={[]}
+        breadcrumbs={[
+          { label: "Menu", href: "/menu" },
+          { label: "Build Your Own Pizza" },
+        ]}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
