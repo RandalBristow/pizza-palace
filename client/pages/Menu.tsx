@@ -18,7 +18,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import { Pizza, Coffee, ArrowLeft, ShoppingCart, Star } from "lucide-react";
+import { Pizza, Coffee, Star } from "lucide-react";
 import { mockCategories, mockMenuItems, type MenuItem } from "../data/mockData";
 
 export default function Menu() {
