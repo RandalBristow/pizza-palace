@@ -193,6 +193,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 12.99,
     category: "pizza",
     isActive: true,
+    defaultToppings: ["mozzarella"],
     sizes: [
       { size: '10"', price: 12.99 },
       { size: '12"', price: 15.99 },
@@ -208,6 +209,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 14.99,
     category: "pizza",
     isActive: true,
+    defaultToppings: ["mozzarella", "pepperoni"],
     sizes: [
       { size: '10"', price: 14.99 },
       { size: '12"', price: 17.99 },
@@ -222,6 +224,13 @@ export const mockMenuItems: MenuItem[] = [
     price: 18.99,
     category: "pizza",
     isActive: true,
+    defaultToppings: [
+      "mozzarella",
+      "pepperoni",
+      "sausage",
+      "mushrooms",
+      "onions",
+    ],
     sizes: [
       { size: '10"', price: 18.99 },
       { size: '12"', price: 21.99 },
@@ -236,6 +245,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 15.99,
     category: "pizza",
     isActive: true,
+    defaultToppings: ["mozzarella"],
     sizes: [{ size: '10"', price: 15.99 }],
   },
 
