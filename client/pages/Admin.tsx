@@ -253,13 +253,13 @@ const mockToppingCategories: ToppingCategory[] = [
 ];
 
 export default function Admin() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(mockMenuItems);
-  const [categories, setCategories] = useState<Category[]>(mockCategories);
-  const [toppings, setToppings] = useState<Topping[]>(mockToppings);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [toppings, setToppings] = useState<Topping[]>(initialToppings);
   const [toppingCategories, setToppingCategories] = useState<ToppingCategory[]>(
-    mockToppingCategories,
+    initialToppingCategories,
   );
-  const [specials, setSpecials] = useState<Special[]>(mockSpecials);
+  const [specials, setSpecials] = useState<Special[]>(initialSpecials);
   const [selectedTab, setSelectedTab] = useState("menu");
 
   // Add states
