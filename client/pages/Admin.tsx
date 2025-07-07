@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
+import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import {
   mockCategories as initialCategories,
   mockMenuItems as initialMenuItems,
