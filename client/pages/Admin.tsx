@@ -1,6 +1,18 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
+import {
+  mockCategories as initialCategories,
+  mockMenuItems as initialMenuItems,
+  mockToppings as initialToppings,
+  mockToppingCategories as initialToppingCategories,
+  mockSpecials as initialSpecials,
+  type Category,
+  type MenuItem,
+  type Topping,
+  type ToppingCategory,
+  type Special,
+} from "../data/mockData";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
