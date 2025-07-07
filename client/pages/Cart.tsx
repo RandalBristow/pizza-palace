@@ -109,10 +109,6 @@ export default function Cart() {
     setDeleteConfirmOpen(false);
   };
 
-  const removeItem = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
-
   const calculateItemTotal = (item: CartItem) => {
     const toppingsTotal = item.toppings
       ? item.toppings.reduce((sum, topping) => sum + topping.price, 0)
