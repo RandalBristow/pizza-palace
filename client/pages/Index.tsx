@@ -9,7 +9,15 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { Pizza, Coffee, MapPin, Phone, Clock, Star } from "lucide-react";
+import {
+  Pizza,
+  Coffee,
+  MapPin,
+  Phone,
+  Clock,
+  Star,
+  ShoppingCart,
+} from "lucide-react";
 
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
