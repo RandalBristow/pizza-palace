@@ -19,19 +19,7 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { Pizza, Coffee, ArrowLeft, ShoppingCart, Star } from "lucide-react";
-
-interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  image?: string;
-  rating?: number;
-  isGlutenFree?: boolean;
-  isVegetarian?: boolean;
-  sizes?: { size: string; price: number }[];
-}
+import { mockCategories, mockMenuItems, type MenuItem } from "../data/mockData";
 
 const mockMenuItems: MenuItem[] = [
   // Pizzas
