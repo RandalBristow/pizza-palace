@@ -29,63 +29,7 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-transparent">
-      {/* Navigation */}
-      <nav className="bg-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F21553f5832104c39886abceeebfd9cb6?format=webp&width=800"
-                alt="Pronto Pizza"
-                className="h-10 w-auto"
-              />
-            </Link>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link
-                to="/menu"
-                className="text-gray-700 hover:text-red-600 font-medium"
-              >
-                Menu
-              </Link>
-              <Link
-                to="/specials"
-                className="text-gray-700 hover:text-red-600 font-medium"
-              >
-                Specials
-              </Link>
-              <Link
-                to="/about"
-                className="text-gray-700 hover:text-red-600 font-medium"
-              >
-                About
-              </Link>
-              <Link
-                to="/admin"
-                className="text-gray-700 hover:text-red-600 font-medium text-sm"
-              >
-                Admin
-              </Link>
-              <Link
-                to="/login"
-                className="text-gray-700 hover:text-red-600 font-medium"
-              >
-                Sign In
-              </Link>
-              <Button variant="outline" className="relative" asChild>
-                <Link to="/cart">
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  Cart
-                </Link>
-              </Button>
-            </div>
-            <div className="md:hidden">
-              <Button variant="outline" size="sm">
-                Menu
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <HeaderWithDelivery />
 
       {/* Hero Section */}
       <section
