@@ -102,26 +102,14 @@ export default function Menu() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <HeaderWithDelivery />
+      <HeaderWithDelivery cart={cart} breadcrumbs={[{ label: "Menu" }]} />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center space-x-4 mb-8">
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Link>
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900">Our Menu</h1>
-            <p className="text-gray-600 mt-1">
-              Fresh ingredients, authentic flavors
-            </p>
-          </div>
-          <Button variant="outline" size="sm" className="flex items-center">
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Cart ({cart.length})
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Our Menu</h1>
+          <p className="text-gray-600 mt-1">
+            Fresh ingredients, authentic flavors
+          </p>
         </div>
 
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
