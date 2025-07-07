@@ -153,22 +153,19 @@ export default function Wings() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <HeaderWithDelivery />
+      <HeaderWithDelivery
+        breadcrumbs={[
+          { label: "Menu", href: "/menu" },
+          { label: "Customize Your Wings" },
+        ]}
+      />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center space-x-4 mb-8">
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/menu">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Menu
-            </Link>
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Customize Your Wings
-            </h1>
-            <p className="text-gray-600 mt-1">Fresh wings, made to order</p>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Customize Your Wings
+          </h1>
+          <p className="text-gray-600 mt-1">Fresh wings, made to order</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
