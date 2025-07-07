@@ -87,10 +87,13 @@ export default function Cart() {
     code: string;
     discount: number;
   } | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const updateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity === 0) {
-      setCartItems(cartItems.filter((item) => item.id !== id));
+      setItemToDelete(id);
+      setDeleteConfirmOpen(true);
     } else {
       setCartItems(
         cartItems.map((item) =>
@@ -98,6 +101,19 @@ export default function Cart() {
         ),
       );
     }
+  };
+
+  const confirmDelete = () => {
+    if (itemToDelete) {
+      setCartItems(cartItems.filter((item) => item.id !== itemToDelete));
+      setItemToDelete(null);
+    }
+    setDeleteConfirmOpen(false);
+  };
+
+  const cancelDelete = () => {
+    setItemToDelete(null);
+    setDeleteConfirmOpen(false);
   };
 
   const removeItem = (id: string) => {
