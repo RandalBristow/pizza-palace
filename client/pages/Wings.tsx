@@ -171,25 +171,7 @@ export default function Wings() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Wing Image */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardContent className="p-0">
-                <div className="aspect-square bg-orange-100 rounded-lg overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-orange-400">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">🍗</div>
-                      <p className="text-lg font-semibold text-gray-700">
-                        Wings
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
+        <div className="grid lg:grid-cols-2 gap-8">
           {/* Customization Options */}
           <div className="lg:col-span-1 space-y-6">
             {/* Choose Size with Quantity */}
