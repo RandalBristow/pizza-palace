@@ -156,6 +156,52 @@ export default function Wings() {
     return total;
   };
 
+  const addToCart = () => {
+    if (!hasDeliveryDetails) {
+      setPendingAction({
+        action: () => {
+          const cartItem = {
+            id: `wings-${Date.now()}`,
+            name: `${wingsOrder.size} Wings - ${wingSauces.find((s) => s.id === wingsOrder.sauce)?.name}`,
+            price: calculateTotal(),
+            quantity: wingsOrder.quantity,
+            customizations: {
+              size: wingsOrder.size,
+              sauce: wingsOrder.sauce,
+              dippingSauces: wingsOrder.dippingSauces,
+            },
+          };
+          setCart((prev) => [...prev, cartItem]);
+        },
+        type: "addToCart",
+      });
+      setShowDeliverySelection(true);
+      return;
+    }
+
+    const cartItem = {
+      id: `wings-${Date.now()}`,
+      name: `${wingsOrder.size} Wings - ${wingSauces.find((s) => s.id === wingsOrder.sauce)?.name}`,
+      price: calculateTotal(),
+      quantity: wingsOrder.quantity,
+      customizations: {
+        size: wingsOrder.size,
+        sauce: wingsOrder.sauce,
+        dippingSauces: wingsOrder.dippingSauces,
+      },
+    };
+    setCart((prev) => [...prev, cartItem]);
+  };
+
+  const handleDeliveryConfirm = (details: any) => {
+    setDeliveryDetails(details);
+    setShowDeliverySelection(false);
+    if (pendingAction) {
+      pendingAction.action();
+      setPendingAction(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <HeaderWithDelivery
