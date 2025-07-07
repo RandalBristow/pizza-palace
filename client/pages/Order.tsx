@@ -214,7 +214,8 @@ const ToppingRow = ({
 
 export default function Order() {
   const navigate = useNavigate();
-  const { hasDeliveryDetails } = useOrder();
+  const { hasDeliveryDetails, deliveryDetails, setDeliveryDetails } =
+    useOrder();
 
   const [pizzaOrder, setPizzaOrder] = useState<PizzaOrder>({
     size: "",
@@ -225,18 +226,14 @@ export default function Order() {
   });
   const [selectedToppingCategory, setSelectedToppingCategory] =
     useState("cheese");
+  const [showDeliverySelection, setShowDeliverySelection] = useState(false);
 
   useEffect(() => {
-    // Only redirect if user tries to access order page directly without delivery details
-    // Don't redirect if they're coming through the proper flow (will be handled by Menu page)
+    // Show delivery selection modal if delivery details are not set
     if (!hasDeliveryDetails) {
-      // Add a small delay to allow the delivery selection modal to appear first
-      const timer = setTimeout(() => {
-        navigate("/menu");
-      }, 100);
-      return () => clearTimeout(timer);
+      setShowDeliverySelection(true);
     }
-  }, [hasDeliveryDetails, navigate]);
+  }, [hasDeliveryDetails]);
 
   const toppingCategories = [
     { id: "cheese", name: "Cheese", icon: "🧀" },
