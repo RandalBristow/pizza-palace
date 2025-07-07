@@ -74,16 +74,21 @@ export default function Menu() {
   };
 
   const customizeItem = (item: MenuItem, size?: string) => {
+    const customizationPath =
+      item.category === "wings"
+        ? `/wings?item=${item.id}&size=${size || ""}`
+        : `/order?item=${item.id}&size=${size || ""}`;
+
     if (!hasDeliveryDetails) {
       setPendingAction({
-        action: () => navigate(`/order?item=${item.id}&size=${size || ""}`),
+        action: () => navigate(customizationPath),
         type: "customize",
       });
       setShowDeliverySelection(true);
       return;
     }
 
-    navigate(`/order?item=${item.id}&size=${size || ""}`);
+    navigate(customizationPath);
   };
 
   const handleDeliveryConfirm = (details: any) => {
