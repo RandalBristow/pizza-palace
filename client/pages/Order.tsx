@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useOrder } from "../context/OrderContext";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
+import DeliverySelection from "../components/DeliverySelection";
 import { Button } from "../components/ui/button";
 import {
   Card,
