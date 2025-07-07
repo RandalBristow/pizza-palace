@@ -5,6 +5,7 @@ import { OrderProvider } from "./context/OrderContext";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
 import Order from "./pages/Order";
+import Wings from "./pages/Wings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
