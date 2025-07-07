@@ -28,12 +28,16 @@ export default function HeaderWithDelivery({
     setShowDeliverySelection(false);
   };
 
+  // Always show breadcrumbs, default to "Home" if none provided
+  const displayBreadcrumbs =
+    breadcrumbs.length > 0 ? breadcrumbs : [{ label: "Home" }];
+
   return (
     <>
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo and Breadcrumbs */}
+            {/* Logo and Breadcrumbs - Always shown */}
             <div className="flex flex-col space-y-2">
               <Link to="/" className="flex items-center">
                 <img
@@ -42,79 +46,71 @@ export default function HeaderWithDelivery({
                   className="h-10 w-auto"
                 />
               </Link>
-              {breadcrumbs.length > 0 && (
-                <nav className="flex items-center space-x-1 text-sm text-gray-500">
-                  <Link to="/" className="hover:text-gray-700">
-                    Home
-                  </Link>
-                  {breadcrumbs.map((crumb, index) => (
-                    <div key={index} className="flex items-center space-x-1">
-                      <ChevronRight className="h-3 w-3" />
-                      {crumb.href ? (
-                        <Link to={crumb.href} className="hover:text-gray-700">
-                          {crumb.label}
-                        </Link>
-                      ) : (
-                        <span className="text-gray-900 font-medium">
-                          {crumb.label}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </nav>
-              )}
+              <nav className="flex items-center space-x-1 text-sm text-gray-500 min-h-[20px]">
+                {displayBreadcrumbs.length === 1 &&
+                displayBreadcrumbs[0].label === "Home" ? (
+                  <span className="text-gray-900 font-medium">Home</span>
+                ) : (
+                  <>
+                    <Link to="/" className="hover:text-gray-700">
+                      Home
+                    </Link>
+                    {displayBreadcrumbs.map((crumb, index) => (
+                      <div key={index} className="flex items-center space-x-1">
+                        <ChevronRight className="h-3 w-3" />
+                        {crumb.href ? (
+                          <Link to={crumb.href} className="hover:text-gray-700">
+                            {crumb.label}
+                          </Link>
+                        ) : (
+                          <span className="text-gray-900 font-medium">
+                            {crumb.label}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </>
+                )}
+              </nav>
             </div>
 
-            <div className="flex items-center space-x-3">
-              {/* Delivery Details Button - Domino's style */}
+            <div className="flex items-center space-x-4">
+              {/* Delivery Details Button - Taller version with 2 lines */}
               {!isAdminPage && hasDeliveryDetails && (
                 <Button
                   variant="outline"
                   onClick={() => setShowDeliverySelection(true)}
-                  className="text-sm h-10 px-3 border-2 hover:bg-gray-50"
+                  className="text-sm flex flex-col items-center h-auto py-2 px-3 border-2 hover:bg-gray-50"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1">
                     {deliveryDetails?.method === "carryout" ? (
                       <Store className="h-4 w-4" />
                     ) : (
                       <MapPin className="h-4 w-4" />
                     )}
-                    <div className="text-left">
-                      <div className="font-semibold text-xs leading-tight">
-                        {deliveryDetails?.method === "carryout"
-                          ? "CARRYOUT"
-                          : "DELIVERY"}
-                      </div>
-                      <div className="text-xs text-gray-600 leading-tight">
-                        {deliveryDetails?.method === "carryout"
-                          ? "914 Ashland Rd"
-                          : `${deliveryDetails?.address?.city || ""}, ${deliveryDetails?.address?.state || ""}`}
-                      </div>
-                    </div>
+                    <span className="font-semibold text-xs">
+                      {deliveryDetails?.method === "carryout"
+                        ? "CARRYOUT FROM"
+                        : "DELIVERY TO"}
+                    </span>
                   </div>
+                  <span className="text-xs text-gray-600">
+                    {deliveryDetails?.method === "carryout"
+                      ? "914 Ashland Rd"
+                      : `${deliveryDetails?.address?.city || ""}, ${deliveryDetails?.address?.state || ""}`}
+                  </span>
                 </Button>
               )}
 
-              {/* Cart Button - Domino's style */}
-              <Button
-                variant="outline"
-                className="relative h-10 px-3 border-2 hover:bg-gray-50"
-                asChild
-              >
-                <Link to="/cart">
-                  <div className="flex items-center space-x-2">
-                    <div className="relative">
-                      <ShoppingCart className="h-5 w-5" />
-                      {cart.length > 0 && (
-                        <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600">
-                          {cart.length}
-                        </Badge>
-                      )}
-                    </div>
-                    <span className="font-medium">Cart</span>
-                  </div>
-                </Link>
-              </Button>
+              {/* Large Cart Icon - Domino's style, not a button */}
+              <Link to="/cart" className="relative">
+                <div className="relative">
+                  <ShoppingCart className="h-8 w-8 text-gray-700 hover:text-gray-900 transition-colors" />
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600 text-white">
+                    {cart.length}
+                  </Badge>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
