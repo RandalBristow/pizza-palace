@@ -452,6 +452,7 @@ export default function Wings() {
                 <Button
                   className="w-full"
                   disabled={!wingsOrder.size || !wingsOrder.sauce}
+                  onClick={addToCart}
                 >
                   Add to Cart
                 </Button>
