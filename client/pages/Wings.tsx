@@ -220,9 +220,9 @@ export default function Wings() {
           <p className="text-gray-600 mt-1">Fresh wings, made to order</p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8">
           {/* Customization Options */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             {/* Choose Size with Quantity */}
             <Card>
               <CardHeader>
