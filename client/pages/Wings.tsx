@@ -270,7 +270,7 @@ export default function Wings() {
                     {wingSizes.map((size) => (
                       <div
                         key={size.size}
-                        className="flex items-center space-x-2"
+                        className="flex items-center space-x-2 p-3 border rounded hover:bg-gray-50"
                       >
                         <RadioGroupItem value={size.size} id={size.size} />
                         <Label
