@@ -306,7 +306,7 @@ export default function Wings() {
                     {wingSauces.map((sauce) => (
                       <div
                         key={sauce.id}
-                        className="flex items-center space-x-2"
+                        className="flex items-center space-x-2 p-3 border rounded hover:bg-gray-50"
                       >
                         <RadioGroupItem value={sauce.id} id={sauce.id} />
                         <Label
