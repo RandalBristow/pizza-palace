@@ -71,19 +71,27 @@ export default function Index() {
 
       {/* Hero Section */}
       <section
-        className={`py-20 px-4 text-center transition-all duration-1000 ${isLoaded ? "animate-fade-in-up" : "opacity-0"}`}
+        className={`py-20 px-4 text-center transition-all duration-1000 bg-cover bg-center bg-no-repeat relative ${isLoaded ? "animate-fade-in-up" : "opacity-0"}`}
+        style={{
+          backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800')`,
+        }}
       >
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-responsive-lg font-bold text-gray-900 mb-6">
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="relative max-w-4xl mx-auto">
+          <h1 className="text-responsive-lg font-bold text-white mb-6">
             Fresh Pizza & Premium Coffee
-            <span className="block text-red-600">Made to Order</span>
+            <span className="block text-yellow-400">Made to Order</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-100 mb-8 max-w-2xl mx-auto">
             At Pronto Pizza Cafe, we serve authentic Italian-style pizzas and
             freshly brewed coffee. Every order is made fresh just for you!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-3" asChild>
+            <Button
+              size="lg"
+              className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700"
+              asChild
+            >
               <Link to="/menu">Order Now</Link>
             </Button>
           </div>
