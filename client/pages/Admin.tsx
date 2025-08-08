@@ -84,6 +84,8 @@ import {
   DollarSign,
   Home,
   FileText,
+  Star,
+  Image as ImageIcon,
 } from "lucide-react";
 
 interface MenuItem {
