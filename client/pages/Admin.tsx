@@ -874,10 +874,63 @@ export default function Admin() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Specials</h2>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Special
-          </Button>
+          <Dialog open={isAddingSpecial} onOpenChange={setIsAddingSpecial}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Special
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Add New Special</DialogTitle>
+                <DialogDescription>
+                  Create a new daily or weekly special offer
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="specialName">Special Name</Label>
+                  <Input id="specialName" placeholder="e.g., Pizza Monday" />
+                </div>
+                <div>
+                  <Label htmlFor="specialDescription">Description</Label>
+                  <Textarea id="specialDescription" placeholder="Describe the special offer" rows={3} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="startDate">Start Date</Label>
+                    <Input id="startDate" type="date" />
+                  </div>
+                  <div>
+                    <Label htmlFor="endDate">End Date</Label>
+                    <Input id="endDate" type="date" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="specialType">Type</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsAddingSpecial(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => setIsAddingSpecial(false)}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Special
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {specials.map((special) => (
@@ -900,7 +953,11 @@ export default function Admin() {
                       {special.description}
                     </p>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingSpecial(special)}
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
                 </div>
@@ -908,6 +965,85 @@ export default function Admin() {
             </Card>
           ))}
         </div>
+
+        {/* Edit Special Dialog */}
+        <Dialog open={!!editingSpecial} onOpenChange={() => setEditingSpecial(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Edit Special</DialogTitle>
+              <DialogDescription>
+                Update the special details
+              </DialogDescription>
+            </DialogHeader>
+            {editingSpecial && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="editSpecialName">Special Name</Label>
+                  <Input
+                    id="editSpecialName"
+                    value={editingSpecial.name}
+                    onChange={(e) => setEditingSpecial({
+                      ...editingSpecial,
+                      name: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editSpecialDescription">Description</Label>
+                  <Textarea
+                    id="editSpecialDescription"
+                    value={editingSpecial.description}
+                    onChange={(e) => setEditingSpecial({
+                      ...editingSpecial,
+                      description: e.target.value
+                    })}
+                    rows={3}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="editStartDate">Start Date</Label>
+                    <Input
+                      id="editStartDate"
+                      type="date"
+                      value={editingSpecial.startDate}
+                      onChange={(e) => setEditingSpecial({
+                        ...editingSpecial,
+                        startDate: e.target.value
+                      })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="editEndDate">End Date</Label>
+                    <Input
+                      id="editEndDate"
+                      type="date"
+                      value={editingSpecial.endDate}
+                      onChange={(e) => setEditingSpecial({
+                        ...editingSpecial,
+                        endDate: e.target.value
+                      })}
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setEditingSpecial(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    setSpecials(specials.map(special =>
+                      special.id === editingSpecial.id ? editingSpecial : special
+                    ));
+                    setEditingSpecial(null);
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
