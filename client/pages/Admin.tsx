@@ -198,6 +198,11 @@ export default function Admin() {
     localStorage.setItem('carouselImages', JSON.stringify(carouselImages));
   }, [carouselImages]);
 
+  // Save customer favorites to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('customerFavorites', JSON.stringify(customerFavorites));
+  }, [customerFavorites]);
+
   // Helper functions for deactivate/delete operations
   const canDeleteCategory = (categoryId: string) => {
     return !menuItems.some(item => item.category === categoryId) &&
