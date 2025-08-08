@@ -103,6 +103,16 @@ export default function Admin() {
   const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
   const [isAddingCustomerFavorite, setIsAddingCustomerFavorite] = useState(false);
 
+  // New item form states
+  const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({
+    name: "",
+    description: "",
+    price: 0,
+    category: "",
+    defaultToppings: [],
+    isActive: true
+  });
+
   // Edit states
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
