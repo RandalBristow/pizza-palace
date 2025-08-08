@@ -73,6 +73,20 @@ const mockCartItems: CartItem[] = [
   },
 ];
 
+// Get restaurant settings for tax rate
+const getRestaurantSettings = () => {
+  try {
+    const stored = localStorage.getItem('restaurantSettings');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+
+  return { taxRate: 8.25 }; // Default tax rate
+};
+
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>(mockCartItems);
   const [promoCode, setPromoCode] = useState("");
@@ -82,6 +96,22 @@ export default function Cart() {
   } | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [taxRate, setTaxRate] = useState(getRestaurantSettings().taxRate);
+
+  // Listen for settings updates
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setTaxRate(getRestaurantSettings().taxRate);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    const interval = setInterval(handleStorageChange, 2000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   const updateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity === 0) {
