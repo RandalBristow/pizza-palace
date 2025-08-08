@@ -2033,6 +2033,34 @@ export default function Admin() {
                 </div>
 
                 <div>
+                  <Label htmlFor="editDiscountType">Discount Type</Label>
+                  <Select value={editingSpecial.discountType} onValueChange={(value: any) => setEditingSpecial({...editingSpecial, discountType: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percentage">Percentage Off</SelectItem>
+                      <SelectItem value="flat">Flat Price</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="editDiscountValue">
+                    {editingSpecial.discountType === "percentage" ? "Percentage (%)" : "Flat Price ($)"}
+                  </Label>
+                  <Input
+                    id="editDiscountValue"
+                    type="number"
+                    step={editingSpecial.discountType === "percentage" ? "1" : "0.01"}
+                    min="0"
+                    max={editingSpecial.discountType === "percentage" ? "100" : undefined}
+                    value={editingSpecial.discountValue}
+                    onChange={(e) => setEditingSpecial({...editingSpecial, discountValue: parseFloat(e.target.value) || 0})}
+                  />
+                </div>
+
+                <div>
                   <Label>Applicable Menu Items</Label>
                   <div className="mt-2 max-h-40 overflow-y-auto border rounded-lg p-3 space-y-2">
                     {menuItems.filter(item => item.isActive).map((item) => (
