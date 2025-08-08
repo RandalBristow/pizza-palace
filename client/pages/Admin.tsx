@@ -1517,152 +1517,257 @@ export default function Admin() {
                       Create a new special offer with menu items and discount settings
                     </p>
                   </div>
-                <div>
-                  <Label htmlFor="specialName">Special Name</Label>
-                  <Input
-                    id="specialName"
-                    placeholder="e.g., Lunch Pizza Special"
-                    value={newSpecial.name}
-                    onChange={(e) => setNewSpecial({...newSpecial, name: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="specialDescription">Description</Label>
-                  <Textarea
-                    id="specialDescription"
-                    placeholder="Describe the special offer"
-                    rows={3}
-                    value={newSpecial.description}
-                    onChange={(e) => setNewSpecial({...newSpecial, description: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="specialType">Type</Label>
-                  <Select value={newSpecial.type} onValueChange={(value: any) => setNewSpecial({...newSpecial, type: value})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="hourly">Hourly by Day (e.g., lunch specials)</SelectItem>
-                      <SelectItem value="daily">Daily (every day for a period)</SelectItem>
-                      <SelectItem value="weekly">Weekly (specific day each week)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Conditional fields based on type */}
-                {newSpecial.type === "hourly" && (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="startTime">Start Time</Label>
-                        <Input
-                          id="startTime"
-                          type="time"
-                          value={newSpecial.startTime || ""}
-                          onChange={(e) => setNewSpecial({...newSpecial, startTime: e.target.value})}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="endTime">End Time</Label>
-                        <Input
-                          id="endTime"
-                          type="time"
-                          value={newSpecial.endTime || ""}
-                          onChange={(e) => setNewSpecial({...newSpecial, endTime: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Days of Week</Label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, index) => (
-                          <div key={day} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`day-${index}`}
-                              checked={newSpecial.daysOfWeek?.includes(index) || false}
-                              onCheckedChange={(checked) => {
-                                const days = newSpecial.daysOfWeek || [];
-                                if (checked) {
-                                  setNewSpecial({...newSpecial, daysOfWeek: [...days, index]});
-                                } else {
-                                  setNewSpecial({...newSpecial, daysOfWeek: days.filter(d => d !== index)});
-                                }
-                              }}
-                            />
-                            <Label htmlFor={`day-${index}`} className="text-sm">{day}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {newSpecial.type === "weekly" && (
                   <div>
-                    <Label>Day of Week</Label>
-                    <Select value={newSpecial.dayOfWeek?.toString()} onValueChange={(value) => setNewSpecial({...newSpecial, dayOfWeek: parseInt(value)})}>
+                    <Label htmlFor="specialName">Special Name</Label>
+                    <Input
+                      id="specialName"
+                      placeholder="e.g., Lunch Pizza Special"
+                      value={newSpecial.name}
+                      onChange={(e) => setNewSpecial({...newSpecial, name: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="specialDescription">Description</Label>
+                    <Textarea
+                      id="specialDescription"
+                      placeholder="Describe the special offer"
+                      rows={3}
+                      value={newSpecial.description}
+                      onChange={(e) => setNewSpecial({...newSpecial, description: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="specialType">Type</Label>
+                    <Select value={newSpecial.type} onValueChange={(value: any) => setNewSpecial({...newSpecial, type: value})}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select day" />
+                        <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="0">Sunday</SelectItem>
-                        <SelectItem value="1">Monday</SelectItem>
-                        <SelectItem value="2">Tuesday</SelectItem>
-                        <SelectItem value="3">Wednesday</SelectItem>
-                        <SelectItem value="4">Thursday</SelectItem>
-                        <SelectItem value="5">Friday</SelectItem>
-                        <SelectItem value="6">Saturday</SelectItem>
+                        <SelectItem value="hourly">Hourly by Day (e.g., lunch specials)</SelectItem>
+                        <SelectItem value="daily">Daily (every day for a period)</SelectItem>
+                        <SelectItem value="weekly">Weekly (specific day each week)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="startDate">Start Date</Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={newSpecial.startDate}
-                      onChange={(e) => setNewSpecial({...newSpecial, startDate: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="endDate">End Date</Label>
-                    <Input
-                      id="endDate"
-                      type="date"
-                      value={newSpecial.endDate}
-                      onChange={(e) => setNewSpecial({...newSpecial, endDate: e.target.value})}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Applicable Menu Items</Label>
-                  <div className="mt-2 max-h-40 overflow-y-auto border rounded-lg p-3 space-y-2">
-                    {menuItems.filter(item => item.isActive).map((item) => (
-                      <div key={item.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`item-${item.id}`}
-                          checked={newSpecial.menuItems?.includes(item.id) || false}
-                          onCheckedChange={(checked) => {
-                            const items = newSpecial.menuItems || [];
-                            if (checked) {
-                              setNewSpecial({...newSpecial, menuItems: [...items, item.id]});
-                            } else {
-                              setNewSpecial({...newSpecial, menuItems: items.filter(i => i !== item.id)});
-                            }
-                          }}
-                        />
-                        <Label htmlFor={`item-${item.id}`} className="text-sm">{item.name}</Label>
+                  {/* Conditional fields based on type */}
+                  {newSpecial.type === "hourly" && (
+                    <>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="startTime">Start Time</Label>
+                          <Input
+                            id="startTime"
+                            type="time"
+                            value={newSpecial.startTime || ""}
+                            onChange={(e) => setNewSpecial({...newSpecial, startTime: e.target.value})}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="endTime">End Time</Label>
+                          <Input
+                            id="endTime"
+                            type="time"
+                            value={newSpecial.endTime || ""}
+                            onChange={(e) => setNewSpecial({...newSpecial, endTime: e.target.value})}
+                          />
+                        </div>
                       </div>
-                    ))}
+                      <div>
+                        <Label>Days of Week</Label>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, index) => (
+                            <div key={day} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`day-${index}`}
+                                checked={newSpecial.daysOfWeek?.includes(index) || false}
+                                onCheckedChange={(checked) => {
+                                  const days = newSpecial.daysOfWeek || [];
+                                  if (checked) {
+                                    setNewSpecial({...newSpecial, daysOfWeek: [...days, index]});
+                                  } else {
+                                    setNewSpecial({...newSpecial, daysOfWeek: days.filter(d => d !== index)});
+                                  }
+                                }}
+                              />
+                              <Label htmlFor={`day-${index}`} className="text-sm">{day}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {newSpecial.type === "weekly" && (
+                    <div>
+                      <Label>Day of Week</Label>
+                      <Select value={newSpecial.dayOfWeek?.toString()} onValueChange={(value) => setNewSpecial({...newSpecial, dayOfWeek: parseInt(value)})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select day" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Sunday</SelectItem>
+                          <SelectItem value="1">Monday</SelectItem>
+                          <SelectItem value="2">Tuesday</SelectItem>
+                          <SelectItem value="3">Wednesday</SelectItem>
+                          <SelectItem value="4">Thursday</SelectItem>
+                          <SelectItem value="5">Friday</SelectItem>
+                          <SelectItem value="6">Saturday</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="startDate">Start Date</Label>
+                      <Input
+                        id="startDate"
+                        type="date"
+                        value={newSpecial.startDate}
+                        onChange={(e) => setNewSpecial({...newSpecial, startDate: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="endDate">End Date</Label>
+                      <Input
+                        id="endDate"
+                        type="date"
+                        value={newSpecial.endDate}
+                        onChange={(e) => setNewSpecial({...newSpecial, endDate: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="discountType">Discount Type</Label>
+                    <Select value={newSpecial.discountType} onValueChange={(value: any) => setNewSpecial({...newSpecial, discountType: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select discount type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="percentage">Percentage Off</SelectItem>
+                        <SelectItem value="flat">Flat Price</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="discountValue">
+                      {newSpecial.discountType === "percentage" ? "Percentage (%)" : "Flat Price ($)"}
+                    </Label>
+                    <Input
+                      id="discountValue"
+                      type="number"
+                      step={newSpecial.discountType === "percentage" ? "1" : "0.01"}
+                      min="0"
+                      max={newSpecial.discountType === "percentage" ? "100" : undefined}
+                      placeholder={newSpecial.discountType === "percentage" ? "e.g., 20" : "e.g., 9.99"}
+                      value={newSpecial.discountValue}
+                      onChange={(e) => setNewSpecial({...newSpecial, discountValue: parseFloat(e.target.value) || 0})}
+                    />
                   </div>
                 </div>
 
-                <div className="flex justify-end space-x-2">
+                {/* Right Column - Menu Selection */}
+                <div className="w-1/2 pl-6 border-l flex flex-col">
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900">Menu Items</h3>
+                    <p className="text-sm text-gray-500">
+                      Select which menu items this special applies to
+                    </p>
+                  </div>
+
+                  <div className="flex-1 overflow-hidden">
+                    {(() => {
+                      const activeCategories = categories.filter(c => c.isActive);
+                      return (
+                        <Tabs
+                          defaultValue={activeCategories[0]?.id}
+                          className="w-full h-full"
+                        >
+                          <TabsList className="w-full justify-start">
+                            {activeCategories.map((category) => (
+                              <TabsTrigger
+                                key={category.id}
+                                value={category.id}
+                                className="text-sm"
+                              >
+                                {category.name}
+                              </TabsTrigger>
+                            ))}
+                          </TabsList>
+
+                          {activeCategories.map((category) => {
+                            const categoryMenuItems = menuItems.filter(
+                              (item) => item.category === category.id && item.isActive
+                            );
+
+                            return (
+                              <TabsContent
+                                key={category.id}
+                                value={category.id}
+                                className="mt-4"
+                              >
+                                <div className="max-h-80 overflow-y-auto border rounded-lg p-4 space-y-2">
+                                  {categoryMenuItems.length > 0 ? (
+                                    categoryMenuItems.map((item) => (
+                                      <div
+                                        key={item.id}
+                                        className="flex items-center space-x-2"
+                                      >
+                                        <Checkbox
+                                          id={`special-item-${item.id}`}
+                                          checked={newSpecial.menuItems?.includes(item.id) || false}
+                                          onCheckedChange={(checked) => {
+                                            const items = newSpecial.menuItems || [];
+                                            if (checked) {
+                                              setNewSpecial({...newSpecial, menuItems: [...items, item.id]});
+                                            } else {
+                                              setNewSpecial({...newSpecial, menuItems: items.filter(i => i !== item.id)});
+                                            }
+                                          }}
+                                        />
+                                        <Label
+                                          htmlFor={`special-item-${item.id}`}
+                                          className="text-sm cursor-pointer flex-1"
+                                        >
+                                          <div className="flex justify-between items-center">
+                                            <span>{item.name}</span>
+                                            <span className="text-gray-500 text-xs">
+                                              ${item.price.toFixed(2)}
+                                              {newSpecial.discountType === "percentage" && newSpecial.discountValue > 0 && (
+                                                <span className="ml-2 text-green-600">
+                                                  → ${(item.price * (1 - newSpecial.discountValue / 100)).toFixed(2)}
+                                                </span>
+                                              )}
+                                              {newSpecial.discountType === "flat" && newSpecial.discountValue > 0 && (
+                                                <span className="ml-2 text-green-600">
+                                                  → ${newSpecial.discountValue.toFixed(2)}
+                                                </span>
+                                              )}
+                                            </span>
+                                          </div>
+                                        </Label>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-gray-500 text-center py-4">
+                                      No active menu items in {category.name}
+                                    </p>
+                                  )}
+                                </div>
+                              </TabsContent>
+                            );
+                          })}
+                        </Tabs>
+                      );
+                    })()}
+                  </div>
+                </div>
+
+                {/* Buttons fixed at bottom of entire dialog */}
+                <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50">
                   <Button variant="outline" onClick={() => {
                     setIsAddingSpecial(false);
                     setNewSpecial({
@@ -1672,6 +1777,8 @@ export default function Admin() {
                       startDate: "",
                       endDate: "",
                       menuItems: [],
+                      discountType: "percentage",
+                      discountValue: 0,
                       isActive: true
                     });
                   }}>
@@ -1688,6 +1795,8 @@ export default function Admin() {
                       startDate: "",
                       endDate: "",
                       menuItems: [],
+                      discountType: "percentage",
+                      discountValue: 0,
                       isActive: true
                     });
                   }}>
