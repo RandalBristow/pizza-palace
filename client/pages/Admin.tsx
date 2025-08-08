@@ -491,22 +491,93 @@ export default function Admin() {
   }
 
   function renderToppingItems() {
+    const filteredToppings = selectedToppingCategory === "all"
+      ? toppings
+      : toppings.filter(topping => topping.category === selectedToppingCategory);
+
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Topping Items</h2>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Topping
-          </Button>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="topping-category-filter">Filter by Category:</Label>
+              <Select value={selectedToppingCategory} onValueChange={setSelectedToppingCategory}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {toppingCategories.filter(cat => cat.isActive).map((toppingCategory) => (
+                    <SelectItem key={toppingCategory.id} value={toppingCategory.id}>
+                      {toppingCategory.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Dialog open={isAddingTopping} onOpenChange={setIsAddingTopping}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Topping
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Topping</DialogTitle>
+                  <DialogDescription>
+                    Create a new topping for your menu items
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="toppingName">Name</Label>
+                    <Input id="toppingName" placeholder="Topping name" />
+                  </div>
+                  <div>
+                    <Label htmlFor="toppingCategory">Category</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {toppingCategories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="toppingPrice">Price</Label>
+                    <Input id="toppingPrice" type="number" step="0.01" placeholder="0.00" />
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <Button variant="outline" onClick={() => setIsAddingTopping(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={() => setIsAddingTopping(false)}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Topping
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          {toppings.map((topping) => (
+          {filteredToppings.map((topping) => (
             <Card key={topping.id}>
               <CardContent className="p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <h3 className="font-semibold">{topping.name}</h3>
+                    <Badge variant="outline">
+                      {toppingCategories.find(c => c.id === topping.category)?.name}
+                    </Badge>
                     <Badge
                       variant={topping.isActive ? "default" : "secondary"}
                     >
@@ -516,7 +587,11 @@ export default function Admin() {
                       +${topping.price.toFixed(2)}
                     </Badge>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingTopping(topping)}
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
                 </div>
@@ -524,6 +599,81 @@ export default function Admin() {
             </Card>
           ))}
         </div>
+
+        {/* Edit Topping Dialog */}
+        <Dialog open={!!editingTopping} onOpenChange={() => setEditingTopping(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Topping</DialogTitle>
+              <DialogDescription>
+                Update the topping details
+              </DialogDescription>
+            </DialogHeader>
+            {editingTopping && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="editToppingName">Name</Label>
+                  <Input
+                    id="editToppingName"
+                    value={editingTopping.name}
+                    onChange={(e) => setEditingTopping({
+                      ...editingTopping,
+                      name: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editToppingCategory">Category</Label>
+                  <Select
+                    value={editingTopping.category}
+                    onValueChange={(value) => setEditingTopping({
+                      ...editingTopping,
+                      category: value
+                    })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {toppingCategories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="editToppingPrice">Price</Label>
+                  <Input
+                    id="editToppingPrice"
+                    type="number"
+                    step="0.01"
+                    value={editingTopping.price}
+                    onChange={(e) => setEditingTopping({
+                      ...editingTopping,
+                      price: parseFloat(e.target.value) || 0
+                    })}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setEditingTopping(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    setToppings(toppings.map(topping =>
+                      topping.id === editingTopping.id ? editingTopping : topping
+                    ));
+                    setEditingTopping(null);
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
