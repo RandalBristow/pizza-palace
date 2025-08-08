@@ -542,10 +542,56 @@ export default function Admin() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Topping Categories</h2>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Topping Category
-          </Button>
+          <Dialog open={isAddingToppingCategory} onOpenChange={setIsAddingToppingCategory}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Topping Category
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Topping Category</DialogTitle>
+                <DialogDescription>
+                  Create a new topping category
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="toppingCategoryName">Category Name</Label>
+                  <Input id="toppingCategoryName" placeholder="e.g., Premium Toppings" />
+                </div>
+                <div>
+                  <Label htmlFor="toppingCategoryOrder">Display Order</Label>
+                  <Input id="toppingCategoryOrder" type="number" placeholder="1" />
+                </div>
+                <div>
+                  <Label htmlFor="menuItemType">Menu Item Type</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select menu item type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsAddingToppingCategory(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => setIsAddingToppingCategory(false)}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Category
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {toppingCategories.map((toppingCategory) => (
@@ -566,7 +612,11 @@ export default function Admin() {
                       ).length} toppings
                     </Badge>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingToppingCategory(toppingCategory)}
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
                 </div>
@@ -574,6 +624,59 @@ export default function Admin() {
             </Card>
           ))}
         </div>
+
+        {/* Edit Topping Category Dialog */}
+        <Dialog open={!!editingToppingCategory} onOpenChange={() => setEditingToppingCategory(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Topping Category</DialogTitle>
+              <DialogDescription>
+                Update the topping category details
+              </DialogDescription>
+            </DialogHeader>
+            {editingToppingCategory && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="editToppingCategoryName">Category Name</Label>
+                  <Input
+                    id="editToppingCategoryName"
+                    value={editingToppingCategory.name}
+                    onChange={(e) => setEditingToppingCategory({
+                      ...editingToppingCategory,
+                      name: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editToppingCategoryOrder">Display Order</Label>
+                  <Input
+                    id="editToppingCategoryOrder"
+                    type="number"
+                    value={editingToppingCategory.order}
+                    onChange={(e) => setEditingToppingCategory({
+                      ...editingToppingCategory,
+                      order: parseInt(e.target.value) || 1
+                    })}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setEditingToppingCategory(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    setToppingCategories(toppingCategories.map(category =>
+                      category.id === editingToppingCategory.id ? editingToppingCategory : category
+                    ));
+                    setEditingToppingCategory(null);
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
