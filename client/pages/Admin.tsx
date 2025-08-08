@@ -1639,34 +1639,7 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  <div>
-                    <Label htmlFor="discountType">Discount Type</Label>
-                    <Select value={newSpecial.discountType} onValueChange={(value: any) => setNewSpecial({...newSpecial, discountType: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select discount type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="percentage">Percentage Off</SelectItem>
-                        <SelectItem value="flat">Flat Price</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
 
-                  <div>
-                    <Label htmlFor="discountValue">
-                      {newSpecial.discountType === "percentage" ? "Percentage (%)" : "Flat Price ($)"}
-                    </Label>
-                    <Input
-                      id="discountValue"
-                      type="number"
-                      step={newSpecial.discountType === "percentage" ? "1" : "0.01"}
-                      min="0"
-                      max={newSpecial.discountType === "percentage" ? "100" : undefined}
-                      placeholder={newSpecial.discountType === "percentage" ? "e.g., 20" : "e.g., 9.99"}
-                      value={newSpecial.discountValue}
-                      onChange={(e) => setNewSpecial({...newSpecial, discountValue: parseFloat(e.target.value) || 0})}
-                    />
-                  </div>
                 </div>
 
                 {/* Right Column - Menu Selection */}
