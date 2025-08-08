@@ -112,6 +112,15 @@ export default function Admin() {
     defaultToppings: [],
     isActive: true
   });
+  const [newSpecial, setNewSpecial] = useState<Partial<Special>>({
+    name: "",
+    description: "",
+    type: "daily",
+    startDate: "",
+    endDate: "",
+    menuItems: [],
+    isActive: true
+  });
 
   // Edit states
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
