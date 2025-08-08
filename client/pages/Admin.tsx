@@ -302,6 +302,8 @@ export default function Admin() {
 
   const renderContent = () => {
     switch (selectedItem) {
+      case "settings":
+        return renderSettings();
       case "categories":
         return renderMenuCategories();
       case "menu-items":
@@ -317,7 +319,7 @@ export default function Admin() {
       case "customer-favorites":
         return renderCustomerFavorites();
       default:
-        return renderMenuCategories();
+        return renderSettings();
     }
   };
 
