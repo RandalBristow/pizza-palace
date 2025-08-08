@@ -45,6 +45,46 @@ const getCarouselImages = () => {
   ];
 };
 
+// Get customer favorites from localStorage or use default
+const getCustomerFavorites = () => {
+  try {
+    const stored = localStorage.getItem('customerFavorites');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Error loading customer favorites:', error);
+  }
+
+  // Default customer favorites data
+  return [
+    {
+      id: "1",
+      title: "Fresh Ingredients",
+      description: "We use only the finest, freshest ingredients in every pizza.",
+      icon: "🍕",
+      isActive: true,
+      order: 1,
+    },
+    {
+      id: "2",
+      title: "Fast Delivery",
+      description: "Hot, fresh pizza delivered to your door in 30 minutes or less.",
+      icon: "🚚",
+      isActive: true,
+      order: 2,
+    },
+    {
+      id: "3",
+      title: "Premium Coffee",
+      description: "Freshly brewed coffee made from premium beans.",
+      icon: "☕",
+      isActive: true,
+      order: 3,
+    }
+  ];
+};
+
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [carouselImages, setCarouselImages] = useState(getCarouselImages());
