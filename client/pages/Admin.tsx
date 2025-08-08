@@ -258,10 +258,42 @@ export default function Admin() {
 
   const [customerFavorites, setCustomerFavorites] = useState<CustomerFavorite[]>(getInitialCustomerFavorites());
 
+  // Initialize settings from localStorage or use default
+  const getInitialSettings = () => {
+    try {
+      const stored = localStorage.getItem('restaurantSettings');
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+
+    return {
+      taxRate: 8.25,
+      businessHours: {
+        monday: { open: '11:00', close: '22:00', closed: false },
+        tuesday: { open: '11:00', close: '22:00', closed: false },
+        wednesday: { open: '11:00', close: '22:00', closed: false },
+        thursday: { open: '11:00', close: '22:00', closed: false },
+        friday: { open: '11:00', close: '23:00', closed: false },
+        saturday: { open: '11:00', close: '23:00', closed: false },
+        sunday: { open: '12:00', close: '21:00', closed: false },
+      }
+    };
+  };
+
+  const [settings, setSettings] = useState(getInitialSettings());
+
   // Save customer favorites to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('customerFavorites', JSON.stringify(customerFavorites));
   }, [customerFavorites]);
+
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('restaurantSettings', JSON.stringify(settings));
+  }, [settings]);
 
   const generateMenuPDF = () => {
     // PDF generation logic would go here
