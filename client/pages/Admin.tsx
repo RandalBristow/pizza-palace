@@ -1252,22 +1252,22 @@ export default function Admin() {
                     )}
                   </div>
                 </div>
+              </div>
 
-                {/* Buttons fixed at bottom of entire dialog */}
-                <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50">
-                  <Button variant="outline" onClick={() => setEditingMenuItem(null)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={() => {
-                    setMenuItems(menuItems.map(item =>
-                      item.id === editingMenuItem.id ? editingMenuItem : item
-                    ));
-                    setEditingMenuItem(null);
-                  }}>
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Changes
-                  </Button>
-                </div>
+              {/* Buttons at bottom */}
+              <div className="flex justify-end space-x-2 p-6 border-t bg-gray-50">
+                <Button variant="outline" onClick={() => setEditingMenuItem(null)}>
+                  Cancel
+                </Button>
+                <Button onClick={() => {
+                  setMenuItems(menuItems.map(item =>
+                    item.id === editingMenuItem.id ? editingMenuItem : item
+                  ));
+                  setEditingMenuItem(null);
+                }}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Changes
+                </Button>
               </div>
             )}
           </DialogContent>
