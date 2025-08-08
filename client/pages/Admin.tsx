@@ -366,13 +366,38 @@ export default function Admin() {
                       {category.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditingCategory(category)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center space-x-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingCategory(category)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => toggleItemActive(category.id, categories, setCategories)}
+                    >
+                      {category.isActive ? "Deactivate" : "Activate"}
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        if (canDeleteCategory(category.id)) {
+                          if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
+                            deleteItem(category.id, categories, setCategories);
+                          }
+                        } else {
+                          alert("Cannot delete category with associated menu items or topping categories.");
+                        }
+                      }}
+                      disabled={!canDeleteCategory(category.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
