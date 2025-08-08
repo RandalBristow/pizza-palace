@@ -21,23 +21,50 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-// Mock carousel data - this will be managed from admin panel
-const mockCarouselImages = [
-  {
-    id: "1",
-    url: "https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800",
-    title: "Fresh Pizza & Premium Coffee",
-    subtitle: "Made to Order",
-    isActive: true,
-  },
-  // Add more images as needed
-];
+// Get carousel images from localStorage or use default
+const getCarouselImages = () => {
+  try {
+    const stored = localStorage.getItem('carouselImages');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Error loading carousel images:', error);
+  }
+
+  // Default carousel data
+  return [
+    {
+      id: "1",
+      url: "https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800",
+      title: "Fresh Pizza & Premium Coffee",
+      subtitle: "Made to Order",
+      isActive: true,
+      order: 1,
+    },
+  ];
+};
 
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [carouselImages, setCarouselImages] = useState(getCarouselImages());
 
   useEffect(() => {
     setIsLoaded(true);
+
+    // Listen for carousel updates from admin
+    const handleStorageChange = () => {
+      setCarouselImages(getCarouselImages());
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Also check for updates every few seconds in case of same-tab updates
+    const interval = setInterval(handleStorageChange, 2000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -47,7 +74,7 @@ export default function Index() {
       {/* Hero Carousel Section */}
       <section className={`transition-all duration-1000 ${isLoaded ? "animate-fade-in-up" : "opacity-0"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Carousel images={mockCarouselImages} />
+        <Carousel images={carouselImages} />
         </div>
 
         {/* Call to Action Below Carousel */}
