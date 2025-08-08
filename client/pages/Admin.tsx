@@ -1554,7 +1554,7 @@ export default function Admin() {
               </DialogHeader>
               <div className="flex h-full relative">
                 {/* Left Column - Basic Info */}
-                <div className="w-1/2 pr-6 pl-4 space-y-4 overflow-y-auto">
+                <div className="w-1/2 pr-6 pl-6 py-6 space-y-4 overflow-y-auto max-h-full">
                   <div className="mb-6">
                     <h2 className="text-lg font-semibold text-gray-900">Add New Special</h2>
                     <p className="text-sm text-gray-500">
