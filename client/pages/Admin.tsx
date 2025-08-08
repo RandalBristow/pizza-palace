@@ -1156,49 +1156,188 @@ export default function Admin() {
                 Add Special
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-3xl">
               <DialogHeader>
                 <DialogTitle>Add New Special</DialogTitle>
                 <DialogDescription>
-                  Create a new daily or weekly special offer
+                  Create a new hourly, daily, or weekly special offer
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="specialName">Special Name</Label>
-                  <Input id="specialName" placeholder="e.g., Pizza Monday" />
+                  <Input
+                    id="specialName"
+                    placeholder="e.g., Lunch Pizza Special"
+                    value={newSpecial.name}
+                    onChange={(e) => setNewSpecial({...newSpecial, name: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="specialDescription">Description</Label>
-                  <Textarea id="specialDescription" placeholder="Describe the special offer" rows={3} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="startDate">Start Date</Label>
-                    <Input id="startDate" type="date" />
-                  </div>
-                  <div>
-                    <Label htmlFor="endDate">End Date</Label>
-                    <Input id="endDate" type="date" />
-                  </div>
+                  <Textarea
+                    id="specialDescription"
+                    placeholder="Describe the special offer"
+                    rows={3}
+                    value={newSpecial.description}
+                    onChange={(e) => setNewSpecial({...newSpecial, description: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="specialType">Type</Label>
-                  <Select>
+                  <Select value={newSpecial.type} onValueChange={(value: any) => setNewSpecial({...newSpecial, type: value})}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="daily">Daily</SelectItem>
-                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="hourly">Hourly by Day (e.g., lunch specials)</SelectItem>
+                      <SelectItem value="daily">Daily (every day for a period)</SelectItem>
+                      <SelectItem value="weekly">Weekly (specific day each week)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Conditional fields based on type */}
+                {newSpecial.type === "hourly" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="startTime">Start Time</Label>
+                        <Input
+                          id="startTime"
+                          type="time"
+                          value={newSpecial.startTime || ""}
+                          onChange={(e) => setNewSpecial({...newSpecial, startTime: e.target.value})}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="endTime">End Time</Label>
+                        <Input
+                          id="endTime"
+                          type="time"
+                          value={newSpecial.endTime || ""}
+                          onChange={(e) => setNewSpecial({...newSpecial, endTime: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Days of Week</Label>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, index) => (
+                          <div key={day} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`day-${index}`}
+                              checked={newSpecial.daysOfWeek?.includes(index) || false}
+                              onCheckedChange={(checked) => {
+                                const days = newSpecial.daysOfWeek || [];
+                                if (checked) {
+                                  setNewSpecial({...newSpecial, daysOfWeek: [...days, index]});
+                                } else {
+                                  setNewSpecial({...newSpecial, daysOfWeek: days.filter(d => d !== index)});
+                                }
+                              }}
+                            />
+                            <Label htmlFor={`day-${index}`} className="text-sm">{day}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {newSpecial.type === "weekly" && (
+                  <div>
+                    <Label>Day of Week</Label>
+                    <Select value={newSpecial.dayOfWeek?.toString()} onValueChange={(value) => setNewSpecial({...newSpecial, dayOfWeek: parseInt(value)})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select day" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0">Sunday</SelectItem>
+                        <SelectItem value="1">Monday</SelectItem>
+                        <SelectItem value="2">Tuesday</SelectItem>
+                        <SelectItem value="3">Wednesday</SelectItem>
+                        <SelectItem value="4">Thursday</SelectItem>
+                        <SelectItem value="5">Friday</SelectItem>
+                        <SelectItem value="6">Saturday</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="startDate">Start Date</Label>
+                    <Input
+                      id="startDate"
+                      type="date"
+                      value={newSpecial.startDate}
+                      onChange={(e) => setNewSpecial({...newSpecial, startDate: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="endDate">End Date</Label>
+                    <Input
+                      id="endDate"
+                      type="date"
+                      value={newSpecial.endDate}
+                      onChange={(e) => setNewSpecial({...newSpecial, endDate: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Applicable Menu Items</Label>
+                  <div className="mt-2 max-h-40 overflow-y-auto border rounded-lg p-3 space-y-2">
+                    {menuItems.filter(item => item.isActive).map((item) => (
+                      <div key={item.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`item-${item.id}`}
+                          checked={newSpecial.menuItems?.includes(item.id) || false}
+                          onCheckedChange={(checked) => {
+                            const items = newSpecial.menuItems || [];
+                            if (checked) {
+                              setNewSpecial({...newSpecial, menuItems: [...items, item.id]});
+                            } else {
+                              setNewSpecial({...newSpecial, menuItems: items.filter(i => i !== item.id)});
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`item-${item.id}`} className="text-sm">{item.name}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddingSpecial(false)}>
+                  <Button variant="outline" onClick={() => {
+                    setIsAddingSpecial(false);
+                    setNewSpecial({
+                      name: "",
+                      description: "",
+                      type: "daily",
+                      startDate: "",
+                      endDate: "",
+                      menuItems: [],
+                      isActive: true
+                    });
+                  }}>
                     Cancel
                   </Button>
-                  <Button onClick={() => setIsAddingSpecial(false)}>
+                  <Button onClick={() => {
+                    const id = `special-${Date.now()}`;
+                    setSpecials([...specials, {...newSpecial, id} as Special]);
+                    setIsAddingSpecial(false);
+                    setNewSpecial({
+                      name: "",
+                      description: "",
+                      type: "daily",
+                      startDate: "",
+                      endDate: "",
+                      menuItems: [],
+                      isActive: true
+                    });
+                  }}>
                     <Save className="h-4 w-4 mr-2" />
                     Save Special
                   </Button>
@@ -1213,10 +1352,10 @@ export default function Admin() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 mb-2">
                       <h3 className="font-semibold">{special.name}</h3>
                       <Badge variant="outline">
-                        {special.type === "daily" ? "Daily" : "Weekly"}
+                        {special.type === "hourly" ? "Hourly" : special.type === "daily" ? "Daily" : "Weekly"}
                       </Badge>
                       <Badge
                         variant={special.isActive ? "default" : "secondary"}
@@ -1224,14 +1363,34 @@ export default function Admin() {
                         {special.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </div>
-                    <p className="text-gray-600 text-sm mt-1">
+                    <p className="text-gray-600 text-sm mb-2">
                       {special.description}
                     </p>
+                    <div className="text-xs text-gray-500 space-y-1">
+                      <div>
+                        {special.startDate} to {special.endDate}
+                      </div>
+                      {special.type === "hourly" && special.startTime && special.endTime && (
+                        <div>
+                          {special.startTime} - {special.endTime}
+                          {special.daysOfWeek && (
+                            <span className="ml-2">
+                              ({special.daysOfWeek.map(d => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d]).join(", ")})
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {special.type === "weekly" && special.dayOfWeek !== undefined && (
+                        <div>
+                          Every {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][special.dayOfWeek]}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setEditingSpecial(special)}
+                    onClick={() => setEditingSpecial({...special})}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -1243,7 +1402,7 @@ export default function Admin() {
 
         {/* Edit Special Dialog */}
         <Dialog open={!!editingSpecial} onOpenChange={() => setEditingSpecial(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-3xl">
             <DialogHeader>
               <DialogTitle>Edit Special</DialogTitle>
               <DialogDescription>
@@ -1275,6 +1434,87 @@ export default function Admin() {
                     rows={3}
                   />
                 </div>
+                <div>
+                  <Label htmlFor="editSpecialType">Type</Label>
+                  <Select value={editingSpecial.type} onValueChange={(value: any) => setEditingSpecial({...editingSpecial, type: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="hourly">Hourly by Day</SelectItem>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {editingSpecial.type === "hourly" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="editStartTime">Start Time</Label>
+                        <Input
+                          id="editStartTime"
+                          type="time"
+                          value={editingSpecial.startTime || ""}
+                          onChange={(e) => setEditingSpecial({...editingSpecial, startTime: e.target.value})}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="editEndTime">End Time</Label>
+                        <Input
+                          id="editEndTime"
+                          type="time"
+                          value={editingSpecial.endTime || ""}
+                          onChange={(e) => setEditingSpecial({...editingSpecial, endTime: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Days of Week</Label>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, index) => (
+                          <div key={day} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`edit-day-${index}`}
+                              checked={editingSpecial.daysOfWeek?.includes(index) || false}
+                              onCheckedChange={(checked) => {
+                                const days = editingSpecial.daysOfWeek || [];
+                                if (checked) {
+                                  setEditingSpecial({...editingSpecial, daysOfWeek: [...days, index]});
+                                } else {
+                                  setEditingSpecial({...editingSpecial, daysOfWeek: days.filter(d => d !== index)});
+                                }
+                              }}
+                            />
+                            <Label htmlFor={`edit-day-${index}`} className="text-sm">{day}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {editingSpecial.type === "weekly" && (
+                  <div>
+                    <Label>Day of Week</Label>
+                    <Select value={editingSpecial.dayOfWeek?.toString()} onValueChange={(value) => setEditingSpecial({...editingSpecial, dayOfWeek: parseInt(value)})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0">Sunday</SelectItem>
+                        <SelectItem value="1">Monday</SelectItem>
+                        <SelectItem value="2">Tuesday</SelectItem>
+                        <SelectItem value="3">Wednesday</SelectItem>
+                        <SelectItem value="4">Thursday</SelectItem>
+                        <SelectItem value="5">Friday</SelectItem>
+                        <SelectItem value="6">Saturday</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="editStartDate">Start Date</Label>
@@ -1301,6 +1541,30 @@ export default function Admin() {
                     />
                   </div>
                 </div>
+
+                <div>
+                  <Label>Applicable Menu Items</Label>
+                  <div className="mt-2 max-h-40 overflow-y-auto border rounded-lg p-3 space-y-2">
+                    {menuItems.filter(item => item.isActive).map((item) => (
+                      <div key={item.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`edit-item-${item.id}`}
+                          checked={editingSpecial.menuItems?.includes(item.id) || false}
+                          onCheckedChange={(checked) => {
+                            const items = editingSpecial.menuItems || [];
+                            if (checked) {
+                              setEditingSpecial({...editingSpecial, menuItems: [...items, item.id]});
+                            } else {
+                              setEditingSpecial({...editingSpecial, menuItems: items.filter(i => i !== item.id)});
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`edit-item-${item.id}`} className="text-sm">{item.name}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="flex justify-end space-x-2">
                   <Button variant="outline" onClick={() => setEditingSpecial(null)}>
                     Cancel
