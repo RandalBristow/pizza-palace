@@ -2239,7 +2239,7 @@ export default function Admin() {
                         size="sm"
                         onClick={() => toggleItemActive(image.id, carouselImages, setCarouselImages)}
                       >
-                        {image.isActive ? "Deactivate" : "Activate"}
+                        {image.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
                       </Button>
                       <Button
                         variant="destructive"
