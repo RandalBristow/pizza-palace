@@ -2028,7 +2028,7 @@ export default function Admin() {
                         {special.type === "hourly" ? "Hourly" : special.type === "daily" ? "Daily" : "Weekly"}
                       </Badge>
                       <Badge
-                        variant={special.isActive ? "default" : "secondary"}
+                        className={special.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
                       >
                         {special.isActive ? "Active" : "Inactive"}
                       </Badge>
