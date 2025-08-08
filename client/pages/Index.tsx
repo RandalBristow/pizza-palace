@@ -140,44 +140,22 @@ export default function Index() {
             Why Choose Pronto?
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <Pizza className="h-12 w-12 text-red-600 mx-auto mb-4" />
-                <CardTitle>Fresh Ingredients</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">
-                  We use only the freshest ingredients and make our dough daily
-                  for the perfect pizza experience.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <Coffee className="h-12 w-12 text-amber-700 mx-auto mb-4" />
-                <CardTitle>Premium Coffee</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">
-                  Our expertly roasted coffee beans create the perfect cup to
-                  complement your meal.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <Clock className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <CardTitle>Quick Service</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">
-                  Fast, friendly service with convenient carry-out options for
-                  your busy lifestyle.
-                </CardDescription>
-              </CardContent>
-            </Card>
+            {customerFavorites
+              .filter(favorite => favorite.isActive)
+              .sort((a, b) => a.order - b.order)
+              .map((favorite) => (
+                <Card key={favorite.id} className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
+                  <CardHeader>
+                    <div className="text-4xl mb-4">{favorite.icon}</div>
+                    <CardTitle>{favorite.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-base">
+                      {favorite.description}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              ))}
           </div>
         </div>
       </section>
