@@ -213,10 +213,41 @@ export default function Admin() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Menu Categories</h2>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Category
-          </Button>
+          <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Category
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Category</DialogTitle>
+                <DialogDescription>
+                  Create a new menu category
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="categoryName">Category Name</Label>
+                  <Input id="categoryName" placeholder="e.g., Appetizers" />
+                </div>
+                <div>
+                  <Label htmlFor="categoryOrder">Display Order</Label>
+                  <Input id="categoryOrder" type="number" placeholder="1" />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsAddingCategory(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => setIsAddingCategory(false)}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Category
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {categories.map((category) => (
@@ -231,7 +262,11 @@ export default function Admin() {
                       {category.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingCategory(category)}
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
                 </div>
@@ -239,6 +274,59 @@ export default function Admin() {
             </Card>
           ))}
         </div>
+
+        {/* Edit Category Dialog */}
+        <Dialog open={!!editingCategory} onOpenChange={() => setEditingCategory(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Category</DialogTitle>
+              <DialogDescription>
+                Update the category details
+              </DialogDescription>
+            </DialogHeader>
+            {editingCategory && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="editCategoryName">Category Name</Label>
+                  <Input
+                    id="editCategoryName"
+                    value={editingCategory.name}
+                    onChange={(e) => setEditingCategory({
+                      ...editingCategory,
+                      name: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editCategoryOrder">Display Order</Label>
+                  <Input
+                    id="editCategoryOrder"
+                    type="number"
+                    value={editingCategory.order}
+                    onChange={(e) => setEditingCategory({
+                      ...editingCategory,
+                      order: parseInt(e.target.value) || 1
+                    })}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setEditingCategory(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    setCategories(categories.map(category =>
+                      category.id === editingCategory.id ? editingCategory : category
+                    ));
+                    setEditingCategory(null);
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
