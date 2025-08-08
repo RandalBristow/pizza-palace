@@ -1329,6 +1329,15 @@ export default function Admin() {
                     </Select>
                   </div>
                   <div>
+                    <Label htmlFor="toppingName">Name</Label>
+                    <Input
+                      id="toppingName"
+                      placeholder="Topping name"
+                      value={newTopping.name}
+                      onChange={(e) => setNewTopping({...newTopping, name: e.target.value})}
+                    />
+                  </div>
+                  <div>
                     <Label htmlFor="toppingPrice">Price</Label>
                     <Input
                       id="toppingPrice"
