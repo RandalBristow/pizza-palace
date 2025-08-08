@@ -1839,25 +1839,54 @@ export default function Admin() {
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="imageUrl">Image URL</Label>
-                  <Input id="imageUrl" placeholder="https://example.com/image.jpg" />
+                  <Input
+                    id="imageUrl"
+                    placeholder="https://example.com/image.jpg"
+                    value={newCarouselImage.url}
+                    onChange={(e) => setNewCarouselImage({...newCarouselImage, url: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="imageTitle">Title</Label>
-                  <Input id="imageTitle" placeholder="Image title" />
+                  <Input
+                    id="imageTitle"
+                    placeholder="Image title"
+                    value={newCarouselImage.title}
+                    onChange={(e) => setNewCarouselImage({...newCarouselImage, title: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="imageSubtitle">Subtitle</Label>
-                  <Input id="imageSubtitle" placeholder="Image subtitle" />
+                  <Input
+                    id="imageSubtitle"
+                    placeholder="Image subtitle"
+                    value={newCarouselImage.subtitle}
+                    onChange={(e) => setNewCarouselImage({...newCarouselImage, subtitle: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="imageOrder">Display Order</Label>
-                  <Input id="imageOrder" type="number" placeholder="1" />
+                  <Input
+                    id="imageOrder"
+                    type="number"
+                    placeholder="1"
+                    value={newCarouselImage.order}
+                    onChange={(e) => setNewCarouselImage({...newCarouselImage, order: parseInt(e.target.value) || 1})}
+                  />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddingCarouselImage(false)}>
+                  <Button variant="outline" onClick={() => {
+                    setIsAddingCarouselImage(false);
+                    setNewCarouselImage({url: "", title: "", subtitle: "", order: 1, isActive: true});
+                  }}>
                     Cancel
                   </Button>
-                  <Button onClick={() => setIsAddingCarouselImage(false)}>
+                  <Button onClick={() => {
+                    const id = `carousel-${Date.now()}`;
+                    setCarouselImages([...carouselImages, {...newCarouselImage, id} as CarouselImage]);
+                    setIsAddingCarouselImage(false);
+                    setNewCarouselImage({url: "", title: "", subtitle: "", order: 1, isActive: true});
+                  }}>
                     <Save className="h-4 w-4 mr-2" />
                     Save Image
                   </Button>
