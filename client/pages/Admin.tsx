@@ -2712,7 +2712,7 @@ export default function Admin() {
                   <h3 className="font-semibold">{favorite.title}</h3>
                   <p className="text-sm text-gray-600">{favorite.description}</p>
                   <div className="mt-2 flex justify-between items-center">
-                    <Badge variant={favorite.isActive ? "default" : "secondary"}>
+                    <Badge className={favorite.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
                       {favorite.isActive ? "Active" : "Inactive"}
                     </Badge>
                     <div className="flex space-x-2">
