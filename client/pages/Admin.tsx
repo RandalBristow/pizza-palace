@@ -381,50 +381,287 @@ export default function Admin() {
                   Add Menu Item
                 </Button>
               </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
+              <DialogContent className="max-w-6xl h-[68vh] flex flex-col p-0">
+                <DialogHeader className="sr-only">
                   <DialogTitle>Add New Menu Item</DialogTitle>
-                  <DialogDescription>
-                    Create a new menu item for your restaurant
-                  </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="itemName">Name</Label>
-                    <Input id="itemName" placeholder="Item name" />
+                <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
+                  {/* Left Column - Item Details */}
+                  <div className="p-6 border-r space-y-4">
+                    <div className="mb-6">
+                      <h2 className="text-lg font-semibold text-gray-900">Add New Menu Item</h2>
+                      <p className="text-sm text-gray-500">
+                        Create a new menu item for your restaurant
+                      </p>
+                    </div>
+
+                    {/* Category moved to top */}
+                    <div>
+                      <Label htmlFor="category" className="text-red-600">
+                        * Category
+                      </Label>
+                      <Select
+                        value={newMenuItem.category}
+                        onValueChange={(value) => {
+                          setNewMenuItem({
+                            ...newMenuItem,
+                            category: value,
+                            defaultToppings: [], // Reset toppings when category changes
+                          });
+                        }}
+                        required
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name" className="text-red-600">
+                          * Name
+                        </Label>
+                        <Input
+                          id="name"
+                          value={newMenuItem.name}
+                          onChange={(e) =>
+                            setNewMenuItem({
+                              ...newMenuItem,
+                              name: e.target.value,
+                            })
+                          }
+                          placeholder="Item name"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="price" className="text-red-600">
+                          * Price
+                        </Label>
+                        <Input
+                          id="price"
+                          type="number"
+                          step="0.01"
+                          value={newMenuItem.price}
+                          onChange={(e) =>
+                            setNewMenuItem({
+                              ...newMenuItem,
+                              price: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          placeholder="0.00"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="description" className="text-red-600">
+                        * Description
+                      </Label>
+                      <Textarea
+                        id="description"
+                        value={newMenuItem.description}
+                        onChange={(e) =>
+                          setNewMenuItem({
+                            ...newMenuItem,
+                            description: e.target.value,
+                          })
+                        }
+                        placeholder="Item description"
+                        rows={3}
+                        required
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button variant="outline">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Image
+                      </Button>
+                      <span className="text-sm text-gray-500">
+                        Optional: Add item image
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="itemCategory">Category</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+
+                  {/* Right Column - Default Toppings */}
+                  <div className="p-6 flex flex-col h-full">
+                    <div className="mb-6">
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Default Toppings
+                      </h2>
+                      <p className="text-sm text-gray-500">
+                        Select which toppings should come with this item by
+                        default
+                      </p>
+                    </div>
+
+                    {/* Toppings content that grows to fill space */}
+                    <div className="flex-1 overflow-hidden">
+                      {newMenuItem.category ? (
+                        (() => {
+                          const availableCategories =
+                            toppingCategories.filter(
+                              (tc) =>
+                                tc.menuItemCategory ===
+                                  newMenuItem.category && tc.isActive,
+                            );
+                          return (
+                            <Tabs
+                              defaultValue={availableCategories[0]?.id}
+                              className="w-full h-full"
+                              key={newMenuItem.category}
+                            >
+                              <TabsList className="w-full justify-start">
+                                {availableCategories.map(
+                                  (toppingCategory) => (
+                                    <TabsTrigger
+                                      key={toppingCategory.id}
+                                      value={toppingCategory.id}
+                                      className="text-sm"
+                                    >
+                                      {toppingCategory.name}
+                                    </TabsTrigger>
+                                  ),
+                                )}
+                              </TabsList>
+
+                              {availableCategories.map((toppingCategory) => {
+                                const categoryToppings = toppings.filter(
+                                  (topping) =>
+                                    topping.category === toppingCategory.id &&
+                                    topping.menuItemCategory ===
+                                      newMenuItem.category &&
+                                    topping.isActive,
+                                );
+
+                                return (
+                                  <TabsContent
+                                    key={toppingCategory.id}
+                                    value={toppingCategory.id}
+                                    className="mt-4"
+                                  >
+                                    <div className="max-h-80 overflow-y-auto border rounded-lg p-4 space-y-2">
+                                      {categoryToppings.length > 0 ? (
+                                        categoryToppings.map((topping) => (
+                                          <div
+                                            key={topping.id}
+                                            className="flex items-center space-x-2"
+                                          >
+                                            <Checkbox
+                                              id={`topping-${topping.id}`}
+                                              checked={
+                                                newMenuItem.defaultToppings?.includes(
+                                                  topping.id,
+                                                ) || false
+                                              }
+                                              onCheckedChange={(checked) => {
+                                                const currentToppings =
+                                                  newMenuItem.defaultToppings || [];
+                                                if (checked) {
+                                                  setNewMenuItem({
+                                                    ...newMenuItem,
+                                                    defaultToppings: [
+                                                      ...currentToppings,
+                                                      topping.id,
+                                                    ],
+                                                  });
+                                                } else {
+                                                  setNewMenuItem({
+                                                    ...newMenuItem,
+                                                    defaultToppings:
+                                                      currentToppings.filter(
+                                                        (id) =>
+                                                          id !== topping.id,
+                                                      ),
+                                                  });
+                                                }
+                                              }}
+                                            />
+                                            <Label
+                                              htmlFor={`topping-${topping.id}`}
+                                              className="text-sm cursor-pointer flex-1"
+                                            >
+                                              {topping.name}
+                                              {topping.price > 0 && (
+                                                <span className="text-gray-500 ml-1">
+                                                  (+$
+                                                  {topping.price.toFixed(2)})
+                                                </span>
+                                              )}
+                                            </Label>
+                                          </div>
+                                        ))
+                                      ) : (
+                                        <p className="text-gray-500 text-center py-4">
+                                          No{" "}
+                                          {toppingCategory.name.toLowerCase()}{" "}
+                                          toppings available for this category
+                                        </p>
+                                      )}
+                                    </div>
+                                  </TabsContent>
+                                );
+                              })}
+                            </Tabs>
+                          );
+                        })()
+                      ) : (
+                        <div className="border rounded-lg p-8 text-center flex items-center justify-center h-full">
+                          <p className="text-gray-500">
+                            Select a category first to see available toppings
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="itemPrice">Price</Label>
-                    <Input id="itemPrice" type="number" step="0.01" placeholder="0.00" />
-                  </div>
-                  <div>
-                    <Label htmlFor="itemDescription">Description</Label>
-                    <Textarea id="itemDescription" placeholder="Item description" rows={3} />
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Button variant="outline" onClick={() => setIsAddingMenuItem(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={() => setIsAddingMenuItem(false)}>
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Item
-                    </Button>
-                  </div>
+                </div>
+
+                {/* Buttons fixed at bottom of entire dialog */}
+                <div className="flex justify-end space-x-2 p-6 border-t bg-gray-50">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingMenuItem(false);
+                      setNewMenuItem({
+                        name: "",
+                        description: "",
+                        price: 0,
+                        category: "",
+                        defaultToppings: [],
+                        isActive: true
+                      });
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    // Add the new menu item to the list
+                    const id = `item-${Date.now()}`;
+                    setMenuItems([...menuItems, {
+                      ...newMenuItem,
+                      id
+                    } as MenuItem]);
+                    setIsAddingMenuItem(false);
+                    setNewMenuItem({
+                      name: "",
+                      description: "",
+                      price: 0,
+                      category: "",
+                      defaultToppings: [],
+                      isActive: true
+                    });
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Item
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
