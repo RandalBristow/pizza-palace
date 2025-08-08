@@ -49,6 +49,8 @@ export interface Special {
   startTime?: string; // For hourly specials
   endTime?: string; // For hourly specials
   menuItems: string[];
+  discountType: "percentage" | "flat"; // Type of discount
+  discountValue: number; // Percentage or flat amount
   isActive: boolean;
 }
 
