@@ -85,10 +85,36 @@ const getCustomerFavorites = () => {
   ];
 };
 
+// Get restaurant settings from localStorage or use default
+const getRestaurantSettings = () => {
+  try {
+    const stored = localStorage.getItem('restaurantSettings');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+
+  return {
+    taxRate: 8.25,
+    businessHours: {
+      monday: { open: '11:00', close: '22:00', closed: false },
+      tuesday: { open: '11:00', close: '22:00', closed: false },
+      wednesday: { open: '11:00', close: '22:00', closed: false },
+      thursday: { open: '11:00', close: '22:00', closed: false },
+      friday: { open: '11:00', close: '23:00', closed: false },
+      saturday: { open: '11:00', close: '23:00', closed: false },
+      sunday: { open: '12:00', close: '21:00', closed: false },
+    }
+  };
+};
+
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [carouselImages, setCarouselImages] = useState(getCarouselImages());
   const [customerFavorites, setCustomerFavorites] = useState(getCustomerFavorites());
+  const [settings, setSettings] = useState(getRestaurantSettings());
 
   useEffect(() => {
     setIsLoaded(true);
@@ -97,6 +123,7 @@ export default function Index() {
     const handleStorageChange = () => {
       setCarouselImages(getCarouselImages());
       setCustomerFavorites(getCustomerFavorites());
+      setSettings(getRestaurantSettings());
     };
 
     window.addEventListener('storage', handleStorageChange);
