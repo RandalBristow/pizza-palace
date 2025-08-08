@@ -121,6 +121,24 @@ export default function Admin() {
     menuItems: [],
     isActive: true
   });
+  const [newCategory, setNewCategory] = useState({
+    name: "",
+    isActive: true,
+    order: 1,
+  });
+  const [newToppingCategory, setNewToppingCategory] = useState({
+    name: "",
+    order: 1,
+    isActive: true,
+    menuItemCategory: "",
+  });
+  const [newTopping, setNewTopping] = useState({
+    name: "",
+    price: 0,
+    category: "",
+    menuItemCategory: "",
+    isActive: true,
+  });
 
   // Edit states
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
