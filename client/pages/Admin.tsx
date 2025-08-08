@@ -139,6 +139,20 @@ export default function Admin() {
     menuItemCategory: "",
     isActive: true,
   });
+  const [newCarouselImage, setNewCarouselImage] = useState({
+    url: "",
+    title: "",
+    subtitle: "",
+    order: 1,
+    isActive: true,
+  });
+  const [newCustomerFavorite, setNewCustomerFavorite] = useState({
+    title: "",
+    description: "",
+    icon: "",
+    order: 1,
+    isActive: true,
+  });
 
   // Edit states
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
