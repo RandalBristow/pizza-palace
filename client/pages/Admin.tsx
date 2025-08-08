@@ -542,7 +542,7 @@ export default function Admin() {
                   <div className="flex items-center space-x-2">
                     <h3 className="font-semibold">{category.name}</h3>
                     <Badge
-                      variant={category.isActive ? "default" : "secondary"}
+                      className={category.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
                     >
                       {category.isActive ? "Active" : "Inactive"}
                     </Badge>
