@@ -501,7 +501,7 @@ export default function Admin() {
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
                   {/* Left Column - Item Details */}
-                  <div className="p-6 border-r space-y-4">
+                  <div className="p-6 pl-8 border-r space-y-4">
                     <div className="mb-6">
                       <h2 className="text-lg font-semibold text-gray-900">Add New Menu Item</h2>
                       <p className="text-sm text-gray-500">
