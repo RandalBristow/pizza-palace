@@ -1188,18 +1188,30 @@ export default function Admin() {
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="toppingName">Name</Label>
-                    <Input id="toppingName" placeholder="Topping name" />
+                    <Input
+                      id="toppingName"
+                      placeholder="Topping name"
+                      value={newTopping.name}
+                      onChange={(e) => setNewTopping({...newTopping, name: e.target.value})}
+                    />
                   </div>
                   <div>
                     <Label htmlFor="toppingCategory">Category</Label>
-                    <Select>
+                    <Select value={newTopping.category} onValueChange={(value) => {
+                      const category = toppingCategories.find(tc => tc.id === value);
+                      setNewTopping({
+                        ...newTopping,
+                        category: value,
+                        menuItemCategory: category?.menuItemCategory || ""
+                      });
+                    }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {toppingCategories.map((category) => (
+                        {toppingCategories.filter(tc => tc.isActive).map((category) => (
                           <SelectItem key={category.id} value={category.id}>
-                            {category.name}
+                            {category.name} ({categories.find(c => c.id === category.menuItemCategory)?.name})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -1207,13 +1219,28 @@ export default function Admin() {
                   </div>
                   <div>
                     <Label htmlFor="toppingPrice">Price</Label>
-                    <Input id="toppingPrice" type="number" step="0.01" placeholder="0.00" />
+                    <Input
+                      id="toppingPrice"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      value={newTopping.price}
+                      onChange={(e) => setNewTopping({...newTopping, price: parseFloat(e.target.value) || 0})}
+                    />
                   </div>
                   <div className="flex justify-end space-x-2">
-                    <Button variant="outline" onClick={() => setIsAddingTopping(false)}>
+                    <Button variant="outline" onClick={() => {
+                      setIsAddingTopping(false);
+                      setNewTopping({name: "", price: 0, category: "", menuItemCategory: "", isActive: true});
+                    }}>
                       Cancel
                     </Button>
-                    <Button onClick={() => setIsAddingTopping(false)}>
+                    <Button onClick={() => {
+                      const id = `${newTopping.category}-${newTopping.name.toLowerCase().replace(/\s+/g, '-')}`;
+                      setToppings([...toppings, {...newTopping, id} as Topping]);
+                      setIsAddingTopping(false);
+                      setNewTopping({name: "", price: 0, category: "", menuItemCategory: "", isActive: true});
+                    }}>
                       <Save className="h-4 w-4 mr-2" />
                       Save Topping
                     </Button>
