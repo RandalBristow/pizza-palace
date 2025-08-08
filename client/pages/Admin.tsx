@@ -2061,37 +2061,172 @@ export default function Admin() {
                     />
                   </div>
                 </div>
-
-                <div>
-                  <Label htmlFor="editDiscountType">Discount Type</Label>
-                  <Select value={editingSpecial.discountType} onValueChange={(value: any) => setEditingSpecial({...editingSpecial, discountType: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="percentage">Percentage Off</SelectItem>
-                      <SelectItem value="flat">Flat Price</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
 
-                <div>
-                  <Label htmlFor="editDiscountValue">
-                    {editingSpecial.discountType === "percentage" ? "Percentage (%)" : "Flat Price ($)"}
-                  </Label>
-                  <Input
-                    id="editDiscountValue"
-                    type="number"
-                    step={editingSpecial.discountType === "percentage" ? "1" : "0.01"}
-                    min="0"
-                    max={editingSpecial.discountType === "percentage" ? "100" : undefined}
-                    value={editingSpecial.discountValue}
-                    onChange={(e) => setEditingSpecial({...editingSpecial, discountValue: parseFloat(e.target.value) || 0})}
-                  />
+                {/* Right Column - Menu Selection */}
+                <div className="w-1/2 pl-6 border-l flex flex-col">
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900">Menu Items</h3>
+                    <p className="text-sm text-gray-500">
+                      Select which menu items this special applies to
+                    </p>
+                  </div>
+
+                  <div className="flex-1 overflow-hidden">
+                    {(() => {
+                      const activeCategories = categories.filter(c => c.isActive);
+                      return (
+                        <Tabs
+                          defaultValue={activeCategories[0]?.id}
+                          className="w-full h-full"
+                        >
+                          <TabsList className="w-full justify-start">
+                            {activeCategories.map((category) => (
+                              <TabsTrigger
+                                key={category.id}
+                                value={category.id}
+                                className="text-sm"
+                              >
+                                {category.name}
+                              </TabsTrigger>
+                            ))}
+                          </TabsList>
+
+                          {activeCategories.map((category) => {
+                            const categoryMenuItems = menuItems.filter(
+                              (item) => item.category === category.id && item.isActive
+                            );
+
+                            return (
+                              <TabsContent
+                                key={category.id}
+                                value={category.id}
+                                className="mt-4"
+                              >
+                                <div className="max-h-80 overflow-y-auto border rounded-lg p-4 space-y-2">
+                                  {categoryMenuItems.length > 0 ? (
+                                    categoryMenuItems.map((item) => (
+                                      <div
+                                        key={item.id}
+                                        className="flex items-center space-x-2"
+                                      >
+                                        <Checkbox
+                                          id={`edit-special-item-${item.id}`}
+                                          checked={editingSpecial.menuItems?.includes(item.id) || false}
+                                          onCheckedChange={(checked) => {
+                                            const items = editingSpecial.menuItems || [];
+                                            if (checked) {
+                                              setEditingSpecial({...editingSpecial, menuItems: [...items, item.id]});
+                                            } else {
+                                              setEditingSpecial({...editingSpecial, menuItems: items.filter(i => i !== item.id)});
+                                            }
+                                          }}
+                                        />
+                                        <Label
+                                          htmlFor={`edit-special-item-${item.id}`}
+                                          className="text-sm cursor-pointer flex-1"
+                                        >
+                                          <div className="flex justify-between items-center">
+                                            <span>{item.name}</span>
+                                            <span className="text-gray-500 text-xs">
+                                              ${item.price.toFixed(2)}
+                                              {editingSpecial.discountType === "percentage" && editingSpecial.discountValue > 0 && (
+                                                <span className="ml-2 text-green-600">
+                                                  → ${(item.price * (1 - editingSpecial.discountValue / 100)).toFixed(2)}
+                                                </span>
+                                              )}
+                                              {editingSpecial.discountType === "flat" && editingSpecial.discountValue > 0 && (
+                                                <span className="ml-2 text-green-600">
+                                                  → ${editingSpecial.discountValue.toFixed(2)}
+                                                </span>
+                                              )}
+                                            </span>
+                                          </div>
+                                        </Label>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-gray-500 text-center py-4">
+                                      No active menu items in {category.name}
+                                    </p>
+                                  )}
+                                </div>
+                              </TabsContent>
+                            );
+                          })}
+                        </Tabs>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Discount Section */}
+                  <div className="mt-6 pt-6 border-t">
+                    <h4 className="text-md font-semibold text-gray-900 mb-4">Discount Settings</h4>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="editDiscountType">Discount Type</Label>
+                        <Select value={editingSpecial.discountType} onValueChange={(value: any) => setEditingSpecial({...editingSpecial, discountType: value})}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="percentage">Percentage Off</SelectItem>
+                            <SelectItem value="flat">Flat Price</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="editDiscountValue">
+                            {editingSpecial.discountType === "percentage" ? "Percentage (%)" : "Flat Price ($)"}
+                          </Label>
+                          <Input
+                            id="editDiscountValue"
+                            type="number"
+                            step={editingSpecial.discountType === "percentage" ? "1" : "0.01"}
+                            min="0"
+                            max={editingSpecial.discountType === "percentage" ? "100" : undefined}
+                            value={editingSpecial.discountValue}
+                            onChange={(e) => setEditingSpecial({...editingSpecial, discountValue: parseFloat(e.target.value) || 0})}
+                          />
+                        </div>
+
+                        {editingSpecial.discountType === "percentage" && editingSpecial.discountValue > 0 && (
+                          <div>
+                            <Label>Preview Discount</Label>
+                            <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
+                              Example: $10.00 → ${(10 * (1 - editingSpecial.discountValue / 100)).toFixed(2)}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <Label>Applicable Menu Items</Label>
+                {/* Buttons fixed at bottom of entire dialog */}
+                <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50">
+                  <Button variant="outline" onClick={() => setEditingSpecial(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    setSpecials(specials.map(special =>
+                      special.id === editingSpecial.id ? editingSpecial : special
+                    ));
+                    setEditingSpecial(null);
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
                   <div className="mt-2 max-h-40 overflow-y-auto border rounded-lg p-3 space-y-2">
                     {menuItems.filter(item => item.isActive).map((item) => (
                       <div key={item.id} className="flex items-center space-x-2">
