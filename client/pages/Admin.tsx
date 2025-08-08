@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
+import AdminSidebar from "../components/AdminSidebar";
 import {
   mockCategories as initialCategories,
   mockMenuItems as initialMenuItems,
@@ -586,7 +587,9 @@ export default function Admin() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Admin Dashboard
+          </h1>
           <div className="flex items-center space-x-2">
             <Button variant="outline" onClick={generateMenuPDF}>
               <FileText className="h-4 w-4 mr-2" />
