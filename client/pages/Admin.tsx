@@ -2388,8 +2388,23 @@ export default function Admin() {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="sm">
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleItemActive(favorite.id, customerFavorites, setCustomerFavorites)}
+                      >
+                        {favorite.isActive ? "Deactivate" : "Activate"}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete "${favorite.title}"?`)) {
+                            deleteItem(favorite.id, customerFavorites, setCustomerFavorites);
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
