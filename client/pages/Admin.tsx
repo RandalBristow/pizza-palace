@@ -167,17 +167,31 @@ export default function Admin() {
   const [editingCarouselImage, setEditingCarouselImage] = useState<CarouselImage | null>(null);
   const [editingCustomerFavorite, setEditingCustomerFavorite] = useState<CustomerFavorite | null>(null);
 
-  // New state for carousel images and customer favorites
-  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>([
-    {
-      id: "1",
-      url: "https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800",
-      title: "Fresh Pizza & Premium Coffee",
-      subtitle: "Made to Order",
-      isActive: true,
-      order: 1,
+  // Initialize carousel images from localStorage or use default
+  const getInitialCarouselImages = () => {
+    try {
+      const stored = localStorage.getItem('carouselImages');
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (error) {
+      console.error('Error loading carousel images:', error);
     }
-  ]);
+
+    return [
+      {
+        id: "1",
+        url: "https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800",
+        title: "Fresh Pizza & Premium Coffee",
+        subtitle: "Made to Order",
+        isActive: true,
+        order: 1,
+      }
+    ];
+  };
+
+  // New state for carousel images and customer favorites
+  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>(getInitialCarouselImages());
 
   // Save carousel images to localStorage whenever they change
   useEffect(() => {
