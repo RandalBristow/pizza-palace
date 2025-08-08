@@ -1063,7 +1063,8 @@ export default function Admin() {
               </DialogDescription>
             </DialogHeader>
             {editingMenuItem && (
-              <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
+              <div>
+                <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
                 {/* Left Column - Item Details */}
                 <div className="p-6 pl-8 border-r space-y-4">
                   <div className="mb-6">
@@ -1267,6 +1268,7 @@ export default function Admin() {
                   <Save className="h-4 w-4 mr-2" />
                   Save Changes
                 </Button>
+              </div>
               </div>
             )}
           </DialogContent>
