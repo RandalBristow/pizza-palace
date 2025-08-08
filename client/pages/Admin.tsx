@@ -1139,13 +1139,38 @@ export default function Admin() {
                       ).length} toppings
                     </Badge>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditingToppingCategory(toppingCategory)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center space-x-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingToppingCategory(toppingCategory)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => toggleItemActive(toppingCategory.id, toppingCategories, setToppingCategories)}
+                    >
+                      {toppingCategory.isActive ? "Deactivate" : "Activate"}
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        if (canDeleteToppingCategory(toppingCategory.id)) {
+                          if (confirm(`Are you sure you want to delete "${toppingCategory.name}"?`)) {
+                            deleteItem(toppingCategory.id, toppingCategories, setToppingCategories);
+                          }
+                        } else {
+                          alert("Cannot delete topping category with associated toppings.");
+                        }
+                      }}
+                      disabled={!canDeleteToppingCategory(toppingCategory.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
