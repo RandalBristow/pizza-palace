@@ -31,49 +31,11 @@ export default function Index() {
     <div className="min-h-screen bg-transparent">
       <HeaderWithDelivery />
 
-      {/* Secondary Navigation */}
-      <nav className="bg-gray-100 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center space-x-8 py-3">
-            <Link
-              to="/menu"
-              className="text-gray-700 hover:text-red-600 font-medium"
-            >
-              Menu
-            </Link>
-            <Link
-              to="/specials"
-              className="text-gray-700 hover:text-red-600 font-medium"
-            >
-              Specials
-            </Link>
-            <Link
-              to="/about"
-              className="text-gray-700 hover:text-red-600 font-medium"
-            >
-              About
-            </Link>
-            <Link
-              to="/admin"
-              className="text-gray-700 hover:text-red-600 font-medium text-sm"
-            >
-              Admin
-            </Link>
-            <Link
-              to="/login"
-              className="text-gray-700 hover:text-red-600 font-medium"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section
         className={`py-20 px-4 text-center transition-all duration-1000 bg-cover bg-center bg-no-repeat relative ${isLoaded ? "animate-fade-in-up" : "opacity-0"}`}
         style={{
-          backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800')`,
+          backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800')`
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -87,11 +49,7 @@ export default function Index() {
             freshly brewed coffee. Every order is made fresh just for you!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700"
-              asChild
-            >
+            <Button size="lg" className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700" asChild>
               <Link to="/menu">Order Now</Link>
             </Button>
           </div>
