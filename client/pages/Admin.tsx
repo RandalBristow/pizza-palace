@@ -67,7 +67,29 @@ export default function Admin() {
   );
   const [specials, setSpecials] = useState<Special[]>(initialSpecials);
   const [selectedItem, setSelectedItem] = useState("categories");
-  
+
+  // Filter states
+  const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
+  const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
+
+  // Modal states
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
+  const [isAddingToppingCategory, setIsAddingToppingCategory] = useState(false);
+  const [isAddingTopping, setIsAddingTopping] = useState(false);
+  const [isAddingSpecial, setIsAddingSpecial] = useState(false);
+  const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
+  const [isAddingCustomerFavorite, setIsAddingCustomerFavorite] = useState(false);
+
+  // Edit states
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
+  const [editingToppingCategory, setEditingToppingCategory] = useState<ToppingCategory | null>(null);
+  const [editingTopping, setEditingTopping] = useState<Topping | null>(null);
+  const [editingSpecial, setEditingSpecial] = useState<Special | null>(null);
+  const [editingCarouselImage, setEditingCarouselImage] = useState<CarouselImage | null>(null);
+  const [editingCustomerFavorite, setEditingCustomerFavorite] = useState<CustomerFavorite | null>(null);
+
   // New state for carousel images and customer favorites
   const [carouselImages, setCarouselImages] = useState<CarouselImage[]>([
     {
@@ -89,7 +111,7 @@ export default function Admin() {
       order: 1,
     },
     {
-      id: "2", 
+      id: "2",
       title: "Fast Delivery",
       description: "Hot, fresh pizza delivered to your door in 30 minutes or less.",
       icon: "🚚",
@@ -138,9 +160,9 @@ export default function Admin() {
 
       <div className="flex h-screen">
         {/* Sidebar */}
-        <AdminSidebar 
-          selectedItem={selectedItem} 
-          onSelectItem={setSelectedItem} 
+        <AdminSidebar
+          selectedItem={selectedItem}
+          onSelectItem={setSelectedItem}
         />
 
         {/* Main Content */}
