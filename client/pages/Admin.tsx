@@ -2176,8 +2176,23 @@ export default function Admin() {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="sm">
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleItemActive(image.id, carouselImages, setCarouselImages)}
+                      >
+                        {image.isActive ? "Deactivate" : "Activate"}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete "${image.title}"?`)) {
+                            deleteItem(image.id, carouselImages, setCarouselImages);
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
