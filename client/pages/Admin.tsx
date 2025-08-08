@@ -558,18 +558,10 @@ export default function Admin() {
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="toppingCategoryName">Category Name</Label>
-                  <Input id="toppingCategoryName" placeholder="e.g., Premium Toppings" />
-                </div>
-                <div>
-                  <Label htmlFor="toppingCategoryOrder">Display Order</Label>
-                  <Input id="toppingCategoryOrder" type="number" placeholder="1" />
-                </div>
-                <div>
-                  <Label htmlFor="menuItemType">Menu Item Type</Label>
+                  <Label htmlFor="menuItemType">Menu Category</Label>
                   <Select>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select menu item type" />
+                      <SelectValue placeholder="Select menu category" />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((category) => (
@@ -579,6 +571,14 @@ export default function Admin() {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+                <div>
+                  <Label htmlFor="toppingCategoryName">Category Name</Label>
+                  <Input id="toppingCategoryName" placeholder="e.g., Premium Toppings" />
+                </div>
+                <div>
+                  <Label htmlFor="toppingCategoryOrder">Display Order</Label>
+                  <Input id="toppingCategoryOrder" type="number" placeholder="1" />
                 </div>
                 <div className="flex justify-end space-x-2">
                   <Button variant="outline" onClick={() => setIsAddingToppingCategory(false)}>
