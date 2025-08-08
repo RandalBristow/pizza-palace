@@ -712,73 +712,197 @@ export default function Admin() {
 
         {/* Edit Menu Item Dialog */}
         <Dialog open={!!editingMenuItem} onOpenChange={() => setEditingMenuItem(null)}>
-          <DialogContent>
-            <DialogHeader>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
+            <DialogHeader className="sr-only">
               <DialogTitle>Edit Menu Item</DialogTitle>
               <DialogDescription>
                 Update the menu item details
               </DialogDescription>
             </DialogHeader>
             {editingMenuItem && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="editItemName">Name</Label>
-                  <Input
-                    id="editItemName"
-                    value={editingMenuItem.name}
-                    onChange={(e) => setEditingMenuItem({
-                      ...editingMenuItem,
-                      name: e.target.value
-                    })}
-                  />
+              <div className="flex h-full max-h-[80vh]">
+                {/* Left Column - Basic Info */}
+                <div className="w-1/2 pr-6 space-y-4 overflow-y-auto">
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold text-gray-900">Edit Menu Item</h2>
+                    <p className="text-sm text-gray-500">
+                      Update the menu item details and default toppings
+                    </p>
+                  </div>
+                  <div>
+                    <Label htmlFor="editItemCategory">Category</Label>
+                    <Select
+                      value={editingMenuItem.category}
+                      onValueChange={(value) => setEditingMenuItem({
+                        ...editingMenuItem,
+                        category: value,
+                        defaultToppings: [] // Reset toppings when category changes
+                      })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.filter(c => c.isActive).map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="editItemName">Name</Label>
+                    <Input
+                      id="editItemName"
+                      value={editingMenuItem.name}
+                      onChange={(e) => setEditingMenuItem({
+                        ...editingMenuItem,
+                        name: e.target.value
+                      })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="editItemPrice">Price</Label>
+                    <Input
+                      id="editItemPrice"
+                      type="number"
+                      step="0.01"
+                      value={editingMenuItem.price}
+                      onChange={(e) => setEditingMenuItem({
+                        ...editingMenuItem,
+                        price: parseFloat(e.target.value) || 0
+                      })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="editItemDescription">Description</Label>
+                    <Textarea
+                      id="editItemDescription"
+                      value={editingMenuItem.description}
+                      onChange={(e) => setEditingMenuItem({
+                        ...editingMenuItem,
+                        description: e.target.value
+                      })}
+                      rows={4}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="editItemCategory">Category</Label>
-                  <Select
-                    value={editingMenuItem.category}
-                    onValueChange={(value) => setEditingMenuItem({
-                      ...editingMenuItem,
-                      category: value
-                    })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+
+                {/* Right Column - Default Toppings */}
+                <div className="w-1/2 pl-6 border-l flex flex-col">
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900">Default Toppings</h3>
+                    <p className="text-sm text-gray-500">
+                      Select which toppings should come with this item by default
+                    </p>
+                  </div>
+
+                  {/* Toppings content that grows to fill space */}
+                  <div className="flex-1 overflow-hidden">
+                    {editingMenuItem.category ? (
+                      (() => {
+                        const availableCategories = toppingCategories.filter(
+                          (tc) => tc.menuItemCategory === editingMenuItem.category && tc.isActive
+                        );
+                        return (
+                          <Tabs
+                            defaultValue={availableCategories[0]?.id}
+                            className="w-full h-full"
+                            key={editingMenuItem.category}
+                          >
+                            <TabsList className="w-full justify-start">
+                              {availableCategories.map((toppingCategory) => (
+                                <TabsTrigger
+                                  key={toppingCategory.id}
+                                  value={toppingCategory.id}
+                                  className="text-sm"
+                                >
+                                  {toppingCategory.name}
+                                </TabsTrigger>
+                              ))}
+                            </TabsList>
+
+                            {availableCategories.map((toppingCategory) => {
+                              const categoryToppings = toppings.filter(
+                                (topping) =>
+                                  topping.category === toppingCategory.id &&
+                                  topping.menuItemCategory === editingMenuItem.category &&
+                                  topping.isActive
+                              );
+
+                              return (
+                                <TabsContent
+                                  key={toppingCategory.id}
+                                  value={toppingCategory.id}
+                                  className="mt-4"
+                                >
+                                  <div className="max-h-80 overflow-y-auto border rounded-lg p-4 space-y-2">
+                                    {categoryToppings.length > 0 ? (
+                                      categoryToppings.map((topping) => (
+                                        <div
+                                          key={topping.id}
+                                          className="flex items-center space-x-2"
+                                        >
+                                          <Checkbox
+                                            id={`edit-topping-${topping.id}`}
+                                            checked={
+                                              editingMenuItem.defaultToppings?.includes(topping.id) || false
+                                            }
+                                            onCheckedChange={(checked) => {
+                                              const currentToppings = editingMenuItem.defaultToppings || [];
+                                              if (checked) {
+                                                setEditingMenuItem({
+                                                  ...editingMenuItem,
+                                                  defaultToppings: [...currentToppings, topping.id],
+                                                });
+                                              } else {
+                                                setEditingMenuItem({
+                                                  ...editingMenuItem,
+                                                  defaultToppings: currentToppings.filter(
+                                                    (id) => id !== topping.id
+                                                  ),
+                                                });
+                                              }
+                                            }}
+                                          />
+                                          <Label
+                                            htmlFor={`edit-topping-${topping.id}`}
+                                            className="text-sm cursor-pointer flex-1"
+                                          >
+                                            {topping.name}
+                                            {topping.price > 0 && (
+                                              <span className="text-gray-500 ml-1">
+                                                (+${topping.price.toFixed(2)})
+                                              </span>
+                                            )}
+                                          </Label>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <p className="text-gray-500 text-center py-4">
+                                        No {toppingCategory.name.toLowerCase()} toppings available for this category
+                                      </p>
+                                    )}
+                                  </div>
+                                </TabsContent>
+                              );
+                            })}
+                          </Tabs>
+                        );
+                      })()
+                    ) : (
+                      <div className="border rounded-lg p-8 text-center flex items-center justify-center h-full">
+                        <p className="text-gray-500">
+                          Select a category first to see available toppings
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="editItemPrice">Price</Label>
-                  <Input
-                    id="editItemPrice"
-                    type="number"
-                    step="0.01"
-                    value={editingMenuItem.price}
-                    onChange={(e) => setEditingMenuItem({
-                      ...editingMenuItem,
-                      price: parseFloat(e.target.value) || 0
-                    })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="editItemDescription">Description</Label>
-                  <Textarea
-                    id="editItemDescription"
-                    value={editingMenuItem.description}
-                    onChange={(e) => setEditingMenuItem({
-                      ...editingMenuItem,
-                      description: e.target.value
-                    })}
-                    rows={3}
-                  />
-                </div>
-                <div className="flex justify-end space-x-2">
+
+                {/* Buttons fixed at bottom of entire dialog */}
+                <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50">
                   <Button variant="outline" onClick={() => setEditingMenuItem(null)}>
                     Cancel
                   </Button>
