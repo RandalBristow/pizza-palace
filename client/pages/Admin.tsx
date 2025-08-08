@@ -1829,7 +1829,7 @@ export default function Admin() {
                 </div>
 
                 {/* Buttons fixed at bottom of entire dialog */}
-                <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50">
+                <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50 z-10">
                   <Button variant="outline" onClick={() => {
                     setIsAddingSpecial(false);
                     setNewSpecial({
