@@ -527,7 +527,7 @@ export default function Admin() {
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
-                          {categories.map((category) => (
+                          {categories.filter(c => c.isActive).map((category) => (
                             <SelectItem key={category.id} value={category.id}>
                               {category.name}
                             </SelectItem>
