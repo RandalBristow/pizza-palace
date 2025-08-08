@@ -1307,15 +1307,6 @@ export default function Admin() {
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="toppingName">Name</Label>
-                    <Input
-                      id="toppingName"
-                      placeholder="Topping name"
-                      value={newTopping.name}
-                      onChange={(e) => setNewTopping({...newTopping, name: e.target.value})}
-                    />
-                  </div>
-                  <div>
                     <Label htmlFor="toppingCategory">Category</Label>
                     <Select value={newTopping.category} onValueChange={(value) => {
                       const category = toppingCategories.find(tc => tc.id === value);
