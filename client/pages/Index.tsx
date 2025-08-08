@@ -21,6 +21,18 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
+// Mock carousel data - this will be managed from admin panel
+const mockCarouselImages = [
+  {
+    id: "1",
+    url: "https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800",
+    title: "Fresh Pizza & Premium Coffee",
+    subtitle: "Made to Order",
+    isActive: true,
+  },
+  // Add more images as needed
+];
+
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
 
