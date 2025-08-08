@@ -1053,10 +1053,49 @@ export default function Admin() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Carousel Images</h2>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Image
-          </Button>
+          <Dialog open={isAddingCarouselImage} onOpenChange={setIsAddingCarouselImage}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Image
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Carousel Image</DialogTitle>
+                <DialogDescription>
+                  Add a new image to the homepage carousel
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="imageUrl">Image URL</Label>
+                  <Input id="imageUrl" placeholder="https://example.com/image.jpg" />
+                </div>
+                <div>
+                  <Label htmlFor="imageTitle">Title</Label>
+                  <Input id="imageTitle" placeholder="Image title" />
+                </div>
+                <div>
+                  <Label htmlFor="imageSubtitle">Subtitle</Label>
+                  <Input id="imageSubtitle" placeholder="Image subtitle" />
+                </div>
+                <div>
+                  <Label htmlFor="imageOrder">Display Order</Label>
+                  <Input id="imageOrder" type="number" placeholder="1" />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsAddingCarouselImage(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => setIsAddingCarouselImage(false)}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Image
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="bg-white rounded-lg border p-6">
           <p className="text-gray-600 mb-4">
@@ -1080,7 +1119,11 @@ export default function Admin() {
                       {image.isActive ? "Active" : "Inactive"}
                     </Badge>
                     <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingCarouselImage(image)}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button variant="outline" size="sm">
@@ -1093,6 +1136,81 @@ export default function Admin() {
             </div>
           )}
         </div>
+
+        {/* Edit Carousel Image Dialog */}
+        <Dialog open={!!editingCarouselImage} onOpenChange={() => setEditingCarouselImage(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Carousel Image</DialogTitle>
+              <DialogDescription>
+                Update the carousel image details
+              </DialogDescription>
+            </DialogHeader>
+            {editingCarouselImage && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="editImageUrl">Image URL</Label>
+                  <Input
+                    id="editImageUrl"
+                    value={editingCarouselImage.url}
+                    onChange={(e) => setEditingCarouselImage({
+                      ...editingCarouselImage,
+                      url: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editImageTitle">Title</Label>
+                  <Input
+                    id="editImageTitle"
+                    value={editingCarouselImage.title}
+                    onChange={(e) => setEditingCarouselImage({
+                      ...editingCarouselImage,
+                      title: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editImageSubtitle">Subtitle</Label>
+                  <Input
+                    id="editImageSubtitle"
+                    value={editingCarouselImage.subtitle}
+                    onChange={(e) => setEditingCarouselImage({
+                      ...editingCarouselImage,
+                      subtitle: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editImageOrder">Display Order</Label>
+                  <Input
+                    id="editImageOrder"
+                    type="number"
+                    value={editingCarouselImage.order}
+                    onChange={(e) => setEditingCarouselImage({
+                      ...editingCarouselImage,
+                      order: parseInt(e.target.value) || 1
+                    })}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setEditingCarouselImage(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    setCarouselImages(carouselImages.map(image =>
+                      image.id === editingCarouselImage.id ? editingCarouselImage : image
+                    ));
+                    setEditingCarouselImage(null);
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
