@@ -244,22 +244,97 @@ export default function Admin() {
   }
 
   function renderMenuItems() {
+    const filteredMenuItems = selectedMenuCategory === "all"
+      ? menuItems
+      : menuItems.filter(item => item.category === selectedMenuCategory);
+
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Menu Items</h2>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Menu Item
-          </Button>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="category-filter">Filter by Category:</Label>
+              <Select value={selectedMenuCategory} onValueChange={setSelectedMenuCategory}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories.filter(cat => cat.isActive).map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Dialog open={isAddingMenuItem} onOpenChange={setIsAddingMenuItem}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Menu Item
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Menu Item</DialogTitle>
+                  <DialogDescription>
+                    Create a new menu item for your restaurant
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="itemName">Name</Label>
+                    <Input id="itemName" placeholder="Item name" />
+                  </div>
+                  <div>
+                    <Label htmlFor="itemCategory">Category</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="itemPrice">Price</Label>
+                    <Input id="itemPrice" type="number" step="0.01" placeholder="0.00" />
+                  </div>
+                  <div>
+                    <Label htmlFor="itemDescription">Description</Label>
+                    <Textarea id="itemDescription" placeholder="Item description" rows={3} />
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <Button variant="outline" onClick={() => setIsAddingMenuItem(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={() => setIsAddingMenuItem(false)}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Item
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          {menuItems.map((item) => (
+          {filteredMenuItems.map((item) => (
             <Card key={item.id}>
               <CardContent className="p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 flex-1 min-w-0">
                     <h3 className="font-semibold truncate">{item.name}</h3>
+                    <Badge variant="outline">
+                      {categories.find(c => c.id === item.category)?.name}
+                    </Badge>
                     <Badge
                       variant={item.isActive ? "default" : "secondary"}
                     >
@@ -270,7 +345,11 @@ export default function Admin() {
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-1 flex-shrink-0">
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingMenuItem(item)}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
                   </div>
@@ -279,6 +358,93 @@ export default function Admin() {
             </Card>
           ))}
         </div>
+
+        {/* Edit Menu Item Dialog */}
+        <Dialog open={!!editingMenuItem} onOpenChange={() => setEditingMenuItem(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Menu Item</DialogTitle>
+              <DialogDescription>
+                Update the menu item details
+              </DialogDescription>
+            </DialogHeader>
+            {editingMenuItem && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="editItemName">Name</Label>
+                  <Input
+                    id="editItemName"
+                    value={editingMenuItem.name}
+                    onChange={(e) => setEditingMenuItem({
+                      ...editingMenuItem,
+                      name: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editItemCategory">Category</Label>
+                  <Select
+                    value={editingMenuItem.category}
+                    onValueChange={(value) => setEditingMenuItem({
+                      ...editingMenuItem,
+                      category: value
+                    })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="editItemPrice">Price</Label>
+                  <Input
+                    id="editItemPrice"
+                    type="number"
+                    step="0.01"
+                    value={editingMenuItem.price}
+                    onChange={(e) => setEditingMenuItem({
+                      ...editingMenuItem,
+                      price: parseFloat(e.target.value) || 0
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editItemDescription">Description</Label>
+                  <Textarea
+                    id="editItemDescription"
+                    value={editingMenuItem.description}
+                    onChange={(e) => setEditingMenuItem({
+                      ...editingMenuItem,
+                      description: e.target.value
+                    })}
+                    rows={3}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setEditingMenuItem(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    setMenuItems(menuItems.map(item =>
+                      item.id === editingMenuItem.id ? editingMenuItem : item
+                    ));
+                    setEditingMenuItem(null);
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
