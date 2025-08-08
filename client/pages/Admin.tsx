@@ -346,10 +346,6 @@ export default function Admin() {
                   <FileText className="h-4 w-4 mr-2" />
                   Print Menu PDF
                 </Button>
-                <Button variant="outline">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
               </div>
             </div>
 
