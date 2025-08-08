@@ -2035,25 +2035,55 @@ export default function Admin() {
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="favoriteTitle">Title</Label>
-                  <Input id="favoriteTitle" placeholder="e.g., Fresh Ingredients" />
+                  <Input
+                    id="favoriteTitle"
+                    placeholder="e.g., Fresh Ingredients"
+                    value={newCustomerFavorite.title}
+                    onChange={(e) => setNewCustomerFavorite({...newCustomerFavorite, title: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="favoriteDescription">Description</Label>
-                  <Textarea id="favoriteDescription" placeholder="Description of this favorite" rows={3} />
+                  <Textarea
+                    id="favoriteDescription"
+                    placeholder="Description of this favorite"
+                    rows={3}
+                    value={newCustomerFavorite.description}
+                    onChange={(e) => setNewCustomerFavorite({...newCustomerFavorite, description: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="favoriteIcon">Icon (Emoji)</Label>
-                  <Input id="favoriteIcon" placeholder="🍕" />
+                  <Input
+                    id="favoriteIcon"
+                    placeholder="🍕"
+                    value={newCustomerFavorite.icon}
+                    onChange={(e) => setNewCustomerFavorite({...newCustomerFavorite, icon: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="favoriteOrder">Display Order</Label>
-                  <Input id="favoriteOrder" type="number" placeholder="1" />
+                  <Input
+                    id="favoriteOrder"
+                    type="number"
+                    placeholder="1"
+                    value={newCustomerFavorite.order}
+                    onChange={(e) => setNewCustomerFavorite({...newCustomerFavorite, order: parseInt(e.target.value) || 1})}
+                  />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddingCustomerFavorite(false)}>
+                  <Button variant="outline" onClick={() => {
+                    setIsAddingCustomerFavorite(false);
+                    setNewCustomerFavorite({title: "", description: "", icon: "", order: 1, isActive: true});
+                  }}>
                     Cancel
                   </Button>
-                  <Button onClick={() => setIsAddingCustomerFavorite(false)}>
+                  <Button onClick={() => {
+                    const id = `favorite-${Date.now()}`;
+                    setCustomerFavorites([...customerFavorites, {...newCustomerFavorite, id} as CustomerFavorite]);
+                    setIsAddingCustomerFavorite(false);
+                    setNewCustomerFavorite({title: "", description: "", icon: "", order: 1, isActive: true});
+                  }}>
                     <Save className="h-4 w-4 mr-2" />
                     Save Favorite
                   </Button>
