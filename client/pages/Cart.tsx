@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
@@ -121,7 +121,7 @@ export default function Cart() {
   };
 
   const calculateTax = () => {
-    return calculateSubtotal() * 0.08; // 8% tax
+    return calculateSubtotal() * (taxRate / 100);
   };
 
   const calculateDiscount = () => {
@@ -320,7 +320,7 @@ export default function Cart() {
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span>Tax (8%):</span>
+                    <span>Tax ({taxRate}%):</span>
                     <span>${calculateTax().toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between font-bold text-lg pt-2 border-t">
