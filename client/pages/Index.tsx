@@ -88,13 +88,15 @@ const getCustomerFavorites = () => {
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [carouselImages, setCarouselImages] = useState(getCarouselImages());
+  const [customerFavorites, setCustomerFavorites] = useState(getCustomerFavorites());
 
   useEffect(() => {
     setIsLoaded(true);
 
-    // Listen for carousel updates from admin
+    // Listen for updates from admin
     const handleStorageChange = () => {
       setCarouselImages(getCarouselImages());
+      setCustomerFavorites(getCustomerFavorites());
     };
 
     window.addEventListener('storage', handleStorageChange);
