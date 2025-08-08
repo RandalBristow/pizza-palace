@@ -1254,7 +1254,6 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* Buttons at bottom */}
               <div className="flex justify-end space-x-2 p-6 border-t bg-gray-50">
                 <Button variant="outline" onClick={() => setEditingMenuItem(null)}>
                   Cancel
