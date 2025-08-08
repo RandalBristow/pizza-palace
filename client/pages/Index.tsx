@@ -116,6 +116,33 @@ export default function Index() {
   const [customerFavorites, setCustomerFavorites] = useState(getCustomerFavorites());
   const [settings, setSettings] = useState(getRestaurantSettings());
 
+  // Format business hours for display
+  const formatBusinessHours = () => {
+    const hours = settings.businessHours;
+    const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const todayName = dayNames[today];
+    const todayHours = hours[todayName];
+
+    if (todayHours.closed) {
+      return { status: "Closed Today", hours: "" };
+    }
+
+    // Convert 24-hour to 12-hour format
+    const formatTime = (time: string) => {
+      const [hour, minute] = time.split(':');
+      const hourNum = parseInt(hour);
+      const ampm = hourNum >= 12 ? 'PM' : 'AM';
+      const hour12 = hourNum > 12 ? hourNum - 12 : hourNum === 0 ? 12 : hourNum;
+      return `${hour12}:${minute} ${ampm}`;
+    };
+
+    return {
+      status: "Open Today",
+      hours: `${formatTime(todayHours.open)} - ${formatTime(todayHours.close)}`
+    };
+  };
+
   useEffect(() => {
     setIsLoaded(true);
 
@@ -341,8 +368,10 @@ export default function Index() {
                 <div className="flex items-start space-x-3">
                   <Clock className="h-5 w-5 text-red-600 mt-1" />
                   <div>
-                    <p className="font-medium">Open Daily</p>
-                    <p className="text-gray-600">11:00 AM - 10:00 PM</p>
+                    <p className="font-medium">{formatBusinessHours().status}</p>
+                    {formatBusinessHours().hours && (
+                      <p className="text-gray-600">{formatBusinessHours().hours}</p>
+                    )}
                   </div>
                 </div>
               </div>
