@@ -274,17 +274,36 @@ export default function Admin() {
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="categoryName">Category Name</Label>
-                  <Input id="categoryName" placeholder="e.g., Appetizers" />
+                  <Input
+                    id="categoryName"
+                    placeholder="e.g., Appetizers"
+                    value={newCategory.name}
+                    onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="categoryOrder">Display Order</Label>
-                  <Input id="categoryOrder" type="number" placeholder="1" />
+                  <Input
+                    id="categoryOrder"
+                    type="number"
+                    placeholder="1"
+                    value={newCategory.order}
+                    onChange={(e) => setNewCategory({...newCategory, order: parseInt(e.target.value) || 1})}
+                  />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddingCategory(false)}>
+                  <Button variant="outline" onClick={() => {
+                    setIsAddingCategory(false);
+                    setNewCategory({name: "", isActive: true, order: 1});
+                  }}>
                     Cancel
                   </Button>
-                  <Button onClick={() => setIsAddingCategory(false)}>
+                  <Button onClick={() => {
+                    const id = newCategory.name.toLowerCase().replace(/\s+/g, '-');
+                    setCategories([...categories, {...newCategory, id} as Category]);
+                    setIsAddingCategory(false);
+                    setNewCategory({name: "", isActive: true, order: 1});
+                  }}>
                     <Save className="h-4 w-4 mr-2" />
                     Save Category
                   </Button>
