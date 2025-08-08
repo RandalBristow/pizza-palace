@@ -2162,20 +2162,19 @@ export default function Admin() {
                   <div className="mt-6 pt-6 border-t">
                     <h4 className="text-md font-semibold text-gray-900 mb-4">Discount Settings</h4>
                     <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="editDiscountType">Discount Type</Label>
-                        <Select value={editingSpecial.discountType} onValueChange={(value: any) => setEditingSpecial({...editingSpecial, discountType: value})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="percentage">Percentage Off</SelectItem>
-                            <SelectItem value="flat">Flat Price</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
                       <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="editDiscountType">Discount Type</Label>
+                          <Select value={editingSpecial.discountType} onValueChange={(value: any) => setEditingSpecial({...editingSpecial, discountType: value})}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="percentage">Percentage Off</SelectItem>
+                              <SelectItem value="flat">Flat Price</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                         <div>
                           <Label htmlFor="editDiscountValue">
                             {editingSpecial.discountType === "percentage" ? "Percentage (%)" : "Flat Price ($)"}
@@ -2190,16 +2189,16 @@ export default function Admin() {
                             onChange={(e) => setEditingSpecial({...editingSpecial, discountValue: parseFloat(e.target.value) || 0})}
                           />
                         </div>
-
-                        {editingSpecial.discountType === "percentage" && editingSpecial.discountValue > 0 && (
-                          <div>
-                            <Label>Preview Discount</Label>
-                            <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
-                              Example: $10.00 → ${(10 * (1 - editingSpecial.discountValue / 100)).toFixed(2)}
-                            </div>
-                          </div>
-                        )}
                       </div>
+
+                      {editingSpecial.discountType === "percentage" && editingSpecial.discountValue > 0 && (
+                        <div>
+                          <Label>Preview Discount</Label>
+                          <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
+                            Example: $10.00 → ${(10 * (1 - editingSpecial.discountValue / 100)).toFixed(2)}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
