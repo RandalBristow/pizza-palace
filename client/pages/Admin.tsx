@@ -241,7 +241,7 @@ export default function Admin() {
         id: "2",
         title: "Fast Delivery",
         description: "Hot, fresh pizza delivered to your door in 30 minutes or less.",
-        icon: "🚚",
+        icon: "���",
         isActive: true,
         order: 2,
       },
@@ -296,8 +296,53 @@ export default function Admin() {
   }, [settings]);
 
   const generateMenuPDF = () => {
-    // PDF generation logic would go here
-    console.log("Generating PDF...");
+    // Create a printable version of the menu
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const menuHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Pronto Pizza Cafe - Menu</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .category { margin-bottom: 30px; }
+          .category-title { font-size: 24px; font-weight: bold; color: #333; border-bottom: 2px solid #333; padding-bottom: 5px; margin-bottom: 15px; }
+          .menu-item { margin-bottom: 15px; padding: 10px; border-left: 3px solid #e74c3c; }
+          .item-name { font-weight: bold; font-size: 18px; }
+          .item-description { color: #666; margin: 5px 0; }
+          .item-price { font-weight: bold; color: #e74c3c; }
+          @media print { body { margin: 0; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Pronto Pizza Cafe</h1>
+          <p>Fresh Pizza & Premium Coffee</p>
+          <p>914 Ashland Rd, Mansfield, OH 44905 | (419) 589-7777</p>
+        </div>
+        ${categories.filter(cat => cat.isActive).map(category => `
+          <div class="category">
+            <h2 class="category-title">${category.name}</h2>
+            ${menuItems.filter(item => item.category === category.id && item.isActive).map(item => `
+              <div class="menu-item">
+                <div class="item-name">${item.name}</div>
+                <div class="item-description">${item.description}</div>
+                <div class="item-price">$${item.price.toFixed(2)}</div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(menuHTML);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
   };
 
   const renderContent = () => {
