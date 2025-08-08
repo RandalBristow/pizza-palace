@@ -624,7 +624,7 @@ export default function Admin() {
             </Button>
           </div>
         </div>
-        <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+        <Tabs value={selectedItem} onValueChange={setSelectedItem}>
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="categories">Menu Item Categories</TabsTrigger>
             <TabsTrigger value="topping-categories">
