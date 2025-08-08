@@ -1063,9 +1063,9 @@ export default function Admin() {
               </DialogDescription>
             </DialogHeader>
             {editingMenuItem && (
-              <div className="flex h-full max-h-[80vh]">
-                {/* Left Column - Basic Info */}
-                <div className="w-1/2 pr-6 pl-4 space-y-4 overflow-y-auto">
+              <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
+                {/* Left Column - Item Details */}
+                <div className="p-6 pl-8 border-r space-y-4">
                   <div className="mb-6">
                     <h2 className="text-lg font-semibold text-gray-900">Edit Menu Item</h2>
                     <p className="text-sm text-gray-500">
@@ -1142,7 +1142,7 @@ export default function Admin() {
                 </div>
 
                 {/* Right Column - Default Toppings */}
-                <div className="w-1/2 pl-6 border-l flex flex-col">
+                <div className="p-6 flex flex-col h-full">
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-900">Default Toppings</h3>
                     <p className="text-sm text-gray-500">
