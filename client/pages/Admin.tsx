@@ -1270,7 +1270,6 @@ export default function Admin() {
                 </Button>
               </div>
             )}
-            )}
           </DialogContent>
         </Dialog>
       </div>
