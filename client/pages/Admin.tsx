@@ -119,6 +119,8 @@ export default function Admin() {
     startDate: "",
     endDate: "",
     menuItems: [],
+    discountType: "percentage",
+    discountValue: 0,
     isActive: true
   });
   const [newCategory, setNewCategory] = useState({
