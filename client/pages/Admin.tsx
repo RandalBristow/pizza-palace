@@ -1220,10 +1220,49 @@ export default function Admin() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Customer Favorites</h2>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Favorite
-          </Button>
+          <Dialog open={isAddingCustomerFavorite} onOpenChange={setIsAddingCustomerFavorite}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Favorite
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Customer Favorite</DialogTitle>
+                <DialogDescription>
+                  Add a new customer favorite item for the homepage
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="favoriteTitle">Title</Label>
+                  <Input id="favoriteTitle" placeholder="e.g., Fresh Ingredients" />
+                </div>
+                <div>
+                  <Label htmlFor="favoriteDescription">Description</Label>
+                  <Textarea id="favoriteDescription" placeholder="Description of this favorite" rows={3} />
+                </div>
+                <div>
+                  <Label htmlFor="favoriteIcon">Icon (Emoji)</Label>
+                  <Input id="favoriteIcon" placeholder="🍕" />
+                </div>
+                <div>
+                  <Label htmlFor="favoriteOrder">Display Order</Label>
+                  <Input id="favoriteOrder" type="number" placeholder="1" />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsAddingCustomerFavorite(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => setIsAddingCustomerFavorite(false)}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Favorite
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="bg-white rounded-lg border p-6">
           <p className="text-gray-600 mb-4">
@@ -1247,7 +1286,11 @@ export default function Admin() {
                       {favorite.isActive ? "Active" : "Inactive"}
                     </Badge>
                     <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingCustomerFavorite(favorite)}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button variant="outline" size="sm">
@@ -1260,6 +1303,82 @@ export default function Admin() {
             </div>
           )}
         </div>
+
+        {/* Edit Customer Favorite Dialog */}
+        <Dialog open={!!editingCustomerFavorite} onOpenChange={() => setEditingCustomerFavorite(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Customer Favorite</DialogTitle>
+              <DialogDescription>
+                Update the customer favorite details
+              </DialogDescription>
+            </DialogHeader>
+            {editingCustomerFavorite && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="editFavoriteTitle">Title</Label>
+                  <Input
+                    id="editFavoriteTitle"
+                    value={editingCustomerFavorite.title}
+                    onChange={(e) => setEditingCustomerFavorite({
+                      ...editingCustomerFavorite,
+                      title: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editFavoriteDescription">Description</Label>
+                  <Textarea
+                    id="editFavoriteDescription"
+                    value={editingCustomerFavorite.description}
+                    onChange={(e) => setEditingCustomerFavorite({
+                      ...editingCustomerFavorite,
+                      description: e.target.value
+                    })}
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editFavoriteIcon">Icon (Emoji)</Label>
+                  <Input
+                    id="editFavoriteIcon"
+                    value={editingCustomerFavorite.icon}
+                    onChange={(e) => setEditingCustomerFavorite({
+                      ...editingCustomerFavorite,
+                      icon: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editFavoriteOrder">Display Order</Label>
+                  <Input
+                    id="editFavoriteOrder"
+                    type="number"
+                    value={editingCustomerFavorite.order}
+                    onChange={(e) => setEditingCustomerFavorite({
+                      ...editingCustomerFavorite,
+                      order: parseInt(e.target.value) || 1
+                    })}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setEditingCustomerFavorite(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    setCustomerFavorites(customerFavorites.map(favorite =>
+                      favorite.id === editingCustomerFavorite.id ? editingCustomerFavorite : favorite
+                    ));
+                    setEditingCustomerFavorite(null);
+                  }}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
