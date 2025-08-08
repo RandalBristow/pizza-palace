@@ -29,8 +29,7 @@ export default function HeaderWithDelivery({
   };
 
   // Always show breadcrumbs, default to "Home" if none provided
-  const displayBreadcrumbs =
-    breadcrumbs.length > 0 ? breadcrumbs : [{ label: "Home" }];
+  const displayBreadcrumbs = breadcrumbs.length > 0 ? breadcrumbs : [{ label: "Home" }];
 
   return (
     <>
@@ -47,14 +46,11 @@ export default function HeaderWithDelivery({
                 />
               </Link>
               <nav className="flex items-center space-x-1 text-sm text-gray-500 min-h-[20px]">
-                {displayBreadcrumbs.length === 1 &&
-                displayBreadcrumbs[0].label === "Home" ? (
+                {displayBreadcrumbs.length === 1 && displayBreadcrumbs[0].label === "Home" ? (
                   <span className="text-gray-900 font-medium">Home</span>
                 ) : (
                   <>
-                    <Link to="/" className="hover:text-gray-700">
-                      Home
-                    </Link>
+                    <Link to="/" className="hover:text-gray-700">Home</Link>
                     {displayBreadcrumbs.map((crumb, index) => (
                       <div key={index} className="flex items-center space-x-1">
                         <ChevronRight className="h-3 w-3" />
@@ -63,9 +59,7 @@ export default function HeaderWithDelivery({
                             {crumb.label}
                           </Link>
                         ) : (
-                          <span className="text-gray-900 font-medium">
-                            {crumb.label}
-                          </span>
+                          <span className="text-gray-900 font-medium">{crumb.label}</span>
                         )}
                       </div>
                     ))}
@@ -75,6 +69,40 @@ export default function HeaderWithDelivery({
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Navigation Links */}
+              <div className="hidden md:flex items-center space-x-6">
+                <Link
+                  to="/menu"
+                  className="text-gray-700 hover:text-red-600 font-medium"
+                >
+                  Menu
+                </Link>
+                <Link
+                  to="/specials"
+                  className="text-gray-700 hover:text-red-600 font-medium"
+                >
+                  Specials
+                </Link>
+                <Link
+                  to="/about"
+                  className="text-gray-700 hover:text-red-600 font-medium"
+                >
+                  About
+                </Link>
+                <Link
+                  to="/admin"
+                  className="text-gray-700 hover:text-red-600 font-medium text-sm"
+                >
+                  Admin
+                </Link>
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-red-600 font-medium"
+                >
+                  Sign In
+                </Link>
+              </div>
+
               {/* Delivery Details Button - Taller version with 2 lines */}
               {!isAdminPage && hasDeliveryDetails && (
                 <Button
@@ -89,9 +117,7 @@ export default function HeaderWithDelivery({
                       <MapPin className="h-4 w-4" />
                     )}
                     <span className="font-semibold text-xs">
-                      {deliveryDetails?.method === "carryout"
-                        ? "CARRYOUT FROM"
-                        : "DELIVERY TO"}
+                      {deliveryDetails?.method === "carryout" ? "CARRYOUT FROM" : "DELIVERY TO"}
                     </span>
                   </div>
                   <span className="text-xs text-gray-600">
