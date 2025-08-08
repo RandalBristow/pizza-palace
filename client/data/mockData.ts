@@ -41,10 +41,13 @@ export interface Special {
   id: string;
   name: string;
   description: string;
-  type: "daily" | "weekly";
+  type: "hourly" | "daily" | "weekly";
   startDate: string;
   endDate: string;
-  dayOfWeek?: number;
+  dayOfWeek?: number; // 0 = Sunday, 1 = Monday, etc. (for weekly)
+  daysOfWeek?: number[]; // For hourly specials that run on multiple days
+  startTime?: string; // For hourly specials
+  endTime?: string; // For hourly specials
   menuItems: string[];
   isActive: boolean;
 }
@@ -386,12 +389,14 @@ export const mockMenuItems: MenuItem[] = [
 export const mockSpecials: Special[] = [
   {
     id: "sp1",
-    name: "Pizza Monday",
-    description: "All large pizzas 20% off",
-    type: "weekly",
+    name: "Lunch Pizza Special",
+    description: "Large pizzas 20% off during lunch hours",
+    type: "hourly",
     startDate: "2024-01-01",
     endDate: "2024-12-31",
-    dayOfWeek: 1,
+    daysOfWeek: [1, 2, 3, 4, 5], // Monday through Friday
+    startTime: "11:00",
+    endTime: "14:00",
     menuItems: ["p1", "p2", "p3"],
     isActive: true,
   },
@@ -404,6 +409,16 @@ export const mockSpecials: Special[] = [
     endDate: "2024-12-31",
     dayOfWeek: 3,
     menuItems: ["w1", "w2", "w3", "w4"],
+    isActive: true,
+  },
+  {
+    id: "sp3",
+    name: "Daily Coffee Special",
+    description: "Free cookie with any coffee purchase",
+    type: "daily",
+    startDate: "2024-01-15",
+    endDate: "2024-02-15",
+    menuItems: ["c1", "c2", "c3", "c4"],
     isActive: true,
   },
 ];
