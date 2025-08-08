@@ -1884,7 +1884,7 @@ export default function Admin() {
 
         {/* Edit Special Dialog */}
         <Dialog open={!!editingSpecial} onOpenChange={() => setEditingSpecial(null)}>
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
             <DialogHeader>
               <DialogTitle>Edit Special</DialogTitle>
               <DialogDescription>
