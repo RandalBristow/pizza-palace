@@ -2227,43 +2227,6 @@ export default function Admin() {
       </div>
     );
   }
-                  <div className="mt-2 max-h-40 overflow-y-auto border rounded-lg p-3 space-y-2">
-                    {menuItems.filter(item => item.isActive).map((item) => (
-                      <div key={item.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`edit-item-${item.id}`}
-                          checked={editingSpecial.menuItems?.includes(item.id) || false}
-                          onCheckedChange={(checked) => {
-                            const items = editingSpecial.menuItems || [];
-                            if (checked) {
-                              setEditingSpecial({...editingSpecial, menuItems: [...items, item.id]});
-                            } else {
-                              setEditingSpecial({...editingSpecial, menuItems: items.filter(i => i !== item.id)});
-                            }
-                          }}
-                        />
-
-                  <Button variant="outline" onClick={() => setEditingSpecial(null)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={() => {
-                    setSpecials(specials.map(special =>
-                      special.id === editingSpecial.id ? editingSpecial : special
-                    ));
-                    setEditingSpecial(null);
-                  }}>
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Changes
-                  </Button>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  }
-
   function renderCarouselImages() {
     return (
       <div className="space-y-6">
