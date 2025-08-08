@@ -1434,17 +1434,6 @@ export default function Admin() {
             {editingTopping && (
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="editToppingName">Name</Label>
-                  <Input
-                    id="editToppingName"
-                    value={editingTopping.name}
-                    onChange={(e) => setEditingTopping({
-                      ...editingTopping,
-                      name: e.target.value
-                    })}
-                  />
-                </div>
-                <div>
                   <Label htmlFor="editToppingCategory">Category</Label>
                   <Select
                     value={editingTopping.category}
