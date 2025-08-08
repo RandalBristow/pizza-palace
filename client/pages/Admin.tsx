@@ -2739,9 +2739,4 @@ export default function Admin() {
                 </Card>
               ))}
             </div>
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
-  );
 }
