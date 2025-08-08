@@ -971,7 +971,7 @@ export default function Admin() {
                       {categories.find(c => c.id === item.category)?.name}
                     </Badge>
                     <Badge
-                      variant={item.isActive ? "default" : "secondary"}
+                      className={item.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
                     >
                       {item.isActive ? "Active" : "Inactive"}
                     </Badge>
