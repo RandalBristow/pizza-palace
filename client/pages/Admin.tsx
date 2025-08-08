@@ -983,12 +983,12 @@ export default function Admin() {
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="menuItemType">Menu Category</Label>
-                  <Select>
+                  <Select value={newToppingCategory.menuItemCategory} onValueChange={(value) => setNewToppingCategory({...newToppingCategory, menuItemCategory: value})}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select menu category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((category) => (
+                      {categories.filter(c => c.isActive).map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name}
                         </SelectItem>
@@ -998,17 +998,36 @@ export default function Admin() {
                 </div>
                 <div>
                   <Label htmlFor="toppingCategoryName">Category Name</Label>
-                  <Input id="toppingCategoryName" placeholder="e.g., Premium Toppings" />
+                  <Input
+                    id="toppingCategoryName"
+                    placeholder="e.g., Premium Toppings"
+                    value={newToppingCategory.name}
+                    onChange={(e) => setNewToppingCategory({...newToppingCategory, name: e.target.value})}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="toppingCategoryOrder">Display Order</Label>
-                  <Input id="toppingCategoryOrder" type="number" placeholder="1" />
+                  <Input
+                    id="toppingCategoryOrder"
+                    type="number"
+                    placeholder="1"
+                    value={newToppingCategory.order}
+                    onChange={(e) => setNewToppingCategory({...newToppingCategory, order: parseInt(e.target.value) || 1})}
+                  />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddingToppingCategory(false)}>
+                  <Button variant="outline" onClick={() => {
+                    setIsAddingToppingCategory(false);
+                    setNewToppingCategory({name: "", order: 1, isActive: true, menuItemCategory: ""});
+                  }}>
                     Cancel
                   </Button>
-                  <Button onClick={() => setIsAddingToppingCategory(false)}>
+                  <Button onClick={() => {
+                    const id = `${newToppingCategory.menuItemCategory}-${newToppingCategory.name.toLowerCase().replace(/\s+/g, '-')}`;
+                    setToppingCategories([...toppingCategories, {...newToppingCategory, id} as ToppingCategory]);
+                    setIsAddingToppingCategory(false);
+                    setNewToppingCategory({name: "", order: 1, isActive: true, menuItemCategory: ""});
+                  }}>
                     <Save className="h-4 w-4 mr-2" />
                     Save Category
                   </Button>
