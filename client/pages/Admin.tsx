@@ -381,7 +381,7 @@ export default function Admin() {
                       size="sm"
                       onClick={() => toggleItemActive(category.id, categories, setCategories)}
                     >
-                      {category.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
+                      {category.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
                     </Button>
                     <Button
                       variant="destructive"
@@ -813,7 +813,7 @@ export default function Admin() {
                       size="sm"
                       onClick={() => toggleItemActive(item.id, menuItems, setMenuItems)}
                     >
-                      {item.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
+                      {item.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
                     </Button>
                     <Button
                       variant="destructive"
@@ -1163,7 +1163,7 @@ export default function Admin() {
                       size="sm"
                       onClick={() => toggleItemActive(toppingCategory.id, toppingCategories, setToppingCategories)}
                     >
-                      {toppingCategory.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
+                      {toppingCategory.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
                     </Button>
                     <Button
                       variant="destructive"
@@ -1402,7 +1402,7 @@ export default function Admin() {
                       size="sm"
                       onClick={() => toggleItemActive(topping.id, toppings, setToppings)}
                     >
-                      {topping.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
+                      {topping.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
                     </Button>
                     <Button
                       variant="destructive"
@@ -1892,7 +1892,7 @@ export default function Admin() {
                       size="sm"
                       onClick={() => toggleItemActive(special.id, specials, setSpecials)}
                     >
-                      {special.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
+                      {special.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
                     </Button>
                     <Button
                       variant="destructive"
@@ -2339,7 +2339,7 @@ export default function Admin() {
                         size="sm"
                         onClick={() => toggleItemActive(image.id, carouselImages, setCarouselImages)}
                       >
-                        {image.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
+                        {image.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
                       </Button>
                       <Button
                         variant="destructive"
@@ -2551,7 +2551,7 @@ export default function Admin() {
                         size="sm"
                         onClick={() => toggleItemActive(favorite.id, customerFavorites, setCustomerFavorites)}
                       >
-                        {favorite.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
+                        {favorite.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
                       </Button>
                       <Button
                         variant="destructive"
