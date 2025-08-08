@@ -2256,7 +2256,6 @@ export default function Admin() {
                     Save Changes
                   </Button>
                 </div>
-                </div>
               </div>
             )}
           </DialogContent>
