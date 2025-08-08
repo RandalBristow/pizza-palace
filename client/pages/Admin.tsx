@@ -1885,14 +1885,22 @@ export default function Admin() {
         {/* Edit Special Dialog */}
         <Dialog open={!!editingSpecial} onOpenChange={() => setEditingSpecial(null)}>
           <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
-            <DialogHeader>
+            <DialogHeader className="sr-only">
               <DialogTitle>Edit Special</DialogTitle>
               <DialogDescription>
-                Update the special details
+                Update the special details with menu selection and discount options
               </DialogDescription>
             </DialogHeader>
             {editingSpecial && (
-              <div className="space-y-4">
+              <div className="flex h-full max-h-[80vh]">
+                {/* Left Column - Basic Info */}
+                <div className="w-1/2 pr-6 space-y-4 overflow-y-auto">
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold text-gray-900">Edit Special</h2>
+                    <p className="text-sm text-gray-500">
+                      Update the special offer details and settings
+                    </p>
+                  </div>
                 <div>
                   <Label htmlFor="editSpecialName">Special Name</Label>
                   <Input
