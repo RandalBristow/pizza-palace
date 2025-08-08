@@ -910,6 +910,15 @@ export default function Admin() {
                       rows={4}
                     />
                   </div>
+                  <div>
+                    <Label htmlFor="editItemImage">Image</Label>
+                    <div className="mt-1">
+                      <Button variant="outline" type="button">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Image
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Right Column - Default Toppings */}
