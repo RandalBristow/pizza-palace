@@ -16,17 +16,21 @@ interface CarouselProps {
   interval?: number;
 }
 
-export default function Carousel({ images, autoPlay = true, interval = 5000 }: CarouselProps) {
+export default function Carousel({
+  images,
+  autoPlay = true,
+  interval = 5000,
+}: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const activeImages = images.filter(img => img.isActive);
+  const activeImages = images.filter((img) => img.isActive);
 
   useEffect(() => {
     if (!autoPlay || activeImages.length <= 1) return;
 
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) =>
-        prevIndex === activeImages.length - 1 ? 0 : prevIndex + 1
+        prevIndex === activeImages.length - 1 ? 0 : prevIndex + 1,
       );
     }, interval);
 
@@ -35,13 +39,13 @@ export default function Carousel({ images, autoPlay = true, interval = 5000 }: C
 
   const goToPrevious = () => {
     setCurrentIndex(
-      currentIndex === 0 ? activeImages.length - 1 : currentIndex - 1
+      currentIndex === 0 ? activeImages.length - 1 : currentIndex - 1,
     );
   };
 
   const goToNext = () => {
     setCurrentIndex(
-      currentIndex === activeImages.length - 1 ? 0 : currentIndex + 1
+      currentIndex === activeImages.length - 1 ? 0 : currentIndex + 1,
     );
   };
 
@@ -49,8 +53,12 @@ export default function Carousel({ images, autoPlay = true, interval = 5000 }: C
     return (
       <div className="relative h-96 bg-gray-200 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-600 mb-2">No Images Available</h2>
-          <p className="text-gray-500">Please add carousel images in the admin panel.</p>
+          <h2 className="text-2xl font-bold text-gray-600 mb-2">
+            No Images Available
+          </h2>
+          <p className="text-gray-500">
+            Please add carousel images in the admin panel.
+          </p>
         </div>
       </div>
     );
@@ -80,9 +88,7 @@ export default function Carousel({ images, autoPlay = true, interval = 5000 }: C
                 <h1 className="text-4xl md:text-6xl font-bold mb-4">
                   {image.title}
                 </h1>
-                <p className="text-xl md:text-2xl mb-8">
-                  {image.subtitle}
-                </p>
+                <p className="text-xl md:text-2xl mb-8">{image.subtitle}</p>
               </div>
             </div>
           </div>

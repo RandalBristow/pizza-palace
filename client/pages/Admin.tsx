@@ -103,7 +103,8 @@ export default function Admin() {
   const [isAddingTopping, setIsAddingTopping] = useState(false);
   const [isAddingSpecial, setIsAddingSpecial] = useState(false);
   const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
-  const [isAddingCustomerFavorite, setIsAddingCustomerFavorite] = useState(false);
+  const [isAddingCustomerFavorite, setIsAddingCustomerFavorite] =
+    useState(false);
 
   // New item form states
   const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({
@@ -112,7 +113,7 @@ export default function Admin() {
     price: 0,
     category: "",
     defaultToppings: [],
-    isActive: true
+    isActive: true,
   });
   const [newSpecial, setNewSpecial] = useState<Partial<Special>>({
     name: "",
@@ -123,7 +124,7 @@ export default function Admin() {
     menuItems: [],
     discountType: "percentage",
     discountValue: 0,
-    isActive: true
+    isActive: true,
   });
   const [newCategory, setNewCategory] = useState({
     name: "",
@@ -161,21 +162,24 @@ export default function Admin() {
   // Edit states
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
-  const [editingToppingCategory, setEditingToppingCategory] = useState<ToppingCategory | null>(null);
+  const [editingToppingCategory, setEditingToppingCategory] =
+    useState<ToppingCategory | null>(null);
   const [editingTopping, setEditingTopping] = useState<Topping | null>(null);
   const [editingSpecial, setEditingSpecial] = useState<Special | null>(null);
-  const [editingCarouselImage, setEditingCarouselImage] = useState<CarouselImage | null>(null);
-  const [editingCustomerFavorite, setEditingCustomerFavorite] = useState<CustomerFavorite | null>(null);
+  const [editingCarouselImage, setEditingCarouselImage] =
+    useState<CarouselImage | null>(null);
+  const [editingCustomerFavorite, setEditingCustomerFavorite] =
+    useState<CustomerFavorite | null>(null);
 
   // Initialize carousel images from localStorage or use default
   const getInitialCarouselImages = () => {
     try {
-      const stored = localStorage.getItem('carouselImages');
+      const stored = localStorage.getItem("carouselImages");
       if (stored) {
         return JSON.parse(stored);
       }
     } catch (error) {
-      console.error('Error loading carousel images:', error);
+      console.error("Error loading carousel images:", error);
     }
 
     return [
@@ -186,53 +190,60 @@ export default function Admin() {
         subtitle: "Made to Order",
         isActive: true,
         order: 1,
-      }
+      },
     ];
   };
 
   // New state for carousel images and customer favorites
-  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>(getInitialCarouselImages());
+  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>(
+    getInitialCarouselImages(),
+  );
 
   // Save carousel images to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('carouselImages', JSON.stringify(carouselImages));
+    localStorage.setItem("carouselImages", JSON.stringify(carouselImages));
   }, [carouselImages]);
 
   // Helper functions for deactivate/delete operations
   const canDeleteCategory = (categoryId: string) => {
-    return !menuItems.some(item => item.category === categoryId) &&
-           !toppingCategories.some(tc => tc.menuItemCategory === categoryId);
+    return (
+      !menuItems.some((item) => item.category === categoryId) &&
+      !toppingCategories.some((tc) => tc.menuItemCategory === categoryId)
+    );
   };
 
   const canDeleteToppingCategory = (toppingCategoryId: string) => {
-    return !toppings.some(topping => topping.category === toppingCategoryId);
+    return !toppings.some((topping) => topping.category === toppingCategoryId);
   };
 
   const toggleItemActive = (id: string, items: any[], setItems: any) => {
-    setItems(items.map(item =>
-      item.id === id ? {...item, isActive: !item.isActive} : item
-    ));
+    setItems(
+      items.map((item) =>
+        item.id === id ? { ...item, isActive: !item.isActive } : item,
+      ),
+    );
   };
 
   const deleteItem = (id: string, items: any[], setItems: any) => {
-    setItems(items.filter(item => item.id !== id));
+    setItems(items.filter((item) => item.id !== id));
   };
   // Initialize customer favorites from localStorage or use default
   const getInitialCustomerFavorites = () => {
     try {
-      const stored = localStorage.getItem('customerFavorites');
+      const stored = localStorage.getItem("customerFavorites");
       if (stored) {
         return JSON.parse(stored);
       }
     } catch (error) {
-      console.error('Error loading customer favorites:', error);
+      console.error("Error loading customer favorites:", error);
     }
 
     return [
       {
         id: "1",
         title: "Fresh Ingredients",
-        description: "We use only the finest, freshest ingredients in every pizza.",
+        description:
+          "We use only the finest, freshest ingredients in every pizza.",
         icon: "🍕",
         isActive: true,
         order: 1,
@@ -240,7 +251,8 @@ export default function Admin() {
       {
         id: "2",
         title: "Fast Delivery",
-        description: "Hot, fresh pizza delivered to your door in 30 minutes or less.",
+        description:
+          "Hot, fresh pizza delivered to your door in 30 minutes or less.",
         icon: "���",
         isActive: true,
         order: 2,
@@ -252,34 +264,36 @@ export default function Admin() {
         icon: "☕",
         isActive: true,
         order: 3,
-      }
+      },
     ];
   };
 
-  const [customerFavorites, setCustomerFavorites] = useState<CustomerFavorite[]>(getInitialCustomerFavorites());
+  const [customerFavorites, setCustomerFavorites] = useState<
+    CustomerFavorite[]
+  >(getInitialCustomerFavorites());
 
   // Initialize settings from localStorage or use default
   const getInitialSettings = () => {
     try {
-      const stored = localStorage.getItem('restaurantSettings');
+      const stored = localStorage.getItem("restaurantSettings");
       if (stored) {
         return JSON.parse(stored);
       }
     } catch (error) {
-      console.error('Error loading settings:', error);
+      console.error("Error loading settings:", error);
     }
 
     return {
       taxRate: 8.25,
       businessHours: {
-        monday: { open: '11:00', close: '22:00', closed: false },
-        tuesday: { open: '11:00', close: '22:00', closed: false },
-        wednesday: { open: '11:00', close: '22:00', closed: false },
-        thursday: { open: '11:00', close: '22:00', closed: false },
-        friday: { open: '11:00', close: '23:00', closed: false },
-        saturday: { open: '11:00', close: '23:00', closed: false },
-        sunday: { open: '12:00', close: '21:00', closed: false },
-      }
+        monday: { open: "11:00", close: "22:00", closed: false },
+        tuesday: { open: "11:00", close: "22:00", closed: false },
+        wednesday: { open: "11:00", close: "22:00", closed: false },
+        thursday: { open: "11:00", close: "22:00", closed: false },
+        friday: { open: "11:00", close: "23:00", closed: false },
+        saturday: { open: "11:00", close: "23:00", closed: false },
+        sunday: { open: "12:00", close: "21:00", closed: false },
+      },
     };
   };
 
@@ -287,17 +301,20 @@ export default function Admin() {
 
   // Save customer favorites to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('customerFavorites', JSON.stringify(customerFavorites));
+    localStorage.setItem(
+      "customerFavorites",
+      JSON.stringify(customerFavorites),
+    );
   }, [customerFavorites]);
 
   // Save settings to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('restaurantSettings', JSON.stringify(settings));
+    localStorage.setItem("restaurantSettings", JSON.stringify(settings));
   }, [settings]);
 
   const generateMenuPDF = () => {
     // Create a printable version of the menu
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
     const menuHTML = `
@@ -323,18 +340,28 @@ export default function Admin() {
           <p>Fresh Pizza & Premium Coffee</p>
           <p>914 Ashland Rd, Mansfield, OH 44905 | (419) 589-7777</p>
         </div>
-        ${categories.filter(cat => cat.isActive).map(category => `
+        ${categories
+          .filter((cat) => cat.isActive)
+          .map(
+            (category) => `
           <div class="category">
             <h2 class="category-title">${category.name}</h2>
-            ${menuItems.filter(item => item.category === category.id && item.isActive).map(item => `
+            ${menuItems
+              .filter((item) => item.category === category.id && item.isActive)
+              .map(
+                (item) => `
               <div class="menu-item">
                 <div class="item-name">${item.name}</div>
                 <div class="item-description">${item.description}</div>
                 <div class="item-price">$${item.price.toFixed(2)}</div>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </body>
       </html>
     `;
@@ -430,10 +457,12 @@ export default function Admin() {
                     min="0"
                     max="100"
                     value={settings.taxRate}
-                    onChange={(e) => setSettings({
-                      ...settings,
-                      taxRate: parseFloat(e.target.value) || 0
-                    })}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        taxRate: parseFloat(e.target.value) || 0,
+                      })
+                    }
                     placeholder="8.25"
                   />
                   <p className="text-sm text-gray-500 mt-1">
@@ -455,7 +484,10 @@ export default function Admin() {
             <CardContent>
               <div className="space-y-4">
                 {Object.entries(settings.businessHours).map(([day, hours]) => (
-                  <div key={day} className="grid grid-cols-4 gap-2 items-center">
+                  <div
+                    key={day}
+                    className="grid grid-cols-4 gap-2 items-center"
+                  >
                     <Label className="capitalize font-medium">{day}</Label>
                     <div className="flex items-center space-x-2">
                       <Checkbox
@@ -465,8 +497,8 @@ export default function Admin() {
                             ...settings,
                             businessHours: {
                               ...settings.businessHours,
-                              [day]: { ...hours, closed: !checked }
-                            }
+                              [day]: { ...hours, closed: !checked },
+                            },
                           });
                         }}
                       />
@@ -482,8 +514,8 @@ export default function Admin() {
                               ...settings,
                               businessHours: {
                                 ...settings.businessHours,
-                                [day]: { ...hours, open: e.target.value }
-                              }
+                                [day]: { ...hours, open: e.target.value },
+                              },
                             });
                           }}
                         />
@@ -495,15 +527,17 @@ export default function Admin() {
                               ...settings,
                               businessHours: {
                                 ...settings.businessHours,
-                                [day]: { ...hours, close: e.target.value }
-                              }
+                                [day]: { ...hours, close: e.target.value },
+                              },
                             });
                           }}
                         />
                       </>
                     )}
                     {hours.closed && (
-                      <div className="col-span-2 text-sm text-gray-500">Closed</div>
+                      <div className="col-span-2 text-sm text-gray-500">
+                        Closed
+                      </div>
                     )}
                   </div>
                 ))}
@@ -541,7 +575,9 @@ export default function Admin() {
                     id="categoryName"
                     placeholder="e.g., Appetizers"
                     value={newCategory.name}
-                    onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
+                    onChange={(e) =>
+                      setNewCategory({ ...newCategory, name: e.target.value })
+                    }
                   />
                 </div>
                 <div>
@@ -551,22 +587,37 @@ export default function Admin() {
                     type="number"
                     placeholder="1"
                     value={newCategory.order}
-                    onChange={(e) => setNewCategory({...newCategory, order: parseInt(e.target.value) || 1})}
+                    onChange={(e) =>
+                      setNewCategory({
+                        ...newCategory,
+                        order: parseInt(e.target.value) || 1,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => {
-                    setIsAddingCategory(false);
-                    setNewCategory({name: "", isActive: true, order: 1});
-                  }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingCategory(false);
+                      setNewCategory({ name: "", isActive: true, order: 1 });
+                    }}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    const id = newCategory.name.toLowerCase().replace(/\s+/g, '-');
-                    setCategories([...categories, {...newCategory, id} as Category]);
-                    setIsAddingCategory(false);
-                    setNewCategory({name: "", isActive: true, order: 1});
-                  }}>
+                  <Button
+                    onClick={() => {
+                      const id = newCategory.name
+                        .toLowerCase()
+                        .replace(/\s+/g, "-");
+                      setCategories([
+                        ...categories,
+                        { ...newCategory, id } as Category,
+                      ]);
+                      setIsAddingCategory(false);
+                      setNewCategory({ name: "", isActive: true, order: 1 });
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Category
                   </Button>
@@ -583,7 +634,11 @@ export default function Admin() {
                   <div className="flex items-center space-x-2">
                     <h3 className="font-semibold">{category.name}</h3>
                     <Badge
-                      className={category.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                      className={
+                        category.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
                     >
                       {category.isActive ? "Active" : "Inactive"}
                     </Badge>
@@ -599,20 +654,32 @@ export default function Admin() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => toggleItemActive(category.id, categories, setCategories)}
+                      onClick={() =>
+                        toggleItemActive(category.id, categories, setCategories)
+                      }
                     >
-                      {category.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                      {category.isActive ? (
+                        <ThumbsUp className="h-4 w-4" />
+                      ) : (
+                        <ThumbsDown className="h-4 w-4" />
+                      )}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => {
                         if (canDeleteCategory(category.id)) {
-                          if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
+                          if (
+                            confirm(
+                              `Are you sure you want to delete "${category.name}"?`,
+                            )
+                          ) {
                             deleteItem(category.id, categories, setCategories);
                           }
                         } else {
-                          alert("Cannot delete category with associated menu items or topping categories.");
+                          alert(
+                            "Cannot delete category with associated menu items or topping categories.",
+                          );
                         }
                       }}
                       disabled={!canDeleteCategory(category.id)}
@@ -627,13 +694,14 @@ export default function Admin() {
         </div>
 
         {/* Edit Category Dialog */}
-        <Dialog open={!!editingCategory} onOpenChange={() => setEditingCategory(null)}>
+        <Dialog
+          open={!!editingCategory}
+          onOpenChange={() => setEditingCategory(null)}
+        >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Category</DialogTitle>
-              <DialogDescription>
-                Update the category details
-              </DialogDescription>
+              <DialogDescription>Update the category details</DialogDescription>
             </DialogHeader>
             {editingCategory && (
               <div className="space-y-4">
@@ -642,10 +710,12 @@ export default function Admin() {
                   <Input
                     id="editCategoryName"
                     value={editingCategory.name}
-                    onChange={(e) => setEditingCategory({
-                      ...editingCategory,
-                      name: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingCategory({
+                        ...editingCategory,
+                        name: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -654,22 +724,33 @@ export default function Admin() {
                     id="editCategoryOrder"
                     type="number"
                     value={editingCategory.order}
-                    onChange={(e) => setEditingCategory({
-                      ...editingCategory,
-                      order: parseInt(e.target.value) || 1
-                    })}
+                    onChange={(e) =>
+                      setEditingCategory({
+                        ...editingCategory,
+                        order: parseInt(e.target.value) || 1,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setEditingCategory(null)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditingCategory(null)}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    setCategories(categories.map(category =>
-                      category.id === editingCategory.id ? editingCategory : category
-                    ));
-                    setEditingCategory(null);
-                  }}>
+                  <Button
+                    onClick={() => {
+                      setCategories(
+                        categories.map((category) =>
+                          category.id === editingCategory.id
+                            ? editingCategory
+                            : category,
+                        ),
+                      );
+                      setEditingCategory(null);
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>
@@ -683,9 +764,10 @@ export default function Admin() {
   }
 
   function renderMenuItems() {
-    const filteredMenuItems = selectedMenuCategory === "all"
-      ? menuItems
-      : menuItems.filter(item => item.category === selectedMenuCategory);
+    const filteredMenuItems =
+      selectedMenuCategory === "all"
+        ? menuItems
+        : menuItems.filter((item) => item.category === selectedMenuCategory);
 
     return (
       <div className="space-y-6">
@@ -694,17 +776,22 @@ export default function Admin() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <Label htmlFor="category-filter">Filter by Category:</Label>
-              <Select value={selectedMenuCategory} onValueChange={setSelectedMenuCategory}>
+              <Select
+                value={selectedMenuCategory}
+                onValueChange={setSelectedMenuCategory}
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {categories.filter(cat => cat.isActive).map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
+                  {categories
+                    .filter((cat) => cat.isActive)
+                    .map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -723,7 +810,9 @@ export default function Admin() {
                   {/* Left Column - Item Details */}
                   <div className="p-6 pl-8 border-r border-gray-200 space-y-4">
                     <div className="mb-6">
-                      <h2 className="text-lg font-semibold text-gray-900">Add New Menu Item</h2>
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Add New Menu Item
+                      </h2>
                       <p className="text-sm text-gray-500">
                         Create a new menu item for your restaurant
                       </p>
@@ -749,11 +838,13 @@ export default function Admin() {
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
-                          {categories.filter(c => c.isActive).map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
+                          {categories
+                            .filter((c) => c.isActive)
+                            .map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -841,12 +932,11 @@ export default function Admin() {
                     <div className="flex-1 overflow-hidden">
                       {newMenuItem.category ? (
                         (() => {
-                          const availableCategories =
-                            toppingCategories.filter(
-                              (tc) =>
-                                tc.menuItemCategory ===
-                                  newMenuItem.category && tc.isActive,
-                            );
+                          const availableCategories = toppingCategories.filter(
+                            (tc) =>
+                              tc.menuItemCategory === newMenuItem.category &&
+                              tc.isActive,
+                          );
                           return (
                             <Tabs
                               defaultValue={availableCategories[0]?.id}
@@ -854,17 +944,15 @@ export default function Admin() {
                               key={newMenuItem.category}
                             >
                               <TabsList className="w-full justify-start">
-                                {availableCategories.map(
-                                  (toppingCategory) => (
-                                    <TabsTrigger
-                                      key={toppingCategory.id}
-                                      value={toppingCategory.id}
-                                      className="text-sm"
-                                    >
-                                      {toppingCategory.name}
-                                    </TabsTrigger>
-                                  ),
-                                )}
+                                {availableCategories.map((toppingCategory) => (
+                                  <TabsTrigger
+                                    key={toppingCategory.id}
+                                    value={toppingCategory.id}
+                                    className="text-sm"
+                                  >
+                                    {toppingCategory.name}
+                                  </TabsTrigger>
+                                ))}
                               </TabsList>
 
                               {availableCategories.map((toppingCategory) => {
@@ -898,7 +986,8 @@ export default function Admin() {
                                               }
                                               onCheckedChange={(checked) => {
                                                 const currentToppings =
-                                                  newMenuItem.defaultToppings || [];
+                                                  newMenuItem.defaultToppings ||
+                                                  [];
                                                 if (checked) {
                                                   setNewMenuItem({
                                                     ...newMenuItem,
@@ -970,29 +1059,34 @@ export default function Admin() {
                         price: 0,
                         category: "",
                         defaultToppings: [],
-                        isActive: true
+                        isActive: true,
                       });
                     }}
                   >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    // Add the new menu item to the list
-                    const id = `item-${Date.now()}`;
-                    setMenuItems([...menuItems, {
-                      ...newMenuItem,
-                      id
-                    } as MenuItem]);
-                    setIsAddingMenuItem(false);
-                    setNewMenuItem({
-                      name: "",
-                      description: "",
-                      price: 0,
-                      category: "",
-                      defaultToppings: [],
-                      isActive: true
-                    });
-                  }}>
+                  <Button
+                    onClick={() => {
+                      // Add the new menu item to the list
+                      const id = `item-${Date.now()}`;
+                      setMenuItems([
+                        ...menuItems,
+                        {
+                          ...newMenuItem,
+                          id,
+                        } as MenuItem,
+                      ]);
+                      setIsAddingMenuItem(false);
+                      setNewMenuItem({
+                        name: "",
+                        description: "",
+                        price: 0,
+                        category: "",
+                        defaultToppings: [],
+                        isActive: true,
+                      });
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Item
                   </Button>
@@ -1009,14 +1103,21 @@ export default function Admin() {
                   <div className="flex items-center space-x-2 flex-1 min-w-0">
                     <h3 className="font-semibold truncate">{item.name}</h3>
                     <Badge variant="outline">
-                      {categories.find(c => c.id === item.category)?.name}
+                      {categories.find((c) => c.id === item.category)?.name}
                     </Badge>
                     <Badge
-                      className={item.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                      className={
+                        item.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
                     >
                       {item.isActive ? "Active" : "Inactive"}
                     </Badge>
-                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-700"
+                    >
                       ${item.price.toFixed(2)}
                     </Badge>
                   </div>
@@ -1031,15 +1132,25 @@ export default function Admin() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => toggleItemActive(item.id, menuItems, setMenuItems)}
+                      onClick={() =>
+                        toggleItemActive(item.id, menuItems, setMenuItems)
+                      }
                     >
-                      {item.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                      {item.isActive ? (
+                        <ThumbsUp className="h-4 w-4" />
+                      ) : (
+                        <ThumbsDown className="h-4 w-4" />
+                      )}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => {
-                        if (confirm(`Are you sure you want to delete "${item.name}"?`)) {
+                        if (
+                          confirm(
+                            `Are you sure you want to delete "${item.name}"?`,
+                          )
+                        ) {
                           deleteItem(item.id, menuItems, setMenuItems);
                         }
                       }}
@@ -1054,7 +1165,10 @@ export default function Admin() {
         </div>
 
         {/* Edit Menu Item Dialog */}
-        <Dialog open={!!editingMenuItem} onOpenChange={() => setEditingMenuItem(null)}>
+        <Dialog
+          open={!!editingMenuItem}
+          onOpenChange={() => setEditingMenuItem(null)}
+        >
           <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
             <DialogHeader className="sr-only">
               <DialogTitle>Edit Menu Item</DialogTitle>
@@ -1065,210 +1179,248 @@ export default function Admin() {
             {editingMenuItem && (
               <div>
                 <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
-                {/* Left Column - Item Details */}
-                <div className="p-6 pl-8 border-r border-gray-200 space-y-4">
-                  <div className="mb-6">
-                    <h2 className="text-lg font-semibold text-gray-900">Edit Menu Item</h2>
-                    <p className="text-sm text-gray-500">
-                      Update the menu item details and default toppings
-                    </p>
+                  {/* Left Column - Item Details */}
+                  <div className="p-6 pl-8 border-r border-gray-200 space-y-4">
+                    <div className="mb-6">
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Edit Menu Item
+                      </h2>
+                      <p className="text-sm text-gray-500">
+                        Update the menu item details and default toppings
+                      </p>
+                    </div>
+                    <div>
+                      <Label htmlFor="editItemCategory">Category</Label>
+                      <Select
+                        value={editingMenuItem.category}
+                        onValueChange={(value) =>
+                          setEditingMenuItem({
+                            ...editingMenuItem,
+                            category: value,
+                            defaultToppings: [], // Reset toppings when category changes
+                          })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories
+                            .filter((c) => c.isActive)
+                            .map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="editItemName">Name</Label>
+                      <Input
+                        id="editItemName"
+                        value={editingMenuItem.name}
+                        onChange={(e) =>
+                          setEditingMenuItem({
+                            ...editingMenuItem,
+                            name: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="editItemPrice">Price</Label>
+                      <Input
+                        id="editItemPrice"
+                        type="number"
+                        step="0.01"
+                        value={editingMenuItem.price}
+                        onChange={(e) =>
+                          setEditingMenuItem({
+                            ...editingMenuItem,
+                            price: parseFloat(e.target.value) || 0,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="editItemDescription">Description</Label>
+                      <Textarea
+                        id="editItemDescription"
+                        value={editingMenuItem.description}
+                        onChange={(e) =>
+                          setEditingMenuItem({
+                            ...editingMenuItem,
+                            description: e.target.value,
+                          })
+                        }
+                        rows={4}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="editItemImage">Image</Label>
+                      <div className="mt-1">
+                        <Button variant="outline" type="button">
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload Image
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="editItemCategory">Category</Label>
-                    <Select
-                      value={editingMenuItem.category}
-                      onValueChange={(value) => setEditingMenuItem({
-                        ...editingMenuItem,
-                        category: value,
-                        defaultToppings: [] // Reset toppings when category changes
-                      })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.filter(c => c.isActive).map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="editItemName">Name</Label>
-                    <Input
-                      id="editItemName"
-                      value={editingMenuItem.name}
-                      onChange={(e) => setEditingMenuItem({
-                        ...editingMenuItem,
-                        name: e.target.value
-                      })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="editItemPrice">Price</Label>
-                    <Input
-                      id="editItemPrice"
-                      type="number"
-                      step="0.01"
-                      value={editingMenuItem.price}
-                      onChange={(e) => setEditingMenuItem({
-                        ...editingMenuItem,
-                        price: parseFloat(e.target.value) || 0
-                      })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="editItemDescription">Description</Label>
-                    <Textarea
-                      id="editItemDescription"
-                      value={editingMenuItem.description}
-                      onChange={(e) => setEditingMenuItem({
-                        ...editingMenuItem,
-                        description: e.target.value
-                      })}
-                      rows={4}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="editItemImage">Image</Label>
-                    <div className="mt-1">
-                      <Button variant="outline" type="button">
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload Image
-                      </Button>
+
+                  {/* Right Column - Default Toppings */}
+                  <div className="p-6 flex flex-col h-full">
+                    <div className="mb-6">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Default Toppings
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        Select which toppings should come with this item by
+                        default
+                      </p>
+                    </div>
+
+                    {/* Toppings content that grows to fill space */}
+                    <div className="flex-1 overflow-hidden">
+                      {editingMenuItem.category ? (
+                        (() => {
+                          const availableCategories = toppingCategories.filter(
+                            (tc) =>
+                              tc.menuItemCategory ===
+                                editingMenuItem.category && tc.isActive,
+                          );
+                          return (
+                            <Tabs
+                              defaultValue={availableCategories[0]?.id}
+                              className="w-full h-full"
+                              key={editingMenuItem.category}
+                            >
+                              <TabsList className="w-full justify-start">
+                                {availableCategories.map((toppingCategory) => (
+                                  <TabsTrigger
+                                    key={toppingCategory.id}
+                                    value={toppingCategory.id}
+                                    className="text-sm"
+                                  >
+                                    {toppingCategory.name}
+                                  </TabsTrigger>
+                                ))}
+                              </TabsList>
+
+                              {availableCategories.map((toppingCategory) => {
+                                const categoryToppings = toppings.filter(
+                                  (topping) =>
+                                    topping.category === toppingCategory.id &&
+                                    topping.menuItemCategory ===
+                                      editingMenuItem.category &&
+                                    topping.isActive,
+                                );
+
+                                return (
+                                  <TabsContent
+                                    key={toppingCategory.id}
+                                    value={toppingCategory.id}
+                                    className="mt-4"
+                                  >
+                                    <div className="max-h-80 overflow-y-auto border rounded-lg p-4 space-y-2">
+                                      {categoryToppings.length > 0 ? (
+                                        categoryToppings.map((topping) => (
+                                          <div
+                                            key={topping.id}
+                                            className="flex items-center space-x-2"
+                                          >
+                                            <Checkbox
+                                              id={`edit-topping-${topping.id}`}
+                                              checked={
+                                                editingMenuItem.defaultToppings?.includes(
+                                                  topping.id,
+                                                ) || false
+                                              }
+                                              onCheckedChange={(checked) => {
+                                                const currentToppings =
+                                                  editingMenuItem.defaultToppings ||
+                                                  [];
+                                                if (checked) {
+                                                  setEditingMenuItem({
+                                                    ...editingMenuItem,
+                                                    defaultToppings: [
+                                                      ...currentToppings,
+                                                      topping.id,
+                                                    ],
+                                                  });
+                                                } else {
+                                                  setEditingMenuItem({
+                                                    ...editingMenuItem,
+                                                    defaultToppings:
+                                                      currentToppings.filter(
+                                                        (id) =>
+                                                          id !== topping.id,
+                                                      ),
+                                                  });
+                                                }
+                                              }}
+                                            />
+                                            <Label
+                                              htmlFor={`edit-topping-${topping.id}`}
+                                              className="text-sm cursor-pointer flex-1"
+                                            >
+                                              {topping.name}
+                                              {topping.price > 0 && (
+                                                <span className="text-gray-500 ml-1">
+                                                  (+${topping.price.toFixed(2)})
+                                                </span>
+                                              )}
+                                            </Label>
+                                          </div>
+                                        ))
+                                      ) : (
+                                        <p className="text-gray-500 text-center py-4">
+                                          No{" "}
+                                          {toppingCategory.name.toLowerCase()}{" "}
+                                          toppings available for this category
+                                        </p>
+                                      )}
+                                    </div>
+                                  </TabsContent>
+                                );
+                              })}
+                            </Tabs>
+                          );
+                        })()
+                      ) : (
+                        <div className="border rounded-lg p-8 text-center flex items-center justify-center h-full">
+                          <p className="text-gray-500">
+                            Select a category first to see available toppings
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Right Column - Default Toppings */}
-                <div className="p-6 flex flex-col h-full">
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Default Toppings</h3>
-                    <p className="text-sm text-gray-500">
-                      Select which toppings should come with this item by default
-                    </p>
-                  </div>
-
-                  {/* Toppings content that grows to fill space */}
-                  <div className="flex-1 overflow-hidden">
-                    {editingMenuItem.category ? (
-                      (() => {
-                        const availableCategories = toppingCategories.filter(
-                          (tc) => tc.menuItemCategory === editingMenuItem.category && tc.isActive
-                        );
-                        return (
-                          <Tabs
-                            defaultValue={availableCategories[0]?.id}
-                            className="w-full h-full"
-                            key={editingMenuItem.category}
-                          >
-                            <TabsList className="w-full justify-start">
-                              {availableCategories.map((toppingCategory) => (
-                                <TabsTrigger
-                                  key={toppingCategory.id}
-                                  value={toppingCategory.id}
-                                  className="text-sm"
-                                >
-                                  {toppingCategory.name}
-                                </TabsTrigger>
-                              ))}
-                            </TabsList>
-
-                            {availableCategories.map((toppingCategory) => {
-                              const categoryToppings = toppings.filter(
-                                (topping) =>
-                                  topping.category === toppingCategory.id &&
-                                  topping.menuItemCategory === editingMenuItem.category &&
-                                  topping.isActive
-                              );
-
-                              return (
-                                <TabsContent
-                                  key={toppingCategory.id}
-                                  value={toppingCategory.id}
-                                  className="mt-4"
-                                >
-                                  <div className="max-h-80 overflow-y-auto border rounded-lg p-4 space-y-2">
-                                    {categoryToppings.length > 0 ? (
-                                      categoryToppings.map((topping) => (
-                                        <div
-                                          key={topping.id}
-                                          className="flex items-center space-x-2"
-                                        >
-                                          <Checkbox
-                                            id={`edit-topping-${topping.id}`}
-                                            checked={
-                                              editingMenuItem.defaultToppings?.includes(topping.id) || false
-                                            }
-                                            onCheckedChange={(checked) => {
-                                              const currentToppings = editingMenuItem.defaultToppings || [];
-                                              if (checked) {
-                                                setEditingMenuItem({
-                                                  ...editingMenuItem,
-                                                  defaultToppings: [...currentToppings, topping.id],
-                                                });
-                                              } else {
-                                                setEditingMenuItem({
-                                                  ...editingMenuItem,
-                                                  defaultToppings: currentToppings.filter(
-                                                    (id) => id !== topping.id
-                                                  ),
-                                                });
-                                              }
-                                            }}
-                                          />
-                                          <Label
-                                            htmlFor={`edit-topping-${topping.id}`}
-                                            className="text-sm cursor-pointer flex-1"
-                                          >
-                                            {topping.name}
-                                            {topping.price > 0 && (
-                                              <span className="text-gray-500 ml-1">
-                                                (+${topping.price.toFixed(2)})
-                                              </span>
-                                            )}
-                                          </Label>
-                                        </div>
-                                      ))
-                                    ) : (
-                                      <p className="text-gray-500 text-center py-4">
-                                        No {toppingCategory.name.toLowerCase()} toppings available for this category
-                                      </p>
-                                    )}
-                                  </div>
-                                </TabsContent>
-                              );
-                            })}
-                          </Tabs>
-                        );
-                      })()
-                    ) : (
-                      <div className="border rounded-lg p-8 text-center flex items-center justify-center h-full">
-                        <p className="text-gray-500">
-                          Select a category first to see available toppings
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                <div className="flex justify-end space-x-2 p-6 border-t bg-gray-50">
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditingMenuItem(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setMenuItems(
+                        menuItems.map((item) =>
+                          item.id === editingMenuItem.id
+                            ? editingMenuItem
+                            : item,
+                        ),
+                      );
+                      setEditingMenuItem(null);
+                    }}
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
                 </div>
-              </div>
-
-              <div className="flex justify-end space-x-2 p-6 border-t bg-gray-50">
-                <Button variant="outline" onClick={() => setEditingMenuItem(null)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => {
-                  setMenuItems(menuItems.map(item =>
-                    item.id === editingMenuItem.id ? editingMenuItem : item
-                  ));
-                  setEditingMenuItem(null);
-                }}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Changes
-                </Button>
-              </div>
               </div>
             )}
           </DialogContent>
@@ -1282,7 +1434,10 @@ export default function Admin() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Topping Categories</h2>
-          <Dialog open={isAddingToppingCategory} onOpenChange={setIsAddingToppingCategory}>
+          <Dialog
+            open={isAddingToppingCategory}
+            onOpenChange={setIsAddingToppingCategory}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -1299,16 +1454,26 @@ export default function Admin() {
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="menuItemType">Menu Category</Label>
-                  <Select value={newToppingCategory.menuItemCategory} onValueChange={(value) => setNewToppingCategory({...newToppingCategory, menuItemCategory: value})}>
+                  <Select
+                    value={newToppingCategory.menuItemCategory}
+                    onValueChange={(value) =>
+                      setNewToppingCategory({
+                        ...newToppingCategory,
+                        menuItemCategory: value,
+                      })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select menu category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.filter(c => c.isActive).map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
+                      {categories
+                        .filter((c) => c.isActive)
+                        .map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -1318,7 +1483,12 @@ export default function Admin() {
                     id="toppingCategoryName"
                     placeholder="e.g., Premium Toppings"
                     value={newToppingCategory.name}
-                    onChange={(e) => setNewToppingCategory({...newToppingCategory, name: e.target.value})}
+                    onChange={(e) =>
+                      setNewToppingCategory({
+                        ...newToppingCategory,
+                        name: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -1328,22 +1498,45 @@ export default function Admin() {
                     type="number"
                     placeholder="1"
                     value={newToppingCategory.order}
-                    onChange={(e) => setNewToppingCategory({...newToppingCategory, order: parseInt(e.target.value) || 1})}
+                    onChange={(e) =>
+                      setNewToppingCategory({
+                        ...newToppingCategory,
+                        order: parseInt(e.target.value) || 1,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => {
-                    setIsAddingToppingCategory(false);
-                    setNewToppingCategory({name: "", order: 1, isActive: true, menuItemCategory: ""});
-                  }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingToppingCategory(false);
+                      setNewToppingCategory({
+                        name: "",
+                        order: 1,
+                        isActive: true,
+                        menuItemCategory: "",
+                      });
+                    }}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    const id = `${newToppingCategory.menuItemCategory}-${newToppingCategory.name.toLowerCase().replace(/\s+/g, '-')}`;
-                    setToppingCategories([...toppingCategories, {...newToppingCategory, id} as ToppingCategory]);
-                    setIsAddingToppingCategory(false);
-                    setNewToppingCategory({name: "", order: 1, isActive: true, menuItemCategory: ""});
-                  }}>
+                  <Button
+                    onClick={() => {
+                      const id = `${newToppingCategory.menuItemCategory}-${newToppingCategory.name.toLowerCase().replace(/\s+/g, "-")}`;
+                      setToppingCategories([
+                        ...toppingCategories,
+                        { ...newToppingCategory, id } as ToppingCategory,
+                      ]);
+                      setIsAddingToppingCategory(false);
+                      setNewToppingCategory({
+                        name: "",
+                        order: 1,
+                        isActive: true,
+                        menuItemCategory: "",
+                      });
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Category
                   </Button>
@@ -1359,16 +1552,26 @@ export default function Admin() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <h3 className="font-semibold">{toppingCategory.name}</h3>
-                    <Badge variant="outline">Order: {toppingCategory.order}</Badge>
+                    <Badge variant="outline">
+                      Order: {toppingCategory.order}
+                    </Badge>
                     <Badge
-                      className={toppingCategory.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                      className={
+                        toppingCategory.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
                     >
                       {toppingCategory.isActive ? "Active" : "Inactive"}
                     </Badge>
                     <Badge variant="outline">
-                      {toppings.filter(
-                        (t) => t.category === toppingCategory.id && t.isActive,
-                      ).length} toppings
+                      {
+                        toppings.filter(
+                          (t) =>
+                            t.category === toppingCategory.id && t.isActive,
+                        ).length
+                      }{" "}
+                      toppings
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-1">
@@ -1382,20 +1585,40 @@ export default function Admin() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => toggleItemActive(toppingCategory.id, toppingCategories, setToppingCategories)}
+                      onClick={() =>
+                        toggleItemActive(
+                          toppingCategory.id,
+                          toppingCategories,
+                          setToppingCategories,
+                        )
+                      }
                     >
-                      {toppingCategory.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                      {toppingCategory.isActive ? (
+                        <ThumbsUp className="h-4 w-4" />
+                      ) : (
+                        <ThumbsDown className="h-4 w-4" />
+                      )}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => {
                         if (canDeleteToppingCategory(toppingCategory.id)) {
-                          if (confirm(`Are you sure you want to delete "${toppingCategory.name}"?`)) {
-                            deleteItem(toppingCategory.id, toppingCategories, setToppingCategories);
+                          if (
+                            confirm(
+                              `Are you sure you want to delete "${toppingCategory.name}"?`,
+                            )
+                          ) {
+                            deleteItem(
+                              toppingCategory.id,
+                              toppingCategories,
+                              setToppingCategories,
+                            );
                           }
                         } else {
-                          alert("Cannot delete topping category with associated toppings.");
+                          alert(
+                            "Cannot delete topping category with associated toppings.",
+                          );
                         }
                       }}
                       disabled={!canDeleteToppingCategory(toppingCategory.id)}
@@ -1410,7 +1633,10 @@ export default function Admin() {
         </div>
 
         {/* Edit Topping Category Dialog */}
-        <Dialog open={!!editingToppingCategory} onOpenChange={() => setEditingToppingCategory(null)}>
+        <Dialog
+          open={!!editingToppingCategory}
+          onOpenChange={() => setEditingToppingCategory(null)}
+        >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Topping Category</DialogTitle>
@@ -1424,21 +1650,25 @@ export default function Admin() {
                   <Label htmlFor="editMenuItemType">Menu Category</Label>
                   <Select
                     value={editingToppingCategory.menuItemCategory}
-                    onValueChange={(value) => setEditingToppingCategory({
-                      ...editingToppingCategory,
-                      menuItemCategory: value
-                    })}
+                    onValueChange={(value) =>
+                      setEditingToppingCategory({
+                        ...editingToppingCategory,
+                        menuItemCategory: value,
+                      })
+                    }
                   >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.filter(c => c.isActive).map((category) => (
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories
+                        .filter((c) => c.isActive)
+                        .map((category) => (
                           <SelectItem key={category.id} value={category.id}>
                             {category.name}
                           </SelectItem>
                         ))}
-                      </SelectContent>
+                    </SelectContent>
                   </Select>
                 </div>
                 <div>
@@ -1446,34 +1676,49 @@ export default function Admin() {
                   <Input
                     id="editToppingCategoryName"
                     value={editingToppingCategory.name}
-                    onChange={(e) => setEditingToppingCategory({
-                      ...editingToppingCategory,
-                      name: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingToppingCategory({
+                        ...editingToppingCategory,
+                        name: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
-                  <Label htmlFor="editToppingCategoryOrder">Display Order</Label>
+                  <Label htmlFor="editToppingCategoryOrder">
+                    Display Order
+                  </Label>
                   <Input
                     id="editToppingCategoryOrder"
                     type="number"
                     value={editingToppingCategory.order}
-                    onChange={(e) => setEditingToppingCategory({
-                      ...editingToppingCategory,
-                      order: parseInt(e.target.value) || 1
-                    })}
+                    onChange={(e) =>
+                      setEditingToppingCategory({
+                        ...editingToppingCategory,
+                        order: parseInt(e.target.value) || 1,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setEditingToppingCategory(null)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditingToppingCategory(null)}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    setToppingCategories(toppingCategories.map(category =>
-                      category.id === editingToppingCategory.id ? editingToppingCategory : category
-                    ));
-                    setEditingToppingCategory(null);
-                  }}>
+                  <Button
+                    onClick={() => {
+                      setToppingCategories(
+                        toppingCategories.map((category) =>
+                          category.id === editingToppingCategory.id
+                            ? editingToppingCategory
+                            : category,
+                        ),
+                      );
+                      setEditingToppingCategory(null);
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>
@@ -1487,9 +1732,12 @@ export default function Admin() {
   }
 
   function renderToppingItems() {
-    const filteredToppings = selectedToppingCategory === "all"
-      ? toppings
-      : toppings.filter(topping => topping.category === selectedToppingCategory);
+    const filteredToppings =
+      selectedToppingCategory === "all"
+        ? toppings
+        : toppings.filter(
+            (topping) => topping.category === selectedToppingCategory,
+          );
 
     return (
       <div className="space-y-6">
@@ -1497,18 +1745,28 @@ export default function Admin() {
           <h2 className="text-xl font-semibold">Topping Items</h2>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <Label htmlFor="topping-category-filter">Filter by Category:</Label>
-              <Select value={selectedToppingCategory} onValueChange={setSelectedToppingCategory}>
+              <Label htmlFor="topping-category-filter">
+                Filter by Category:
+              </Label>
+              <Select
+                value={selectedToppingCategory}
+                onValueChange={setSelectedToppingCategory}
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {toppingCategories.filter(cat => cat.isActive).map((toppingCategory) => (
-                    <SelectItem key={toppingCategory.id} value={toppingCategory.id}>
-                      {toppingCategory.name}
-                    </SelectItem>
-                  ))}
+                  {toppingCategories
+                    .filter((cat) => cat.isActive)
+                    .map((toppingCategory) => (
+                      <SelectItem
+                        key={toppingCategory.id}
+                        value={toppingCategory.id}
+                      >
+                        {toppingCategory.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -1529,23 +1787,36 @@ export default function Admin() {
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="toppingCategory">Category</Label>
-                    <Select value={newTopping.category} onValueChange={(value) => {
-                      const category = toppingCategories.find(tc => tc.id === value);
-                      setNewTopping({
-                        ...newTopping,
-                        category: value,
-                        menuItemCategory: category?.menuItemCategory || ""
-                      });
-                    }}>
+                    <Select
+                      value={newTopping.category}
+                      onValueChange={(value) => {
+                        const category = toppingCategories.find(
+                          (tc) => tc.id === value,
+                        );
+                        setNewTopping({
+                          ...newTopping,
+                          category: value,
+                          menuItemCategory: category?.menuItemCategory || "",
+                        });
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {toppingCategories.filter(tc => tc.isActive).map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name} ({categories.find(c => c.id === category.menuItemCategory)?.name})
-                          </SelectItem>
-                        ))}
+                        {toppingCategories
+                          .filter((tc) => tc.isActive)
+                          .map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name} (
+                              {
+                                categories.find(
+                                  (c) => c.id === category.menuItemCategory,
+                                )?.name
+                              }
+                              )
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -1555,7 +1826,9 @@ export default function Admin() {
                       id="toppingName"
                       placeholder="Topping name"
                       value={newTopping.name}
-                      onChange={(e) => setNewTopping({...newTopping, name: e.target.value})}
+                      onChange={(e) =>
+                        setNewTopping({ ...newTopping, name: e.target.value })
+                      }
                     />
                   </div>
                   <div>
@@ -1566,22 +1839,47 @@ export default function Admin() {
                       step="0.01"
                       placeholder="0.00"
                       value={newTopping.price}
-                      onChange={(e) => setNewTopping({...newTopping, price: parseFloat(e.target.value) || 0})}
+                      onChange={(e) =>
+                        setNewTopping({
+                          ...newTopping,
+                          price: parseFloat(e.target.value) || 0,
+                        })
+                      }
                     />
                   </div>
                   <div className="flex justify-end space-x-2">
-                    <Button variant="outline" onClick={() => {
-                      setIsAddingTopping(false);
-                      setNewTopping({name: "", price: 0, category: "", menuItemCategory: "", isActive: true});
-                    }}>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsAddingTopping(false);
+                        setNewTopping({
+                          name: "",
+                          price: 0,
+                          category: "",
+                          menuItemCategory: "",
+                          isActive: true,
+                        });
+                      }}
+                    >
                       Cancel
                     </Button>
-                    <Button onClick={() => {
-                      const id = `${newTopping.category}-${newTopping.name.toLowerCase().replace(/\s+/g, '-')}`;
-                      setToppings([...toppings, {...newTopping, id} as Topping]);
-                      setIsAddingTopping(false);
-                      setNewTopping({name: "", price: 0, category: "", menuItemCategory: "", isActive: true});
-                    }}>
+                    <Button
+                      onClick={() => {
+                        const id = `${newTopping.category}-${newTopping.name.toLowerCase().replace(/\s+/g, "-")}`;
+                        setToppings([
+                          ...toppings,
+                          { ...newTopping, id } as Topping,
+                        ]);
+                        setIsAddingTopping(false);
+                        setNewTopping({
+                          name: "",
+                          price: 0,
+                          category: "",
+                          menuItemCategory: "",
+                          isActive: true,
+                        });
+                      }}
+                    >
                       <Save className="h-4 w-4 mr-2" />
                       Save Topping
                     </Button>
@@ -1599,14 +1897,24 @@ export default function Admin() {
                   <div className="flex items-center space-x-2">
                     <h3 className="font-semibold">{topping.name}</h3>
                     <Badge variant="outline">
-                      {toppingCategories.find(c => c.id === topping.category)?.name}
+                      {
+                        toppingCategories.find((c) => c.id === topping.category)
+                          ?.name
+                      }
                     </Badge>
                     <Badge
-                      className={topping.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                      className={
+                        topping.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
                     >
                       {topping.isActive ? "Active" : "Inactive"}
                     </Badge>
-                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-700"
+                    >
                       +${topping.price.toFixed(2)}
                     </Badge>
                   </div>
@@ -1621,15 +1929,25 @@ export default function Admin() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => toggleItemActive(topping.id, toppings, setToppings)}
+                      onClick={() =>
+                        toggleItemActive(topping.id, toppings, setToppings)
+                      }
                     >
-                      {topping.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                      {topping.isActive ? (
+                        <ThumbsUp className="h-4 w-4" />
+                      ) : (
+                        <ThumbsDown className="h-4 w-4" />
+                      )}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => {
-                        if (confirm(`Are you sure you want to delete "${topping.name}"?`)) {
+                        if (
+                          confirm(
+                            `Are you sure you want to delete "${topping.name}"?`,
+                          )
+                        ) {
                           deleteItem(topping.id, toppings, setToppings);
                         }
                       }}
@@ -1644,13 +1962,14 @@ export default function Admin() {
         </div>
 
         {/* Edit Topping Dialog */}
-        <Dialog open={!!editingTopping} onOpenChange={() => setEditingTopping(null)}>
+        <Dialog
+          open={!!editingTopping}
+          onOpenChange={() => setEditingTopping(null)}
+        >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Topping</DialogTitle>
-              <DialogDescription>
-                Update the topping details
-              </DialogDescription>
+              <DialogDescription>Update the topping details</DialogDescription>
             </DialogHeader>
             {editingTopping && (
               <div className="space-y-4">
@@ -1658,10 +1977,12 @@ export default function Admin() {
                   <Label htmlFor="editToppingCategory">Category</Label>
                   <Select
                     value={editingTopping.category}
-                    onValueChange={(value) => setEditingTopping({
-                      ...editingTopping,
-                      category: value
-                    })}
+                    onValueChange={(value) =>
+                      setEditingTopping({
+                        ...editingTopping,
+                        category: value,
+                      })
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -1680,10 +2001,12 @@ export default function Admin() {
                   <Input
                     id="editToppingName"
                     value={editingTopping.name}
-                    onChange={(e) => setEditingTopping({
-                      ...editingTopping,
-                      name: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingTopping({
+                        ...editingTopping,
+                        name: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -1693,22 +2016,33 @@ export default function Admin() {
                     type="number"
                     step="0.01"
                     value={editingTopping.price}
-                    onChange={(e) => setEditingTopping({
-                      ...editingTopping,
-                      price: parseFloat(e.target.value) || 0
-                    })}
+                    onChange={(e) =>
+                      setEditingTopping({
+                        ...editingTopping,
+                        price: parseFloat(e.target.value) || 0,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setEditingTopping(null)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditingTopping(null)}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    setToppings(toppings.map(topping =>
-                      topping.id === editingTopping.id ? editingTopping : topping
-                    ));
-                    setEditingTopping(null);
-                  }}>
+                  <Button
+                    onClick={() => {
+                      setToppings(
+                        toppings.map((topping) =>
+                          topping.id === editingTopping.id
+                            ? editingTopping
+                            : topping,
+                        ),
+                      );
+                      setEditingTopping(null);
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>
@@ -1737,16 +2071,20 @@ export default function Admin() {
               <DialogHeader className="sr-only">
                 <DialogTitle>Add New Special</DialogTitle>
                 <DialogDescription>
-                  Create a new hourly, daily, or weekly special offer with menu selection and discount options
+                  Create a new hourly, daily, or weekly special offer with menu
+                  selection and discount options
                 </DialogDescription>
               </DialogHeader>
               <div className="flex h-full relative">
                 {/* Left Column - Basic Info */}
                 <div className="w-1/2 pr-6 pl-6 py-6 space-y-4 overflow-y-auto max-h-full">
                   <div className="mb-6">
-                    <h2 className="text-lg font-semibold text-gray-900">Add New Special</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Add New Special
+                    </h2>
                     <p className="text-sm text-gray-500">
-                      Create a new special offer with menu items and discount settings
+                      Create a new special offer with menu items and discount
+                      settings
                     </p>
                   </div>
                   <div>
@@ -1755,7 +2093,9 @@ export default function Admin() {
                       id="specialName"
                       placeholder="e.g., Lunch Pizza Special"
                       value={newSpecial.name}
-                      onChange={(e) => setNewSpecial({...newSpecial, name: e.target.value})}
+                      onChange={(e) =>
+                        setNewSpecial({ ...newSpecial, name: e.target.value })
+                      }
                     />
                   </div>
                   <div>
@@ -1765,19 +2105,35 @@ export default function Admin() {
                       placeholder="Describe the special offer"
                       rows={3}
                       value={newSpecial.description}
-                      onChange={(e) => setNewSpecial({...newSpecial, description: e.target.value})}
+                      onChange={(e) =>
+                        setNewSpecial({
+                          ...newSpecial,
+                          description: e.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="specialType">Type</Label>
-                    <Select value={newSpecial.type} onValueChange={(value: any) => setNewSpecial({...newSpecial, type: value})}>
+                    <Select
+                      value={newSpecial.type}
+                      onValueChange={(value: any) =>
+                        setNewSpecial({ ...newSpecial, type: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="hourly">Hourly by Day (e.g., lunch specials)</SelectItem>
-                        <SelectItem value="daily">Daily (every day for a period)</SelectItem>
-                        <SelectItem value="weekly">Weekly (specific day each week)</SelectItem>
+                        <SelectItem value="hourly">
+                          Hourly by Day (e.g., lunch specials)
+                        </SelectItem>
+                        <SelectItem value="daily">
+                          Daily (every day for a period)
+                        </SelectItem>
+                        <SelectItem value="weekly">
+                          Weekly (specific day each week)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1792,7 +2148,12 @@ export default function Admin() {
                             id="startTime"
                             type="time"
                             value={newSpecial.startTime || ""}
-                            onChange={(e) => setNewSpecial({...newSpecial, startTime: e.target.value})}
+                            onChange={(e) =>
+                              setNewSpecial({
+                                ...newSpecial,
+                                startTime: e.target.value,
+                              })
+                            }
                           />
                         </div>
                         <div>
@@ -1801,28 +2162,60 @@ export default function Admin() {
                             id="endTime"
                             type="time"
                             value={newSpecial.endTime || ""}
-                            onChange={(e) => setNewSpecial({...newSpecial, endTime: e.target.value})}
+                            onChange={(e) =>
+                              setNewSpecial({
+                                ...newSpecial,
+                                endTime: e.target.value,
+                              })
+                            }
                           />
                         </div>
                       </div>
                       <div>
                         <Label>Days of Week</Label>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, index) => (
-                            <div key={day} className="flex items-center space-x-2">
+                          {[
+                            "Sunday",
+                            "Monday",
+                            "Tuesday",
+                            "Wednesday",
+                            "Thursday",
+                            "Friday",
+                            "Saturday",
+                          ].map((day, index) => (
+                            <div
+                              key={day}
+                              className="flex items-center space-x-2"
+                            >
                               <Checkbox
                                 id={`day-${index}`}
-                                checked={newSpecial.daysOfWeek?.includes(index) || false}
+                                checked={
+                                  newSpecial.daysOfWeek?.includes(index) ||
+                                  false
+                                }
                                 onCheckedChange={(checked) => {
                                   const days = newSpecial.daysOfWeek || [];
                                   if (checked) {
-                                    setNewSpecial({...newSpecial, daysOfWeek: [...days, index]});
+                                    setNewSpecial({
+                                      ...newSpecial,
+                                      daysOfWeek: [...days, index],
+                                    });
                                   } else {
-                                    setNewSpecial({...newSpecial, daysOfWeek: days.filter(d => d !== index)});
+                                    setNewSpecial({
+                                      ...newSpecial,
+                                      daysOfWeek: days.filter(
+                                        (d) => d !== index,
+                                      ),
+                                    });
                                   }
                                 }}
                               />
-                              <Label htmlFor={`day-${index}`} className="text-sm">{day}</Label>
+                              <Label
+                                htmlFor={`day-${index}`}
+                                className="text-sm"
+                              >
+                                {day}
+                              </Label>
                             </div>
                           ))}
                         </div>
@@ -1833,7 +2226,15 @@ export default function Admin() {
                   {newSpecial.type === "weekly" && (
                     <div>
                       <Label>Day of Week</Label>
-                      <Select value={newSpecial.dayOfWeek?.toString()} onValueChange={(value) => setNewSpecial({...newSpecial, dayOfWeek: parseInt(value)})}>
+                      <Select
+                        value={newSpecial.dayOfWeek?.toString()}
+                        onValueChange={(value) =>
+                          setNewSpecial({
+                            ...newSpecial,
+                            dayOfWeek: parseInt(value),
+                          })
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select day" />
                         </SelectTrigger>
@@ -1857,7 +2258,12 @@ export default function Admin() {
                         id="startDate"
                         type="date"
                         value={newSpecial.startDate}
-                        onChange={(e) => setNewSpecial({...newSpecial, startDate: e.target.value})}
+                        onChange={(e) =>
+                          setNewSpecial({
+                            ...newSpecial,
+                            startDate: e.target.value,
+                          })
+                        }
                       />
                     </div>
                     <div>
@@ -1866,18 +2272,23 @@ export default function Admin() {
                         id="endDate"
                         type="date"
                         value={newSpecial.endDate}
-                        onChange={(e) => setNewSpecial({...newSpecial, endDate: e.target.value})}
+                        onChange={(e) =>
+                          setNewSpecial({
+                            ...newSpecial,
+                            endDate: e.target.value,
+                          })
+                        }
                       />
                     </div>
                   </div>
-
-
                 </div>
 
                 {/* Right Column - Menu Selection */}
                 <div className="w-1/2 pl-6 border-l flex flex-col">
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Menu Items</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Menu Items
+                    </h3>
                     <p className="text-sm text-gray-500">
                       Select which menu items this special applies to
                     </p>
@@ -1885,7 +2296,9 @@ export default function Admin() {
 
                   <div className="flex-1 overflow-hidden">
                     {(() => {
-                      const activeCategories = categories.filter(c => c.isActive);
+                      const activeCategories = categories.filter(
+                        (c) => c.isActive,
+                      );
                       return (
                         <Tabs
                           defaultValue={activeCategories[0]?.id}
@@ -1905,7 +2318,8 @@ export default function Admin() {
 
                           {activeCategories.map((category) => {
                             const categoryMenuItems = menuItems.filter(
-                              (item) => item.category === category.id && item.isActive
+                              (item) =>
+                                item.category === category.id && item.isActive,
                             );
 
                             return (
@@ -1923,13 +2337,26 @@ export default function Admin() {
                                       >
                                         <Checkbox
                                           id={`special-item-${item.id}`}
-                                          checked={newSpecial.menuItems?.includes(item.id) || false}
+                                          checked={
+                                            newSpecial.menuItems?.includes(
+                                              item.id,
+                                            ) || false
+                                          }
                                           onCheckedChange={(checked) => {
-                                            const items = newSpecial.menuItems || [];
+                                            const items =
+                                              newSpecial.menuItems || [];
                                             if (checked) {
-                                              setNewSpecial({...newSpecial, menuItems: [...items, item.id]});
+                                              setNewSpecial({
+                                                ...newSpecial,
+                                                menuItems: [...items, item.id],
+                                              });
                                             } else {
-                                              setNewSpecial({...newSpecial, menuItems: items.filter(i => i !== item.id)});
+                                              setNewSpecial({
+                                                ...newSpecial,
+                                                menuItems: items.filter(
+                                                  (i) => i !== item.id,
+                                                ),
+                                              });
                                             }
                                           }}
                                         />
@@ -1941,16 +2368,31 @@ export default function Admin() {
                                             <span>{item.name}</span>
                                             <span className="text-gray-500 text-xs">
                                               ${item.price.toFixed(2)}
-                                              {newSpecial.discountType === "percentage" && newSpecial.discountValue > 0 && (
-                                                <span className="ml-2 text-green-600">
-                                                  → ${(item.price * (1 - newSpecial.discountValue / 100)).toFixed(2)}
-                                                </span>
-                                              )}
-                                              {newSpecial.discountType === "flat" && newSpecial.discountValue > 0 && (
-                                                <span className="ml-2 text-green-600">
-                                                  → ${newSpecial.discountValue.toFixed(2)}
-                                                </span>
-                                              )}
+                                              {newSpecial.discountType ===
+                                                "percentage" &&
+                                                newSpecial.discountValue >
+                                                  0 && (
+                                                  <span className="ml-2 text-green-600">
+                                                    → $
+                                                    {(
+                                                      item.price *
+                                                      (1 -
+                                                        newSpecial.discountValue /
+                                                          100)
+                                                    ).toFixed(2)}
+                                                  </span>
+                                                )}
+                                              {newSpecial.discountType ===
+                                                "flat" &&
+                                                newSpecial.discountValue >
+                                                  0 && (
+                                                  <span className="ml-2 text-green-600">
+                                                    → $
+                                                    {newSpecial.discountValue.toFixed(
+                                                      2,
+                                                    )}
+                                                  </span>
+                                                )}
                                             </span>
                                           </div>
                                         </Label>
@@ -1972,47 +2414,83 @@ export default function Admin() {
 
                   {/* Discount Section */}
                   <div className="mt-6 pt-6 border-t">
-                    <h4 className="text-md font-semibold text-gray-900 mb-4">Discount Settings</h4>
+                    <h4 className="text-md font-semibold text-gray-900 mb-4">
+                      Discount Settings
+                    </h4>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="discountType">Discount Type</Label>
-                          <Select value={newSpecial.discountType} onValueChange={(value: any) => setNewSpecial({...newSpecial, discountType: value})}>
+                          <Select
+                            value={newSpecial.discountType}
+                            onValueChange={(value: any) =>
+                              setNewSpecial({
+                                ...newSpecial,
+                                discountType: value,
+                              })
+                            }
+                          >
                             <SelectTrigger>
                               <SelectValue placeholder="Select discount type" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="percentage">Percentage Off</SelectItem>
+                              <SelectItem value="percentage">
+                                Percentage Off
+                              </SelectItem>
                               <SelectItem value="flat">Flat Price</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div>
                           <Label htmlFor="discountValue">
-                            {newSpecial.discountType === "percentage" ? "Percentage (%)" : "Flat Price ($)"}
+                            {newSpecial.discountType === "percentage"
+                              ? "Percentage (%)"
+                              : "Flat Price ($)"}
                           </Label>
                           <Input
                             id="discountValue"
                             type="number"
-                            step={newSpecial.discountType === "percentage" ? "1" : "0.01"}
+                            step={
+                              newSpecial.discountType === "percentage"
+                                ? "1"
+                                : "0.01"
+                            }
                             min="0"
-                            max={newSpecial.discountType === "percentage" ? "100" : undefined}
-                            placeholder={newSpecial.discountType === "percentage" ? "e.g., 20" : "e.g., 9.99"}
+                            max={
+                              newSpecial.discountType === "percentage"
+                                ? "100"
+                                : undefined
+                            }
+                            placeholder={
+                              newSpecial.discountType === "percentage"
+                                ? "e.g., 20"
+                                : "e.g., 9.99"
+                            }
                             value={newSpecial.discountValue}
-                            onChange={(e) => setNewSpecial({...newSpecial, discountValue: parseFloat(e.target.value) || 0})}
+                            onChange={(e) =>
+                              setNewSpecial({
+                                ...newSpecial,
+                                discountValue: parseFloat(e.target.value) || 0,
+                              })
+                            }
                           />
                         </div>
                       </div>
 
                       <div style={{ minHeight: "60px" }}>
-                        {newSpecial.discountType === "percentage" && newSpecial.discountValue > 0 && (
-                          <div>
-                            <Label>Preview Discount</Label>
-                            <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
-                              Example: $10.00 → ${(10 * (1 - newSpecial.discountValue / 100)).toFixed(2)}
+                        {newSpecial.discountType === "percentage" &&
+                          newSpecial.discountValue > 0 && (
+                            <div>
+                              <Label>Preview Discount</Label>
+                              <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
+                                Example: $10.00 → $
+                                {(
+                                  10 *
+                                  (1 - newSpecial.discountValue / 100)
+                                ).toFixed(2)}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     </div>
                   </div>
@@ -2020,38 +2498,46 @@ export default function Admin() {
 
                 {/* Buttons fixed at bottom of entire dialog */}
                 <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50 z-10">
-                  <Button variant="outline" onClick={() => {
-                    setIsAddingSpecial(false);
-                    setNewSpecial({
-                      name: "",
-                      description: "",
-                      type: "daily",
-                      startDate: "",
-                      endDate: "",
-                      menuItems: [],
-                      discountType: "percentage",
-                      discountValue: 0,
-                      isActive: true
-                    });
-                  }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingSpecial(false);
+                      setNewSpecial({
+                        name: "",
+                        description: "",
+                        type: "daily",
+                        startDate: "",
+                        endDate: "",
+                        menuItems: [],
+                        discountType: "percentage",
+                        discountValue: 0,
+                        isActive: true,
+                      });
+                    }}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    const id = `special-${Date.now()}`;
-                    setSpecials([...specials, {...newSpecial, id} as Special]);
-                    setIsAddingSpecial(false);
-                    setNewSpecial({
-                      name: "",
-                      description: "",
-                      type: "daily",
-                      startDate: "",
-                      endDate: "",
-                      menuItems: [],
-                      discountType: "percentage",
-                      discountValue: 0,
-                      isActive: true
-                    });
-                  }}>
+                  <Button
+                    onClick={() => {
+                      const id = `special-${Date.now()}`;
+                      setSpecials([
+                        ...specials,
+                        { ...newSpecial, id } as Special,
+                      ]);
+                      setIsAddingSpecial(false);
+                      setNewSpecial({
+                        name: "",
+                        description: "",
+                        type: "daily",
+                        startDate: "",
+                        endDate: "",
+                        menuItems: [],
+                        discountType: "percentage",
+                        discountValue: 0,
+                        isActive: true,
+                      });
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Special
                   </Button>
@@ -2069,10 +2555,18 @@ export default function Admin() {
                     <div className="flex items-center space-x-2 mb-2">
                       <h3 className="font-semibold">{special.name}</h3>
                       <Badge variant="outline">
-                        {special.type === "hourly" ? "Hourly" : special.type === "daily" ? "Daily" : "Weekly"}
+                        {special.type === "hourly"
+                          ? "Hourly"
+                          : special.type === "daily"
+                            ? "Daily"
+                            : "Weekly"}
                       </Badge>
                       <Badge
-                        className={special.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                        className={
+                          special.isActive
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }
                       >
                         {special.isActive ? "Active" : "Inactive"}
                       </Badge>
@@ -2084,43 +2578,82 @@ export default function Admin() {
                       <div>
                         {special.startDate} to {special.endDate}
                       </div>
-                      {special.type === "hourly" && special.startTime && special.endTime && (
-                        <div>
-                          {special.startTime} - {special.endTime}
-                          {special.daysOfWeek && (
-                            <span className="ml-2">
-                              ({special.daysOfWeek.map(d => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d]).join(", ")})
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      {special.type === "weekly" && special.dayOfWeek !== undefined && (
-                        <div>
-                          Every {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][special.dayOfWeek]}
-                        </div>
-                      )}
+                      {special.type === "hourly" &&
+                        special.startTime &&
+                        special.endTime && (
+                          <div>
+                            {special.startTime} - {special.endTime}
+                            {special.daysOfWeek && (
+                              <span className="ml-2">
+                                (
+                                {special.daysOfWeek
+                                  .map(
+                                    (d) =>
+                                      [
+                                        "Sun",
+                                        "Mon",
+                                        "Tue",
+                                        "Wed",
+                                        "Thu",
+                                        "Fri",
+                                        "Sat",
+                                      ][d],
+                                  )
+                                  .join(", ")}
+                                )
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      {special.type === "weekly" &&
+                        special.dayOfWeek !== undefined && (
+                          <div>
+                            Every{" "}
+                            {
+                              [
+                                "Sunday",
+                                "Monday",
+                                "Tuesday",
+                                "Wednesday",
+                                "Thursday",
+                                "Friday",
+                                "Saturday",
+                              ][special.dayOfWeek]
+                            }
+                          </div>
+                        )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setEditingSpecial({...special})}
+                      onClick={() => setEditingSpecial({ ...special })}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => toggleItemActive(special.id, specials, setSpecials)}
+                      onClick={() =>
+                        toggleItemActive(special.id, specials, setSpecials)
+                      }
                     >
-                      {special.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                      {special.isActive ? (
+                        <ThumbsUp className="h-4 w-4" />
+                      ) : (
+                        <ThumbsDown className="h-4 w-4" />
+                      )}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => {
-                        if (confirm(`Are you sure you want to delete "${special.name}"?`)) {
+                        if (
+                          confirm(
+                            `Are you sure you want to delete "${special.name}"?`,
+                          )
+                        ) {
                           deleteItem(special.id, specials, setSpecials);
                         }
                       }}
@@ -2135,12 +2668,16 @@ export default function Admin() {
         </div>
 
         {/* Edit Special Dialog */}
-        <Dialog open={!!editingSpecial} onOpenChange={() => setEditingSpecial(null)}>
+        <Dialog
+          open={!!editingSpecial}
+          onOpenChange={() => setEditingSpecial(null)}
+        >
           <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
             <DialogHeader className="sr-only">
               <DialogTitle>Edit Special</DialogTitle>
               <DialogDescription>
-                Update the special details with menu selection and discount options
+                Update the special details with menu selection and discount
+                options
               </DialogDescription>
             </DialogHeader>
             {editingSpecial && (
@@ -2148,147 +2685,209 @@ export default function Admin() {
                 {/* Left Column - Basic Info */}
                 <div className="w-1/2 pr-6 pl-4 space-y-4 overflow-y-auto">
                   <div className="mb-6">
-                    <h2 className="text-lg font-semibold text-gray-900">Edit Special</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Edit Special
+                    </h2>
                     <p className="text-sm text-gray-500">
                       Update the special offer details and settings
                     </p>
                   </div>
-                <div>
-                  <Label htmlFor="editSpecialName">Special Name</Label>
-                  <Input
-                    id="editSpecialName"
-                    value={editingSpecial.name}
-                    onChange={(e) => setEditingSpecial({
-                      ...editingSpecial,
-                      name: e.target.value
-                    })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="editSpecialDescription">Description</Label>
-                  <Textarea
-                    id="editSpecialDescription"
-                    value={editingSpecial.description}
-                    onChange={(e) => setEditingSpecial({
-                      ...editingSpecial,
-                      description: e.target.value
-                    })}
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="editSpecialType">Type</Label>
-                  <Select value={editingSpecial.type} onValueChange={(value: any) => setEditingSpecial({...editingSpecial, type: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="hourly">Hourly by Day</SelectItem>
-                      <SelectItem value="daily">Daily</SelectItem>
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {editingSpecial.type === "hourly" && (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="editStartTime">Start Time</Label>
-                        <Input
-                          id="editStartTime"
-                          type="time"
-                          value={editingSpecial.startTime || ""}
-                          onChange={(e) => setEditingSpecial({...editingSpecial, startTime: e.target.value})}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="editEndTime">End Time</Label>
-                        <Input
-                          id="editEndTime"
-                          type="time"
-                          value={editingSpecial.endTime || ""}
-                          onChange={(e) => setEditingSpecial({...editingSpecial, endTime: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Days of Week</Label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, index) => (
-                          <div key={day} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`edit-day-${index}`}
-                              checked={editingSpecial.daysOfWeek?.includes(index) || false}
-                              onCheckedChange={(checked) => {
-                                const days = editingSpecial.daysOfWeek || [];
-                                if (checked) {
-                                  setEditingSpecial({...editingSpecial, daysOfWeek: [...days, index]});
-                                } else {
-                                  setEditingSpecial({...editingSpecial, daysOfWeek: days.filter(d => d !== index)});
-                                }
-                              }}
-                            />
-                            <Label htmlFor={`edit-day-${index}`} className="text-sm">{day}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {editingSpecial.type === "weekly" && (
                   <div>
-                    <Label>Day of Week</Label>
-                    <Select value={editingSpecial.dayOfWeek?.toString()} onValueChange={(value) => setEditingSpecial({...editingSpecial, dayOfWeek: parseInt(value)})}>
+                    <Label htmlFor="editSpecialName">Special Name</Label>
+                    <Input
+                      id="editSpecialName"
+                      value={editingSpecial.name}
+                      onChange={(e) =>
+                        setEditingSpecial({
+                          ...editingSpecial,
+                          name: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="editSpecialDescription">Description</Label>
+                    <Textarea
+                      id="editSpecialDescription"
+                      value={editingSpecial.description}
+                      onChange={(e) =>
+                        setEditingSpecial({
+                          ...editingSpecial,
+                          description: e.target.value,
+                        })
+                      }
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="editSpecialType">Type</Label>
+                    <Select
+                      value={editingSpecial.type}
+                      onValueChange={(value: any) =>
+                        setEditingSpecial({ ...editingSpecial, type: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="0">Sunday</SelectItem>
-                        <SelectItem value="1">Monday</SelectItem>
-                        <SelectItem value="2">Tuesday</SelectItem>
-                        <SelectItem value="3">Wednesday</SelectItem>
-                        <SelectItem value="4">Thursday</SelectItem>
-                        <SelectItem value="5">Friday</SelectItem>
-                        <SelectItem value="6">Saturday</SelectItem>
+                        <SelectItem value="hourly">Hourly by Day</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Weekly</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="editStartDate">Start Date</Label>
-                    <Input
-                      id="editStartDate"
-                      type="date"
-                      value={editingSpecial.startDate}
-                      onChange={(e) => setEditingSpecial({
-                        ...editingSpecial,
-                        startDate: e.target.value
-                      })}
-                    />
+                  {editingSpecial.type === "hourly" && (
+                    <>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="editStartTime">Start Time</Label>
+                          <Input
+                            id="editStartTime"
+                            type="time"
+                            value={editingSpecial.startTime || ""}
+                            onChange={(e) =>
+                              setEditingSpecial({
+                                ...editingSpecial,
+                                startTime: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="editEndTime">End Time</Label>
+                          <Input
+                            id="editEndTime"
+                            type="time"
+                            value={editingSpecial.endTime || ""}
+                            onChange={(e) =>
+                              setEditingSpecial({
+                                ...editingSpecial,
+                                endTime: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Days of Week</Label>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {[
+                            "Sunday",
+                            "Monday",
+                            "Tuesday",
+                            "Wednesday",
+                            "Thursday",
+                            "Friday",
+                            "Saturday",
+                          ].map((day, index) => (
+                            <div
+                              key={day}
+                              className="flex items-center space-x-2"
+                            >
+                              <Checkbox
+                                id={`edit-day-${index}`}
+                                checked={
+                                  editingSpecial.daysOfWeek?.includes(index) ||
+                                  false
+                                }
+                                onCheckedChange={(checked) => {
+                                  const days = editingSpecial.daysOfWeek || [];
+                                  if (checked) {
+                                    setEditingSpecial({
+                                      ...editingSpecial,
+                                      daysOfWeek: [...days, index],
+                                    });
+                                  } else {
+                                    setEditingSpecial({
+                                      ...editingSpecial,
+                                      daysOfWeek: days.filter(
+                                        (d) => d !== index,
+                                      ),
+                                    });
+                                  }
+                                }}
+                              />
+                              <Label
+                                htmlFor={`edit-day-${index}`}
+                                className="text-sm"
+                              >
+                                {day}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {editingSpecial.type === "weekly" && (
+                    <div>
+                      <Label>Day of Week</Label>
+                      <Select
+                        value={editingSpecial.dayOfWeek?.toString()}
+                        onValueChange={(value) =>
+                          setEditingSpecial({
+                            ...editingSpecial,
+                            dayOfWeek: parseInt(value),
+                          })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Sunday</SelectItem>
+                          <SelectItem value="1">Monday</SelectItem>
+                          <SelectItem value="2">Tuesday</SelectItem>
+                          <SelectItem value="3">Wednesday</SelectItem>
+                          <SelectItem value="4">Thursday</SelectItem>
+                          <SelectItem value="5">Friday</SelectItem>
+                          <SelectItem value="6">Saturday</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="editStartDate">Start Date</Label>
+                      <Input
+                        id="editStartDate"
+                        type="date"
+                        value={editingSpecial.startDate}
+                        onChange={(e) =>
+                          setEditingSpecial({
+                            ...editingSpecial,
+                            startDate: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="editEndDate">End Date</Label>
+                      <Input
+                        id="editEndDate"
+                        type="date"
+                        value={editingSpecial.endDate}
+                        onChange={(e) =>
+                          setEditingSpecial({
+                            ...editingSpecial,
+                            endDate: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="editEndDate">End Date</Label>
-                    <Input
-                      id="editEndDate"
-                      type="date"
-                      value={editingSpecial.endDate}
-                      onChange={(e) => setEditingSpecial({
-                        ...editingSpecial,
-                        endDate: e.target.value
-                      })}
-                    />
-                  </div>
-                </div>
                 </div>
 
                 {/* Right Column - Menu Selection */}
                 <div className="w-1/2 pl-6 border-l flex flex-col">
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Menu Items</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Menu Items
+                    </h3>
                     <p className="text-sm text-gray-500">
                       Select which menu items this special applies to
                     </p>
@@ -2296,7 +2895,9 @@ export default function Admin() {
 
                   <div className="flex-1 overflow-hidden">
                     {(() => {
-                      const activeCategories = categories.filter(c => c.isActive);
+                      const activeCategories = categories.filter(
+                        (c) => c.isActive,
+                      );
                       return (
                         <Tabs
                           defaultValue={activeCategories[0]?.id}
@@ -2316,7 +2917,8 @@ export default function Admin() {
 
                           {activeCategories.map((category) => {
                             const categoryMenuItems = menuItems.filter(
-                              (item) => item.category === category.id && item.isActive
+                              (item) =>
+                                item.category === category.id && item.isActive,
                             );
 
                             return (
@@ -2334,13 +2936,26 @@ export default function Admin() {
                                       >
                                         <Checkbox
                                           id={`edit-special-item-${item.id}`}
-                                          checked={editingSpecial.menuItems?.includes(item.id) || false}
+                                          checked={
+                                            editingSpecial.menuItems?.includes(
+                                              item.id,
+                                            ) || false
+                                          }
                                           onCheckedChange={(checked) => {
-                                            const items = editingSpecial.menuItems || [];
+                                            const items =
+                                              editingSpecial.menuItems || [];
                                             if (checked) {
-                                              setEditingSpecial({...editingSpecial, menuItems: [...items, item.id]});
+                                              setEditingSpecial({
+                                                ...editingSpecial,
+                                                menuItems: [...items, item.id],
+                                              });
                                             } else {
-                                              setEditingSpecial({...editingSpecial, menuItems: items.filter(i => i !== item.id)});
+                                              setEditingSpecial({
+                                                ...editingSpecial,
+                                                menuItems: items.filter(
+                                                  (i) => i !== item.id,
+                                                ),
+                                              });
                                             }
                                           }}
                                         />
@@ -2352,16 +2967,31 @@ export default function Admin() {
                                             <span>{item.name}</span>
                                             <span className="text-gray-500 text-xs">
                                               ${item.price.toFixed(2)}
-                                              {editingSpecial.discountType === "percentage" && editingSpecial.discountValue > 0 && (
-                                                <span className="ml-2 text-green-600">
-                                                  → ${(item.price * (1 - editingSpecial.discountValue / 100)).toFixed(2)}
-                                                </span>
-                                              )}
-                                              {editingSpecial.discountType === "flat" && editingSpecial.discountValue > 0 && (
-                                                <span className="ml-2 text-green-600">
-                                                  → ${editingSpecial.discountValue.toFixed(2)}
-                                                </span>
-                                              )}
+                                              {editingSpecial.discountType ===
+                                                "percentage" &&
+                                                editingSpecial.discountValue >
+                                                  0 && (
+                                                  <span className="ml-2 text-green-600">
+                                                    → $
+                                                    {(
+                                                      item.price *
+                                                      (1 -
+                                                        editingSpecial.discountValue /
+                                                          100)
+                                                    ).toFixed(2)}
+                                                  </span>
+                                                )}
+                                              {editingSpecial.discountType ===
+                                                "flat" &&
+                                                editingSpecial.discountValue >
+                                                  0 && (
+                                                  <span className="ml-2 text-green-600">
+                                                    → $
+                                                    {editingSpecial.discountValue.toFixed(
+                                                      2,
+                                                    )}
+                                                  </span>
+                                                )}
                                             </span>
                                           </div>
                                         </Label>
@@ -2383,46 +3013,80 @@ export default function Admin() {
 
                   {/* Discount Section */}
                   <div className="mt-6 pt-6 border-t">
-                    <h4 className="text-md font-semibold text-gray-900 mb-4">Discount Settings</h4>
+                    <h4 className="text-md font-semibold text-gray-900 mb-4">
+                      Discount Settings
+                    </h4>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="editDiscountType">Discount Type</Label>
-                          <Select value={editingSpecial.discountType} onValueChange={(value: any) => setEditingSpecial({...editingSpecial, discountType: value})}>
+                          <Label htmlFor="editDiscountType">
+                            Discount Type
+                          </Label>
+                          <Select
+                            value={editingSpecial.discountType}
+                            onValueChange={(value: any) =>
+                              setEditingSpecial({
+                                ...editingSpecial,
+                                discountType: value,
+                              })
+                            }
+                          >
                             <SelectTrigger>
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="percentage">Percentage Off</SelectItem>
+                              <SelectItem value="percentage">
+                                Percentage Off
+                              </SelectItem>
                               <SelectItem value="flat">Flat Price</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div>
                           <Label htmlFor="editDiscountValue">
-                            {editingSpecial.discountType === "percentage" ? "Percentage (%)" : "Flat Price ($)"}
+                            {editingSpecial.discountType === "percentage"
+                              ? "Percentage (%)"
+                              : "Flat Price ($)"}
                           </Label>
                           <Input
                             id="editDiscountValue"
                             type="number"
-                            step={editingSpecial.discountType === "percentage" ? "1" : "0.01"}
+                            step={
+                              editingSpecial.discountType === "percentage"
+                                ? "1"
+                                : "0.01"
+                            }
                             min="0"
-                            max={editingSpecial.discountType === "percentage" ? "100" : undefined}
+                            max={
+                              editingSpecial.discountType === "percentage"
+                                ? "100"
+                                : undefined
+                            }
                             value={editingSpecial.discountValue}
-                            onChange={(e) => setEditingSpecial({...editingSpecial, discountValue: parseFloat(e.target.value) || 0})}
+                            onChange={(e) =>
+                              setEditingSpecial({
+                                ...editingSpecial,
+                                discountValue: parseFloat(e.target.value) || 0,
+                              })
+                            }
                           />
                         </div>
                       </div>
 
                       <div style={{ minHeight: "60px" }}>
-                        {editingSpecial.discountType === "percentage" && editingSpecial.discountValue > 0 && (
-                          <div>
-                            <Label>Preview Discount</Label>
-                            <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
-                              Example: $10.00 → ${(10 * (1 - editingSpecial.discountValue / 100)).toFixed(2)}
+                        {editingSpecial.discountType === "percentage" &&
+                          editingSpecial.discountValue > 0 && (
+                            <div>
+                              <Label>Preview Discount</Label>
+                              <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
+                                Example: $10.00 → $
+                                {(
+                                  10 *
+                                  (1 - editingSpecial.discountValue / 100)
+                                ).toFixed(2)}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                     </div>
                   </div>
@@ -2430,15 +3094,24 @@ export default function Admin() {
 
                 {/* Buttons fixed at bottom of entire dialog */}
                 <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50">
-                  <Button variant="outline" onClick={() => setEditingSpecial(null)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditingSpecial(null)}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    setSpecials(specials.map(special =>
-                      special.id === editingSpecial.id ? editingSpecial : special
-                    ));
-                    setEditingSpecial(null);
-                  }}>
+                  <Button
+                    onClick={() => {
+                      setSpecials(
+                        specials.map((special) =>
+                          special.id === editingSpecial.id
+                            ? editingSpecial
+                            : special,
+                        ),
+                      );
+                      setEditingSpecial(null);
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>
@@ -2455,7 +3128,10 @@ export default function Admin() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Carousel Images</h2>
-          <Dialog open={isAddingCarouselImage} onOpenChange={setIsAddingCarouselImage}>
+          <Dialog
+            open={isAddingCarouselImage}
+            onOpenChange={setIsAddingCarouselImage}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -2476,7 +3152,12 @@ export default function Admin() {
                     id="imageUrl"
                     placeholder="https://example.com/image.jpg"
                     value={newCarouselImage.url}
-                    onChange={(e) => setNewCarouselImage({...newCarouselImage, url: e.target.value})}
+                    onChange={(e) =>
+                      setNewCarouselImage({
+                        ...newCarouselImage,
+                        url: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2485,7 +3166,12 @@ export default function Admin() {
                     id="imageTitle"
                     placeholder="Image title"
                     value={newCarouselImage.title}
-                    onChange={(e) => setNewCarouselImage({...newCarouselImage, title: e.target.value})}
+                    onChange={(e) =>
+                      setNewCarouselImage({
+                        ...newCarouselImage,
+                        title: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2494,7 +3180,12 @@ export default function Admin() {
                     id="imageSubtitle"
                     placeholder="Image subtitle"
                     value={newCarouselImage.subtitle}
-                    onChange={(e) => setNewCarouselImage({...newCarouselImage, subtitle: e.target.value})}
+                    onChange={(e) =>
+                      setNewCarouselImage({
+                        ...newCarouselImage,
+                        subtitle: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2504,22 +3195,47 @@ export default function Admin() {
                     type="number"
                     placeholder="1"
                     value={newCarouselImage.order}
-                    onChange={(e) => setNewCarouselImage({...newCarouselImage, order: parseInt(e.target.value) || 1})}
+                    onChange={(e) =>
+                      setNewCarouselImage({
+                        ...newCarouselImage,
+                        order: parseInt(e.target.value) || 1,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => {
-                    setIsAddingCarouselImage(false);
-                    setNewCarouselImage({url: "", title: "", subtitle: "", order: 1, isActive: true});
-                  }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingCarouselImage(false);
+                      setNewCarouselImage({
+                        url: "",
+                        title: "",
+                        subtitle: "",
+                        order: 1,
+                        isActive: true,
+                      });
+                    }}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    const id = `carousel-${Date.now()}`;
-                    setCarouselImages([...carouselImages, {...newCarouselImage, id} as CarouselImage]);
-                    setIsAddingCarouselImage(false);
-                    setNewCarouselImage({url: "", title: "", subtitle: "", order: 1, isActive: true});
-                  }}>
+                  <Button
+                    onClick={() => {
+                      const id = `carousel-${Date.now()}`;
+                      setCarouselImages([
+                        ...carouselImages,
+                        { ...newCarouselImage, id } as CarouselImage,
+                      ]);
+                      setIsAddingCarouselImage(false);
+                      setNewCarouselImage({
+                        url: "",
+                        title: "",
+                        subtitle: "",
+                        order: 1,
+                        isActive: true,
+                      });
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Image
                   </Button>
@@ -2536,17 +3252,29 @@ export default function Admin() {
             <div className="text-center py-8">
               <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No carousel images yet.</p>
-              <p className="text-sm text-gray-400">Add images to display in the homepage carousel.</p>
+              <p className="text-sm text-gray-400">
+                Add images to display in the homepage carousel.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {carouselImages.map((image) => (
                 <div key={image.id} className="border rounded-lg p-4">
-                  <img src={image.url} alt={image.title} className="w-full h-32 object-cover rounded mb-2" />
+                  <img
+                    src={image.url}
+                    alt={image.title}
+                    className="w-full h-32 object-cover rounded mb-2"
+                  />
                   <h3 className="font-semibold">{image.title}</h3>
                   <p className="text-sm text-gray-600">{image.subtitle}</p>
                   <div className="mt-2 flex justify-between items-center">
-                    <Badge className={image.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                    <Badge
+                      className={
+                        image.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
+                    >
                       {image.isActive ? "Active" : "Inactive"}
                     </Badge>
                     <div className="flex space-x-2">
@@ -2560,16 +3288,34 @@ export default function Admin() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => toggleItemActive(image.id, carouselImages, setCarouselImages)}
+                        onClick={() =>
+                          toggleItemActive(
+                            image.id,
+                            carouselImages,
+                            setCarouselImages,
+                          )
+                        }
                       >
-                        {image.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                        {image.isActive ? (
+                          <ThumbsUp className="h-4 w-4" />
+                        ) : (
+                          <ThumbsDown className="h-4 w-4" />
+                        )}
                       </Button>
                       <Button
                         variant="destructive"
                         size="sm"
                         onClick={() => {
-                          if (confirm(`Are you sure you want to delete "${image.title}"?`)) {
-                            deleteItem(image.id, carouselImages, setCarouselImages);
+                          if (
+                            confirm(
+                              `Are you sure you want to delete "${image.title}"?`,
+                            )
+                          ) {
+                            deleteItem(
+                              image.id,
+                              carouselImages,
+                              setCarouselImages,
+                            );
                           }
                         }}
                       >
@@ -2584,7 +3330,10 @@ export default function Admin() {
         </div>
 
         {/* Edit Carousel Image Dialog */}
-        <Dialog open={!!editingCarouselImage} onOpenChange={() => setEditingCarouselImage(null)}>
+        <Dialog
+          open={!!editingCarouselImage}
+          onOpenChange={() => setEditingCarouselImage(null)}
+        >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Carousel Image</DialogTitle>
@@ -2599,10 +3348,12 @@ export default function Admin() {
                   <Input
                     id="editImageUrl"
                     value={editingCarouselImage.url}
-                    onChange={(e) => setEditingCarouselImage({
-                      ...editingCarouselImage,
-                      url: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingCarouselImage({
+                        ...editingCarouselImage,
+                        url: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2610,10 +3361,12 @@ export default function Admin() {
                   <Input
                     id="editImageTitle"
                     value={editingCarouselImage.title}
-                    onChange={(e) => setEditingCarouselImage({
-                      ...editingCarouselImage,
-                      title: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingCarouselImage({
+                        ...editingCarouselImage,
+                        title: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2621,10 +3374,12 @@ export default function Admin() {
                   <Input
                     id="editImageSubtitle"
                     value={editingCarouselImage.subtitle}
-                    onChange={(e) => setEditingCarouselImage({
-                      ...editingCarouselImage,
-                      subtitle: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingCarouselImage({
+                        ...editingCarouselImage,
+                        subtitle: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2633,22 +3388,33 @@ export default function Admin() {
                     id="editImageOrder"
                     type="number"
                     value={editingCarouselImage.order}
-                    onChange={(e) => setEditingCarouselImage({
-                      ...editingCarouselImage,
-                      order: parseInt(e.target.value) || 1
-                    })}
+                    onChange={(e) =>
+                      setEditingCarouselImage({
+                        ...editingCarouselImage,
+                        order: parseInt(e.target.value) || 1,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setEditingCarouselImage(null)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditingCarouselImage(null)}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    setCarouselImages(carouselImages.map(image =>
-                      image.id === editingCarouselImage.id ? editingCarouselImage : image
-                    ));
-                    setEditingCarouselImage(null);
-                  }}>
+                  <Button
+                    onClick={() => {
+                      setCarouselImages(
+                        carouselImages.map((image) =>
+                          image.id === editingCarouselImage.id
+                            ? editingCarouselImage
+                            : image,
+                        ),
+                      );
+                      setEditingCarouselImage(null);
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>
@@ -2666,7 +3432,10 @@ export default function Admin() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Customer Favorites</h2>
-          <Dialog open={isAddingCustomerFavorite} onOpenChange={setIsAddingCustomerFavorite}>
+          <Dialog
+            open={isAddingCustomerFavorite}
+            onOpenChange={setIsAddingCustomerFavorite}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -2687,7 +3456,12 @@ export default function Admin() {
                     id="favoriteTitle"
                     placeholder="e.g., Fresh Ingredients"
                     value={newCustomerFavorite.title}
-                    onChange={(e) => setNewCustomerFavorite({...newCustomerFavorite, title: e.target.value})}
+                    onChange={(e) =>
+                      setNewCustomerFavorite({
+                        ...newCustomerFavorite,
+                        title: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2697,7 +3471,12 @@ export default function Admin() {
                     placeholder="Description of this favorite"
                     rows={3}
                     value={newCustomerFavorite.description}
-                    onChange={(e) => setNewCustomerFavorite({...newCustomerFavorite, description: e.target.value})}
+                    onChange={(e) =>
+                      setNewCustomerFavorite({
+                        ...newCustomerFavorite,
+                        description: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2706,7 +3485,12 @@ export default function Admin() {
                     id="favoriteIcon"
                     placeholder="🍕"
                     value={newCustomerFavorite.icon}
-                    onChange={(e) => setNewCustomerFavorite({...newCustomerFavorite, icon: e.target.value})}
+                    onChange={(e) =>
+                      setNewCustomerFavorite({
+                        ...newCustomerFavorite,
+                        icon: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2716,22 +3500,47 @@ export default function Admin() {
                     type="number"
                     placeholder="1"
                     value={newCustomerFavorite.order}
-                    onChange={(e) => setNewCustomerFavorite({...newCustomerFavorite, order: parseInt(e.target.value) || 1})}
+                    onChange={(e) =>
+                      setNewCustomerFavorite({
+                        ...newCustomerFavorite,
+                        order: parseInt(e.target.value) || 1,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => {
-                    setIsAddingCustomerFavorite(false);
-                    setNewCustomerFavorite({title: "", description: "", icon: "", order: 1, isActive: true});
-                  }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingCustomerFavorite(false);
+                      setNewCustomerFavorite({
+                        title: "",
+                        description: "",
+                        icon: "",
+                        order: 1,
+                        isActive: true,
+                      });
+                    }}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    const id = `favorite-${Date.now()}`;
-                    setCustomerFavorites([...customerFavorites, {...newCustomerFavorite, id} as CustomerFavorite]);
-                    setIsAddingCustomerFavorite(false);
-                    setNewCustomerFavorite({title: "", description: "", icon: "", order: 1, isActive: true});
-                  }}>
+                  <Button
+                    onClick={() => {
+                      const id = `favorite-${Date.now()}`;
+                      setCustomerFavorites([
+                        ...customerFavorites,
+                        { ...newCustomerFavorite, id } as CustomerFavorite,
+                      ]);
+                      setIsAddingCustomerFavorite(false);
+                      setNewCustomerFavorite({
+                        title: "",
+                        description: "",
+                        icon: "",
+                        order: 1,
+                        isActive: true,
+                      });
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Favorite
                   </Button>
@@ -2748,7 +3557,9 @@ export default function Admin() {
             <div className="text-center py-8">
               <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No customer favorites yet.</p>
-              <p className="text-sm text-gray-400">Add favorite items to showcase on the homepage.</p>
+              <p className="text-sm text-gray-400">
+                Add favorite items to showcase on the homepage.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2756,9 +3567,17 @@ export default function Admin() {
                 <div key={favorite.id} className="border rounded-lg p-4">
                   <div className="text-2xl mb-2">{favorite.icon}</div>
                   <h3 className="font-semibold">{favorite.title}</h3>
-                  <p className="text-sm text-gray-600">{favorite.description}</p>
+                  <p className="text-sm text-gray-600">
+                    {favorite.description}
+                  </p>
                   <div className="mt-2 flex justify-between items-center">
-                    <Badge className={favorite.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                    <Badge
+                      className={
+                        favorite.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
+                    >
                       {favorite.isActive ? "Active" : "Inactive"}
                     </Badge>
                     <div className="flex space-x-2">
@@ -2772,16 +3591,34 @@ export default function Admin() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => toggleItemActive(favorite.id, customerFavorites, setCustomerFavorites)}
+                        onClick={() =>
+                          toggleItemActive(
+                            favorite.id,
+                            customerFavorites,
+                            setCustomerFavorites,
+                          )
+                        }
                       >
-                        {favorite.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                        {favorite.isActive ? (
+                          <ThumbsUp className="h-4 w-4" />
+                        ) : (
+                          <ThumbsDown className="h-4 w-4" />
+                        )}
                       </Button>
                       <Button
                         variant="destructive"
                         size="sm"
                         onClick={() => {
-                          if (confirm(`Are you sure you want to delete "${favorite.title}"?`)) {
-                            deleteItem(favorite.id, customerFavorites, setCustomerFavorites);
+                          if (
+                            confirm(
+                              `Are you sure you want to delete "${favorite.title}"?`,
+                            )
+                          ) {
+                            deleteItem(
+                              favorite.id,
+                              customerFavorites,
+                              setCustomerFavorites,
+                            );
                           }
                         }}
                       >
@@ -2796,7 +3633,10 @@ export default function Admin() {
         </div>
 
         {/* Edit Customer Favorite Dialog */}
-        <Dialog open={!!editingCustomerFavorite} onOpenChange={() => setEditingCustomerFavorite(null)}>
+        <Dialog
+          open={!!editingCustomerFavorite}
+          onOpenChange={() => setEditingCustomerFavorite(null)}
+        >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Customer Favorite</DialogTitle>
@@ -2811,10 +3651,12 @@ export default function Admin() {
                   <Input
                     id="editFavoriteTitle"
                     value={editingCustomerFavorite.title}
-                    onChange={(e) => setEditingCustomerFavorite({
-                      ...editingCustomerFavorite,
-                      title: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingCustomerFavorite({
+                        ...editingCustomerFavorite,
+                        title: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2822,10 +3664,12 @@ export default function Admin() {
                   <Textarea
                     id="editFavoriteDescription"
                     value={editingCustomerFavorite.description}
-                    onChange={(e) => setEditingCustomerFavorite({
-                      ...editingCustomerFavorite,
-                      description: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingCustomerFavorite({
+                        ...editingCustomerFavorite,
+                        description: e.target.value,
+                      })
+                    }
                     rows={3}
                   />
                 </div>
@@ -2834,10 +3678,12 @@ export default function Admin() {
                   <Input
                     id="editFavoriteIcon"
                     value={editingCustomerFavorite.icon}
-                    onChange={(e) => setEditingCustomerFavorite({
-                      ...editingCustomerFavorite,
-                      icon: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingCustomerFavorite({
+                        ...editingCustomerFavorite,
+                        icon: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -2846,22 +3692,33 @@ export default function Admin() {
                     id="editFavoriteOrder"
                     type="number"
                     value={editingCustomerFavorite.order}
-                    onChange={(e) => setEditingCustomerFavorite({
-                      ...editingCustomerFavorite,
-                      order: parseInt(e.target.value) || 1
-                    })}
+                    onChange={(e) =>
+                      setEditingCustomerFavorite({
+                        ...editingCustomerFavorite,
+                        order: parseInt(e.target.value) || 1,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setEditingCustomerFavorite(null)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditingCustomerFavorite(null)}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    setCustomerFavorites(customerFavorites.map(favorite =>
-                      favorite.id === editingCustomerFavorite.id ? editingCustomerFavorite : favorite
-                    ));
-                    setEditingCustomerFavorite(null);
-                  }}>
+                  <Button
+                    onClick={() => {
+                      setCustomerFavorites(
+                        customerFavorites.map((favorite) =>
+                          favorite.id === editingCustomerFavorite.id
+                            ? editingCustomerFavorite
+                            : favorite,
+                        ),
+                      );
+                      setEditingCustomerFavorite(null);
+                    }}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>

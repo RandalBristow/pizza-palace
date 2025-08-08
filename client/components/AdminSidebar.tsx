@@ -7,7 +7,7 @@ import {
   Pizza,
   Calendar,
   Image as ImageIcon,
-  Settings
+  Settings,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -62,8 +62,13 @@ const sidebarItems: SidebarItem[] = [
   },
 ];
 
-export default function AdminSidebar({ selectedItem, onSelectItem }: AdminSidebarProps) {
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(["settings", "menu", "toppings", "images"]));
+export default function AdminSidebar({
+  selectedItem,
+  onSelectItem,
+}: AdminSidebarProps) {
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(
+    new Set(["settings", "menu", "toppings", "images"]),
+  );
 
   const toggleExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -98,13 +103,12 @@ export default function AdminSidebar({ selectedItem, onSelectItem }: AdminSideba
           <div className="flex items-center space-x-2 w-full">
             {item.icon && <item.icon className="h-4 w-4" />}
             <span className="flex-1">{item.label}</span>
-            {hasChildren && (
-              isExpanded ? (
+            {hasChildren &&
+              (isExpanded ? (
                 <ChevronDown className="h-4 w-4" />
               ) : (
                 <ChevronRight className="h-4 w-4" />
-              )
-            )}
+              ))}
           </div>
         </Button>
 
@@ -120,7 +124,9 @@ export default function AdminSidebar({ selectedItem, onSelectItem }: AdminSideba
   return (
     <div className="w-64 bg-white border-r border-gray-200 h-full">
       <div className="p-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Admin Panel</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Admin Panel
+        </h2>
         <nav className="space-y-2">
           {sidebarItems.map((item) => renderSidebarItem(item))}
         </nav>

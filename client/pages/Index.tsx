@@ -24,12 +24,12 @@ import {
 // Get carousel images from localStorage or use default
 const getCarouselImages = () => {
   try {
-    const stored = localStorage.getItem('carouselImages');
+    const stored = localStorage.getItem("carouselImages");
     if (stored) {
       return JSON.parse(stored);
     }
   } catch (error) {
-    console.error('Error loading carousel images:', error);
+    console.error("Error loading carousel images:", error);
   }
 
   // Default carousel data
@@ -48,12 +48,12 @@ const getCarouselImages = () => {
 // Get customer favorites from localStorage or use default
 const getCustomerFavorites = () => {
   try {
-    const stored = localStorage.getItem('customerFavorites');
+    const stored = localStorage.getItem("customerFavorites");
     if (stored) {
       return JSON.parse(stored);
     }
   } catch (error) {
-    console.error('Error loading customer favorites:', error);
+    console.error("Error loading customer favorites:", error);
   }
 
   // Default customer favorites data
@@ -61,7 +61,8 @@ const getCustomerFavorites = () => {
     {
       id: "1",
       title: "Fresh Ingredients",
-      description: "We use only the finest, freshest ingredients in every pizza.",
+      description:
+        "We use only the finest, freshest ingredients in every pizza.",
       icon: "🍕",
       isActive: true,
       order: 1,
@@ -69,7 +70,8 @@ const getCustomerFavorites = () => {
     {
       id: "2",
       title: "Fast Delivery",
-      description: "Hot, fresh pizza delivered to your door in 30 minutes or less.",
+      description:
+        "Hot, fresh pizza delivered to your door in 30 minutes or less.",
       icon: "🚚",
       isActive: true,
       order: 2,
@@ -81,46 +83,56 @@ const getCustomerFavorites = () => {
       icon: "☕",
       isActive: true,
       order: 3,
-    }
+    },
   ];
 };
 
 // Get restaurant settings from localStorage or use default
 const getRestaurantSettings = () => {
   try {
-    const stored = localStorage.getItem('restaurantSettings');
+    const stored = localStorage.getItem("restaurantSettings");
     if (stored) {
       return JSON.parse(stored);
     }
   } catch (error) {
-    console.error('Error loading settings:', error);
+    console.error("Error loading settings:", error);
   }
 
   return {
     taxRate: 8.25,
     businessHours: {
-      monday: { open: '11:00', close: '22:00', closed: false },
-      tuesday: { open: '11:00', close: '22:00', closed: false },
-      wednesday: { open: '11:00', close: '22:00', closed: false },
-      thursday: { open: '11:00', close: '22:00', closed: false },
-      friday: { open: '11:00', close: '23:00', closed: false },
-      saturday: { open: '11:00', close: '23:00', closed: false },
-      sunday: { open: '12:00', close: '21:00', closed: false },
-    }
+      monday: { open: "11:00", close: "22:00", closed: false },
+      tuesday: { open: "11:00", close: "22:00", closed: false },
+      wednesday: { open: "11:00", close: "22:00", closed: false },
+      thursday: { open: "11:00", close: "22:00", closed: false },
+      friday: { open: "11:00", close: "23:00", closed: false },
+      saturday: { open: "11:00", close: "23:00", closed: false },
+      sunday: { open: "12:00", close: "21:00", closed: false },
+    },
   };
 };
 
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [carouselImages, setCarouselImages] = useState(getCarouselImages());
-  const [customerFavorites, setCustomerFavorites] = useState(getCustomerFavorites());
+  const [customerFavorites, setCustomerFavorites] = useState(
+    getCustomerFavorites(),
+  );
   const [settings, setSettings] = useState(getRestaurantSettings());
 
   // Format business hours for display
   const formatBusinessHours = () => {
     const hours = settings.businessHours;
     const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
-    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayNames = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ];
     const todayName = dayNames[today];
     const todayHours = hours[todayName];
 
@@ -130,16 +142,16 @@ export default function Index() {
 
     // Convert 24-hour to 12-hour format
     const formatTime = (time: string) => {
-      const [hour, minute] = time.split(':');
+      const [hour, minute] = time.split(":");
       const hourNum = parseInt(hour);
-      const ampm = hourNum >= 12 ? 'PM' : 'AM';
+      const ampm = hourNum >= 12 ? "PM" : "AM";
       const hour12 = hourNum > 12 ? hourNum - 12 : hourNum === 0 ? 12 : hourNum;
       return `${hour12}:${minute} ${ampm}`;
     };
 
     return {
       status: "Open Today",
-      hours: `${formatTime(todayHours.open)} - ${formatTime(todayHours.close)}`
+      hours: `${formatTime(todayHours.open)} - ${formatTime(todayHours.close)}`,
     };
   };
 
@@ -153,12 +165,12 @@ export default function Index() {
       setSettings(getRestaurantSettings());
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
     // Also check for updates every few seconds in case of same-tab updates
     const interval = setInterval(handleStorageChange, 2000);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
       clearInterval(interval);
     };
   }, []);
@@ -168,9 +180,11 @@ export default function Index() {
       <HeaderWithDelivery />
 
       {/* Hero Carousel Section */}
-      <section className={`transition-all duration-1000 ${isLoaded ? "animate-fade-in-up" : "opacity-0"}`}>
+      <section
+        className={`transition-all duration-1000 ${isLoaded ? "animate-fade-in-up" : "opacity-0"}`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Carousel images={carouselImages} />
+          <Carousel images={carouselImages} />
         </div>
 
         {/* Call to Action Below Carousel */}
@@ -180,7 +194,11 @@ export default function Index() {
             freshly brewed coffee. Every order is made fresh just for you!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700" asChild>
+            <Button
+              size="lg"
+              className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700"
+              asChild
+            >
               <Link to="/menu">Order Now</Link>
             </Button>
           </div>
@@ -195,10 +213,13 @@ export default function Index() {
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {customerFavorites
-              .filter(favorite => favorite.isActive)
+              .filter((favorite) => favorite.isActive)
               .sort((a, b) => a.order - b.order)
               .map((favorite) => (
-                <Card key={favorite.id} className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
+                <Card
+                  key={favorite.id}
+                  className="text-center border-none shadow-lg hover:shadow-xl transition-shadow"
+                >
                   <CardHeader>
                     <div className="text-4xl mb-4">{favorite.icon}</div>
                     <CardTitle>{favorite.title}</CardTitle>
@@ -368,9 +389,13 @@ export default function Index() {
                 <div className="flex items-start space-x-3">
                   <Clock className="h-5 w-5 text-red-600 mt-1" />
                   <div>
-                    <p className="font-medium">{formatBusinessHours().status}</p>
+                    <p className="font-medium">
+                      {formatBusinessHours().status}
+                    </p>
                     {formatBusinessHours().hours && (
-                      <p className="text-gray-600">{formatBusinessHours().hours}</p>
+                      <p className="text-gray-600">
+                        {formatBusinessHours().hours}
+                      </p>
                     )}
                   </div>
                 </div>

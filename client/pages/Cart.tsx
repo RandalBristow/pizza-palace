@@ -76,12 +76,12 @@ const mockCartItems: CartItem[] = [
 // Get restaurant settings for tax rate
 const getRestaurantSettings = () => {
   try {
-    const stored = localStorage.getItem('restaurantSettings');
+    const stored = localStorage.getItem("restaurantSettings");
     if (stored) {
       return JSON.parse(stored);
     }
   } catch (error) {
-    console.error('Error loading settings:', error);
+    console.error("Error loading settings:", error);
   }
 
   return { taxRate: 8.25 }; // Default tax rate
@@ -104,11 +104,11 @@ export default function Cart() {
       setTaxRate(getRestaurantSettings().taxRate);
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
     const interval = setInterval(handleStorageChange, 2000);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
       clearInterval(interval);
     };
   }, []);
