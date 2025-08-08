@@ -381,7 +381,7 @@ export default function Admin() {
                       size="sm"
                       onClick={() => toggleItemActive(category.id, categories, setCategories)}
                     >
-                      {category.isActive ? "Deactivate" : "Activate"}
+                      {category.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
                     </Button>
                     <Button
                       variant="destructive"
