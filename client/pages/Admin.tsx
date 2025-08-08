@@ -174,6 +174,11 @@ export default function Admin() {
       order: 1,
     }
   ]);
+
+  // Save carousel images to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('carouselImages', JSON.stringify(carouselImages));
+  }, [carouselImages]);
   const [customerFavorites, setCustomerFavorites] = useState<CustomerFavorite[]>([
     {
       id: "1",
