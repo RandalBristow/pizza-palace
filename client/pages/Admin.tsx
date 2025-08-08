@@ -1319,7 +1319,7 @@ export default function Admin() {
                     <h3 className="font-semibold">{toppingCategory.name}</h3>
                     <Badge variant="outline">Order: {toppingCategory.order}</Badge>
                     <Badge
-                      variant={toppingCategory.isActive ? "default" : "secondary"}
+                      className={toppingCategory.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
                     >
                       {toppingCategory.isActive ? "Active" : "Inactive"}
                     </Badge>
