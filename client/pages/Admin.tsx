@@ -2003,14 +2003,16 @@ export default function Admin() {
                         </div>
                       </div>
 
-                      {newSpecial.discountType === "percentage" && newSpecial.discountValue > 0 && (
-                        <div>
-                          <Label>Preview Discount</Label>
-                          <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
-                            Example: $10.00 → ${(10 * (1 - newSpecial.discountValue / 100)).toFixed(2)}
+                      <div style={{ minHeight: "60px" }}>
+                        {newSpecial.discountType === "percentage" && newSpecial.discountValue > 0 && (
+                          <div>
+                            <Label>Preview Discount</Label>
+                            <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
+                              Example: $10.00 → ${(10 * (1 - newSpecial.discountValue / 100)).toFixed(2)}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
