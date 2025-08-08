@@ -262,7 +262,11 @@ export default function Admin() {
     initialToppingCategories,
   );
   const [specials, setSpecials] = useState<Special[]>(initialSpecials);
-  const [selectedTab, setSelectedTab] = useState("menu");
+  const [selectedItem, setSelectedItem] = useState("categories");
+
+  // New state for carousel images and customer favorites
+  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>([]);
+  const [customerFavorites, setCustomerFavorites] = useState<CustomerFavorite[]>([]);
 
   // Add states
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
