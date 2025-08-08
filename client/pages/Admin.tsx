@@ -1560,7 +1560,7 @@ export default function Admin() {
                       {toppingCategories.find(c => c.id === topping.category)?.name}
                     </Badge>
                     <Badge
-                      variant={topping.isActive ? "default" : "secondary"}
+                      className={topping.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
                     >
                       {topping.isActive ? "Active" : "Inactive"}
                     </Badge>
