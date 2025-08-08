@@ -15,6 +15,25 @@ import {
   type ToppingCategory,
   type Special,
 } from "../data/mockData";
+
+// New interfaces for carousel and customer favorites
+interface CarouselImage {
+  id: string;
+  url: string;
+  title: string;
+  subtitle: string;
+  isActive: boolean;
+  order: number;
+}
+
+interface CustomerFavorite {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  isActive: boolean;
+  order: number;
+}
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
