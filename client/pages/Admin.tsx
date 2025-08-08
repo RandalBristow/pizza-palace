@@ -198,11 +198,6 @@ export default function Admin() {
     localStorage.setItem('carouselImages', JSON.stringify(carouselImages));
   }, [carouselImages]);
 
-  // Save customer favorites to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('customerFavorites', JSON.stringify(customerFavorites));
-  }, [customerFavorites]);
-
   // Helper functions for deactivate/delete operations
   const canDeleteCategory = (categoryId: string) => {
     return !menuItems.some(item => item.category === categoryId) &&
@@ -262,6 +257,11 @@ export default function Admin() {
   };
 
   const [customerFavorites, setCustomerFavorites] = useState<CustomerFavorite[]>(getInitialCustomerFavorites());
+
+  // Save customer favorites to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('customerFavorites', JSON.stringify(customerFavorites));
+  }, [customerFavorites]);
 
   const generateMenuPDF = () => {
     // PDF generation logic would go here
