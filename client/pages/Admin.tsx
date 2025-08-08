@@ -1455,6 +1455,17 @@ export default function Admin() {
                   </Select>
                 </div>
                 <div>
+                  <Label htmlFor="editToppingName">Name</Label>
+                  <Input
+                    id="editToppingName"
+                    value={editingTopping.name}
+                    onChange={(e) => setEditingTopping({
+                      ...editingTopping,
+                      name: e.target.value
+                    })}
+                  />
+                </div>
+                <div>
                   <Label htmlFor="editToppingPrice">Price</Label>
                   <Input
                     id="editToppingPrice"
