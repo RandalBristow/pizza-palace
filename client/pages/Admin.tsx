@@ -1883,7 +1883,7 @@ export default function Admin() {
                       size="sm"
                       onClick={() => toggleItemActive(special.id, specials, setSpecials)}
                     >
-                      {special.isActive ? "Deactivate" : "Activate"}
+                      {special.isActive ? <ThumbsDown className="h-4 w-4" /> : <ThumbsUp className="h-4 w-4" />}
                     </Button>
                     <Button
                       variant="destructive"
