@@ -845,7 +845,7 @@ export default function Admin() {
             {editingMenuItem && (
               <div className="flex h-full max-h-[80vh]">
                 {/* Left Column - Basic Info */}
-                <div className="w-1/2 pr-6 space-y-4 overflow-y-auto">
+                <div className="w-1/2 pr-6 pl-4 space-y-4 overflow-y-auto">
                   <div className="mb-6">
                     <h2 className="text-lg font-semibold text-gray-900">Edit Menu Item</h2>
                     <p className="text-sm text-gray-500">
