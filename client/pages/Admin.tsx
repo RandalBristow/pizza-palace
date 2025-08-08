@@ -47,6 +47,8 @@ import {
   FileText,
   Star,
   Image as ImageIcon,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 import {
   mockCategories as initialCategories,
