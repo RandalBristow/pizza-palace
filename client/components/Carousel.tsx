@@ -25,7 +25,7 @@ export default function Carousel({ images, autoPlay = true, interval = 5000 }: C
     if (!autoPlay || activeImages.length <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
+      setCurrentIndex((prevIndex) =>
         prevIndex === activeImages.length - 1 ? 0 : prevIndex + 1
       );
     }, interval);
@@ -60,26 +60,33 @@ export default function Carousel({ images, autoPlay = true, interval = 5000 }: C
 
   return (
     <div className="relative h-96 overflow-hidden rounded-lg bg-gray-900">
-      {/* Background Image */}
+      {/* Sliding Images Container */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
-        style={{
-          backgroundImage: `url('${currentImage.url}')`,
-        }}
+        className="flex transition-transform duration-700 ease-in-out h-full"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
-      </div>
-
-      {/* Content Overlay */}
-      <div className="relative h-full flex items-center justify-center text-center text-white">
-        <div className="max-w-2xl mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            {currentImage.title}
-          </h1>
-          <p className="text-xl md:text-2xl mb-8">
-            {currentImage.subtitle}
-          </p>
-        </div>
+        {activeImages.map((image, index) => (
+          <div
+            key={image.id}
+            className="w-full h-full flex-shrink-0 relative bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url('${image.url}')`,
+            }}
+          >
+            <div className="absolute inset-0 bg-black bg-opacity-50" />
+            {/* Content Overlay */}
+            <div className="relative h-full flex items-center justify-center text-center text-white">
+              <div className="max-w-2xl mx-auto px-4">
+                <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                  {image.title}
+                </h1>
+                <p className="text-xl md:text-2xl mb-8">
+                  {image.subtitle}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Navigation Arrows */}
@@ -111,8 +118,8 @@ export default function Carousel({ images, autoPlay = true, interval = 5000 }: C
             <button
               key={index}
               className={`w-3 h-3 rounded-full transition-all ${
-                index === currentIndex 
-                  ? "bg-white" 
+                index === currentIndex
+                  ? "bg-white"
                   : "bg-white/50 hover:bg-white/75"
               }`}
               onClick={() => setCurrentIndex(index)}
