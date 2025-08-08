@@ -604,27 +604,215 @@ export default function Admin() {
     }
   };
 
+  const renderContent = () => {
+    switch (selectedItem) {
+      case "categories":
+        return renderMenuCategories();
+      case "menu-items":
+        return renderMenuItems();
+      case "topping-categories":
+        return renderToppingCategories();
+      case "topping-items":
+        return renderToppingItems();
+      case "specials":
+        return renderSpecials();
+      case "carousel-images":
+        return renderCarouselImages();
+      case "customer-favorites":
+        return renderCustomerFavorites();
+      default:
+        return renderMenuCategories();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-gray-50">
       <HeaderWithDelivery breadcrumbs={[{ label: "Admin Dashboard" }]} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Admin Dashboard
-          </h1>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" onClick={generateMenuPDF}>
-              <FileText className="h-4 w-4 mr-2" />
-              Print Menu PDF
-            </Button>
-            <Button variant="outline">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <AdminSidebar
+          selectedItem={selectedItem}
+          onSelectItem={setSelectedItem}
+        />
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          <div className="p-8">
+            <div className="mb-8 flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-gray-900">
+                Admin Dashboard
+              </h1>
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" onClick={generateMenuPDF}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Print Menu PDF
+                </Button>
+                <Button variant="outline">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </Button>
+              </div>
+            </div>
+
+            {/* Dynamic Content */}
+            {renderContent()}
           </div>
         </div>
-        <Tabs value={selectedItem} onValueChange={setSelectedItem}>
+      </div>
+    </div>
+  );
+
+  // Individual render functions for each section
+  function renderMenuCategories() {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Menu Categories</h2>
+          <Button>Add Category</Button>
+        </div>
+        <p className="text-gray-600">Menu categories management will go here...</p>
+      </div>
+    );
+  }
+
+  function renderMenuItems() {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Menu Items</h2>
+          <Button>Add Menu Item</Button>
+        </div>
+        <p className="text-gray-600">Menu items management will go here...</p>
+      </div>
+    );
+  }
+
+  function renderToppingCategories() {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Topping Categories</h2>
+          <Button>Add Topping Category</Button>
+        </div>
+        <p className="text-gray-600">Topping categories management will go here...</p>
+      </div>
+    );
+  }
+
+  function renderToppingItems() {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Topping Items</h2>
+          <Button>Add Topping</Button>
+        </div>
+        <p className="text-gray-600">Topping items management will go here...</p>
+      </div>
+    );
+  }
+
+  function renderSpecials() {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Specials</h2>
+          <Button>Add Special</Button>
+        </div>
+        <p className="text-gray-600">Specials management will go here...</p>
+      </div>
+    );
+  }
+
+  function renderCarouselImages() {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Carousel Images</h2>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Image
+          </Button>
+        </div>
+        <div className="bg-white rounded-lg border p-6">
+          <p className="text-gray-600 mb-4">
+            Manage images that appear in the homepage carousel.
+          </p>
+          {carouselImages.length === 0 ? (
+            <div className="text-center py-8">
+              <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No carousel images yet.</p>
+              <p className="text-sm text-gray-400">Add images to display in the homepage carousel.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {carouselImages.map((image) => (
+                <div key={image.id} className="border rounded-lg p-4">
+                  <img src={image.url} alt={image.title} className="w-full h-32 object-cover rounded mb-2" />
+                  <h3 className="font-semibold">{image.title}</h3>
+                  <p className="text-sm text-gray-600">{image.subtitle}</p>
+                  <div className="mt-2 flex justify-between items-center">
+                    <Badge variant={image.isActive ? "default" : "secondary"}>
+                      {image.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm">Edit</Button>
+                      <Button variant="outline" size="sm">Delete</Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function renderCustomerFavorites() {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Customer Favorites</h2>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Favorite
+          </Button>
+        </div>
+        <div className="bg-white rounded-lg border p-6">
+          <p className="text-gray-600 mb-4">
+            Manage customer favorite items displayed on the homepage.
+          </p>
+          {customerFavorites.length === 0 ? (
+            <div className="text-center py-8">
+              <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No customer favorites yet.</p>
+              <p className="text-sm text-gray-400">Add favorite items to showcase on the homepage.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {customerFavorites.map((favorite) => (
+                <div key={favorite.id} className="border rounded-lg p-4">
+                  <div className="text-2xl mb-2">{favorite.icon}</div>
+                  <h3 className="font-semibold">{favorite.title}</h3>
+                  <p className="text-sm text-gray-600">{favorite.description}</p>
+                  <div className="mt-2 flex justify-between items-center">
+                    <Badge variant={favorite.isActive ? "default" : "secondary"}>
+                      {favorite.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm">Edit</Button>
+                      <Button variant="outline" size="sm">Delete</Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="categories">Menu Item Categories</TabsTrigger>
             <TabsTrigger value="topping-categories">
