@@ -1545,14 +1545,14 @@ export default function Admin() {
                 Add Special
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
+            <DialogContent className="max-w-7xl h-[90vh] max-h-[90vh] overflow-hidden p-0">
               <DialogHeader className="sr-only">
                 <DialogTitle>Add New Special</DialogTitle>
                 <DialogDescription>
                   Create a new hourly, daily, or weekly special offer with menu selection and discount options
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex h-full max-h-[80vh]">
+              <div className="flex h-full relative">
                 {/* Left Column - Basic Info */}
                 <div className="w-1/2 pr-6 pl-4 space-y-4 overflow-y-auto">
                   <div className="mb-6">
