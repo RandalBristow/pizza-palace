@@ -181,6 +181,26 @@ export default function Admin() {
   useEffect(() => {
     localStorage.setItem('carouselImages', JSON.stringify(carouselImages));
   }, [carouselImages]);
+
+  // Helper functions for deactivate/delete operations
+  const canDeleteCategory = (categoryId: string) => {
+    return !menuItems.some(item => item.category === categoryId) &&
+           !toppingCategories.some(tc => tc.menuItemCategory === categoryId);
+  };
+
+  const canDeleteToppingCategory = (toppingCategoryId: string) => {
+    return !toppings.some(topping => topping.category === toppingCategoryId);
+  };
+
+  const toggleItemActive = (id: string, items: any[], setItems: any) => {
+    setItems(items.map(item =>
+      item.id === id ? {...item, isActive: !item.isActive} : item
+    ));
+  };
+
+  const deleteItem = (id: string, items: any[], setItems: any) => {
+    setItems(items.filter(item => item.id !== id));
+  };
   const [customerFavorites, setCustomerFavorites] = useState<CustomerFavorite[]>([
     {
       id: "1",
