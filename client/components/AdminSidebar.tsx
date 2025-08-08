@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { 
-  ChevronDown, 
-  ChevronRight, 
-  Menu as MenuIcon, 
-  Pizza, 
+import {
+  ChevronDown,
+  ChevronRight,
+  Menu as MenuIcon,
+  Pizza,
   Calendar,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Settings
 } from "lucide-react";
 
 interface SidebarItem {
@@ -22,6 +23,11 @@ interface AdminSidebarProps {
 }
 
 const sidebarItems: SidebarItem[] = [
+  {
+    id: "settings",
+    label: "Settings",
+    icon: Settings,
+  },
   {
     id: "menu",
     label: "Menu",
@@ -57,7 +63,7 @@ const sidebarItems: SidebarItem[] = [
 ];
 
 export default function AdminSidebar({ selectedItem, onSelectItem }: AdminSidebarProps) {
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(["menu", "toppings", "images"]));
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(["settings", "menu", "toppings", "images"]));
 
   const toggleExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
