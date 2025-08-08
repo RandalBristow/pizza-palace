@@ -362,6 +362,118 @@ export default function Admin() {
   );
 
   // Individual render functions for each section
+  function renderSettings() {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Restaurant Settings</h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Tax Rate Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Tax Rate</CardTitle>
+              <CardDescription>
+                Set the tax rate used for calculating order totals
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="taxRate">Tax Rate (%)</Label>
+                  <Input
+                    id="taxRate"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    value={settings.taxRate}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      taxRate: parseFloat(e.target.value) || 0
+                    })}
+                    placeholder="8.25"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Current rate: {settings.taxRate}%
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Business Hours Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Business Hours</CardTitle>
+              <CardDescription>
+                Set your restaurant's operating hours for each day
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {Object.entries(settings.businessHours).map(([day, hours]) => (
+                  <div key={day} className="grid grid-cols-4 gap-2 items-center">
+                    <Label className="capitalize font-medium">{day}</Label>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={!hours.closed}
+                        onCheckedChange={(checked) => {
+                          setSettings({
+                            ...settings,
+                            businessHours: {
+                              ...settings.businessHours,
+                              [day]: { ...hours, closed: !checked }
+                            }
+                          });
+                        }}
+                      />
+                      <span className="text-sm">Open</span>
+                    </div>
+                    {!hours.closed && (
+                      <>
+                        <Input
+                          type="time"
+                          value={hours.open}
+                          onChange={(e) => {
+                            setSettings({
+                              ...settings,
+                              businessHours: {
+                                ...settings.businessHours,
+                                [day]: { ...hours, open: e.target.value }
+                              }
+                            });
+                          }}
+                        />
+                        <Input
+                          type="time"
+                          value={hours.close}
+                          onChange={(e) => {
+                            setSettings({
+                              ...settings,
+                              businessHours: {
+                                ...settings.businessHours,
+                                [day]: { ...hours, close: e.target.value }
+                              }
+                            });
+                          }}
+                        />
+                      </>
+                    )}
+                    {hours.closed && (
+                      <div className="col-span-2 text-sm text-gray-500">Closed</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   function renderMenuCategories() {
     return (
       <div className="space-y-6">
