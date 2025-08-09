@@ -67,18 +67,28 @@ export interface Topping {
 }
 
 interface MenuItemFormProps {
+  menuItems: MenuItem[];
+  categories: Category[];
+  toppingCategories: ToppingCategory[];
+  toppings: Topping[];
   selectedMenuCategory: string;
   onSelectedCategoryChange: (category: string) => void;
+  createMenuItem: (menuItem: any) => Promise<any>;
+  updateMenuItem: (id: string, updates: any) => Promise<any>;
+  deleteMenuItem: (id: string) => Promise<void>;
 }
 
 export default function MenuItemForm({
+  menuItems,
+  categories,
+  toppingCategories,
+  toppings,
   selectedMenuCategory,
-  onSelectedCategoryChange
+  onSelectedCategoryChange,
+  createMenuItem,
+  updateMenuItem,
+  deleteMenuItem
 }: MenuItemFormProps) {
-  const { menuItems, createMenuItem, updateMenuItem, deleteMenuItem } = useMenuItems();
-  const { categories } = useCategories();
-  const { toppingCategories } = useToppingCategories();
-  const { toppings } = useToppings();
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
   const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({

@@ -32,14 +32,18 @@ interface MenuCategoryFormProps {
   categories: Category[];
   menuItems?: any[];
   toppingCategories?: any[];
-  onCategoriesChange: (categories: Category[]) => void;
+  createCategory: (category: any) => Promise<any>;
+  updateCategory: (id: string, updates: any) => Promise<any>;
+  deleteCategory: (id: string) => Promise<void>;
 }
 
 export default function MenuCategoryForm({
   categories,
   menuItems = [],
   toppingCategories = [],
-  onCategoriesChange,
+  createCategory,
+  updateCategory,
+  deleteCategory,
 }: MenuCategoryFormProps) {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);

@@ -41,8 +41,10 @@ interface ToppingCategoryFormProps {
   categories: Category[];
   toppings?: any[];
   selectedToppingCategory: string;
-  onToppingCategoriesChange: (toppingCategories: ToppingCategory[]) => void;
   onSelectedCategoryChange: (category: string) => void;
+  createToppingCategory: (toppingCategory: any) => Promise<any>;
+  updateToppingCategory: (id: string, updates: any) => Promise<any>;
+  deleteToppingCategory: (id: string) => Promise<void>;
 }
 
 export default function ToppingCategoryForm({
@@ -50,8 +52,10 @@ export default function ToppingCategoryForm({
   categories,
   toppings = [],
   selectedToppingCategory,
-  onToppingCategoriesChange,
   onSelectedCategoryChange,
+  createToppingCategory,
+  updateToppingCategory,
+  deleteToppingCategory
 }: ToppingCategoryFormProps) {
   const [isAddingToppingCategory, setIsAddingToppingCategory] = useState(false);
   const [editingToppingCategory, setEditingToppingCategory] =
