@@ -87,7 +87,7 @@ export interface DatabaseCarouselImage {
   title: string;
   subtitle: string;
   is_active: boolean;
-  order: number;
+  order_num: number;
   created_at: string;
   updated_at: string;
 }
