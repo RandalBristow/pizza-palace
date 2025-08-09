@@ -1,55 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import AdminSidebar from "../components/AdminSidebar";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Textarea } from "../components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Checkbox } from "../components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../components/ui/tabs";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Save,
-  Upload,
-  Settings,
-  Calendar,
-  FileText,
-  Star,
-  Image as ImageIcon,
-  ThumbsUp,
-  ThumbsDown,
-} from "lucide-react";
+import { FileText } from "lucide-react";
 import {
   mockCategories as initialCategories,
   mockMenuItems as initialMenuItems,
@@ -63,7 +16,17 @@ import {
   type Special,
 } from "../data/mockData";
 
-// New interfaces for carousel and customer favorites
+// Import form components
+import SettingsForm from "../components/admin/SettingsForm";
+import MenuCategoryForm from "../components/admin/MenuCategoryForm";
+import MenuItemForm from "../components/admin/MenuItemForm";
+import ToppingCategoryForm from "../components/admin/ToppingCategoryForm";
+import ToppingItemForm from "../components/admin/ToppingItemForm";
+import SpecialForm from "../components/admin/SpecialForm";
+import CarouselForm from "../components/admin/CarouselForm";
+import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
+
+// Interfaces for carousel and customer favorites
 interface CarouselImage {
   id: string;
   url: string;
@@ -80,6 +43,20 @@ interface CustomerFavorite {
   icon: string;
   isActive: boolean;
   order: number;
+}
+
+interface BusinessHours {
+  open: string;
+  close: string;
+  closed: boolean;
+}
+
+interface Settings {
+  taxRate: number;
+  deliveryFee: number;
+  businessHours: {
+    [key: string]: BusinessHours;
+  };
 }
 
 export default function Admin() {
