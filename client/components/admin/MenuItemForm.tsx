@@ -149,8 +149,12 @@ export default function MenuItemForm({
     }
   };
 
-  const handleDeleteMenuItem = (id: string) => {
-    onMenuItemsChange(menuItems.filter((item) => item.id !== id));
+  const handleDeleteMenuItem = async (id: string) => {
+    try {
+      await deleteMenuItem(id);
+    } catch (error) {
+      console.error('Failed to delete menu item:', error);
+    }
   };
 
   const toggleMenuItemStatus = (id: string) => {
