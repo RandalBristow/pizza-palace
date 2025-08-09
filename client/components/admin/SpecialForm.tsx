@@ -80,11 +80,14 @@ export default function SpecialForm({
     isActive: true,
   });
 
-  const handleAddSpecial = () => {
-    const id = `special-${Date.now()}`;
-    onSpecialsChange([...specials, { ...newSpecial, id } as Special]);
-    setIsAddingSpecial(false);
-    resetForm();
+  const handleAddSpecial = async () => {
+    try {
+      await createSpecial(newSpecial);
+      setIsAddingSpecial(false);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to create special:', error);
+    }
   };
 
   const handleEditSpecial = (special: Special) => {
@@ -118,15 +121,23 @@ export default function SpecialForm({
     resetForm();
   };
 
-  const handleDeleteSpecial = (id: string) => {
-    onSpecialsChange(specials.filter((special) => special.id !== id));
+  const handleDeleteSpecial = async (id: string) => {
+    try {
+      await deleteSpecial(id);
+    } catch (error) {
+      console.error('Failed to delete special:', error);
+    }
   };
 
-  const toggleSpecialStatus = (id: string) => {
-    const updatedSpecials = specials.map((special) =>
-      special.id === id ? { ...special, isActive: !special.isActive } : special,
-    );
-    onSpecialsChange(updatedSpecials);
+  const toggleSpecialStatus = async (id: string) => {
+    const special = specials.find(s => s.id === id);
+    if (!special) return;
+
+    try {
+      await updateSpecial(id, { ...special, isActive: !special.isActive });
+    } catch (error) {
+      console.error('Failed to toggle special status:', error);
+    }
   };
 
   const resetForm = () => {
