@@ -89,8 +89,8 @@ export default function AdminSidebar({
       <div key={item.id}>
         <Button
           variant={isSelected ? "default" : "ghost"}
-          className={`w-full justify-start text-left h-auto py-3 px-4 ${
-            level > 0 ? "ml-6 text-sm" : ""
+          className={`justify-start text-left h-auto py-3 px-4 ${
+            level > 0 ? "w-[90%] self-center text-sm" : "w-full"
           }`}
           onClick={() => {
             if (hasChildren) {
