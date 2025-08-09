@@ -618,6 +618,12 @@ export default function SpecialForm({
         </Dialog>
       </div>
 
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="grid grid-cols-2 gap-4">
         {specials.map((special) => (
           <Card key={special.id}>
