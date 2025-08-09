@@ -570,7 +570,25 @@ export const useSpecials = () => {
       setSpecials(prev => [...prev, newSpecial])
       return newSpecial
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create special')
+      let errorMessage = 'Failed to create special';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('error' in err && typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if ('details' in err && typeof err.details === 'string') {
+          errorMessage = err.details;
+        } else {
+          errorMessage = `Failed to create special: ${JSON.stringify(err)}`;
+        }
+      }
+
+      setError(errorMessage)
       throw err
     }
   }
