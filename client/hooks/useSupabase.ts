@@ -125,7 +125,7 @@ export const useCategories = () => {
         .insert({
           name: category.name,
           is_active: category.isActive,
-          order: category.order,
+          order_num: category.order,
         })
         .select()
         .single();
