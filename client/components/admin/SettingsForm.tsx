@@ -85,11 +85,11 @@ export default function SettingsForm({
             <CardTitle>Business Hours</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-3">
               {Object.entries(settings.businessHours).map(([day, hours]) => (
                 <div
                   key={day}
-                  className="flex items-center space-x-2 p-2 border rounded text-sm"
+                  className="flex w-full flex-row space-x-2 p-2 border rounded text-sm"
                 >
                   <Checkbox
                     checked={!hours.closed}
