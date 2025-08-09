@@ -81,11 +81,11 @@ export default function ToppingItemForm({
   const handleEditTopping = (topping: Topping) => {
     setEditingTopping(topping);
     setNewTopping({
-      name: topping.name,
-      price: topping.price,
-      category: topping.category,
-      menuItemCategory: topping.menuItemCategory,
-      isActive: topping.isActive,
+      name: topping.name || "",
+      price: topping.price || 0,
+      category: topping.category || "",
+      menuItemCategory: topping.menuItemCategory || "",
+      isActive: topping.isActive ?? true,
     });
   };
 

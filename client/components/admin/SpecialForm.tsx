@@ -85,7 +85,20 @@ export default function SpecialForm({
 
   const handleEditSpecial = (special: Special) => {
     setEditingSpecial(special);
-    setNewSpecial(special);
+    setNewSpecial({
+      ...special,
+      name: special.name || "",
+      description: special.description || "",
+      type: special.type || "daily",
+      startDate: special.startDate || "",
+      endDate: special.endDate || "",
+      startTime: special.startTime || "",
+      endTime: special.endTime || "",
+      menuItems: special.menuItems || [],
+      discountType: special.discountType || "percentage",
+      discountValue: special.discountValue || 0,
+      isActive: special.isActive ?? true,
+    });
   };
 
   const handleUpdateSpecial = () => {

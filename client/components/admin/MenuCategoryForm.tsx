@@ -58,9 +58,9 @@ export default function MenuCategoryForm({
   const handleEditCategory = (category: Category) => {
     setEditingCategory(category);
     setNewCategory({
-      name: category.name,
-      isActive: category.isActive,
-      order: category.order,
+      name: category.name || "",
+      isActive: category.isActive ?? true,
+      order: category.order || 1,
     });
   };
 

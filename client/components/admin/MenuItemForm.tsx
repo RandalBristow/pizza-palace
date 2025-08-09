@@ -112,7 +112,15 @@ export default function MenuItemForm({
 
   const handleEditMenuItem = (menuItem: MenuItem) => {
     setEditingMenuItem(menuItem);
-    setNewMenuItem(menuItem);
+    setNewMenuItem({
+      ...menuItem,
+      name: menuItem.name || "",
+      description: menuItem.description || "",
+      price: menuItem.price || 0,
+      category: menuItem.category || "",
+      defaultToppings: menuItem.defaultToppings || [],
+      isActive: menuItem.isActive ?? true,
+    });
   };
 
   const handleUpdateMenuItem = () => {

@@ -69,11 +69,11 @@ export default function CarouselForm({
   const handleEditCarouselImage = (carouselImage: CarouselImage) => {
     setEditingCarouselImage(carouselImage);
     setNewCarouselImage({
-      url: carouselImage.url,
-      title: carouselImage.title,
-      subtitle: carouselImage.subtitle,
-      order: carouselImage.order,
-      isActive: carouselImage.isActive,
+      url: carouselImage.url || "",
+      title: carouselImage.title || "",
+      subtitle: carouselImage.subtitle || "",
+      order: carouselImage.order || 1,
+      isActive: carouselImage.isActive ?? true,
     });
   };
 

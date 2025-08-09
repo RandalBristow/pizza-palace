@@ -71,11 +71,11 @@ export default function CustomerFavoriteForm({
   const handleEditCustomerFavorite = (customerFavorite: CustomerFavorite) => {
     setEditingCustomerFavorite(customerFavorite);
     setNewCustomerFavorite({
-      title: customerFavorite.title,
-      description: customerFavorite.description,
-      icon: customerFavorite.icon,
-      order: customerFavorite.order,
-      isActive: customerFavorite.isActive,
+      title: customerFavorite.title || "",
+      description: customerFavorite.description || "",
+      icon: customerFavorite.icon || "",
+      order: customerFavorite.order || 1,
+      isActive: customerFavorite.isActive ?? true,
     });
   };
 
