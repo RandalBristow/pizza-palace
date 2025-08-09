@@ -62,14 +62,14 @@ export default function CustomerFavoriteForm({
     isActive: true,
   });
 
-  const handleAddCustomerFavorite = () => {
-    const id = `favorite-${Date.now()}`;
-    onCustomerFavoritesChange([
-      ...customerFavorites,
-      { ...newCustomerFavorite, id } as CustomerFavorite,
-    ]);
-    setIsAddingCustomerFavorite(false);
-    resetForm();
+  const handleAddCustomerFavorite = async () => {
+    try {
+      await createCustomerFavorite(newCustomerFavorite);
+      setIsAddingCustomerFavorite(false);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to create customer favorite:', error);
+    }
   };
 
   const handleEditCustomerFavorite = (customerFavorite: CustomerFavorite) => {
@@ -83,32 +83,35 @@ export default function CustomerFavoriteForm({
     });
   };
 
-  const handleUpdateCustomerFavorite = () => {
+  const handleUpdateCustomerFavorite = async () => {
     if (!editingCustomerFavorite) return;
 
-    const updatedCustomerFavorites = customerFavorites.map((favorite) =>
-      favorite.id === editingCustomerFavorite.id
-        ? { ...favorite, ...newCustomerFavorite }
-        : favorite,
-    );
-    onCustomerFavoritesChange(updatedCustomerFavorites);
-    setEditingCustomerFavorite(null);
-    resetForm();
+    try {
+      await updateCustomerFavorite(editingCustomerFavorite.id, newCustomerFavorite);
+      setEditingCustomerFavorite(null);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to update customer favorite:', error);
+    }
   };
 
-  const handleDeleteCustomerFavorite = (id: string) => {
-    onCustomerFavoritesChange(
-      customerFavorites.filter((favorite) => favorite.id !== id),
-    );
+  const handleDeleteCustomerFavorite = async (id: string) => {
+    try {
+      await deleteCustomerFavorite(id);
+    } catch (error) {
+      console.error('Failed to delete customer favorite:', error);
+    }
   };
 
-  const toggleCustomerFavoriteStatus = (id: string) => {
-    const updatedCustomerFavorites = customerFavorites.map((favorite) =>
-      favorite.id === id
-        ? { ...favorite, isActive: !favorite.isActive }
-        : favorite,
-    );
-    onCustomerFavoritesChange(updatedCustomerFavorites);
+  const toggleCustomerFavoriteStatus = async (id: string) => {
+    const favorite = customerFavorites.find(fav => fav.id === id);
+    if (!favorite) return;
+
+    try {
+      await updateCustomerFavorite(id, { ...favorite, isActive: !favorite.isActive });
+    } catch (error) {
+      console.error('Failed to toggle customer favorite status:', error);
+    }
   };
 
   const resetForm = () => {

@@ -60,14 +60,14 @@ export default function CarouselForm({
     isActive: true,
   });
 
-  const handleAddCarouselImage = () => {
-    const id = `carousel-${Date.now()}`;
-    onCarouselImagesChange([
-      ...carouselImages,
-      { ...newCarouselImage, id } as CarouselImage,
-    ]);
-    setIsAddingCarouselImage(false);
-    resetForm();
+  const handleAddCarouselImage = async () => {
+    try {
+      await createCarouselImage(newCarouselImage);
+      setIsAddingCarouselImage(false);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to create carousel image:', error);
+    }
   };
 
   const handleEditCarouselImage = (carouselImage: CarouselImage) => {
@@ -81,28 +81,35 @@ export default function CarouselForm({
     });
   };
 
-  const handleUpdateCarouselImage = () => {
+  const handleUpdateCarouselImage = async () => {
     if (!editingCarouselImage) return;
 
-    const updatedCarouselImages = carouselImages.map((image) =>
-      image.id === editingCarouselImage.id
-        ? { ...image, ...newCarouselImage }
-        : image,
-    );
-    onCarouselImagesChange(updatedCarouselImages);
-    setEditingCarouselImage(null);
-    resetForm();
+    try {
+      await updateCarouselImage(editingCarouselImage.id, newCarouselImage);
+      setEditingCarouselImage(null);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to update carousel image:', error);
+    }
   };
 
-  const handleDeleteCarouselImage = (id: string) => {
-    onCarouselImagesChange(carouselImages.filter((image) => image.id !== id));
+  const handleDeleteCarouselImage = async (id: string) => {
+    try {
+      await deleteCarouselImage(id);
+    } catch (error) {
+      console.error('Failed to delete carousel image:', error);
+    }
   };
 
-  const toggleCarouselImageStatus = (id: string) => {
-    const updatedCarouselImages = carouselImages.map((image) =>
-      image.id === id ? { ...image, isActive: !image.isActive } : image,
-    );
-    onCarouselImagesChange(updatedCarouselImages);
+  const toggleCarouselImageStatus = async (id: string) => {
+    const image = carouselImages.find(img => img.id === id);
+    if (!image) return;
+
+    try {
+      await updateCarouselImage(id, { ...image, isActive: !image.isActive });
+    } catch (error) {
+      console.error('Failed to toggle carousel image status:', error);
+    }
   };
 
   const resetForm = () => {
