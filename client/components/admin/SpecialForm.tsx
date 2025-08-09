@@ -154,6 +154,8 @@ export default function SpecialForm({
     try {
       await updateSpecial(id, { ...special, isActive: !special.isActive });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle special status';
+      setError(errorMessage);
       console.error('Failed to toggle special status:', error);
     }
   };
