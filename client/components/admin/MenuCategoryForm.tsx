@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 export interface Category {
   id: string;
@@ -53,7 +54,7 @@ export default function MenuCategoryForm({ categories, onCategoriesChange }: Men
 
   const handleUpdateCategory = () => {
     if (!editingCategory) return;
-    
+
     const updatedCategories = categories.map((cat) =>
       cat.id === editingCategory.id
         ? { ...cat, name: newCategory.name, order: newCategory.order, isActive: newCategory.isActive }
@@ -157,31 +158,58 @@ export default function MenuCategoryForm({ categories, onCategoriesChange }: Men
                   </Badge>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toggleCategoryStatus(category.id)}
-                  >
-                    {category.isActive ? (
-                      <ThumbsDown className="h-4 w-4" />
-                    ) : (
-                      <ThumbsUp className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditCategory(category)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteCategory(category.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleCategoryStatus(category.id)}
+                        >
+                          {category.isActive ? (
+                            <ThumbsUp className="h-4 w-4" />
+                          ) : (
+                            <ThumbsDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {category.isActive ? "Deactivate" : "Activate"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditCategory(category)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Edit Category
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteCategory(category.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Delete Category
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </CardContent>
