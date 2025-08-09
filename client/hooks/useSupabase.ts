@@ -84,7 +84,7 @@ export const transformCustomerFavorite = (
   description: dbCustomerFavorite.description,
   icon: dbCustomerFavorite.icon,
   isActive: dbCustomerFavorite.is_active,
-  order: dbCustomerFavorite.order,
+  order: dbCustomerFavorite.order_num,
 });
 
 export const transformSettings = (dbSettings: DatabaseSettings) => ({
