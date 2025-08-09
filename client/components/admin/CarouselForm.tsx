@@ -38,12 +38,16 @@ export interface CarouselImage {
 
 interface CarouselFormProps {
   carouselImages: CarouselImage[];
-  onCarouselImagesChange: (carouselImages: CarouselImage[]) => void;
+  createCarouselImage: (carouselImage: any) => Promise<any>;
+  updateCarouselImage: (id: string, updates: any) => Promise<any>;
+  deleteCarouselImage: (id: string) => Promise<void>;
 }
 
 export default function CarouselForm({
   carouselImages,
-  onCarouselImagesChange,
+  createCarouselImage,
+  updateCarouselImage,
+  deleteCarouselImage
 }: CarouselFormProps) {
   const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
   const [editingCarouselImage, setEditingCarouselImage] =

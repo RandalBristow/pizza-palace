@@ -53,14 +53,18 @@ interface SpecialFormProps {
   specials: Special[];
   categories: Category[];
   menuItems: MenuItem[];
-  onSpecialsChange: (specials: Special[]) => void;
+  createSpecial: (special: any) => Promise<any>;
+  updateSpecial: (id: string, updates: any) => Promise<any>;
+  deleteSpecial: (id: string) => Promise<void>;
 }
 
 export default function SpecialForm({
   specials,
   categories,
   menuItems,
-  onSpecialsChange,
+  createSpecial,
+  updateSpecial,
+  deleteSpecial
 }: SpecialFormProps) {
   const [isAddingSpecial, setIsAddingSpecial] = useState(false);
   const [editingSpecial, setEditingSpecial] = useState<Special | null>(null);

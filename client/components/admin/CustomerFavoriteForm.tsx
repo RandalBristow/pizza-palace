@@ -39,12 +39,16 @@ export interface CustomerFavorite {
 
 interface CustomerFavoriteFormProps {
   customerFavorites: CustomerFavorite[];
-  onCustomerFavoritesChange: (customerFavorites: CustomerFavorite[]) => void;
+  createCustomerFavorite: (customerFavorite: any) => Promise<any>;
+  updateCustomerFavorite: (id: string, updates: any) => Promise<any>;
+  deleteCustomerFavorite: (id: string) => Promise<void>;
 }
 
 export default function CustomerFavoriteForm({
   customerFavorites,
-  onCustomerFavoritesChange,
+  createCustomerFavorite,
+  updateCustomerFavorite,
+  deleteCustomerFavorite
 }: CustomerFavoriteFormProps) {
   const [isAddingCustomerFavorite, setIsAddingCustomerFavorite] =
     useState(false);
