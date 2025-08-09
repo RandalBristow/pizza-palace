@@ -26,13 +26,13 @@ import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 
 export default function Admin() {
   // Supabase hooks
-  const { categories, loading: categoriesLoading } = useCategories();
-  const { menuItems, loading: menuItemsLoading } = useMenuItems();
-  const { toppings, loading: toppingsLoading } = useToppings();
-  const { toppingCategories, loading: toppingCategoriesLoading } = useToppingCategories();
-  const { specials, loading: specialsLoading } = useSpecials();
-  const { carouselImages, loading: carouselLoading } = useCarouselImages();
-  const { customerFavorites, loading: favoritesLoading } = useCustomerFavorites();
+  const { categories, loading: categoriesLoading, createCategory, updateCategory, deleteCategory } = useCategories();
+  const { menuItems, loading: menuItemsLoading, createMenuItem, updateMenuItem, deleteMenuItem } = useMenuItems();
+  const { toppings, loading: toppingsLoading, createTopping, updateTopping, deleteTopping } = useToppings();
+  const { toppingCategories, loading: toppingCategoriesLoading, createToppingCategory, updateToppingCategory, deleteToppingCategory } = useToppingCategories();
+  const { specials, loading: specialsLoading, createSpecial, updateSpecial, deleteSpecial } = useSpecials();
+  const { carouselImages, loading: carouselLoading, createCarouselImage, updateCarouselImage, deleteCarouselImage } = useCarouselImages();
+  const { customerFavorites, loading: favoritesLoading, createCustomerFavorite, updateCustomerFavorite, deleteCustomerFavorite } = useCustomerFavorites();
   const { settings, loading: settingsLoading, updateSettings } = useSettings();
 
   const [selectedItem, setSelectedItem] = useState("categories");
@@ -42,8 +42,8 @@ export default function Admin() {
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
   // Show loading state while data is being fetched
-  const isLoading = categoriesLoading || menuItemsLoading || toppingsLoading || 
-                   toppingCategoriesLoading || specialsLoading || carouselLoading || 
+  const isLoading = categoriesLoading || menuItemsLoading || toppingsLoading ||
+                   toppingCategoriesLoading || specialsLoading || carouselLoading ||
                    favoritesLoading || settingsLoading;
 
   if (isLoading) {
@@ -131,7 +131,9 @@ export default function Admin() {
             categories={categories}
             menuItems={menuItems}
             toppingCategories={toppingCategories}
-            onCategoriesChange={() => {}} // Not needed since hooks handle updates
+            createCategory={createCategory}
+            updateCategory={updateCategory}
+            deleteCategory={deleteCategory}
           />
         );
       case "menu-items":
@@ -142,8 +144,10 @@ export default function Admin() {
             toppingCategories={toppingCategories}
             toppings={toppings}
             selectedMenuCategory={selectedMenuCategory}
-            onMenuItemsChange={() => {}} // Not needed since hooks handle updates
             onSelectedCategoryChange={setSelectedMenuCategory}
+            createMenuItem={createMenuItem}
+            updateMenuItem={updateMenuItem}
+            deleteMenuItem={deleteMenuItem}
           />
         );
       case "topping-categories":
@@ -153,8 +157,10 @@ export default function Admin() {
             categories={categories}
             toppings={toppings}
             selectedToppingCategory={selectedToppingCategory}
-            onToppingCategoriesChange={() => {}} // Not needed since hooks handle updates
             onSelectedCategoryChange={setSelectedToppingCategory}
+            createToppingCategory={createToppingCategory}
+            updateToppingCategory={updateToppingCategory}
+            deleteToppingCategory={deleteToppingCategory}
           />
         );
       case "topping-items":
@@ -164,8 +170,10 @@ export default function Admin() {
             categories={categories}
             toppingCategories={toppingCategories}
             selectedToppingCategory={selectedToppingCategory}
-            onToppingsChange={() => {}} // Not needed since hooks handle updates
             onSelectedCategoryChange={setSelectedToppingCategory}
+            createTopping={createTopping}
+            updateTopping={updateTopping}
+            deleteTopping={deleteTopping}
           />
         );
       case "specials":
@@ -174,21 +182,27 @@ export default function Admin() {
             specials={specials}
             categories={categories}
             menuItems={menuItems}
-            onSpecialsChange={() => {}} // Not needed since hooks handle updates
+            createSpecial={createSpecial}
+            updateSpecial={updateSpecial}
+            deleteSpecial={deleteSpecial}
           />
         );
       case "carousel-images":
         return (
           <CarouselForm
             carouselImages={carouselImages}
-            onCarouselImagesChange={() => {}} // Not needed since hooks handle updates
+            createCarouselImage={createCarouselImage}
+            updateCarouselImage={updateCarouselImage}
+            deleteCarouselImage={deleteCarouselImage}
           />
         );
       case "customer-favorites":
         return (
           <CustomerFavoriteForm
             customerFavorites={customerFavorites}
-            onCustomerFavoritesChange={() => {}} // Not needed since hooks handle updates
+            createCustomerFavorite={createCustomerFavorite}
+            updateCustomerFavorite={updateCustomerFavorite}
+            deleteCustomerFavorite={deleteCustomerFavorite}
           />
         );
       default:
