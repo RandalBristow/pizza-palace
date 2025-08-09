@@ -130,22 +130,23 @@ export default function MenuItemForm({
     });
   };
 
-  const handleUpdateMenuItem = () => {
+  const handleUpdateMenuItem = async () => {
     if (!editingMenuItem) return;
 
-    const updatedMenuItems = menuItems.map((item) =>
-      item.id === editingMenuItem.id ? ({ ...newMenuItem } as MenuItem) : item,
-    );
-    onMenuItemsChange(updatedMenuItems);
-    setEditingMenuItem(null);
-    setNewMenuItem({
-      name: "",
-      description: "",
-      price: 0,
-      category: "",
-      defaultToppings: [],
-      isActive: true,
-    });
+    try {
+      await updateMenuItem(editingMenuItem.id, newMenuItem);
+      setEditingMenuItem(null);
+      setNewMenuItem({
+        name: "",
+        description: "",
+        price: 0,
+        category: "",
+        defaultToppings: [],
+        isActive: true,
+      });
+    } catch (error) {
+      console.error('Failed to update menu item:', error);
+    }
   };
 
   const handleDeleteMenuItem = (id: string) => {
