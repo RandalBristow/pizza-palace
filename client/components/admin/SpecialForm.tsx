@@ -172,6 +172,7 @@ export default function SpecialForm({
       discountValue: 0,
       isActive: true,
     });
+    setError(null);
   };
 
   const renderSpecialForm = (isEdit: boolean = false) => (
