@@ -34,6 +34,7 @@ export interface ToppingCategory {
 interface ToppingCategoryFormProps {
   toppingCategories: ToppingCategory[];
   categories: Category[];
+  toppings?: any[];
   selectedToppingCategory: string;
   onToppingCategoriesChange: (toppingCategories: ToppingCategory[]) => void;
   onSelectedCategoryChange: (category: string) => void;
@@ -42,6 +43,7 @@ interface ToppingCategoryFormProps {
 export default function ToppingCategoryForm({
   toppingCategories,
   categories,
+  toppings = [],
   selectedToppingCategory,
   onToppingCategoriesChange,
   onSelectedCategoryChange
@@ -95,7 +97,16 @@ export default function ToppingCategoryForm({
     });
   };
 
+  const canDeleteToppingCategory = (toppingCategoryId: string) => {
+    const hasToppings = toppings.some((topping) => topping.category === toppingCategoryId);
+    return !hasToppings;
+  };
+
   const handleDeleteToppingCategory = (id: string) => {
+    if (!canDeleteToppingCategory(id)) {
+      alert("Cannot delete topping category: It has related topping items. Please remove them first.");
+      return;
+    }
     onToppingCategoriesChange(toppingCategories.filter((cat) => cat.id !== id));
   };
 
@@ -290,13 +301,14 @@ export default function ToppingCategoryForm({
                         <Button
                           variant="outline"
                           size="sm"
+                          disabled={!canDeleteToppingCategory(toppingCategory.id)}
                           onClick={() => handleDeleteToppingCategory(toppingCategory.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        Delete Topping Category
+                        {canDeleteToppingCategory(toppingCategory.id) ? "Delete Topping Category" : "Cannot delete: Has related toppings"}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
