@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { useCategories } from "../../hooks/useSupabase";
 
 export interface Category {
   id: string;
