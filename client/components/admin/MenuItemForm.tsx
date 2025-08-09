@@ -157,11 +157,15 @@ export default function MenuItemForm({
     }
   };
 
-  const toggleMenuItemStatus = (id: string) => {
-    const updatedMenuItems = menuItems.map((item) =>
-      item.id === id ? { ...item, isActive: !item.isActive } : item,
-    );
-    onMenuItemsChange(updatedMenuItems);
+  const toggleMenuItemStatus = async (id: string) => {
+    const menuItem = menuItems.find(item => item.id === id);
+    if (!menuItem) return;
+
+    try {
+      await updateMenuItem(id, { ...menuItem, isActive: !menuItem.isActive });
+    } catch (error) {
+      console.error('Failed to toggle menu item status:', error);
+    }
   };
 
   const filteredMenuItems =
