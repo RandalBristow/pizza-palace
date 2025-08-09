@@ -21,14 +21,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../ui/tabs";
-import { Plus, Edit, Trash2, Save, Upload, ThumbsUp, ThumbsDown } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  Upload,
+  ThumbsUp,
+  ThumbsDown,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { Category } from "./MenuCategoryForm";
 
 export interface MenuItem {
@@ -75,7 +83,7 @@ export default function MenuItemForm({
   toppings,
   selectedMenuCategory,
   onMenuItemsChange,
-  onSelectedCategoryChange
+  onSelectedCategoryChange,
 }: MenuItemFormProps) {
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
@@ -111,7 +119,7 @@ export default function MenuItemForm({
     if (!editingMenuItem) return;
 
     const updatedMenuItems = menuItems.map((item) =>
-      item.id === editingMenuItem.id ? { ...newMenuItem } as MenuItem : item
+      item.id === editingMenuItem.id ? ({ ...newMenuItem } as MenuItem) : item,
     );
     onMenuItemsChange(updatedMenuItems);
     setEditingMenuItem(null);
@@ -131,14 +139,15 @@ export default function MenuItemForm({
 
   const toggleMenuItemStatus = (id: string) => {
     const updatedMenuItems = menuItems.map((item) =>
-      item.id === id ? { ...item, isActive: !item.isActive } : item
+      item.id === id ? { ...item, isActive: !item.isActive } : item,
     );
     onMenuItemsChange(updatedMenuItems);
   };
 
-  const filteredMenuItems = selectedMenuCategory === "all"
-    ? menuItems
-    : menuItems.filter((item) => item.category === selectedMenuCategory);
+  const filteredMenuItems =
+    selectedMenuCategory === "all"
+      ? menuItems
+      : menuItems.filter((item) => item.category === selectedMenuCategory);
 
   const renderMenuItemForm = (isEdit: boolean = false) => (
     <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
@@ -149,7 +158,9 @@ export default function MenuItemForm({
             {isEdit ? "Edit Menu Item" : "Add New Menu Item"}
           </h2>
           <p className="text-sm text-gray-500">
-            {isEdit ? "Update menu item details" : "Create a new menu item for your restaurant"}
+            {isEdit
+              ? "Update menu item details"
+              : "Create a new menu item for your restaurant"}
           </p>
         </div>
 
@@ -268,8 +279,7 @@ export default function MenuItemForm({
             (() => {
               const availableCategories = toppingCategories.filter(
                 (tc) =>
-                  tc.menuItemCategory === newMenuItem.category &&
-                  tc.isActive,
+                  tc.menuItemCategory === newMenuItem.category && tc.isActive,
               );
               return (
                 <Tabs
@@ -326,10 +336,9 @@ export default function MenuItemForm({
                                     } else {
                                       setNewMenuItem({
                                         ...newMenuItem,
-                                        defaultToppings:
-                                          currentToppings.filter(
-                                            (id) => id !== topping.id,
-                                          ),
+                                        defaultToppings: currentToppings.filter(
+                                          (id) => id !== topping.id,
+                                        ),
                                       });
                                     }
                                   }}
@@ -390,7 +399,10 @@ export default function MenuItemForm({
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Menu Items</h2>
         <div className="flex items-center space-x-4">
-          <Select value={selectedMenuCategory} onValueChange={onSelectedCategoryChange}>
+          <Select
+            value={selectedMenuCategory}
+            onValueChange={onSelectedCategoryChange}
+          >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Filter by category" />
             </SelectTrigger>
@@ -479,9 +491,7 @@ export default function MenuItemForm({
                           <Edit className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        Edit Menu Item
-                      </TooltipContent>
+                      <TooltipContent>Edit Menu Item</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                   <TooltipProvider>
@@ -495,9 +505,7 @@ export default function MenuItemForm({
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        Delete Menu Item
-                      </TooltipContent>
+                      <TooltipContent>Delete Menu Item</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
@@ -508,13 +516,14 @@ export default function MenuItemForm({
       </div>
 
       {/* Edit Menu Item Dialog */}
-      <Dialog open={editingMenuItem !== null} onOpenChange={(open) => !open && setEditingMenuItem(null)}>
+      <Dialog
+        open={editingMenuItem !== null}
+        onOpenChange={(open) => !open && setEditingMenuItem(null)}
+      >
         <DialogContent className="max-w-6xl h-[68vh] flex flex-col p-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Edit Menu Item</DialogTitle>
-            <DialogDescription>
-              Update the menu item details
-            </DialogDescription>
+            <DialogDescription>Update the menu item details</DialogDescription>
           </DialogHeader>
           {renderMenuItemForm(true)}
         </DialogContent>

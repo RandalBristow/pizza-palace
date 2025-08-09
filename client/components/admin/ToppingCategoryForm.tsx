@@ -20,7 +20,12 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { Category } from "./MenuCategoryForm";
 
 export interface ToppingCategory {
@@ -46,10 +51,11 @@ export default function ToppingCategoryForm({
   toppings = [],
   selectedToppingCategory,
   onToppingCategoriesChange,
-  onSelectedCategoryChange
+  onSelectedCategoryChange,
 }: ToppingCategoryFormProps) {
   const [isAddingToppingCategory, setIsAddingToppingCategory] = useState(false);
-  const [editingToppingCategory, setEditingToppingCategory] = useState<ToppingCategory | null>(null);
+  const [editingToppingCategory, setEditingToppingCategory] =
+    useState<ToppingCategory | null>(null);
   const [newToppingCategory, setNewToppingCategory] = useState({
     name: "",
     order: 1,
@@ -59,7 +65,10 @@ export default function ToppingCategoryForm({
 
   const handleAddToppingCategory = () => {
     const id = `${newToppingCategory.menuItemCategory}-${newToppingCategory.name.toLowerCase().replace(/\s+/g, "-")}`;
-    onToppingCategoriesChange([...toppingCategories, { ...newToppingCategory, id } as ToppingCategory]);
+    onToppingCategoriesChange([
+      ...toppingCategories,
+      { ...newToppingCategory, id } as ToppingCategory,
+    ]);
     setIsAddingToppingCategory(false);
     setNewToppingCategory({
       name: "",
@@ -85,7 +94,7 @@ export default function ToppingCategoryForm({
     const updatedToppingCategories = toppingCategories.map((cat) =>
       cat.id === editingToppingCategory.id
         ? { ...cat, ...newToppingCategory }
-        : cat
+        : cat,
     );
     onToppingCategoriesChange(updatedToppingCategories);
     setEditingToppingCategory(null);
@@ -98,13 +107,17 @@ export default function ToppingCategoryForm({
   };
 
   const canDeleteToppingCategory = (toppingCategoryId: string) => {
-    const hasToppings = toppings.some((topping) => topping.category === toppingCategoryId);
+    const hasToppings = toppings.some(
+      (topping) => topping.category === toppingCategoryId,
+    );
     return !hasToppings;
   };
 
   const handleDeleteToppingCategory = (id: string) => {
     if (!canDeleteToppingCategory(id)) {
-      alert("Cannot delete topping category: It has related topping items. Please remove them first.");
+      alert(
+        "Cannot delete topping category: It has related topping items. Please remove them first.",
+      );
       return;
     }
     onToppingCategoriesChange(toppingCategories.filter((cat) => cat.id !== id));
@@ -112,21 +125,27 @@ export default function ToppingCategoryForm({
 
   const toggleToppingCategoryStatus = (id: string) => {
     const updatedToppingCategories = toppingCategories.map((cat) =>
-      cat.id === id ? { ...cat, isActive: !cat.isActive } : cat
+      cat.id === id ? { ...cat, isActive: !cat.isActive } : cat,
     );
     onToppingCategoriesChange(updatedToppingCategories);
   };
 
-  const filteredToppingCategories = selectedToppingCategory === "all"
-    ? toppingCategories
-    : toppingCategories.filter((cat) => cat.menuItemCategory === selectedToppingCategory);
+  const filteredToppingCategories =
+    selectedToppingCategory === "all"
+      ? toppingCategories
+      : toppingCategories.filter(
+          (cat) => cat.menuItemCategory === selectedToppingCategory,
+        );
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Topping Categories</h2>
         <div className="flex items-center space-x-4">
-          <Select value={selectedToppingCategory} onValueChange={onSelectedCategoryChange}>
+          <Select
+            value={selectedToppingCategory}
+            onValueChange={onSelectedCategoryChange}
+          >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Filter by menu category" />
             </SelectTrigger>
@@ -141,7 +160,10 @@ export default function ToppingCategoryForm({
                 ))}
             </SelectContent>
           </Select>
-          <Dialog open={isAddingToppingCategory} onOpenChange={setIsAddingToppingCategory}>
+          <Dialog
+            open={isAddingToppingCategory}
+            onOpenChange={setIsAddingToppingCategory}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -255,7 +277,10 @@ export default function ToppingCategoryForm({
                     </Badge>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Menu: {categories.find(c => c.id === toppingCategory.menuItemCategory)?.name || "Unknown"}
+                    Menu:{" "}
+                    {categories.find(
+                      (c) => c.id === toppingCategory.menuItemCategory,
+                    )?.name || "Unknown"}
                   </p>
                 </div>
                 <div className="flex items-center space-x-1">
@@ -265,7 +290,9 @@ export default function ToppingCategoryForm({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => toggleToppingCategoryStatus(toppingCategory.id)}
+                          onClick={() =>
+                            toggleToppingCategoryStatus(toppingCategory.id)
+                          }
                         >
                           {toppingCategory.isActive ? (
                             <ThumbsUp className="h-4 w-4" />
@@ -285,14 +312,14 @@ export default function ToppingCategoryForm({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleEditToppingCategory(toppingCategory)}
+                          onClick={() =>
+                            handleEditToppingCategory(toppingCategory)
+                          }
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        Edit Topping Category
-                      </TooltipContent>
+                      <TooltipContent>Edit Topping Category</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                   <TooltipProvider>
@@ -301,14 +328,20 @@ export default function ToppingCategoryForm({
                         <Button
                           variant="outline"
                           size="sm"
-                          disabled={!canDeleteToppingCategory(toppingCategory.id)}
-                          onClick={() => handleDeleteToppingCategory(toppingCategory.id)}
+                          disabled={
+                            !canDeleteToppingCategory(toppingCategory.id)
+                          }
+                          onClick={() =>
+                            handleDeleteToppingCategory(toppingCategory.id)
+                          }
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {canDeleteToppingCategory(toppingCategory.id) ? "Delete Topping Category" : "Cannot delete: Has related toppings"}
+                        {canDeleteToppingCategory(toppingCategory.id)
+                          ? "Delete Topping Category"
+                          : "Cannot delete: Has related toppings"}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -320,7 +353,10 @@ export default function ToppingCategoryForm({
       </div>
 
       {/* Edit Topping Category Dialog */}
-      <Dialog open={editingToppingCategory !== null} onOpenChange={(open) => !open && setEditingToppingCategory(null)}>
+      <Dialog
+        open={editingToppingCategory !== null}
+        onOpenChange={(open) => !open && setEditingToppingCategory(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Topping Category</DialogTitle>

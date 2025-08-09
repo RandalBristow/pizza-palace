@@ -21,14 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { Category } from "./MenuCategoryForm";
 import { MenuItem } from "./MenuItemForm";
 
@@ -60,7 +60,7 @@ export default function SpecialForm({
   specials,
   categories,
   menuItems,
-  onSpecialsChange
+  onSpecialsChange,
 }: SpecialFormProps) {
   const [isAddingSpecial, setIsAddingSpecial] = useState(false);
   const [editingSpecial, setEditingSpecial] = useState<Special | null>(null);
@@ -92,7 +92,9 @@ export default function SpecialForm({
     if (!editingSpecial) return;
 
     const updatedSpecials = specials.map((special) =>
-      special.id === editingSpecial.id ? { ...newSpecial } as Special : special
+      special.id === editingSpecial.id
+        ? ({ ...newSpecial } as Special)
+        : special,
     );
     onSpecialsChange(updatedSpecials);
     setEditingSpecial(null);
@@ -105,7 +107,7 @@ export default function SpecialForm({
 
   const toggleSpecialStatus = (id: string) => {
     const updatedSpecials = specials.map((special) =>
-      special.id === id ? { ...special, isActive: !special.isActive } : special
+      special.id === id ? { ...special, isActive: !special.isActive } : special,
     );
     onSpecialsChange(updatedSpecials);
   };
@@ -133,7 +135,9 @@ export default function SpecialForm({
             {isEdit ? "Edit Special" : "Add New Special"}
           </h2>
           <p className="text-sm text-gray-500">
-            {isEdit ? "Update the special offer details and settings" : "Create a new special offer with menu items and discount settings"}
+            {isEdit
+              ? "Update the special offer details and settings"
+              : "Create a new special offer with menu items and discount settings"}
           </p>
         </div>
         <div>
@@ -232,16 +236,10 @@ export default function SpecialForm({
                   "Friday",
                   "Saturday",
                 ].map((day, index) => (
-                  <div
-                    key={day}
-                    className="flex items-center space-x-2"
-                  >
+                  <div key={day} className="flex items-center space-x-2">
                     <Checkbox
                       id={`day-${index}`}
-                      checked={
-                        newSpecial.daysOfWeek?.includes(index) ||
-                        false
-                      }
+                      checked={newSpecial.daysOfWeek?.includes(index) || false}
                       onCheckedChange={(checked) => {
                         const days = newSpecial.daysOfWeek || [];
                         if (checked) {
@@ -252,17 +250,12 @@ export default function SpecialForm({
                         } else {
                           setNewSpecial({
                             ...newSpecial,
-                            daysOfWeek: days.filter(
-                              (d) => d !== index,
-                            ),
+                            daysOfWeek: days.filter((d) => d !== index),
                           });
                         }
                       }}
                     />
-                    <Label
-                      htmlFor={`day-${index}`}
-                      className="text-sm"
-                    >
+                    <Label htmlFor={`day-${index}`} className="text-sm">
                       {day}
                     </Label>
                   </div>
@@ -335,9 +328,7 @@ export default function SpecialForm({
       {/* Right Column - Menu Selection */}
       <div className="w-1/2 pl-6 border-l flex flex-col h-full pb-16">
         <div className="mb-4 py-6">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Menu Items
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">Menu Items</h2>
           <p className="text-sm text-gray-500">
             Select which menu items this special applies to
           </p>
@@ -345,9 +336,7 @@ export default function SpecialForm({
 
         <div className="flex-1 overflow-hidden min-h-0">
           {(() => {
-            const activeCategories = categories.filter(
-              (c) => c.isActive,
-            );
+            const activeCategories = categories.filter((c) => c.isActive);
             return (
               <Tabs
                 defaultValue={activeCategories[0]?.id}
@@ -367,8 +356,7 @@ export default function SpecialForm({
 
                 {activeCategories.map((category) => {
                   const categoryMenuItems = menuItems.filter(
-                    (item) =>
-                      item.category === category.id && item.isActive,
+                    (item) => item.category === category.id && item.isActive,
                   );
 
                   return (
@@ -387,13 +375,11 @@ export default function SpecialForm({
                               <Checkbox
                                 id={`special-item-${item.id}`}
                                 checked={
-                                  newSpecial.menuItems?.includes(
-                                    item.id,
-                                  ) || false
+                                  newSpecial.menuItems?.includes(item.id) ||
+                                  false
                                 }
                                 onCheckedChange={(checked) => {
-                                  const items =
-                                    newSpecial.menuItems || [];
+                                  const items = newSpecial.menuItems || [];
                                   if (checked) {
                                     setNewSpecial({
                                       ...newSpecial,
@@ -417,29 +403,21 @@ export default function SpecialForm({
                                   <span>{item.name}</span>
                                   <span className="text-gray-500 text-xs">
                                     ${item.price.toFixed(2)}
-                                    {newSpecial.discountType ===
-                                      "percentage" &&
-                                      newSpecial.discountValue >
-                                        0 && (
+                                    {newSpecial.discountType === "percentage" &&
+                                      newSpecial.discountValue > 0 && (
                                         <span className="ml-2 text-green-600">
                                           → $
                                           {(
                                             item.price *
-                                            (1 -
-                                              newSpecial.discountValue /
-                                                100)
+                                            (1 - newSpecial.discountValue / 100)
                                           ).toFixed(2)}
                                         </span>
                                       )}
-                                    {newSpecial.discountType ===
-                                      "flat" &&
-                                      newSpecial.discountValue >
-                                        0 && (
+                                    {newSpecial.discountType === "flat" &&
+                                      newSpecial.discountValue > 0 && (
                                         <span className="ml-2 text-green-600">
                                           → $
-                                          {newSpecial.discountValue.toFixed(
-                                            2,
-                                          )}
+                                          {newSpecial.discountValue.toFixed(2)}
                                         </span>
                                       )}
                                   </span>
@@ -483,9 +461,7 @@ export default function SpecialForm({
                     <SelectValue placeholder="Select discount type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="percentage">
-                      Percentage Off
-                    </SelectItem>
+                    <SelectItem value="percentage">Percentage Off</SelectItem>
                     <SelectItem value="flat">Flat Price</SelectItem>
                   </SelectContent>
                 </Select>
@@ -499,16 +475,10 @@ export default function SpecialForm({
                 <Input
                   id="discountValue"
                   type="number"
-                  step={
-                    newSpecial.discountType === "percentage"
-                      ? "1"
-                      : "0.01"
-                  }
+                  step={newSpecial.discountType === "percentage" ? "1" : "0.01"}
                   min="0"
                   max={
-                    newSpecial.discountType === "percentage"
-                      ? "100"
-                      : undefined
+                    newSpecial.discountType === "percentage" ? "100" : undefined
                   }
                   placeholder={
                     newSpecial.discountType === "percentage"
@@ -533,10 +503,7 @@ export default function SpecialForm({
                     <Label>Preview Discount</Label>
                     <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
                       Example: $10.00 → $
-                      {(
-                        10 *
-                        (1 - newSpecial.discountValue / 100)
-                      ).toFixed(2)}
+                      {(10 * (1 - newSpecial.discountValue / 100)).toFixed(2)}
                     </div>
                   </div>
                 )}
@@ -706,9 +673,7 @@ export default function SpecialForm({
                           <Edit className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        Edit Special
-                      </TooltipContent>
+                      <TooltipContent>Edit Special</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                   <TooltipProvider>
@@ -722,9 +687,7 @@ export default function SpecialForm({
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        Delete Special
-                      </TooltipContent>
+                      <TooltipContent>Delete Special</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
@@ -735,7 +698,10 @@ export default function SpecialForm({
       </div>
 
       {/* Edit Special Dialog */}
-      <Dialog open={editingSpecial !== null} onOpenChange={(open) => !open && setEditingSpecial(null)}>
+      <Dialog
+        open={editingSpecial !== null}
+        onOpenChange={(open) => !open && setEditingSpecial(null)}
+      >
         <DialogContent className="max-w-7xl h-[95vh] max-h-[95vh] overflow-hidden p-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Edit Special</DialogTitle>

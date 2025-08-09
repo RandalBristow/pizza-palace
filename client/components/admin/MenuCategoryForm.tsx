@@ -13,7 +13,12 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 export interface Category {
   id: string;
@@ -29,7 +34,12 @@ interface MenuCategoryFormProps {
   onCategoriesChange: (categories: Category[]) => void;
 }
 
-export default function MenuCategoryForm({ categories, menuItems = [], toppingCategories = [], onCategoriesChange }: MenuCategoryFormProps) {
+export default function MenuCategoryForm({
+  categories,
+  menuItems = [],
+  toppingCategories = [],
+  onCategoriesChange,
+}: MenuCategoryFormProps) {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newCategory, setNewCategory] = useState({
@@ -59,8 +69,13 @@ export default function MenuCategoryForm({ categories, menuItems = [], toppingCa
 
     const updatedCategories = categories.map((cat) =>
       cat.id === editingCategory.id
-        ? { ...cat, name: newCategory.name, order: newCategory.order, isActive: newCategory.isActive }
-        : cat
+        ? {
+            ...cat,
+            name: newCategory.name,
+            order: newCategory.order,
+            isActive: newCategory.isActive,
+          }
+        : cat,
     );
     onCategoriesChange(updatedCategories);
     setEditingCategory(null);
@@ -69,13 +84,17 @@ export default function MenuCategoryForm({ categories, menuItems = [], toppingCa
 
   const canDeleteCategory = (categoryId: string) => {
     const hasMenuItems = menuItems.some((item) => item.category === categoryId);
-    const hasToppingCategories = toppingCategories.some((tc) => tc.menuItemCategory === categoryId);
+    const hasToppingCategories = toppingCategories.some(
+      (tc) => tc.menuItemCategory === categoryId,
+    );
     return !hasMenuItems && !hasToppingCategories;
   };
 
   const handleDeleteCategory = (id: string) => {
     if (!canDeleteCategory(id)) {
-      alert("Cannot delete category: It has related menu items or topping categories. Please remove them first.");
+      alert(
+        "Cannot delete category: It has related menu items or topping categories. Please remove them first.",
+      );
       return;
     }
     onCategoriesChange(categories.filter((cat) => cat.id !== id));
@@ -83,7 +102,7 @@ export default function MenuCategoryForm({ categories, menuItems = [], toppingCa
 
   const toggleCategoryStatus = (id: string) => {
     const updatedCategories = categories.map((cat) =>
-      cat.id === id ? { ...cat, isActive: !cat.isActive } : cat
+      cat.id === id ? { ...cat, isActive: !cat.isActive } : cat,
     );
     onCategoriesChange(updatedCategories);
   };
@@ -102,9 +121,7 @@ export default function MenuCategoryForm({ categories, menuItems = [], toppingCa
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Category</DialogTitle>
-              <DialogDescription>
-                Create a new menu category
-              </DialogDescription>
+              <DialogDescription>Create a new menu category</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -201,9 +218,7 @@ export default function MenuCategoryForm({ categories, menuItems = [], toppingCa
                           <Edit className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        Edit Category
-                      </TooltipContent>
+                      <TooltipContent>Edit Category</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                   <TooltipProvider>
@@ -219,7 +234,9 @@ export default function MenuCategoryForm({ categories, menuItems = [], toppingCa
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {canDeleteCategory(category.id) ? "Delete Category" : "Cannot delete: Has related items"}
+                        {canDeleteCategory(category.id)
+                          ? "Delete Category"
+                          : "Cannot delete: Has related items"}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -231,7 +248,10 @@ export default function MenuCategoryForm({ categories, menuItems = [], toppingCa
       </div>
 
       {/* Edit Category Dialog */}
-      <Dialog open={editingCategory !== null} onOpenChange={(open) => !open && setEditingCategory(null)}>
+      <Dialog
+        open={editingCategory !== null}
+        onOpenChange={(open) => !open && setEditingCategory(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Category</DialogTitle>

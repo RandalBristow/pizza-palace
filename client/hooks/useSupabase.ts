@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { supabase, TABLES } from '../lib/supabase'
+import { useState, useEffect } from "react";
+import { supabase, TABLES } from "../lib/supabase";
 import type {
   DatabaseCategory,
   DatabaseMenuItem,
@@ -9,7 +9,7 @@ import type {
   DatabaseCarouselImage,
   DatabaseCustomerFavorite,
   DatabaseSettings,
-} from '../lib/supabase'
+} from "../lib/supabase";
 
 // Transform database objects to frontend format
 export const transformCategory = (dbCategory: DatabaseCategory) => ({
@@ -17,7 +17,7 @@ export const transformCategory = (dbCategory: DatabaseCategory) => ({
   name: dbCategory.name,
   isActive: dbCategory.is_active,
   order: dbCategory.order,
-})
+});
 
 export const transformMenuItem = (dbMenuItem: DatabaseMenuItem) => ({
   id: dbMenuItem.id,
@@ -27,7 +27,7 @@ export const transformMenuItem = (dbMenuItem: DatabaseMenuItem) => ({
   category: dbMenuItem.category_id,
   defaultToppings: dbMenuItem.default_toppings,
   isActive: dbMenuItem.is_active,
-})
+});
 
 export const transformTopping = (dbTopping: DatabaseTopping) => ({
   id: dbTopping.id,
@@ -36,15 +36,17 @@ export const transformTopping = (dbTopping: DatabaseTopping) => ({
   category: dbTopping.category_id,
   menuItemCategory: dbTopping.menu_item_category_id,
   isActive: dbTopping.is_active,
-})
+});
 
-export const transformToppingCategory = (dbToppingCategory: DatabaseToppingCategory) => ({
+export const transformToppingCategory = (
+  dbToppingCategory: DatabaseToppingCategory,
+) => ({
   id: dbToppingCategory.id,
   name: dbToppingCategory.name,
   menuItemCategory: dbToppingCategory.menu_item_category_id,
   order: dbToppingCategory.order,
   isActive: dbToppingCategory.is_active,
-})
+});
 
 export const transformSpecial = (dbSpecial: DatabaseSpecial) => ({
   id: dbSpecial.id,
@@ -61,54 +63,60 @@ export const transformSpecial = (dbSpecial: DatabaseSpecial) => ({
   discountType: dbSpecial.discount_type,
   discountValue: dbSpecial.discount_value,
   isActive: dbSpecial.is_active,
-})
+});
 
-export const transformCarouselImage = (dbCarouselImage: DatabaseCarouselImage) => ({
+export const transformCarouselImage = (
+  dbCarouselImage: DatabaseCarouselImage,
+) => ({
   id: dbCarouselImage.id,
   url: dbCarouselImage.url,
   title: dbCarouselImage.title,
   subtitle: dbCarouselImage.subtitle,
   isActive: dbCarouselImage.is_active,
   order: dbCarouselImage.order,
-})
+});
 
-export const transformCustomerFavorite = (dbCustomerFavorite: DatabaseCustomerFavorite) => ({
+export const transformCustomerFavorite = (
+  dbCustomerFavorite: DatabaseCustomerFavorite,
+) => ({
   id: dbCustomerFavorite.id,
   title: dbCustomerFavorite.title,
   description: dbCustomerFavorite.description,
   icon: dbCustomerFavorite.icon,
   isActive: dbCustomerFavorite.is_active,
   order: dbCustomerFavorite.order,
-})
+});
 
 export const transformSettings = (dbSettings: DatabaseSettings) => ({
   taxRate: dbSettings.tax_rate,
   deliveryFee: dbSettings.delivery_fee,
   businessHours: dbSettings.business_hours,
-})
+});
 
 // Custom hooks for each data type
 export const useCategories = () => {
-  const [categories, setCategories] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCategories = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.CATEGORIES)
-        .select('*')
-        .order('order', { ascending: true })
+        .select("*")
+        .order("order", { ascending: true });
 
-      if (error) throw error
-      
-      setCategories(data ? data.map(transformCategory) : [])
+      if (error) throw error;
+
+      setCategories(data ? data.map(transformCategory) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch categories')
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch categories",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createCategory = async (category: any) => {
     try {
@@ -120,18 +128,20 @@ export const useCategories = () => {
           order: category.order,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
-      
-      const newCategory = transformCategory(data)
-      setCategories(prev => [...prev, newCategory])
-      return newCategory
+      if (error) throw error;
+
+      const newCategory = transformCategory(data);
+      setCategories((prev) => [...prev, newCategory]);
+      return newCategory;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create category')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to create category",
+      );
+      throw err;
     }
-  }
+  };
 
   const updateCategory = async (id: string, updates: any) => {
     try {
@@ -143,40 +153,46 @@ export const useCategories = () => {
           order: updates.order,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
-      
-      const updatedCategory = transformCategory(data)
-      setCategories(prev => prev.map(cat => cat.id === id ? updatedCategory : cat))
-      return updatedCategory
+      if (error) throw error;
+
+      const updatedCategory = transformCategory(data);
+      setCategories((prev) =>
+        prev.map((cat) => (cat.id === id ? updatedCategory : cat)),
+      );
+      return updatedCategory;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update category')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to update category",
+      );
+      throw err;
     }
-  }
+  };
 
   const deleteCategory = async (id: string) => {
     try {
       const { error } = await supabase
         .from(TABLES.CATEGORIES)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
-      
-      setCategories(prev => prev.filter(cat => cat.id !== id))
+      if (error) throw error;
+
+      setCategories((prev) => prev.filter((cat) => cat.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete category')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to delete category",
+      );
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchCategories()
-  }, [])
+    fetchCategories();
+  }, []);
 
   return {
     categories,
@@ -186,8 +202,8 @@ export const useCategories = () => {
     updateCategory,
     deleteCategory,
     refetch: fetchCategories,
-  }
-}
+  };
+};
 
 // Similar hooks would be created for other data types
 export const useMenuItems = () => {
@@ -201,27 +217,28 @@ export const useMenuItems = () => {
     updateMenuItem: async () => {},
     deleteMenuItem: async () => {},
     refetch: async () => {},
-  }
-}
+  };
+};
 
 export const useSettings = () => {
-  const [settings, setSettings] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [settings, setSettings] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchSettings = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.SETTINGS)
-        .select('*')
-        .single()
+        .select("*")
+        .single();
 
-      if (error && error.code !== 'PGRST116') { // Not found error
-        throw error
+      if (error && error.code !== "PGRST116") {
+        // Not found error
+        throw error;
       }
-      
+
       if (data) {
-        setSettings(transformSettings(data))
+        setSettings(transformSettings(data));
       } else {
         // Create default settings if none exist
         const defaultSettings = {
@@ -236,53 +253,55 @@ export const useSettings = () => {
             saturday: { open: "10:00", close: "23:00", closed: false },
             sunday: { open: "10:00", close: "21:00", closed: false },
           },
-        }
+        };
 
         const { data: newData, error: createError } = await supabase
           .from(TABLES.SETTINGS)
           .insert(defaultSettings)
           .select()
-          .single()
+          .single();
 
-        if (createError) throw createError
-        
-        setSettings(transformSettings(newData))
+        if (createError) throw createError;
+
+        setSettings(transformSettings(newData));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch settings')
+      setError(err instanceof Error ? err.message : "Failed to fetch settings");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const updateSettings = async (updates: any) => {
     try {
       const { data, error } = await supabase
         .from(TABLES.SETTINGS)
         .upsert({
-          id: '1', // Single settings row
+          id: "1", // Single settings row
           tax_rate: updates.taxRate,
           delivery_fee: updates.deliveryFee,
           business_hours: updates.businessHours,
           updated_at: new Date().toISOString(),
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
-      
-      const updatedSettings = transformSettings(data)
-      setSettings(updatedSettings)
-      return updatedSettings
+      if (error) throw error;
+
+      const updatedSettings = transformSettings(data);
+      setSettings(updatedSettings);
+      return updatedSettings;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update settings')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to update settings",
+      );
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchSettings()
-  }, [])
+    fetchSettings();
+  }, []);
 
   return {
     settings,
@@ -290,5 +309,5 @@ export const useSettings = () => {
     error,
     updateSettings,
     refetch: fetchSettings,
-  }
-}
+  };
+};

@@ -139,9 +139,9 @@ export default function Admin() {
     ];
   };
 
-  const [customerFavorites, setCustomerFavorites] = useState<CustomerFavorite[]>(
-    getInitialCustomerFavorites(),
-  );
+  const [customerFavorites, setCustomerFavorites] = useState<
+    CustomerFavorite[]
+  >(getInitialCustomerFavorites());
 
   // Initialize settings from localStorage or use default
   const getInitialSettings = () => {
@@ -185,7 +185,10 @@ export default function Admin() {
   }, [toppings]);
 
   useEffect(() => {
-    localStorage.setItem("toppingCategories", JSON.stringify(toppingCategories));
+    localStorage.setItem(
+      "toppingCategories",
+      JSON.stringify(toppingCategories),
+    );
   }, [toppingCategories]);
 
   useEffect(() => {
@@ -197,7 +200,10 @@ export default function Admin() {
   }, [carouselImages]);
 
   useEffect(() => {
-    localStorage.setItem("customerFavorites", JSON.stringify(customerFavorites));
+    localStorage.setItem(
+      "customerFavorites",
+      JSON.stringify(customerFavorites),
+    );
   }, [customerFavorites]);
 
   useEffect(() => {
@@ -267,10 +273,7 @@ export default function Admin() {
     switch (selectedItem) {
       case "settings":
         return (
-          <SettingsForm
-            settings={settings}
-            onSettingsChange={setSettings}
-          />
+          <SettingsForm settings={settings} onSettingsChange={setSettings} />
         );
       case "categories":
         return (
@@ -340,10 +343,7 @@ export default function Admin() {
         );
       default:
         return (
-          <SettingsForm
-            settings={settings}
-            onSettingsChange={setSettings}
-          />
+          <SettingsForm settings={settings} onSettingsChange={setSettings} />
         );
     }
   };

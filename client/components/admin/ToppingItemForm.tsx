@@ -20,7 +20,12 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { Category } from "./MenuCategoryForm";
 import { ToppingCategory } from "./ToppingCategoryForm";
 
@@ -48,7 +53,7 @@ export default function ToppingItemForm({
   toppingCategories,
   selectedToppingCategory,
   onToppingsChange,
-  onSelectedCategoryChange
+  onSelectedCategoryChange,
 }: ToppingItemFormProps) {
   const [isAddingTopping, setIsAddingTopping] = useState(false);
   const [editingTopping, setEditingTopping] = useState<Topping | null>(null);
@@ -90,7 +95,7 @@ export default function ToppingItemForm({
     const updatedToppings = toppings.map((topping) =>
       topping.id === editingTopping.id
         ? { ...topping, ...newTopping }
-        : topping
+        : topping,
     );
     onToppingsChange(updatedToppings);
     setEditingTopping(null);
@@ -109,21 +114,27 @@ export default function ToppingItemForm({
 
   const toggleToppingStatus = (id: string) => {
     const updatedToppings = toppings.map((topping) =>
-      topping.id === id ? { ...topping, isActive: !topping.isActive } : topping
+      topping.id === id ? { ...topping, isActive: !topping.isActive } : topping,
     );
     onToppingsChange(updatedToppings);
   };
 
-  const filteredToppings = selectedToppingCategory === "all"
-    ? toppings
-    : toppings.filter((topping) => topping.menuItemCategory === selectedToppingCategory);
+  const filteredToppings =
+    selectedToppingCategory === "all"
+      ? toppings
+      : toppings.filter(
+          (topping) => topping.menuItemCategory === selectedToppingCategory,
+        );
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Topping Items</h2>
         <div className="flex items-center space-x-4">
-          <Select value={selectedToppingCategory} onValueChange={onSelectedCategoryChange}>
+          <Select
+            value={selectedToppingCategory}
+            onValueChange={onSelectedCategoryChange}
+          >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Filter by menu category" />
             </SelectTrigger>
@@ -148,9 +159,7 @@ export default function ToppingItemForm({
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Topping</DialogTitle>
-                <DialogDescription>
-                  Create a new topping item
-                </DialogDescription>
+                <DialogDescription>Create a new topping item</DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -198,11 +207,14 @@ export default function ToppingItemForm({
                       {toppingCategories
                         .filter(
                           (tc) =>
-                            tc.menuItemCategory === newTopping.menuItemCategory &&
-                            tc.isActive
+                            tc.menuItemCategory ===
+                              newTopping.menuItemCategory && tc.isActive,
                         )
                         .map((toppingCategory) => (
-                          <SelectItem key={toppingCategory.id} value={toppingCategory.id}>
+                          <SelectItem
+                            key={toppingCategory.id}
+                            value={toppingCategory.id}
+                          >
                             {toppingCategory.name}
                           </SelectItem>
                         ))}
@@ -274,10 +286,13 @@ export default function ToppingItemForm({
                 <div>
                   <h3 className="font-semibold">{topping.name}</h3>
                   <p className="text-sm text-gray-600">
-                    {toppingCategories.find(tc => tc.id === topping.category)?.name || "Unknown Category"}
+                    {toppingCategories.find((tc) => tc.id === topping.category)
+                      ?.name || "Unknown Category"}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Menu: {categories.find(c => c.id === topping.menuItemCategory)?.name || "Unknown"}
+                    Menu:{" "}
+                    {categories.find((c) => c.id === topping.menuItemCategory)
+                      ?.name || "Unknown"}
                   </p>
                   <p className="text-lg font-bold text-green-600">
                     +${topping.price.toFixed(2)}
@@ -326,9 +341,7 @@ export default function ToppingItemForm({
                           <Edit className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        Edit Topping
-                      </TooltipContent>
+                      <TooltipContent>Edit Topping</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                   <TooltipProvider>
@@ -342,9 +355,7 @@ export default function ToppingItemForm({
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        Delete Topping
-                      </TooltipContent>
+                      <TooltipContent>Delete Topping</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
@@ -355,7 +366,10 @@ export default function ToppingItemForm({
       </div>
 
       {/* Edit Topping Dialog */}
-      <Dialog open={editingTopping !== null} onOpenChange={(open) => !open && setEditingTopping(null)}>
+      <Dialog
+        open={editingTopping !== null}
+        onOpenChange={(open) => !open && setEditingTopping(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Topping</DialogTitle>
@@ -408,10 +422,13 @@ export default function ToppingItemForm({
                     .filter(
                       (tc) =>
                         tc.menuItemCategory === newTopping.menuItemCategory &&
-                        tc.isActive
+                        tc.isActive,
                     )
                     .map((toppingCategory) => (
-                      <SelectItem key={toppingCategory.id} value={toppingCategory.id}>
+                      <SelectItem
+                        key={toppingCategory.id}
+                        value={toppingCategory.id}
+                      >
                         {toppingCategory.name}
                       </SelectItem>
                     ))}

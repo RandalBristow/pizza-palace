@@ -12,8 +12,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Star } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  ThumbsUp,
+  ThumbsDown,
+  Star,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 export interface CustomerFavorite {
   id: string;
@@ -31,10 +44,12 @@ interface CustomerFavoriteFormProps {
 
 export default function CustomerFavoriteForm({
   customerFavorites,
-  onCustomerFavoritesChange
+  onCustomerFavoritesChange,
 }: CustomerFavoriteFormProps) {
-  const [isAddingCustomerFavorite, setIsAddingCustomerFavorite] = useState(false);
-  const [editingCustomerFavorite, setEditingCustomerFavorite] = useState<CustomerFavorite | null>(null);
+  const [isAddingCustomerFavorite, setIsAddingCustomerFavorite] =
+    useState(false);
+  const [editingCustomerFavorite, setEditingCustomerFavorite] =
+    useState<CustomerFavorite | null>(null);
   const [newCustomerFavorite, setNewCustomerFavorite] = useState({
     title: "",
     description: "",
@@ -45,7 +60,10 @@ export default function CustomerFavoriteForm({
 
   const handleAddCustomerFavorite = () => {
     const id = `favorite-${Date.now()}`;
-    onCustomerFavoritesChange([...customerFavorites, { ...newCustomerFavorite, id } as CustomerFavorite]);
+    onCustomerFavoritesChange([
+      ...customerFavorites,
+      { ...newCustomerFavorite, id } as CustomerFavorite,
+    ]);
     setIsAddingCustomerFavorite(false);
     resetForm();
   };
@@ -67,7 +85,7 @@ export default function CustomerFavoriteForm({
     const updatedCustomerFavorites = customerFavorites.map((favorite) =>
       favorite.id === editingCustomerFavorite.id
         ? { ...favorite, ...newCustomerFavorite }
-        : favorite
+        : favorite,
     );
     onCustomerFavoritesChange(updatedCustomerFavorites);
     setEditingCustomerFavorite(null);
@@ -75,12 +93,16 @@ export default function CustomerFavoriteForm({
   };
 
   const handleDeleteCustomerFavorite = (id: string) => {
-    onCustomerFavoritesChange(customerFavorites.filter((favorite) => favorite.id !== id));
+    onCustomerFavoritesChange(
+      customerFavorites.filter((favorite) => favorite.id !== id),
+    );
   };
 
   const toggleCustomerFavoriteStatus = (id: string) => {
     const updatedCustomerFavorites = customerFavorites.map((favorite) =>
-      favorite.id === id ? { ...favorite, isActive: !favorite.isActive } : favorite
+      favorite.id === id
+        ? { ...favorite, isActive: !favorite.isActive }
+        : favorite,
     );
     onCustomerFavoritesChange(updatedCustomerFavorites);
   };
@@ -99,7 +121,10 @@ export default function CustomerFavoriteForm({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Customer Favorites</h2>
-        <Dialog open={isAddingCustomerFavorite} onOpenChange={setIsAddingCustomerFavorite}>
+        <Dialog
+          open={isAddingCustomerFavorite}
+          onOpenChange={setIsAddingCustomerFavorite}
+        >
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
@@ -210,9 +235,7 @@ export default function CustomerFavoriteForm({
               <div key={favorite.id} className="border rounded-lg p-4">
                 <div className="text-2xl mb-2">{favorite.icon}</div>
                 <h3 className="font-semibold">{favorite.title}</h3>
-                <p className="text-sm text-gray-600">
-                  {favorite.description}
-                </p>
+                <p className="text-sm text-gray-600">{favorite.description}</p>
                 <div className="mt-2 flex justify-between items-center">
                   <Badge
                     className={
@@ -230,7 +253,9 @@ export default function CustomerFavoriteForm({
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => toggleCustomerFavoriteStatus(favorite.id)}
+                            onClick={() =>
+                              toggleCustomerFavoriteStatus(favorite.id)
+                            }
                           >
                             {favorite.isActive ? (
                               <ThumbsUp className="h-4 w-4" />
@@ -255,9 +280,7 @@ export default function CustomerFavoriteForm({
                             <Edit className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
-                          Edit Favorite
-                        </TooltipContent>
+                        <TooltipContent>Edit Favorite</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                     <TooltipProvider>
@@ -266,14 +289,14 @@ export default function CustomerFavoriteForm({
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleDeleteCustomerFavorite(favorite.id)}
+                            onClick={() =>
+                              handleDeleteCustomerFavorite(favorite.id)
+                            }
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
-                          Delete Favorite
-                        </TooltipContent>
+                        <TooltipContent>Delete Favorite</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>
@@ -285,7 +308,10 @@ export default function CustomerFavoriteForm({
       </div>
 
       {/* Edit Customer Favorite Dialog */}
-      <Dialog open={editingCustomerFavorite !== null} onOpenChange={(open) => !open && setEditingCustomerFavorite(null)}>
+      <Dialog
+        open={editingCustomerFavorite !== null}
+        onOpenChange={(open) => !open && setEditingCustomerFavorite(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Customer Favorite</DialogTitle>

@@ -23,7 +23,10 @@ interface SettingsFormProps {
   onSettingsChange: (settings: Settings) => void;
 }
 
-export default function SettingsForm({ settings, onSettingsChange }: SettingsFormProps) {
+export default function SettingsForm({
+  settings,
+  onSettingsChange,
+}: SettingsFormProps) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -100,7 +103,9 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                       });
                     }}
                   />
-                  <span className="w-12 font-medium capitalize text-xs">{day.slice(0, 3)}</span>
+                  <span className="w-12 font-medium capitalize text-xs">
+                    {day.slice(0, 3)}
+                  </span>
                   {!hours.closed ? (
                     <div className="flex items-center space-x-1">
                       <Input

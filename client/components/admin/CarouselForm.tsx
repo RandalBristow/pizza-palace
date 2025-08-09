@@ -11,8 +11,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Image as ImageIcon } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  ThumbsUp,
+  ThumbsDown,
+  Image as ImageIcon,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 export interface CarouselImage {
   id: string;
@@ -30,10 +43,11 @@ interface CarouselFormProps {
 
 export default function CarouselForm({
   carouselImages,
-  onCarouselImagesChange
+  onCarouselImagesChange,
 }: CarouselFormProps) {
   const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
-  const [editingCarouselImage, setEditingCarouselImage] = useState<CarouselImage | null>(null);
+  const [editingCarouselImage, setEditingCarouselImage] =
+    useState<CarouselImage | null>(null);
   const [newCarouselImage, setNewCarouselImage] = useState({
     url: "",
     title: "",
@@ -44,7 +58,10 @@ export default function CarouselForm({
 
   const handleAddCarouselImage = () => {
     const id = `carousel-${Date.now()}`;
-    onCarouselImagesChange([...carouselImages, { ...newCarouselImage, id } as CarouselImage]);
+    onCarouselImagesChange([
+      ...carouselImages,
+      { ...newCarouselImage, id } as CarouselImage,
+    ]);
     setIsAddingCarouselImage(false);
     resetForm();
   };
@@ -66,7 +83,7 @@ export default function CarouselForm({
     const updatedCarouselImages = carouselImages.map((image) =>
       image.id === editingCarouselImage.id
         ? { ...image, ...newCarouselImage }
-        : image
+        : image,
     );
     onCarouselImagesChange(updatedCarouselImages);
     setEditingCarouselImage(null);
@@ -79,7 +96,7 @@ export default function CarouselForm({
 
   const toggleCarouselImageStatus = (id: string) => {
     const updatedCarouselImages = carouselImages.map((image) =>
-      image.id === id ? { ...image, isActive: !image.isActive } : image
+      image.id === id ? { ...image, isActive: !image.isActive } : image,
     );
     onCarouselImagesChange(updatedCarouselImages);
   };
@@ -98,7 +115,10 @@ export default function CarouselForm({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Carousel Images</h2>
-        <Dialog open={isAddingCarouselImage} onOpenChange={setIsAddingCarouselImage}>
+        <Dialog
+          open={isAddingCarouselImage}
+          onOpenChange={setIsAddingCarouselImage}
+        >
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
@@ -255,9 +275,7 @@ export default function CarouselForm({
                             <Edit className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
-                          Edit Image
-                        </TooltipContent>
+                        <TooltipContent>Edit Image</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                     <TooltipProvider>
@@ -271,9 +289,7 @@ export default function CarouselForm({
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
-                          Delete Image
-                        </TooltipContent>
+                        <TooltipContent>Delete Image</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>
@@ -285,7 +301,10 @@ export default function CarouselForm({
       </div>
 
       {/* Edit Carousel Image Dialog */}
-      <Dialog open={editingCarouselImage !== null} onOpenChange={(open) => !open && setEditingCarouselImage(null)}>
+      <Dialog
+        open={editingCarouselImage !== null}
+        onOpenChange={(open) => !open && setEditingCarouselImage(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Carousel Image</DialogTitle>
