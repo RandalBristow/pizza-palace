@@ -53,11 +53,14 @@ export default function MenuCategoryForm({
     order: 1,
   });
 
-  const handleAddCategory = () => {
-    const id = newCategory.name.toLowerCase().replace(/\s+/g, "-");
-    onCategoriesChange([...categories, { ...newCategory, id } as Category]);
-    setIsAddingCategory(false);
-    setNewCategory({ name: "", isActive: true, order: 1 });
+  const handleAddCategory = async () => {
+    try {
+      await createCategory(newCategory);
+      setIsAddingCategory(false);
+      setNewCategory({ name: "", isActive: true, order: 1 });
+    } catch (error) {
+      console.error('Failed to create category:', error);
+    }
   };
 
   const handleEditCategory = (category: Category) => {
