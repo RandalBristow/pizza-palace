@@ -84,12 +84,19 @@ export default function SpecialForm({
   });
 
   const handleAddSpecial = async () => {
+    setError(null);
+    setIsLoading(true);
+
     try {
       await createSpecial(newSpecial);
       setIsAddingSpecial(false);
       resetForm();
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create special';
+      setError(errorMessage);
       console.error('Failed to create special:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
