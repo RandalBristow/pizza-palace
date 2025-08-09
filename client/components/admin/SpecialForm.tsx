@@ -333,8 +333,8 @@ export default function SpecialForm({
       </div>
 
       {/* Right Column - Menu Selection */}
-      <div className="w-1/2 pl-6 border-l flex flex-col">
-        <div className="mb-6 py-6">
+      <div className="w-1/2 pl-6 border-l flex flex-col h-full pb-16">
+        <div className="mb-4 py-6">
           <h2 className="text-lg font-semibold text-gray-900">
             Menu Items
           </h2>
@@ -343,7 +343,7 @@ export default function SpecialForm({
           </p>
         </div>
 
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden min-h-0">
           {(() => {
             const activeCategories = categories.filter(
               (c) => c.isActive,
@@ -462,8 +462,8 @@ export default function SpecialForm({
         </div>
 
         {/* Discount Section */}
-        <div className="mt-4 pt-4 border-t">
-          <h4 className="text-md font-semibold text-gray-900 mb-4">
+        <div className="mt-2 pt-2 border-t">
+          <h4 className="text-md font-semibold text-gray-900 mb-3">
             Discount Settings
           </h4>
           <div className="space-y-4">
@@ -546,7 +546,7 @@ export default function SpecialForm({
       </div>
 
       {/* Buttons fixed at bottom of entire dialog */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-6 border-t bg-gray-50 z-10">
+      <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-4 border-t bg-gray-50 z-10">
         <Button
           variant="outline"
           onClick={() => {
@@ -579,7 +579,7 @@ export default function SpecialForm({
               Add Special
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-7xl h-[90vh] max-h-[90vh] overflow-hidden p-0">
+          <DialogContent className="max-w-7xl h-[95vh] max-h-[95vh] overflow-hidden p-0">
             <DialogHeader className="sr-only">
               <DialogTitle>Add New Special</DialogTitle>
               <DialogDescription>
@@ -736,7 +736,7 @@ export default function SpecialForm({
 
       {/* Edit Special Dialog */}
       <Dialog open={editingSpecial !== null} onOpenChange={(open) => !open && setEditingSpecial(null)}>
-        <DialogContent className="max-w-7xl h-[90vh] max-h-[90vh] overflow-hidden p-0">
+        <DialogContent className="max-w-7xl h-[95vh] max-h-[95vh] overflow-hidden p-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Edit Special</DialogTitle>
             <DialogDescription>
