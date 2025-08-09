@@ -92,14 +92,19 @@ export default function MenuCategoryForm({
     return !hasMenuItems && !hasToppingCategories;
   };
 
-  const handleDeleteCategory = (id: string) => {
+  const handleDeleteCategory = async (id: string) => {
     if (!canDeleteCategory(id)) {
       alert(
         "Cannot delete category: It has related menu items or topping categories. Please remove them first.",
       );
       return;
     }
-    onCategoriesChange(categories.filter((cat) => cat.id !== id));
+
+    try {
+      await deleteCategory(id);
+    } catch (error) {
+      console.error('Failed to delete category:', error);
+    }
   };
 
   const toggleCategoryStatus = (id: string) => {
