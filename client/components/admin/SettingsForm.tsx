@@ -120,7 +120,7 @@ export default function SettingsForm({
                             },
                           });
                         }}
-                        className="w-20 h-6 text-xs"
+                        className="w-30 h-6 text-xs"
                       />
                       <span className="text-xs">-</span>
                       <Input
@@ -135,7 +135,7 @@ export default function SettingsForm({
                             },
                           });
                         }}
-                        className="w-20 h-6 text-xs"
+                        className="w-30 h-6 text-xs"
                       />
                     </div>
                   ) : (
