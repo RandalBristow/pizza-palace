@@ -189,6 +189,12 @@ export default function SpecialForm({
               : "Create a new special offer with menu items and discount settings"}
           </p>
         </div>
+
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         <div>
           <Label htmlFor="specialName">Special Name</Label>
           <Input
