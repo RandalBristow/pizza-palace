@@ -579,12 +579,16 @@ export default function SpecialForm({
             }
             resetForm();
           }}
+          disabled={isLoading}
         >
           Cancel
         </Button>
-        <Button onClick={isEdit ? handleUpdateSpecial : handleAddSpecial}>
+        <Button
+          onClick={isEdit ? handleUpdateSpecial : handleAddSpecial}
+          disabled={isLoading}
+        >
           <Save className="h-4 w-4 mr-2" />
-          {isEdit ? "Update Special" : "Save Special"}
+          {isLoading ? "Saving..." : (isEdit ? "Update Special" : "Save Special")}
         </Button>
       </div>
     </div>
