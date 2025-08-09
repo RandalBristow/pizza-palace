@@ -1,20 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "../components/ui/button";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import AdminSidebar from "../components/AdminSidebar";
 import { FileText } from "lucide-react";
 import {
-  mockCategories as initialCategories,
-  mockMenuItems as initialMenuItems,
-  mockToppings as initialToppings,
-  mockToppingCategories as initialToppingCategories,
-  mockSpecials as initialSpecials,
-  type Category,
-  type MenuItem,
-  type Topping,
-  type ToppingCategory,
-  type Special,
-} from "../data/mockData";
+  useCategories,
+  useMenuItems,
+  useToppings,
+  useToppingCategories,
+  useSpecials,
+  useCarouselImages,
+  useCustomerFavorites,
+  useSettings,
+} from "../hooks/useSupabase";
 
 // Import form components
 import SettingsForm from "../components/admin/SettingsForm";
@@ -60,13 +58,16 @@ interface Settings {
 }
 
 export default function Admin() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
-  const [toppings, setToppings] = useState<Topping[]>(initialToppings);
-  const [toppingCategories, setToppingCategories] = useState<ToppingCategory[]>(
-    initialToppingCategories,
-  );
-  const [specials, setSpecials] = useState<Special[]>(initialSpecials);
+  // Supabase hooks
+  const { categories, loading: categoriesLoading, createCategory, updateCategory, deleteCategory } = useCategories();
+  const { menuItems, loading: menuItemsLoading, createMenuItem, updateMenuItem, deleteMenuItem } = useMenuItems();
+  const { toppings, loading: toppingsLoading, createTopping, updateTopping, deleteTopping } = useToppings();
+  const { toppingCategories, loading: toppingCategoriesLoading, createToppingCategory, updateToppingCategory, deleteToppingCategory } = useToppingCategories();
+  const { specials, loading: specialsLoading, createSpecial, updateSpecial, deleteSpecial } = useSpecials();
+  const { carouselImages, loading: carouselLoading, createCarouselImage, updateCarouselImage, deleteCarouselImage } = useCarouselImages();
+  const { customerFavorites, loading: favoritesLoading, createCustomerFavorite, updateCustomerFavorite, deleteCustomerFavorite } = useCustomerFavorites();
+  const { settings, loading: settingsLoading, updateSettings } = useSettings();
+
   const [selectedItem, setSelectedItem] = useState("categories");
 
   // Filter states
