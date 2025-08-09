@@ -104,7 +104,7 @@ export const useCategories = () => {
       const { data, error } = await supabase
         .from(TABLES.CATEGORIES)
         .select("*")
-        .order("order", { ascending: true });
+        .order("order_num", { ascending: true });
 
       if (error) throw error;
 
