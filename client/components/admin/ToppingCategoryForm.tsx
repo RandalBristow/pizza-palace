@@ -67,19 +67,19 @@ export default function ToppingCategoryForm({
     menuItemCategory: "",
   });
 
-  const handleAddToppingCategory = () => {
-    const id = `${newToppingCategory.menuItemCategory}-${newToppingCategory.name.toLowerCase().replace(/\s+/g, "-")}`;
-    onToppingCategoriesChange([
-      ...toppingCategories,
-      { ...newToppingCategory, id } as ToppingCategory,
-    ]);
-    setIsAddingToppingCategory(false);
-    setNewToppingCategory({
-      name: "",
-      order: 1,
-      isActive: true,
-      menuItemCategory: "",
-    });
+  const handleAddToppingCategory = async () => {
+    try {
+      await createToppingCategory(newToppingCategory);
+      setIsAddingToppingCategory(false);
+      setNewToppingCategory({
+        name: "",
+        order: 1,
+        isActive: true,
+        menuItemCategory: "",
+      });
+    } catch (error) {
+      console.error('Failed to create topping category:', error);
+    }
   };
 
   const handleEditToppingCategory = (toppingCategory: ToppingCategory) => {
@@ -92,22 +92,21 @@ export default function ToppingCategoryForm({
     });
   };
 
-  const handleUpdateToppingCategory = () => {
+  const handleUpdateToppingCategory = async () => {
     if (!editingToppingCategory) return;
 
-    const updatedToppingCategories = toppingCategories.map((cat) =>
-      cat.id === editingToppingCategory.id
-        ? { ...cat, ...newToppingCategory }
-        : cat,
-    );
-    onToppingCategoriesChange(updatedToppingCategories);
-    setEditingToppingCategory(null);
-    setNewToppingCategory({
-      name: "",
-      order: 1,
-      isActive: true,
-      menuItemCategory: "",
-    });
+    try {
+      await updateToppingCategory(editingToppingCategory.id, newToppingCategory);
+      setEditingToppingCategory(null);
+      setNewToppingCategory({
+        name: "",
+        order: 1,
+        isActive: true,
+        menuItemCategory: "",
+      });
+    } catch (error) {
+      console.error('Failed to update topping category:', error);
+    }
   };
 
   const canDeleteToppingCategory = (toppingCategoryId: string) => {
