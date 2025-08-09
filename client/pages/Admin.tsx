@@ -276,6 +276,8 @@ export default function Admin() {
         return (
           <MenuCategoryForm
             categories={categories}
+            menuItems={menuItems}
+            toppingCategories={toppingCategories}
             onCategoriesChange={setCategories}
           />
         );
@@ -296,6 +298,7 @@ export default function Admin() {
           <ToppingCategoryForm
             toppingCategories={toppingCategories}
             categories={categories}
+            toppings={toppings}
             selectedToppingCategory={selectedToppingCategory}
             onToppingCategoriesChange={setToppingCategories}
             onSelectedCategoryChange={setSelectedToppingCategory}
