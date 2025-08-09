@@ -234,7 +234,6 @@ async function migrateData() {
     // 8. Migrate Default Settings
     console.log('⚙️ Migrating settings...')
     const defaultSettings = {
-      id: '00000000-0000-0000-0000-000000000001',
       tax_rate: 8.25,
       delivery_fee: 2.99,
       business_hours: {
@@ -250,7 +249,10 @@ async function migrateData() {
 
     const { error: settingsError } = await supabase
       .from('settings')
-      .upsert(defaultSettings)
+      .insert({
+        id: generateUUID(),
+        ...defaultSettings
+      })
 
     if (settingsError) {
       console.error('❌ Error migrating settings:', settingsError)
