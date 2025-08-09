@@ -73,7 +73,7 @@ export const transformCarouselImage = (
   title: dbCarouselImage.title,
   subtitle: dbCarouselImage.subtitle,
   isActive: dbCarouselImage.is_active,
-  order: dbCarouselImage.order,
+  order: dbCarouselImage.order_num,
 });
 
 export const transformCustomerFavorite = (
