@@ -72,22 +72,16 @@ export default function MenuCategoryForm({
     });
   };
 
-  const handleUpdateCategory = () => {
+  const handleUpdateCategory = async () => {
     if (!editingCategory) return;
 
-    const updatedCategories = categories.map((cat) =>
-      cat.id === editingCategory.id
-        ? {
-            ...cat,
-            name: newCategory.name,
-            order: newCategory.order,
-            isActive: newCategory.isActive,
-          }
-        : cat,
-    );
-    onCategoriesChange(updatedCategories);
-    setEditingCategory(null);
-    setNewCategory({ name: "", isActive: true, order: 1 });
+    try {
+      await updateCategory(editingCategory.id, newCategory);
+      setEditingCategory(null);
+      setNewCategory({ name: "", isActive: true, order: 1 });
+    } catch (error) {
+      console.error('Failed to update category:', error);
+    }
   };
 
   const canDeleteCategory = (categoryId: string) => {
