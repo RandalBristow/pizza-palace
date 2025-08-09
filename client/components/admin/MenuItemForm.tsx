@@ -28,6 +28,7 @@ import {
   TabsTrigger,
 } from "../ui/tabs";
 import { Plus, Edit, Trash2, Save, Upload, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Category } from "./MenuCategoryForm";
 
 export interface MenuItem {
@@ -67,11 +68,11 @@ interface MenuItemFormProps {
   onSelectedCategoryChange: (category: string) => void;
 }
 
-export default function MenuItemForm({ 
-  menuItems, 
-  categories, 
-  toppingCategories, 
-  toppings, 
+export default function MenuItemForm({
+  menuItems,
+  categories,
+  toppingCategories,
+  toppings,
   selectedMenuCategory,
   onMenuItemsChange,
   onSelectedCategoryChange
@@ -108,7 +109,7 @@ export default function MenuItemForm({
 
   const handleUpdateMenuItem = () => {
     if (!editingMenuItem) return;
-    
+
     const updatedMenuItems = menuItems.map((item) =>
       item.id === editingMenuItem.id ? { ...newMenuItem } as MenuItem : item
     );
@@ -135,8 +136,8 @@ export default function MenuItemForm({
     onMenuItemsChange(updatedMenuItems);
   };
 
-  const filteredMenuItems = selectedMenuCategory === "all" 
-    ? menuItems 
+  const filteredMenuItems = selectedMenuCategory === "all"
+    ? menuItems
     : menuItems.filter((item) => item.category === selectedMenuCategory);
 
   const renderMenuItemForm = (isEdit: boolean = false) => (
@@ -420,7 +421,7 @@ export default function MenuItemForm({
           </Dialog>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredMenuItems.map((menuItem) => (
           <Card key={menuItem.id}>
@@ -447,31 +448,58 @@ export default function MenuItemForm({
               </div>
               <div className="flex justify-between items-center mt-3">
                 <div className="flex items-center space-x-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toggleMenuItemStatus(menuItem.id)}
-                  >
-                    {menuItem.isActive ? (
-                      <ThumbsDown className="h-4 w-4" />
-                    ) : (
-                      <ThumbsUp className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditMenuItem(menuItem)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteMenuItem(menuItem.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleMenuItemStatus(menuItem.id)}
+                        >
+                          {menuItem.isActive ? (
+                            <ThumbsUp className="h-4 w-4" />
+                          ) : (
+                            <ThumbsDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {menuItem.isActive ? "Deactivate" : "Activate"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditMenuItem(menuItem)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Edit Menu Item
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteMenuItem(menuItem.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Delete Menu Item
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </CardContent>
