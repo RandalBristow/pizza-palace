@@ -123,14 +123,22 @@ export default function ToppingCategoryForm({
       );
       return;
     }
-    onToppingCategoriesChange(toppingCategories.filter((cat) => cat.id !== id));
+    try {
+      await deleteToppingCategory(id);
+    } catch (error) {
+      console.error('Failed to delete topping category:', error);
+    }
   };
 
-  const toggleToppingCategoryStatus = (id: string) => {
-    const updatedToppingCategories = toppingCategories.map((cat) =>
-      cat.id === id ? { ...cat, isActive: !cat.isActive } : cat,
-    );
-    onToppingCategoriesChange(updatedToppingCategories);
+  const toggleToppingCategoryStatus = async (id: string) => {
+    const toppingCategory = toppingCategories.find(cat => cat.id === id);
+    if (!toppingCategory) return;
+
+    try {
+      await updateToppingCategory(id, { ...toppingCategory, isActive: !toppingCategory.isActive });
+    } catch (error) {
+      console.error('Failed to toggle topping category status:', error);
+    }
   };
 
   const filteredToppingCategories =
