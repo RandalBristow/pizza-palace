@@ -1,0 +1,246 @@
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
+
+export interface Category {
+  id: string;
+  name: string;
+  isActive: boolean;
+  order: number;
+}
+
+interface MenuCategoryFormProps {
+  categories: Category[];
+  onCategoriesChange: (categories: Category[]) => void;
+}
+
+export default function MenuCategoryForm({ categories, onCategoriesChange }: MenuCategoryFormProps) {
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [newCategory, setNewCategory] = useState({
+    name: "",
+    isActive: true,
+    order: 1,
+  });
+
+  const handleAddCategory = () => {
+    const id = newCategory.name.toLowerCase().replace(/\s+/g, "-");
+    onCategoriesChange([...categories, { ...newCategory, id } as Category]);
+    setIsAddingCategory(false);
+    setNewCategory({ name: "", isActive: true, order: 1 });
+  };
+
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category);
+    setNewCategory({
+      name: category.name,
+      isActive: category.isActive,
+      order: category.order,
+    });
+  };
+
+  const handleUpdateCategory = () => {
+    if (!editingCategory) return;
+    
+    const updatedCategories = categories.map((cat) =>
+      cat.id === editingCategory.id
+        ? { ...cat, name: newCategory.name, order: newCategory.order, isActive: newCategory.isActive }
+        : cat
+    );
+    onCategoriesChange(updatedCategories);
+    setEditingCategory(null);
+    setNewCategory({ name: "", isActive: true, order: 1 });
+  };
+
+  const handleDeleteCategory = (id: string) => {
+    onCategoriesChange(categories.filter((cat) => cat.id !== id));
+  };
+
+  const toggleCategoryStatus = (id: string) => {
+    const updatedCategories = categories.map((cat) =>
+      cat.id === id ? { ...cat, isActive: !cat.isActive } : cat
+    );
+    onCategoriesChange(updatedCategories);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">Menu Categories</h2>
+        <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Category
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Category</DialogTitle>
+              <DialogDescription>
+                Create a new menu category
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="categoryName">Category Name</Label>
+                <Input
+                  id="categoryName"
+                  placeholder="e.g., Appetizers"
+                  value={newCategory.name}
+                  onChange={(e) =>
+                    setNewCategory({ ...newCategory, name: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="categoryOrder">Display Order</Label>
+                <Input
+                  id="categoryOrder"
+                  type="number"
+                  placeholder="1"
+                  value={newCategory.order}
+                  onChange={(e) =>
+                    setNewCategory({
+                      ...newCategory,
+                      order: parseInt(e.target.value) || 1,
+                    })
+                  }
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsAddingCategory(false);
+                    setNewCategory({ name: "", isActive: true, order: 1 });
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleAddCategory}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Category
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        {categories.map((category) => (
+          <Card key={category.id}>
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <h3 className="font-semibold">{category.name}</h3>
+                  <Badge
+                    className={
+                      category.isActive
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }
+                  >
+                    {category.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => toggleCategoryStatus(category.id)}
+                  >
+                    {category.isActive ? (
+                      <ThumbsDown className="h-4 w-4" />
+                    ) : (
+                      <ThumbsUp className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEditCategory(category)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteCategory(category.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Edit Category Dialog */}
+      <Dialog open={editingCategory !== null} onOpenChange={(open) => !open && setEditingCategory(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Category</DialogTitle>
+            <DialogDescription>Update the category details</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="editCategoryName">Category Name</Label>
+              <Input
+                id="editCategoryName"
+                placeholder="e.g., Appetizers"
+                value={newCategory.name}
+                onChange={(e) =>
+                  setNewCategory({ ...newCategory, name: e.target.value })
+                }
+              />
+            </div>
+            <div>
+              <Label htmlFor="editCategoryOrder">Display Order</Label>
+              <Input
+                id="editCategoryOrder"
+                type="number"
+                placeholder="1"
+                value={newCategory.order}
+                onChange={(e) =>
+                  setNewCategory({
+                    ...newCategory,
+                    order: parseInt(e.target.value) || 1,
+                  })
+                }
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingCategory(null);
+                  setNewCategory({ name: "", isActive: true, order: 1 });
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleUpdateCategory}>
+                <Save className="h-4 w-4 mr-2" />
+                Update Category
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
