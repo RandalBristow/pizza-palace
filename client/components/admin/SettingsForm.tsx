@@ -43,7 +43,7 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                 step="0.01"
                 min="0"
                 max="100"
-                value={settings.taxRate}
+                value={settings.taxRate || 0}
                 onChange={(e) =>
                   onSettingsChange({
                     ...settings,
@@ -52,7 +52,7 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                 }
               />
               <p className="text-sm text-gray-500 mt-1">
-                Current rate: {settings.taxRate}%
+                Current rate: {settings.taxRate || 0}%
               </p>
             </div>
             <div>
@@ -62,7 +62,7 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                 type="number"
                 step="0.01"
                 min="0"
-                value={settings.deliveryFee}
+                value={settings.deliveryFee || 0}
                 onChange={(e) =>
                   onSettingsChange({
                     ...settings,
@@ -71,7 +71,7 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                 }
               />
               <p className="text-sm text-gray-500 mt-1">
-                Current fee: ${settings.deliveryFee}
+                Current fee: ${settings.deliveryFee || 0}
               </p>
             </div>
           </CardContent>
@@ -107,7 +107,7 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                     <>
                       <Input
                         type="time"
-                        value={hours.open}
+                        value={hours.open || "09:00"}
                         onChange={(e) => {
                           onSettingsChange({
                             ...settings,
@@ -122,7 +122,7 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                       <span>to</span>
                       <Input
                         type="time"
-                        value={hours.close}
+                        value={hours.close || "17:00"}
                         onChange={(e) => {
                           onSettingsChange({
                             ...settings,
