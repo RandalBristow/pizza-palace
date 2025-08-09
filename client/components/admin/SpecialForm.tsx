@@ -69,6 +69,8 @@ export default function SpecialForm({
 }: SpecialFormProps) {
   const [isAddingSpecial, setIsAddingSpecial] = useState(false);
   const [editingSpecial, setEditingSpecial] = useState<Special | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [newSpecial, setNewSpecial] = useState<Partial<Special>>({
     name: "",
     description: "",
