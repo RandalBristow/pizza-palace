@@ -24,10 +24,12 @@ export interface Category {
 
 interface MenuCategoryFormProps {
   categories: Category[];
+  menuItems?: any[];
+  toppingCategories?: any[];
   onCategoriesChange: (categories: Category[]) => void;
 }
 
-export default function MenuCategoryForm({ categories, onCategoriesChange }: MenuCategoryFormProps) {
+export default function MenuCategoryForm({ categories, menuItems = [], toppingCategories = [], onCategoriesChange }: MenuCategoryFormProps) {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newCategory, setNewCategory] = useState({
@@ -65,7 +67,17 @@ export default function MenuCategoryForm({ categories, onCategoriesChange }: Men
     setNewCategory({ name: "", isActive: true, order: 1 });
   };
 
+  const canDeleteCategory = (categoryId: string) => {
+    const hasMenuItems = menuItems.some((item) => item.category === categoryId);
+    const hasToppingCategories = toppingCategories.some((tc) => tc.menuItemCategory === categoryId);
+    return !hasMenuItems && !hasToppingCategories;
+  };
+
   const handleDeleteCategory = (id: string) => {
+    if (!canDeleteCategory(id)) {
+      alert("Cannot delete category: It has related menu items or topping categories. Please remove them first.");
+      return;
+    }
     onCategoriesChange(categories.filter((cat) => cat.id !== id));
   };
 
@@ -200,13 +212,14 @@ export default function MenuCategoryForm({ categories, onCategoriesChange }: Men
                         <Button
                           variant="outline"
                           size="sm"
+                          disabled={!canDeleteCategory(category.id)}
                           onClick={() => handleDeleteCategory(category.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        Delete Category
+                        {canDeleteCategory(category.id) ? "Delete Category" : "Cannot delete: Has related items"}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
