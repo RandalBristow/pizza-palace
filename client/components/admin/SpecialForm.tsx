@@ -326,7 +326,7 @@ export default function SpecialForm({
       </div>
 
       {/* Right Column - Menu Selection */}
-      <div className="w-1/2 pl-6 border-l flex flex-col h-full pb-16">
+      <div className="w-1/2 px-6 border-l flex flex-col h-full pb-16 gap-1.5">
         <div className="mb-4 py-6">
           <h2 className="text-lg font-semibold text-gray-900">Menu Items</h2>
           <p className="text-sm text-gray-500">
@@ -440,7 +440,7 @@ export default function SpecialForm({
         </div>
 
         {/* Discount Section */}
-        <div className="mt-2 pt-2 border-t">
+        <div className="mt-2 py-2 pb-6 border-t">
           <h4 className="text-md font-semibold text-gray-900 mb-3">
             Discount Settings
           </h4>
