@@ -90,7 +90,7 @@ export default function AdminSidebar({
         <Button
           variant={isSelected ? "default" : "ghost"}
           className={`justify-start text-left h-auto py-3 px-4 ${
-            level > 0 ? "w-[90%] self-center text-sm" : "w-full"
+            level > 0 ? "w-[90%] self-center text-sm ml-6" : "w-full"
           }`}
           onClick={() => {
             if (hasChildren) {
