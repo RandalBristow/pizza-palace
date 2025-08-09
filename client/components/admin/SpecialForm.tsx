@@ -108,17 +108,16 @@ export default function SpecialForm({
     });
   };
 
-  const handleUpdateSpecial = () => {
+  const handleUpdateSpecial = async () => {
     if (!editingSpecial) return;
 
-    const updatedSpecials = specials.map((special) =>
-      special.id === editingSpecial.id
-        ? ({ ...newSpecial } as Special)
-        : special,
-    );
-    onSpecialsChange(updatedSpecials);
-    setEditingSpecial(null);
-    resetForm();
+    try {
+      await updateSpecial(editingSpecial.id, newSpecial);
+      setEditingSpecial(null);
+      resetForm();
+    } catch (error) {
+      console.error('Failed to update special:', error);
+    }
   };
 
   const handleDeleteSpecial = async (id: string) => {
