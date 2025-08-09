@@ -28,6 +28,7 @@ import {
   TabsTrigger,
 } from "../ui/tabs";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Category } from "./MenuCategoryForm";
 import { MenuItem } from "./MenuItemForm";
 
@@ -55,9 +56,9 @@ interface SpecialFormProps {
   onSpecialsChange: (specials: Special[]) => void;
 }
 
-export default function SpecialForm({ 
-  specials, 
-  categories, 
+export default function SpecialForm({
+  specials,
+  categories,
   menuItems,
   onSpecialsChange
 }: SpecialFormProps) {
@@ -89,7 +90,7 @@ export default function SpecialForm({
 
   const handleUpdateSpecial = () => {
     if (!editingSpecial) return;
-    
+
     const updatedSpecials = specials.map((special) =>
       special.id === editingSpecial.id ? { ...newSpecial } as Special : special
     );
@@ -333,10 +334,10 @@ export default function SpecialForm({
 
       {/* Right Column - Menu Selection */}
       <div className="w-1/2 pl-6 border-l flex flex-col">
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">
+        <div className="mb-6 py-6">
+          <h2 className="text-lg font-semibold text-gray-900">
             Menu Items
-          </h3>
+          </h2>
           <p className="text-sm text-gray-500">
             Select which menu items this special applies to
           </p>
@@ -461,7 +462,7 @@ export default function SpecialForm({
         </div>
 
         {/* Discount Section */}
-        <div className="mt-6 pt-6 border-t">
+        <div className="mt-4 pt-4 border-t">
           <h4 className="text-md font-semibold text-gray-900 mb-4">
             Discount Settings
           </h4>
@@ -590,7 +591,7 @@ export default function SpecialForm({
           </DialogContent>
         </Dialog>
       </div>
-      
+
       <div className="grid grid-cols-2 gap-4">
         {specials.map((special) => (
           <Card key={special.id}>
@@ -674,31 +675,58 @@ export default function SpecialForm({
                   </div>
                 </div>
                 <div className="flex flex-col items-center space-y-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toggleSpecialStatus(special.id)}
-                  >
-                    {special.isActive ? (
-                      <ThumbsDown className="h-4 w-4" />
-                    ) : (
-                      <ThumbsUp className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditSpecial(special)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteSpecial(special.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleSpecialStatus(special.id)}
+                        >
+                          {special.isActive ? (
+                            <ThumbsUp className="h-4 w-4" />
+                          ) : (
+                            <ThumbsDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {special.isActive ? "Deactivate" : "Activate"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditSpecial(special)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Edit Special
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteSpecial(special.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Delete Special
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </CardContent>
