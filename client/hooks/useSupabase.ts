@@ -150,7 +150,7 @@ export const useCategories = () => {
         .update({
           name: updates.name,
           is_active: updates.isActive,
-          order: updates.order,
+          order_num: updates.order,
           updated_at: new Date().toISOString(),
         })
         .eq("id", id)
