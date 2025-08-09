@@ -16,7 +16,7 @@ export const transformCategory = (dbCategory: DatabaseCategory) => ({
   id: dbCategory.id,
   name: dbCategory.name,
   isActive: dbCategory.is_active,
-  order: dbCategory.order,
+  order: dbCategory.order_num,
 });
 
 export const transformMenuItem = (dbMenuItem: DatabaseMenuItem) => ({
