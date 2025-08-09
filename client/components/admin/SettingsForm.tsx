@@ -82,29 +82,27 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
             <CardTitle>Business Hours</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
               {Object.entries(settings.businessHours).map(([day, hours]) => (
                 <div
                   key={day}
-                  className="flex items-center space-x-4 p-3 border rounded"
+                  className="flex items-center space-x-2 p-2 border rounded text-sm"
                 >
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      checked={!hours.closed}
-                      onCheckedChange={(checked) => {
-                        onSettingsChange({
-                          ...settings,
-                          businessHours: {
-                            ...settings.businessHours,
-                            [day]: { ...hours, closed: !checked },
-                          },
-                        });
-                      }}
-                    />
-                    <span className="w-20 font-medium capitalize">{day}</span>
-                  </div>
-                  {!hours.closed && (
-                    <>
+                  <Checkbox
+                    checked={!hours.closed}
+                    onCheckedChange={(checked) => {
+                      onSettingsChange({
+                        ...settings,
+                        businessHours: {
+                          ...settings.businessHours,
+                          [day]: { ...hours, closed: !checked },
+                        },
+                      });
+                    }}
+                  />
+                  <span className="w-12 font-medium capitalize text-xs">{day.slice(0, 3)}</span>
+                  {!hours.closed ? (
+                    <div className="flex items-center space-x-1">
                       <Input
                         type="time"
                         value={hours.open || "09:00"}
@@ -117,9 +115,9 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                             },
                           });
                         }}
-                        className="w-32"
+                        className="w-20 h-6 text-xs"
                       />
-                      <span>to</span>
+                      <span className="text-xs">-</span>
                       <Input
                         type="time"
                         value={hours.close || "17:00"}
@@ -132,12 +130,11 @@ export default function SettingsForm({ settings, onSettingsChange }: SettingsFor
                             },
                           });
                         }}
-                        className="w-32"
+                        className="w-20 h-6 text-xs"
                       />
-                    </>
-                  )}
-                  {hours.closed && (
-                    <span className="text-gray-500 italic">Closed</span>
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 italic text-xs">Closed</span>
                   )}
                 </div>
               ))}
