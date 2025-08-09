@@ -24,48 +24,15 @@ import SpecialForm from "../components/admin/SpecialForm";
 import CarouselForm from "../components/admin/CarouselForm";
 import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 
-// Interfaces for carousel and customer favorites
-interface CarouselImage {
-  id: string;
-  url: string;
-  title: string;
-  subtitle: string;
-  isActive: boolean;
-  order: number;
-}
-
-interface CustomerFavorite {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  isActive: boolean;
-  order: number;
-}
-
-interface BusinessHours {
-  open: string;
-  close: string;
-  closed: boolean;
-}
-
-interface Settings {
-  taxRate: number;
-  deliveryFee: number;
-  businessHours: {
-    [key: string]: BusinessHours;
-  };
-}
-
 export default function Admin() {
   // Supabase hooks
-  const { categories, loading: categoriesLoading, createCategory, updateCategory, deleteCategory } = useCategories();
-  const { menuItems, loading: menuItemsLoading, createMenuItem, updateMenuItem, deleteMenuItem } = useMenuItems();
-  const { toppings, loading: toppingsLoading, createTopping, updateTopping, deleteTopping } = useToppings();
-  const { toppingCategories, loading: toppingCategoriesLoading, createToppingCategory, updateToppingCategory, deleteToppingCategory } = useToppingCategories();
-  const { specials, loading: specialsLoading, createSpecial, updateSpecial, deleteSpecial } = useSpecials();
-  const { carouselImages, loading: carouselLoading, createCarouselImage, updateCarouselImage, deleteCarouselImage } = useCarouselImages();
-  const { customerFavorites, loading: favoritesLoading, createCustomerFavorite, updateCustomerFavorite, deleteCustomerFavorite } = useCustomerFavorites();
+  const { categories, loading: categoriesLoading } = useCategories();
+  const { menuItems, loading: menuItemsLoading } = useMenuItems();
+  const { toppings, loading: toppingsLoading } = useToppings();
+  const { toppingCategories, loading: toppingCategoriesLoading } = useToppingCategories();
+  const { specials, loading: specialsLoading } = useSpecials();
+  const { carouselImages, loading: carouselLoading } = useCarouselImages();
+  const { customerFavorites, loading: favoritesLoading } = useCustomerFavorites();
   const { settings, loading: settingsLoading, updateSettings } = useSettings();
 
   const [selectedItem, setSelectedItem] = useState("categories");
@@ -74,142 +41,21 @@ export default function Admin() {
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
-  // Initialize carousel images from localStorage or use default
-  const getInitialCarouselImages = () => {
-    try {
-      const stored = localStorage.getItem("carouselImages");
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch (error) {
-      console.error("Error loading carousel images:", error);
-    }
+  // Show loading state while data is being fetched
+  const isLoading = categoriesLoading || menuItemsLoading || toppingsLoading || 
+                   toppingCategoriesLoading || specialsLoading || carouselLoading || 
+                   favoritesLoading || settingsLoading;
 
-    return [
-      {
-        id: "1",
-        url: "https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800",
-        title: "Fresh Pizza & Premium Coffee",
-        subtitle: "Made to Order",
-        isActive: true,
-        order: 1,
-      },
-    ];
-  };
-
-  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>(
-    getInitialCarouselImages(),
-  );
-
-  // Initialize customer favorites from localStorage or use default
-  const getInitialCustomerFavorites = () => {
-    try {
-      const stored = localStorage.getItem("customerFavorites");
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch (error) {
-      console.error("Error loading customer favorites:", error);
-    }
-
-    return [
-      {
-        id: "1",
-        title: "Fresh Ingredients",
-        description: "We use only the freshest ingredients in all our dishes",
-        icon: "🥬",
-        isActive: true,
-        order: 1,
-      },
-      {
-        id: "2",
-        title: "Fast Delivery",
-        description: "Quick and reliable delivery to your doorstep",
-        icon: "🚚",
-        isActive: true,
-        order: 2,
-      },
-      {
-        id: "3",
-        title: "Great Taste",
-        description: "Delicious flavors that keep customers coming back",
-        icon: "😋",
-        isActive: true,
-        order: 3,
-      },
-    ];
-  };
-
-  const [customerFavorites, setCustomerFavorites] = useState<
-    CustomerFavorite[]
-  >(getInitialCustomerFavorites());
-
-  // Initialize settings from localStorage or use default
-  const getInitialSettings = () => {
-    try {
-      const stored = localStorage.getItem("restaurantSettings");
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch (error) {
-      console.error("Error loading settings:", error);
-    }
-
-    return {
-      taxRate: 8.5,
-      deliveryFee: 2.99,
-      businessHours: {
-        monday: { open: "09:00", close: "22:00", closed: false },
-        tuesday: { open: "09:00", close: "22:00", closed: false },
-        wednesday: { open: "09:00", close: "22:00", closed: false },
-        thursday: { open: "09:00", close: "22:00", closed: false },
-        friday: { open: "09:00", close: "23:00", closed: false },
-        saturday: { open: "10:00", close: "23:00", closed: false },
-        sunday: { open: "10:00", close: "21:00", closed: false },
-      },
-    };
-  };
-
-  const [settings, setSettings] = useState<Settings>(getInitialSettings());
-
-  // Save data to localStorage
-  useEffect(() => {
-    localStorage.setItem("menuItems", JSON.stringify(menuItems));
-  }, [menuItems]);
-
-  useEffect(() => {
-    localStorage.setItem("categories", JSON.stringify(categories));
-  }, [categories]);
-
-  useEffect(() => {
-    localStorage.setItem("toppings", JSON.stringify(toppings));
-  }, [toppings]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      "toppingCategories",
-      JSON.stringify(toppingCategories),
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading admin dashboard...</p>
+        </div>
+      </div>
     );
-  }, [toppingCategories]);
-
-  useEffect(() => {
-    localStorage.setItem("specials", JSON.stringify(specials));
-  }, [specials]);
-
-  useEffect(() => {
-    localStorage.setItem("carouselImages", JSON.stringify(carouselImages));
-  }, [carouselImages]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      "customerFavorites",
-      JSON.stringify(customerFavorites),
-    );
-  }, [customerFavorites]);
-
-  useEffect(() => {
-    localStorage.setItem("restaurantSettings", JSON.stringify(settings));
-  }, [settings]);
+  }
 
   const generateMenuPDF = () => {
     const printWindow = window.open("", "_blank");
@@ -274,7 +120,10 @@ export default function Admin() {
     switch (selectedItem) {
       case "settings":
         return (
-          <SettingsForm settings={settings} onSettingsChange={setSettings} />
+          <SettingsForm
+            settings={settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }}
+            onSettingsChange={updateSettings}
+          />
         );
       case "categories":
         return (
@@ -282,7 +131,7 @@ export default function Admin() {
             categories={categories}
             menuItems={menuItems}
             toppingCategories={toppingCategories}
-            onCategoriesChange={setCategories}
+            onCategoriesChange={() => {}} // Not needed since hooks handle updates
           />
         );
       case "menu-items":
@@ -293,7 +142,7 @@ export default function Admin() {
             toppingCategories={toppingCategories}
             toppings={toppings}
             selectedMenuCategory={selectedMenuCategory}
-            onMenuItemsChange={setMenuItems}
+            onMenuItemsChange={() => {}} // Not needed since hooks handle updates
             onSelectedCategoryChange={setSelectedMenuCategory}
           />
         );
@@ -304,7 +153,7 @@ export default function Admin() {
             categories={categories}
             toppings={toppings}
             selectedToppingCategory={selectedToppingCategory}
-            onToppingCategoriesChange={setToppingCategories}
+            onToppingCategoriesChange={() => {}} // Not needed since hooks handle updates
             onSelectedCategoryChange={setSelectedToppingCategory}
           />
         );
@@ -315,7 +164,7 @@ export default function Admin() {
             categories={categories}
             toppingCategories={toppingCategories}
             selectedToppingCategory={selectedToppingCategory}
-            onToppingsChange={setToppings}
+            onToppingsChange={() => {}} // Not needed since hooks handle updates
             onSelectedCategoryChange={setSelectedToppingCategory}
           />
         );
@@ -325,26 +174,29 @@ export default function Admin() {
             specials={specials}
             categories={categories}
             menuItems={menuItems}
-            onSpecialsChange={setSpecials}
+            onSpecialsChange={() => {}} // Not needed since hooks handle updates
           />
         );
       case "carousel-images":
         return (
           <CarouselForm
             carouselImages={carouselImages}
-            onCarouselImagesChange={setCarouselImages}
+            onCarouselImagesChange={() => {}} // Not needed since hooks handle updates
           />
         );
       case "customer-favorites":
         return (
           <CustomerFavoriteForm
             customerFavorites={customerFavorites}
-            onCustomerFavoritesChange={setCustomerFavorites}
+            onCustomerFavoritesChange={() => {}} // Not needed since hooks handle updates
           />
         );
       default:
         return (
-          <SettingsForm settings={settings} onSettingsChange={setSettings} />
+          <SettingsForm
+            settings={settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }}
+            onSettingsChange={updateSettings}
+          />
         );
     }
   };
