@@ -107,11 +107,15 @@ export default function MenuCategoryForm({
     }
   };
 
-  const toggleCategoryStatus = (id: string) => {
-    const updatedCategories = categories.map((cat) =>
-      cat.id === id ? { ...cat, isActive: !cat.isActive } : cat,
-    );
-    onCategoriesChange(updatedCategories);
+  const toggleCategoryStatus = async (id: string) => {
+    const category = categories.find(cat => cat.id === id);
+    if (!category) return;
+
+    try {
+      await updateCategory(id, { ...category, isActive: !category.isActive });
+    } catch (error) {
+      console.error('Failed to toggle category status:', error);
+    }
   };
 
   return (
