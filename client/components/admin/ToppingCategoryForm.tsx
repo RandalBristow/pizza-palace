@@ -116,7 +116,7 @@ export default function ToppingCategoryForm({
     return !hasToppings;
   };
 
-  const handleDeleteToppingCategory = (id: string) => {
+  const handleDeleteToppingCategory = async (id: string) => {
     if (!canDeleteToppingCategory(id)) {
       alert(
         "Cannot delete topping category: It has related topping items. Please remove them first.",
