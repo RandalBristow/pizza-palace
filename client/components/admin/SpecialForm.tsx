@@ -141,6 +141,8 @@ export default function SpecialForm({
     try {
       await deleteSpecial(id);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete special';
+      setError(errorMessage);
       console.error('Failed to delete special:', error);
     }
   };
