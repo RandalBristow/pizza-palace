@@ -81,10 +81,10 @@ export default function ToppingCategoryForm({
   const handleEditToppingCategory = (toppingCategory: ToppingCategory) => {
     setEditingToppingCategory(toppingCategory);
     setNewToppingCategory({
-      name: toppingCategory.name,
-      order: toppingCategory.order,
-      isActive: toppingCategory.isActive,
-      menuItemCategory: toppingCategory.menuItemCategory,
+      name: toppingCategory.name || "",
+      order: toppingCategory.order || 1,
+      isActive: toppingCategory.isActive || true,
+      menuItemCategory: toppingCategory.menuItemCategory || "",
     });
   };
 
