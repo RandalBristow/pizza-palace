@@ -100,18 +100,21 @@ export default function MenuItemForm({
     isActive: true,
   });
 
-  const handleAddMenuItem = () => {
-    const id = `${newMenuItem.category}-${newMenuItem.name?.toLowerCase().replace(/\s+/g, "-")}`;
-    onMenuItemsChange([...menuItems, { ...newMenuItem, id } as MenuItem]);
-    setIsAddingMenuItem(false);
-    setNewMenuItem({
-      name: "",
-      description: "",
-      price: 0,
-      category: "",
-      defaultToppings: [],
-      isActive: true,
-    });
+  const handleAddMenuItem = async () => {
+    try {
+      await createMenuItem(newMenuItem);
+      setIsAddingMenuItem(false);
+      setNewMenuItem({
+        name: "",
+        description: "",
+        price: 0,
+        category: "",
+        defaultToppings: [],
+        isActive: true,
+      });
+    } catch (error) {
+      console.error('Failed to create menu item:', error);
+    }
   };
 
   const handleEditMenuItem = (menuItem: MenuItem) => {

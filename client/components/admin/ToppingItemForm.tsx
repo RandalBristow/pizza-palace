@@ -69,17 +69,20 @@ export default function ToppingItemForm({
     isActive: true,
   });
 
-  const handleAddTopping = () => {
-    const id = `${newTopping.category}-${newTopping.name.toLowerCase().replace(/\s+/g, "-")}`;
-    onToppingsChange([...toppings, { ...newTopping, id } as Topping]);
-    setIsAddingTopping(false);
-    setNewTopping({
-      name: "",
-      price: 0,
-      category: "",
-      menuItemCategory: "",
-      isActive: true,
-    });
+  const handleAddTopping = async () => {
+    try {
+      await createTopping(newTopping);
+      setIsAddingTopping(false);
+      setNewTopping({
+        name: "",
+        price: 0,
+        category: "",
+        menuItemCategory: "",
+        isActive: true,
+      });
+    } catch (error) {
+      console.error('Failed to create topping:', error);
+    }
   };
 
   const handleEditTopping = (topping: Topping) => {
@@ -93,34 +96,41 @@ export default function ToppingItemForm({
     });
   };
 
-  const handleUpdateTopping = () => {
+  const handleUpdateTopping = async () => {
     if (!editingTopping) return;
 
-    const updatedToppings = toppings.map((topping) =>
-      topping.id === editingTopping.id
-        ? { ...topping, ...newTopping }
-        : topping,
-    );
-    onToppingsChange(updatedToppings);
-    setEditingTopping(null);
-    setNewTopping({
-      name: "",
-      price: 0,
-      category: "",
-      menuItemCategory: "",
-      isActive: true,
-    });
+    try {
+      await updateTopping(editingTopping.id, newTopping);
+      setEditingTopping(null);
+      setNewTopping({
+        name: "",
+        price: 0,
+        category: "",
+        menuItemCategory: "",
+        isActive: true,
+      });
+    } catch (error) {
+      console.error('Failed to update topping:', error);
+    }
   };
 
-  const handleDeleteTopping = (id: string) => {
-    onToppingsChange(toppings.filter((topping) => topping.id !== id));
+  const handleDeleteTopping = async (id: string) => {
+    try {
+      await deleteTopping(id);
+    } catch (error) {
+      console.error('Failed to delete topping:', error);
+    }
   };
 
-  const toggleToppingStatus = (id: string) => {
-    const updatedToppings = toppings.map((topping) =>
-      topping.id === id ? { ...topping, isActive: !topping.isActive } : topping,
-    );
-    onToppingsChange(updatedToppings);
+  const toggleToppingStatus = async (id: string) => {
+    const topping = toppings.find(t => t.id === id);
+    if (!topping) return;
+
+    try {
+      await updateTopping(id, { ...topping, isActive: !topping.isActive });
+    } catch (error) {
+      console.error('Failed to toggle topping status:', error);
+    }
   };
 
   const filteredToppings =
