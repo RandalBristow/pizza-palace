@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Star } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 export interface CustomerFavorite {
   id: string;
@@ -28,8 +29,8 @@ interface CustomerFavoriteFormProps {
   onCustomerFavoritesChange: (customerFavorites: CustomerFavorite[]) => void;
 }
 
-export default function CustomerFavoriteForm({ 
-  customerFavorites, 
+export default function CustomerFavoriteForm({
+  customerFavorites,
   onCustomerFavoritesChange
 }: CustomerFavoriteFormProps) {
   const [isAddingCustomerFavorite, setIsAddingCustomerFavorite] = useState(false);
@@ -62,7 +63,7 @@ export default function CustomerFavoriteForm({
 
   const handleUpdateCustomerFavorite = () => {
     if (!editingCustomerFavorite) return;
-    
+
     const updatedCustomerFavorites = customerFavorites.map((favorite) =>
       favorite.id === editingCustomerFavorite.id
         ? { ...favorite, ...newCustomerFavorite }
@@ -190,7 +191,7 @@ export default function CustomerFavoriteForm({
           </DialogContent>
         </Dialog>
       </div>
-      
+
       <div className="bg-white rounded-lg border p-6">
         <p className="text-gray-600 mb-4">
           Manage customer favorite items displayed on the homepage.
@@ -223,31 +224,58 @@ export default function CustomerFavoriteForm({
                     {favorite.isActive ? "Active" : "Inactive"}
                   </Badge>
                   <div className="flex items-center space-x-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleCustomerFavoriteStatus(favorite.id)}
-                    >
-                      {favorite.isActive ? (
-                        <ThumbsDown className="h-4 w-4" />
-                      ) : (
-                        <ThumbsUp className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditCustomerFavorite(favorite)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteCustomerFavorite(favorite.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleCustomerFavoriteStatus(favorite.id)}
+                          >
+                            {favorite.isActive ? (
+                              <ThumbsUp className="h-4 w-4" />
+                            ) : (
+                              <ThumbsDown className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {favorite.isActive ? "Deactivate" : "Activate"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditCustomerFavorite(favorite)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Edit Favorite
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteCustomerFavorite(favorite.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Delete Favorite
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
               </div>

@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Image as ImageIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 export interface CarouselImage {
   id: string;
@@ -27,8 +28,8 @@ interface CarouselFormProps {
   onCarouselImagesChange: (carouselImages: CarouselImage[]) => void;
 }
 
-export default function CarouselForm({ 
-  carouselImages, 
+export default function CarouselForm({
+  carouselImages,
   onCarouselImagesChange
 }: CarouselFormProps) {
   const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
@@ -61,7 +62,7 @@ export default function CarouselForm({
 
   const handleUpdateCarouselImage = () => {
     if (!editingCarouselImage) return;
-    
+
     const updatedCarouselImages = carouselImages.map((image) =>
       image.id === editingCarouselImage.id
         ? { ...image, ...newCarouselImage }
@@ -188,7 +189,7 @@ export default function CarouselForm({
           </DialogContent>
         </Dialog>
       </div>
-      
+
       <div className="bg-white rounded-lg border p-6">
         <p className="text-gray-600 mb-4">
           Manage images that appear in the homepage carousel.
@@ -223,31 +224,58 @@ export default function CarouselForm({
                     {image.isActive ? "Active" : "Inactive"}
                   </Badge>
                   <div className="flex items-center space-x-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleCarouselImageStatus(image.id)}
-                    >
-                      {image.isActive ? (
-                        <ThumbsDown className="h-4 w-4" />
-                      ) : (
-                        <ThumbsUp className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditCarouselImage(image)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteCarouselImage(image.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleCarouselImageStatus(image.id)}
+                          >
+                            {image.isActive ? (
+                              <ThumbsUp className="h-4 w-4" />
+                            ) : (
+                              <ThumbsDown className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {image.isActive ? "Deactivate" : "Activate"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditCarouselImage(image)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Edit Image
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteCarouselImage(image.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Delete Image
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
               </div>

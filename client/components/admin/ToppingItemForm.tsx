@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Category } from "./MenuCategoryForm";
 import { ToppingCategory } from "./ToppingCategoryForm";
 
@@ -41,9 +42,9 @@ interface ToppingItemFormProps {
   onSelectedCategoryChange: (category: string) => void;
 }
 
-export default function ToppingItemForm({ 
-  toppings, 
-  categories, 
+export default function ToppingItemForm({
+  toppings,
+  categories,
   toppingCategories,
   selectedToppingCategory,
   onToppingsChange,
@@ -85,7 +86,7 @@ export default function ToppingItemForm({
 
   const handleUpdateTopping = () => {
     if (!editingTopping) return;
-    
+
     const updatedToppings = toppings.map((topping) =>
       topping.id === editingTopping.id
         ? { ...topping, ...newTopping }
@@ -113,8 +114,8 @@ export default function ToppingItemForm({
     onToppingsChange(updatedToppings);
   };
 
-  const filteredToppings = selectedToppingCategory === "all" 
-    ? toppings 
+  const filteredToppings = selectedToppingCategory === "all"
+    ? toppings
     : toppings.filter((topping) => topping.menuItemCategory === selectedToppingCategory);
 
   return (
@@ -264,7 +265,7 @@ export default function ToppingItemForm({
           </Dialog>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredToppings.map((topping) => (
           <Card key={topping.id}>
@@ -294,31 +295,58 @@ export default function ToppingItemForm({
               </div>
               <div className="flex justify-between items-center mt-3">
                 <div className="flex items-center space-x-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toggleToppingStatus(topping.id)}
-                  >
-                    {topping.isActive ? (
-                      <ThumbsDown className="h-4 w-4" />
-                    ) : (
-                      <ThumbsUp className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditTopping(topping)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteTopping(topping.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleToppingStatus(topping.id)}
+                        >
+                          {topping.isActive ? (
+                            <ThumbsUp className="h-4 w-4" />
+                          ) : (
+                            <ThumbsDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {topping.isActive ? "Deactivate" : "Activate"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditTopping(topping)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Edit Topping
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteTopping(topping.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Delete Topping
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </CardContent>

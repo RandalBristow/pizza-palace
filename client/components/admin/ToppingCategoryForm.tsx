@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Category } from "./MenuCategoryForm";
 
 export interface ToppingCategory {
@@ -38,9 +39,9 @@ interface ToppingCategoryFormProps {
   onSelectedCategoryChange: (category: string) => void;
 }
 
-export default function ToppingCategoryForm({ 
-  toppingCategories, 
-  categories, 
+export default function ToppingCategoryForm({
+  toppingCategories,
+  categories,
   selectedToppingCategory,
   onToppingCategoriesChange,
   onSelectedCategoryChange
@@ -78,7 +79,7 @@ export default function ToppingCategoryForm({
 
   const handleUpdateToppingCategory = () => {
     if (!editingToppingCategory) return;
-    
+
     const updatedToppingCategories = toppingCategories.map((cat) =>
       cat.id === editingToppingCategory.id
         ? { ...cat, ...newToppingCategory }
@@ -105,8 +106,8 @@ export default function ToppingCategoryForm({
     onToppingCategoriesChange(updatedToppingCategories);
   };
 
-  const filteredToppingCategories = selectedToppingCategory === "all" 
-    ? toppingCategories 
+  const filteredToppingCategories = selectedToppingCategory === "all"
+    ? toppingCategories
     : toppingCategories.filter((cat) => cat.menuItemCategory === selectedToppingCategory);
 
   return (
@@ -223,7 +224,7 @@ export default function ToppingCategoryForm({
           </Dialog>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-2 gap-4">
         {filteredToppingCategories.map((toppingCategory) => (
           <Card key={toppingCategory.id}>
@@ -247,31 +248,58 @@ export default function ToppingCategoryForm({
                   </p>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toggleToppingCategoryStatus(toppingCategory.id)}
-                  >
-                    {toppingCategory.isActive ? (
-                      <ThumbsDown className="h-4 w-4" />
-                    ) : (
-                      <ThumbsUp className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditToppingCategory(toppingCategory)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteToppingCategory(toppingCategory.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleToppingCategoryStatus(toppingCategory.id)}
+                        >
+                          {toppingCategory.isActive ? (
+                            <ThumbsUp className="h-4 w-4" />
+                          ) : (
+                            <ThumbsDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {toppingCategory.isActive ? "Deactivate" : "Activate"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditToppingCategory(toppingCategory)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Edit Topping Category
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteToppingCategory(toppingCategory.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Delete Topping Category
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </CardContent>
