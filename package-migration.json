@@ -1,0 +1,12 @@
+{
+  "name": "data-migration",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.4",
+    "tsx": "^4.7.1"
+  },
+  "scripts": {
+    "migrate": "tsx migrate-data.ts"
+  }
+}
