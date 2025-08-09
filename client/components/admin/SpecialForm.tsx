@@ -121,12 +121,19 @@ export default function SpecialForm({
   const handleUpdateSpecial = async () => {
     if (!editingSpecial) return;
 
+    setError(null);
+    setIsLoading(true);
+
     try {
       await updateSpecial(editingSpecial.id, newSpecial);
       setEditingSpecial(null);
       resetForm();
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update special';
+      setError(errorMessage);
       console.error('Failed to update special:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
