@@ -8,6 +8,7 @@ import {
   Calendar,
   Image as ImageIcon,
   Settings,
+  FileText,
 } from "lucide-react";
 
 interface SidebarItem {
