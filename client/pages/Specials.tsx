@@ -78,6 +78,18 @@ export default function Specials() {
   const dailySpecials = activeSpecials.filter(special => special.type === "daily");
   const hourlySpecials = activeSpecials.filter(special => special.type === "hourly");
 
+  // Show loading state while data is being fetched
+  if (specialsLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading specials...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <HeaderWithDelivery breadcrumbs={[{ label: "Specials" }]} />
