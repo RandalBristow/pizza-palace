@@ -198,7 +198,7 @@ export default function Specials() {
                           Discount:
                         </span>
                         <span className="text-lg font-bold text-green-600">
-                          {special.discount}
+                          {formatDiscount(special)}
                         </span>
                       </div>
                       <div>
@@ -206,9 +206,7 @@ export default function Specials() {
                           Valid:
                         </span>
                         <span className="text-sm text-green-700 ml-2">
-                          {special.validDates}
-                          {special.id === "s4" &&
-                            (isHappyHour() ? " (Active Now!)" : "")}
+                          {formatValidDates(special)}
                         </span>
                       </div>
                       <div>
@@ -216,7 +214,7 @@ export default function Specials() {
                           Includes:
                         </span>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {special.menuItems.map((item, index) => (
+                          {getMenuItemNames(special).map((item, index) => (
                             <Badge
                               key={index}
                               variant="outline"
