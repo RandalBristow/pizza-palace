@@ -1010,3 +1010,170 @@ export const useSettings = () => {
     refetch: fetchSettings,
   };
 };
+
+export const useAboutSections = () => {
+  const [aboutSections, setAboutSections] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchAboutSections = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.ABOUT_SECTIONS)
+        .select('*')
+        .order('order_num', { ascending: true })
+
+      if (error) throw error
+
+      setAboutSections(data ? data.map(transformAboutSection) : [])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch about sections')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const createAboutSection = async (aboutSection: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.ABOUT_SECTIONS)
+        .insert({
+          type: aboutSection.type,
+          title: aboutSection.title,
+          content: aboutSection.content,
+          image_url: aboutSection.imageUrl,
+          image_alt_text: aboutSection.imageAltText,
+          links: aboutSection.links,
+          text_overlay: aboutSection.textOverlay,
+          order_num: aboutSection.order,
+          is_active: aboutSection.isActive,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      const newAboutSection = transformAboutSection(data)
+      setAboutSections(prev => [...prev, newAboutSection])
+      return newAboutSection
+    } catch (err) {
+      let errorMessage = 'Failed to create about section';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('error' in err && typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if ('details' in err && typeof err.details === 'string') {
+          errorMessage = err.details;
+        } else {
+          errorMessage = `Failed to create about section: ${JSON.stringify(err)}`;
+        }
+      }
+
+      setError(errorMessage)
+      throw err
+    }
+  }
+
+  const updateAboutSection = async (id: string, updates: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.ABOUT_SECTIONS)
+        .update({
+          type: updates.type,
+          title: updates.title,
+          content: updates.content,
+          image_url: updates.imageUrl,
+          image_alt_text: updates.imageAltText,
+          links: updates.links,
+          text_overlay: updates.textOverlay,
+          order_num: updates.order,
+          is_active: updates.isActive,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) throw error
+
+      const updatedAboutSection = transformAboutSection(data)
+      setAboutSections(prev => prev.map(section => section.id === id ? updatedAboutSection : section))
+      return updatedAboutSection
+    } catch (err) {
+      let errorMessage = 'Failed to update about section';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('error' in err && typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if ('details' in err && typeof err.details === 'string') {
+          errorMessage = err.details;
+        } else {
+          errorMessage = `Failed to update about section: ${JSON.stringify(err)}`;
+        }
+      }
+
+      setError(errorMessage)
+      throw err
+    }
+  }
+
+  const deleteAboutSection = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.ABOUT_SECTIONS)
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+
+      setAboutSections(prev => prev.filter(section => section.id !== id))
+    } catch (err) {
+      let errorMessage = 'Failed to delete about section';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('error' in err && typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if ('details' in err && typeof err.details === 'string') {
+          errorMessage = err.details;
+        } else {
+          errorMessage = `Failed to delete about section: ${JSON.stringify(err)}`;
+        }
+      }
+
+      setError(errorMessage)
+      throw err
+    }
+  }
+
+  useEffect(() => {
+    fetchAboutSections()
+  }, [])
+
+  return {
+    aboutSections,
+    loading,
+    error,
+    createAboutSection,
+    updateAboutSection,
+    deleteAboutSection,
+    refetch: fetchAboutSections,
+  }
+};
