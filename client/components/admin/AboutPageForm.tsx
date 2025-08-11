@@ -38,6 +38,7 @@ export interface AboutSection {
   imageAltText?: string;
   links: { text: string; url: string; type: "text" | "image" }[];
   textOverlay?: { text: string; position: "top" | "center" | "bottom"; style?: any };
+  columns: number;
   order: number;
   isActive: boolean;
 }
