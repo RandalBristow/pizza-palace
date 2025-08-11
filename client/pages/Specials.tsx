@@ -41,6 +41,48 @@ const isSpecialActiveToday = (special: any) => {
   return false;
 };
 
+// Helper function to format discount text
+const formatDiscount = (special: any) => {
+  if (special.discountType === "percentage") {
+    return `${special.discountValue}% OFF`;
+  } else if (special.discountType === "flat") {
+    return `$${special.discountValue}`;
+  }
+  return "Special Price";
+};
+
+// Helper function to format valid dates/times
+const formatValidDates = (special: any) => {
+  if (special.type === "daily") {
+    return "Daily Special";
+  }
+
+  if (special.type === "weekly" && special.dayOfWeek !== undefined) {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    return `Every ${days[special.dayOfWeek]}`;
+  }
+
+  if (special.type === "hourly") {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const dayNames = special.daysOfWeek?.map((d: number) => days[d]).join(", ") || "";
+    const timeRange = special.startTime && special.endTime ?
+      `${special.startTime} - ${special.endTime}` : "";
+    return `${dayNames} ${timeRange}`.trim();
+  }
+
+  return `${special.startDate} to ${special.endDate}`;
+};
+
+// Helper function to get menu item names (simplified)
+const getMenuItemNames = (special: any) => {
+  // Since menuItems in the database are just IDs, we'll show a generic label
+  // In a real implementation, you'd map these IDs to actual menu item names
+  if (!special.menuItems || special.menuItems.length === 0) {
+    return ["Selected Items"];
+  }
+  return [`${special.menuItems.length} Menu Items`];
+};
+
 export default function Specials() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const { specials: dbSpecials, loading: specialsLoading } = useSpecials();
