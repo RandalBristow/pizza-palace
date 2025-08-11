@@ -245,19 +245,19 @@ export default function Specials() {
             {weeklySpecials.map((special) => (
               <Card
                 key={special.id}
-                className={`${special.isToday ? "border-blue-200 bg-blue-50" : ""}`}
+                className={`${isSpecialActiveToday(special) ? "border-blue-200 bg-blue-50" : ""}`}
               >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle
-                      className={special.isToday ? "text-blue-800" : ""}
+                      className={isSpecialActiveToday(special) ? "text-blue-800" : ""}
                     >
                       {special.name}
                     </CardTitle>
-                    {special.isToday && <Badge>Today!</Badge>}
+                    {isSpecialActiveToday(special) && <Badge>Today!</Badge>}
                   </div>
                   <CardDescription
-                    className={special.isToday ? "text-blue-700" : ""}
+                    className={isSpecialActiveToday(special) ? "text-blue-700" : ""}
                   >
                     {special.description}
                   </CardDescription>
