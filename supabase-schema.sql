@@ -112,6 +112,22 @@ CREATE TABLE settings (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- About page sections table
+CREATE TABLE about_sections (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  type VARCHAR(20) CHECK (type IN ('text', 'image', 'text_with_image')) NOT NULL,
+  title VARCHAR(255),
+  content TEXT,
+  image_url TEXT,
+  image_alt_text VARCHAR(255),
+  links JSONB DEFAULT '[]', -- Array of {text, url, type: 'text'|'image'}
+  text_overlay JSONB, -- {text, position: 'top'|'center'|'bottom', style}
+  order_num INTEGER DEFAULT 1,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Indexes for better performance
 CREATE INDEX idx_menu_items_category ON menu_items(category_id);
 CREATE INDEX idx_toppings_category ON toppings(category_id);
