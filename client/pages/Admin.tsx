@@ -36,6 +36,7 @@ export default function Admin() {
   const { carouselImages, loading: carouselLoading, createCarouselImage, updateCarouselImage, deleteCarouselImage } = useCarouselImages();
   const { customerFavorites, loading: favoritesLoading, createCustomerFavorite, updateCustomerFavorite, deleteCustomerFavorite } = useCustomerFavorites();
   const { settings, loading: settingsLoading, updateSettings } = useSettings();
+  const { aboutSections, loading: aboutLoading, createAboutSection, updateAboutSection, deleteAboutSection } = useAboutSections();
 
   const [selectedItem, setSelectedItem] = useState("categories");
 
