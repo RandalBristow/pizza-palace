@@ -53,6 +53,11 @@ const sidebarItems: SidebarItem[] = [
     icon: Calendar,
   },
   {
+    id: "about-page",
+    label: "About Page",
+    icon: FileText,
+  },
+  {
     id: "images",
     label: "Images",
     icon: ImageIcon,
