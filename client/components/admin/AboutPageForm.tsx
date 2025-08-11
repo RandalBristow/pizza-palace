@@ -68,6 +68,7 @@ export default function AboutPageForm({
     imageAltText: "",
     links: [],
     textOverlay: undefined,
+    columns: 1,
     order: aboutSections.length + 1,
     isActive: true,
   });
