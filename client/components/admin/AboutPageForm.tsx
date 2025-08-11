@@ -131,7 +131,24 @@ export default function AboutPageForm({
       setEditingSection(null);
       resetForm();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update section';
+      let errorMessage = 'Failed to update section';
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object') {
+        if ('message' in error && typeof error.message === 'string') {
+          errorMessage = error.message;
+        } else if ('error' in error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if ('details' in error && typeof error.details === 'string') {
+          errorMessage = error.details;
+        } else {
+          errorMessage = `Failed to update section: ${JSON.stringify(error)}`;
+        }
+      }
+
       setError(errorMessage);
       console.error('Failed to update section:', error);
     } finally {
