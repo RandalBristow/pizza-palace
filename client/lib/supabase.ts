@@ -125,6 +125,7 @@ export interface DatabaseAboutSection {
   image_alt_text?: string;
   links: { text: string; url: string; type: "text" | "image" }[];
   text_overlay?: { text: string; position: "top" | "center" | "bottom"; style?: any };
+  columns: number;
   order_num: number;
   is_active: boolean;
   created_at: string;
