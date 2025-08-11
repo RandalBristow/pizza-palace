@@ -38,8 +38,8 @@ export default function Menu() {
   const { categories: dbCategories, loading: categoriesLoading } = useCategories();
   const { menuItems: dbMenuItems, loading: menuItemsLoading } = useMenuItems();
 
-  // Use shared categories and filter active ones
-  const categories = mockCategories
+  // Use database categories and filter active ones
+  const categories = dbCategories
     .filter((cat) => cat.isActive)
     .sort((a, b) => a.order - b.order)
     .map((cat) => ({
