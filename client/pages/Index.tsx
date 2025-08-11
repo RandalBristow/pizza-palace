@@ -20,32 +20,9 @@ import {
   Star,
   ShoppingCart,
 } from "lucide-react";
+import { useCarouselImages, useCustomerFavorites } from "../hooks/useSupabase";
 
-// Get carousel images from localStorage or use default
-const getCarouselImages = () => {
-  try {
-    const stored = localStorage.getItem("carouselImages");
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error("Error loading carousel images:", error);
-  }
-
-  // Default carousel data
-  return [
-    {
-      id: "1",
-      url: "https://cdn.builder.io/api/v1/image/assets%2F8595ba96a391483e886f01139655b832%2F3eb3e3851578457ebc6357b42054ea36?format=webp&width=800",
-      title: "Fresh Pizza & Premium Coffee",
-      subtitle: "Made to Order",
-      isActive: true,
-      order: 1,
-    },
-  ];
-};
-
-// Get customer favorites from localStorage or use default
+// Get customer favorites from localStorage or use default (fallback)
 const getCustomerFavorites = () => {
   try {
     const stored = localStorage.getItem("customerFavorites");
