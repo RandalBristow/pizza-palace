@@ -133,6 +133,7 @@ CREATE INDEX idx_menu_items_category ON menu_items(category_id);
 CREATE INDEX idx_toppings_category ON toppings(category_id);
 CREATE INDEX idx_toppings_menu_category ON toppings(menu_item_category_id);
 CREATE INDEX idx_topping_categories_menu_category ON topping_categories(menu_item_category_id);
+CREATE INDEX idx_about_sections_order ON about_sections(order_num);
 CREATE INDEX idx_categories_order ON categories(order_num);
 CREATE INDEX idx_carousel_order ON carousel_images(order_num);
 CREATE INDEX idx_favorites_order ON customer_favorites(order_num);
