@@ -93,6 +93,19 @@ export const transformSettings = (dbSettings: DatabaseSettings) => ({
   businessHours: dbSettings.business_hours,
 });
 
+export const transformAboutSection = (dbAboutSection: DatabaseAboutSection) => ({
+  id: dbAboutSection.id,
+  type: dbAboutSection.type,
+  title: dbAboutSection.title,
+  content: dbAboutSection.content,
+  imageUrl: dbAboutSection.image_url,
+  imageAltText: dbAboutSection.image_alt_text,
+  links: dbAboutSection.links,
+  textOverlay: dbAboutSection.text_overlay,
+  order: dbAboutSection.order_num,
+  isActive: dbAboutSection.is_active,
+});
+
 // Custom hooks for each data type
 export const useCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
