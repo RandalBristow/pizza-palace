@@ -182,9 +182,9 @@ export default function Specials() {
                         {special.name}
                       </CardTitle>
                       <Badge className="bg-green-600">
-                        {special.id === "s4" && isHappyHour()
+                        {special.type === "hourly" && isHappyHour()
                           ? "Active Now!"
-                          : "Today Only"}
+                          : "Available Today"}
                       </Badge>
                     </div>
                     <CardDescription className="text-green-700">
