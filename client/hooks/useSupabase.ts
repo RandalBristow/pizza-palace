@@ -9,6 +9,7 @@ import type {
   DatabaseCarouselImage,
   DatabaseCustomerFavorite,
   DatabaseSettings,
+  DatabaseAboutSection,
 } from "../lib/supabase";
 
 // Transform database objects to frontend format
