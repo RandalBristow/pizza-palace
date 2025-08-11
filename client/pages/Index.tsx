@@ -98,6 +98,7 @@ export default function Index() {
   // Use database data with fallback
   const carouselImages = dbCarouselImages.length > 0 ? dbCarouselImages : [];
   const customerFavorites = dbCustomerFavorites.length > 0 ? dbCustomerFavorites : getCustomerFavorites();
+  const settings = dbSettings || getRestaurantSettings();
 
   // Format business hours for display
   const formatBusinessHours = () => {
