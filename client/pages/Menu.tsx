@@ -19,7 +19,8 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { Pizza, Coffee, Star } from "lucide-react";
-import { mockCategories, mockMenuItems, type MenuItem } from "../data/mockData";
+import { useCategories, useMenuItems } from "../hooks/useSupabase";
+import { type MenuItem } from "../data/mockData";
 
 export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("pizza");
