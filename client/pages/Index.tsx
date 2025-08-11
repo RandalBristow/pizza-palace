@@ -20,7 +20,7 @@ import {
   Star,
   ShoppingCart,
 } from "lucide-react";
-import { useCarouselImages, useCustomerFavorites } from "../hooks/useSupabase";
+import { useCarouselImages, useCustomerFavorites, useSettings } from "../hooks/useSupabase";
 
 // Get customer favorites from localStorage or use default (fallback)
 const getCustomerFavorites = () => {
