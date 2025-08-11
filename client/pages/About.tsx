@@ -8,7 +8,7 @@ export default function About() {
 
   // Helper function to render section content
   const renderSectionContent = (section: any) => {
-    const baseClasses = "mb-8";
+    const baseClasses = "mb-8 -ml-0.5";
 
     switch (section.type) {
       case "text":
