@@ -21,79 +21,25 @@ import {
 } from "lucide-react";
 import { useSpecials } from "../hooks/useSupabase";
 
-interface Special {
-  id: string;
-  name: string;
-  description: string;
-  type: "daily" | "weekly";
-  dayOfWeek?: string;
-  validDates: string;
-  discount: string;
-  menuItems: string[];
-  isActive: boolean;
-  isToday?: boolean;
-}
+// Helper function to check if special is active today
+const isSpecialActiveToday = (special: any) => {
+  const today = new Date();
+  const todayDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
-const mockSpecials: Special[] = [
-  {
-    id: "s1",
-    name: "Pizza Monday",
-    description: "Get 20% off all pizzas every Monday!",
-    type: "weekly",
-    dayOfWeek: "Monday",
-    validDates: "Every Monday",
-    discount: "20% OFF",
-    menuItems: ["All Pizzas"],
-    isActive: true,
-    isToday: new Date().getDay() === 1,
-  },
-  {
-    id: "s2",
-    name: "Coffee & Pizza Combo",
-    description: "Buy any large pizza and get a premium coffee for just $1.99",
-    type: "daily",
-    validDates: "Daily Special",
-    discount: "Special Price",
-    menuItems: ["Large Pizza + Coffee"],
-    isActive: true,
-    isToday: true,
-  },
-  {
-    id: "s3",
-    name: "Weekend Supreme",
-    description: "15% off Supreme and Specialty pizzas on weekends",
-    type: "weekly",
-    dayOfWeek: "Saturday & Sunday",
-    validDates: "Weekends Only",
-    discount: "15% OFF",
-    menuItems: ["Supreme Pizza", "Specialty Pizzas"],
-    isActive: true,
-    isToday: new Date().getDay() === 0 || new Date().getDay() === 6,
-  },
-  {
-    id: "s4",
-    name: "Happy Hour Coffee",
-    description: "Half price on all coffee drinks from 2-4 PM daily",
-    type: "daily",
-    validDates: "2:00 PM - 4:00 PM Daily",
-    discount: "50% OFF",
-    menuItems: ["All Coffee Drinks"],
-    isActive: true,
-    isToday: true,
-  },
-  {
-    id: "s5",
-    name: "Family Night",
-    description: "Buy 2 large pizzas, get the third 50% off (Wednesday only)",
-    type: "weekly",
-    dayOfWeek: "Wednesday",
-    validDates: "Every Wednesday",
-    discount: "50% OFF 3rd Pizza",
-    menuItems: ["Large Pizzas"],
-    isActive: true,
-    isToday: new Date().getDay() === 3,
-  },
-];
+  if (special.type === "daily") {
+    return true; // Daily specials are always active
+  }
+
+  if (special.type === "weekly" && special.dayOfWeek !== undefined) {
+    return todayDay === special.dayOfWeek;
+  }
+
+  if (special.type === "hourly" && special.daysOfWeek) {
+    return special.daysOfWeek.includes(todayDay);
+  }
+
+  return false;
+};
 
 export default function Specials() {
   const [currentTime, setCurrentTime] = useState(new Date());
