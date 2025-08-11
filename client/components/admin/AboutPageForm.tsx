@@ -160,7 +160,24 @@ export default function AboutPageForm({
     try {
       await deleteAboutSection(id);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete section';
+      let errorMessage = 'Failed to delete section';
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object') {
+        if ('message' in error && typeof error.message === 'string') {
+          errorMessage = error.message;
+        } else if ('error' in error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if ('details' in error && typeof error.details === 'string') {
+          errorMessage = error.details;
+        } else {
+          errorMessage = `Failed to delete section: ${JSON.stringify(error)}`;
+        }
+      }
+
       setError(errorMessage);
       console.error('Failed to delete section:', error);
     }
