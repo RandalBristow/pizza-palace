@@ -537,6 +537,9 @@ export default function AboutPageForm({
                     <Badge variant="outline">
                       Order: {section.order}
                     </Badge>
+                    <Badge variant="outline">
+                      {section.columns} Column{section.columns !== 1 ? 's' : ''}
+                    </Badge>
                     <Badge
                       className={
                         section.isActive
