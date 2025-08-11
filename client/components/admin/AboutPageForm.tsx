@@ -1,0 +1,547 @@
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Alert, AlertDescription } from "../ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Image as ImageIcon, Type, FileText } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+
+export interface AboutSection {
+  id: string;
+  type: "text" | "image" | "text_with_image";
+  title?: string;
+  content?: string;
+  imageUrl?: string;
+  imageAltText?: string;
+  links: { text: string; url: string; type: "text" | "image" }[];
+  textOverlay?: { text: string; position: "top" | "center" | "bottom"; style?: any };
+  order: number;
+  isActive: boolean;
+}
+
+interface AboutPageFormProps {
+  aboutSections: AboutSection[];
+  createAboutSection: (section: any) => Promise<any>;
+  updateAboutSection: (id: string, updates: any) => Promise<any>;
+  deleteAboutSection: (id: string) => Promise<void>;
+}
+
+export default function AboutPageForm({
+  aboutSections,
+  createAboutSection,
+  updateAboutSection,
+  deleteAboutSection
+}: AboutPageFormProps) {
+  const [isAddingSection, setIsAddingSection] = useState(false);
+  const [editingSection, setEditingSection] = useState<AboutSection | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [newSection, setNewSection] = useState<Partial<AboutSection>>({
+    type: "text",
+    title: "",
+    content: "",
+    imageUrl: "",
+    imageAltText: "",
+    links: [],
+    textOverlay: undefined,
+    order: aboutSections.length + 1,
+    isActive: true,
+  });
+
+  const handleAddSection = async () => {
+    setError(null);
+    setIsLoading(true);
+    
+    try {
+      await createAboutSection(newSection);
+      setIsAddingSection(false);
+      resetForm();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create section';
+      setError(errorMessage);
+      console.error('Failed to create section:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditSection = (section: AboutSection) => {
+    setEditingSection(section);
+    setNewSection({
+      type: section.type || "text",
+      title: section.title || "",
+      content: section.content || "",
+      imageUrl: section.imageUrl || "",
+      imageAltText: section.imageAltText || "",
+      links: section.links || [],
+      textOverlay: section.textOverlay,
+      order: section.order || 1,
+      isActive: section.isActive ?? true,
+    });
+  };
+
+  const handleUpdateSection = async () => {
+    if (!editingSection) return;
+
+    setError(null);
+    setIsLoading(true);
+    
+    try {
+      await updateAboutSection(editingSection.id, newSection);
+      setEditingSection(null);
+      resetForm();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update section';
+      setError(errorMessage);
+      console.error('Failed to update section:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteSection = async (id: string) => {
+    try {
+      await deleteAboutSection(id);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete section';
+      setError(errorMessage);
+      console.error('Failed to delete section:', error);
+    }
+  };
+
+  const toggleSectionStatus = async (id: string) => {
+    const section = aboutSections.find(s => s.id === id);
+    if (!section) return;
+
+    try {
+      await updateAboutSection(id, { ...section, isActive: !section.isActive });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle section status';
+      setError(errorMessage);
+      console.error('Failed to toggle section status:', error);
+    }
+  };
+
+  const resetForm = () => {
+    setNewSection({
+      type: "text",
+      title: "",
+      content: "",
+      imageUrl: "",
+      imageAltText: "",
+      links: [],
+      textOverlay: undefined,
+      order: aboutSections.length + 1,
+      isActive: true,
+    });
+    setError(null);
+  };
+
+  const addLink = () => {
+    setNewSection({
+      ...newSection,
+      links: [...(newSection.links || []), { text: "", url: "", type: "text" }]
+    });
+  };
+
+  const updateLink = (index: number, field: string, value: string) => {
+    const updatedLinks = [...(newSection.links || [])];
+    updatedLinks[index] = { ...updatedLinks[index], [field]: value };
+    setNewSection({ ...newSection, links: updatedLinks });
+  };
+
+  const removeLink = (index: number) => {
+    const updatedLinks = (newSection.links || []).filter((_, i) => i !== index);
+    setNewSection({ ...newSection, links: updatedLinks });
+  };
+
+  const renderSectionForm = (isEdit: boolean = false) => (
+    <div className="space-y-6 max-h-[80vh] overflow-y-auto">
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <div>
+        <Label htmlFor="sectionType">Section Type</Label>
+        <Select
+          value={newSection.type}
+          onValueChange={(value: any) =>
+            setNewSection({ ...newSection, type: value })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select section type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="text">Text Only</SelectItem>
+            <SelectItem value="image">Image Only</SelectItem>
+            <SelectItem value="text_with_image">Text with Image</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="sectionTitle">Title (optional)</Label>
+        <Input
+          id="sectionTitle"
+          placeholder="Section title"
+          value={newSection.title}
+          onChange={(e) =>
+            setNewSection({ ...newSection, title: e.target.value })
+          }
+        />
+      </div>
+
+      {(newSection.type === "text" || newSection.type === "text_with_image") && (
+        <div>
+          <Label htmlFor="sectionContent">Content</Label>
+          <Textarea
+            id="sectionContent"
+            placeholder="Section content"
+            rows={6}
+            value={newSection.content}
+            onChange={(e) =>
+              setNewSection({ ...newSection, content: e.target.value })
+            }
+          />
+        </div>
+      )}
+
+      {(newSection.type === "image" || newSection.type === "text_with_image") && (
+        <>
+          <div>
+            <Label htmlFor="imageUrl">Image URL</Label>
+            <Input
+              id="imageUrl"
+              placeholder="https://example.com/image.jpg"
+              value={newSection.imageUrl}
+              onChange={(e) =>
+                setNewSection({ ...newSection, imageUrl: e.target.value })
+              }
+            />
+          </div>
+          <div>
+            <Label htmlFor="imageAltText">Image Alt Text</Label>
+            <Input
+              id="imageAltText"
+              placeholder="Description of the image"
+              value={newSection.imageAltText}
+              onChange={(e) =>
+                setNewSection({ ...newSection, imageAltText: e.target.value })
+              }
+            />
+          </div>
+        </>
+      )}
+
+      <div>
+        <Label htmlFor="sectionOrder">Order</Label>
+        <Input
+          id="sectionOrder"
+          type="number"
+          min="1"
+          value={newSection.order}
+          onChange={(e) =>
+            setNewSection({ ...newSection, order: parseInt(e.target.value) || 1 })
+          }
+        />
+      </div>
+
+      {/* Links Section */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label>Links (optional)</Label>
+          <Button type="button" size="sm" onClick={addLink}>
+            <Plus className="h-4 w-4 mr-1" />
+            Add Link
+          </Button>
+        </div>
+        {(newSection.links || []).map((link, index) => (
+          <div key={index} className="space-y-2 p-3 border rounded-md mb-2">
+            <div className="flex items-center space-x-2">
+              <Input
+                placeholder="Link text"
+                value={link.text}
+                onChange={(e) => updateLink(index, "text", e.target.value)}
+                className="flex-1"
+              />
+              <Select
+                value={link.type}
+                onValueChange={(value) => updateLink(index, "type", value)}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="text">Text Link</SelectItem>
+                  <SelectItem value="image">Image Link</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => removeLink(index)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+            <Input
+              placeholder="URL"
+              value={link.url}
+              onChange={(e) => updateLink(index, "url", e.target.value)}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Text Overlay for Image Sections */}
+      {newSection.type === "image" && (
+        <div>
+          <Label>Text Overlay (optional)</Label>
+          <div className="space-y-2">
+            <Input
+              placeholder="Overlay text"
+              value={newSection.textOverlay?.text || ""}
+              onChange={(e) =>
+                setNewSection({
+                  ...newSection,
+                  textOverlay: {
+                    ...newSection.textOverlay,
+                    text: e.target.value,
+                    position: newSection.textOverlay?.position || "center"
+                  }
+                })
+              }
+            />
+            <Select
+              value={newSection.textOverlay?.position || "center"}
+              onValueChange={(value: any) =>
+                setNewSection({
+                  ...newSection,
+                  textOverlay: {
+                    ...newSection.textOverlay,
+                    text: newSection.textOverlay?.text || "",
+                    position: value
+                  }
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Overlay position" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="top">Top</SelectItem>
+                <SelectItem value="center">Center</SelectItem>
+                <SelectItem value="bottom">Bottom</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-end space-x-2 pt-4">
+        <Button
+          variant="outline"
+          onClick={() => {
+            if (isEdit) {
+              setEditingSection(null);
+            } else {
+              setIsAddingSection(false);
+            }
+            resetForm();
+          }}
+          disabled={isLoading}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={isEdit ? handleUpdateSection : handleAddSection}
+          disabled={isLoading}
+        >
+          <Save className="h-4 w-4 mr-2" />
+          {isLoading ? "Saving..." : (isEdit ? "Update Section" : "Save Section")}
+        </Button>
+      </div>
+    </div>
+  );
+
+  const getSectionIcon = (type: string) => {
+    switch (type) {
+      case "text": return <Type className="h-4 w-4" />;
+      case "image": return <ImageIcon className="h-4 w-4" />;
+      case "text_with_image": return <FileText className="h-4 w-4" />;
+      default: return <Type className="h-4 w-4" />;
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">About Page Sections</h2>
+        <Dialog open={isAddingSection} onOpenChange={setIsAddingSection}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Section
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Add New Section</DialogTitle>
+              <DialogDescription>
+                Create a new section for the about page with text, images, and links
+              </DialogDescription>
+            </DialogHeader>
+            {renderSectionForm(false)}
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <div className="grid gap-4">
+        {aboutSections
+          .sort((a, b) => a.order - b.order)
+          .map((section) => (
+          <Card key={section.id}>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-2">
+                    {getSectionIcon(section.type)}
+                    <h3 className="font-semibold">
+                      {section.title || `${section.type} Section`}
+                    </h3>
+                    <Badge variant="outline">
+                      Order: {section.order}
+                    </Badge>
+                    <Badge
+                      className={
+                        section.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
+                    >
+                      {section.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                  {section.content && (
+                    <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                      {section.content}
+                    </p>
+                  )}
+                  {section.imageUrl && (
+                    <div className="text-xs text-gray-500 mb-2">
+                      Image: {section.imageUrl}
+                    </div>
+                  )}
+                  {section.links && section.links.length > 0 && (
+                    <div className="text-xs text-gray-500">
+                      Links: {section.links.length}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col items-center space-y-1">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleSectionStatus(section.id)}
+                        >
+                          {section.isActive ? (
+                            <ThumbsUp className="h-4 w-4" />
+                          ) : (
+                            <ThumbsDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {section.isActive ? "Deactivate" : "Activate"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditSection(section)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Edit Section</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteSection(section.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Delete Section</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Edit Section Dialog */}
+      <Dialog
+        open={editingSection !== null}
+        onOpenChange={(open) => !open && setEditingSection(null)}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Section</DialogTitle>
+            <DialogDescription>
+              Update the section details and settings
+            </DialogDescription>
+          </DialogHeader>
+          {renderSectionForm(true)}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
