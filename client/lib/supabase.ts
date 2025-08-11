@@ -115,3 +115,18 @@ export interface DatabaseSettings {
   created_at: string;
   updated_at: string;
 }
+
+export interface DatabaseAboutSection {
+  id: string;
+  type: "text" | "image" | "text_with_image";
+  title?: string;
+  content?: string;
+  image_url?: string;
+  image_alt_text?: string;
+  links: { text: string; url: string; type: "text" | "image" }[];
+  text_overlay?: { text: string; position: "top" | "center" | "bottom"; style?: any };
+  order_num: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
