@@ -19,6 +19,7 @@ import {
   Percent,
   Star,
 } from "lucide-react";
+import { useSpecials } from "../hooks/useSupabase";
 
 interface Special {
   id: string;
