@@ -49,7 +49,7 @@ export default function Menu() {
     }));
 
   // Filter menu items by category and only show active items
-  const filteredItems = mockMenuItems.filter(
+  const filteredItems = dbMenuItems.filter(
     (item) => item.category === selectedCategory && item.isActive,
   );
 
