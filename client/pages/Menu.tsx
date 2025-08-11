@@ -34,6 +34,10 @@ export default function Menu() {
     useOrder();
   const navigate = useNavigate();
 
+  // Load data from database
+  const { categories: dbCategories, loading: categoriesLoading } = useCategories();
+  const { menuItems: dbMenuItems, loading: menuItemsLoading } = useMenuItems();
+
   // Use shared categories and filter active ones
   const categories = mockCategories
     .filter((cat) => cat.isActive)
