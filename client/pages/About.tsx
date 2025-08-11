@@ -147,7 +147,7 @@ export default function About() {
     <div className="min-h-screen bg-gray-50">
       <HeaderWithDelivery breadcrumbs={[{ label: "About" }]} />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-6xl mx-auto px-1 py-8">
         {/* Default header if no sections exist */}
         {activeSections.length === 0 && (
           <section className="text-center mb-12">
