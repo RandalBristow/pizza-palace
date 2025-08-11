@@ -267,19 +267,19 @@ export default function Specials() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Discount:</span>
                       <span className="text-lg font-bold text-red-600">
-                        {special.discount}
+                        {formatDiscount(special)}
                       </span>
                     </div>
                     <div>
                       <span className="text-sm font-medium">When:</span>
                       <span className="text-sm text-gray-600 ml-2">
-                        {special.dayOfWeek}
+                        {formatValidDates(special)}
                       </span>
                     </div>
                     <div>
                       <span className="text-sm font-medium">Includes:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {special.menuItems.map((item, index) => (
+                        {getMenuItemNames(special).map((item, index) => (
                           <Badge
                             key={index}
                             variant="outline"
