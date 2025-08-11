@@ -103,6 +103,7 @@ export const transformAboutSection = (dbAboutSection: DatabaseAboutSection) => (
   imageAltText: dbAboutSection.image_alt_text,
   links: dbAboutSection.links,
   textOverlay: dbAboutSection.text_overlay,
+  columns: dbAboutSection.columns,
   order: dbAboutSection.order_num,
   isActive: dbAboutSection.is_active,
 });
