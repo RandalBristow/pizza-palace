@@ -93,7 +93,7 @@ export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
   const { carouselImages: dbCarouselImages, loading: carouselLoading } = useCarouselImages();
   const { customerFavorites: dbCustomerFavorites, loading: favoritesLoading } = useCustomerFavorites();
-  const [settings, setSettings] = useState(getRestaurantSettings());
+  const { settings: dbSettings, loading: settingsLoading } = useSettings();
 
   // Use database data with fallback
   const carouselImages = dbCarouselImages.length > 0 ? dbCarouselImages : [];
