@@ -1046,6 +1046,7 @@ export const useAboutSections = () => {
           image_alt_text: aboutSection.imageAltText,
           links: aboutSection.links,
           text_overlay: aboutSection.textOverlay,
+          columns: aboutSection.columns,
           order_num: aboutSection.order,
           is_active: aboutSection.isActive,
         })
