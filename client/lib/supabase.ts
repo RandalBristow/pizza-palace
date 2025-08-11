@@ -17,6 +17,7 @@ export const TABLES = {
   CAROUSEL_IMAGES: "carousel_images",
   CUSTOMER_FAVORITES: "customer_favorites",
   SETTINGS: "settings",
+  ABOUT_SECTIONS: "about_sections",
 } as const;
 
 // Type definitions for Supabase tables
