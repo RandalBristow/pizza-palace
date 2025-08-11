@@ -74,13 +74,30 @@ export default function AboutPageForm({
   const handleAddSection = async () => {
     setError(null);
     setIsLoading(true);
-    
+
     try {
       await createAboutSection(newSection);
       setIsAddingSection(false);
       resetForm();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create section';
+      let errorMessage = 'Failed to create section';
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object') {
+        if ('message' in error && typeof error.message === 'string') {
+          errorMessage = error.message;
+        } else if ('error' in error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if ('details' in error && typeof error.details === 'string') {
+          errorMessage = error.details;
+        } else {
+          errorMessage = `Failed to create section: ${JSON.stringify(error)}`;
+        }
+      }
+
       setError(errorMessage);
       console.error('Failed to create section:', error);
     } finally {
@@ -108,7 +125,7 @@ export default function AboutPageForm({
 
     setError(null);
     setIsLoading(true);
-    
+
     try {
       await updateAboutSection(editingSection.id, newSection);
       setEditingSection(null);
@@ -380,7 +397,7 @@ export default function AboutPageForm({
         >
           Cancel
         </Button>
-        <Button 
+        <Button
           onClick={isEdit ? handleUpdateSection : handleAddSection}
           disabled={isLoading}
         >
