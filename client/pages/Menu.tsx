@@ -23,7 +23,7 @@ import { useCategories, useMenuItems } from "../hooks/useSupabase";
 import { type MenuItem } from "../data/mockData";
 
 export default function Menu() {
-  const [selectedCategory, setSelectedCategory] = useState("pizza");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [cart, setCart] = useState<any[]>([]);
   const [showDeliverySelection, setShowDeliverySelection] = useState(false);
   const [pendingAction, setPendingAction] = useState<{
