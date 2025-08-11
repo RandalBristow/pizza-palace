@@ -1,24 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import {
-  Pizza,
-  Coffee,
-  ArrowLeft,
-  MapPin,
-  Phone,
-  Clock,
-  Heart,
-  Users,
-  Award,
-} from "lucide-react";
+import { useAboutSections } from "../hooks/useSupabase";
 
 export default function About() {
   return (
