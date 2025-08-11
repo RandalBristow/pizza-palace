@@ -1094,6 +1094,7 @@ export const useAboutSections = () => {
           image_alt_text: updates.imageAltText,
           links: updates.links,
           text_overlay: updates.textOverlay,
+          columns: updates.columns,
           order_num: updates.order,
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
