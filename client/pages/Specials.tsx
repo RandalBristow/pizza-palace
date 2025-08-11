@@ -43,6 +43,7 @@ const isSpecialActiveToday = (special: any) => {
 
 export default function Specials() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { specials: dbSpecials, loading: specialsLoading } = useSpecials();
 
   useEffect(() => {
     const timer = setInterval(() => {
