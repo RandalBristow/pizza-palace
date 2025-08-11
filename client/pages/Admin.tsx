@@ -190,6 +190,15 @@ export default function Admin() {
             deleteSpecial={deleteSpecial}
           />
         );
+      case "about-page":
+        return (
+          <AboutPageForm
+            aboutSections={aboutSections}
+            createAboutSection={createAboutSection}
+            updateAboutSection={updateAboutSection}
+            deleteAboutSection={deleteAboutSection}
+          />
+        );
       case "carousel-images":
         return (
           <CarouselForm
