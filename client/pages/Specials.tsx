@@ -71,13 +71,12 @@ export default function Specials() {
     return days[dayNum];
   };
 
-  const todaysSpecials = mockSpecials.filter((special) => special.isToday);
-  const weeklySpecials = mockSpecials.filter(
-    (special) => special.type === "weekly",
-  );
-  const dailySpecials = mockSpecials.filter(
-    (special) => special.type === "daily",
-  );
+  // Filter active specials from database
+  const activeSpecials = dbSpecials.filter(special => special.isActive);
+  const todaysSpecials = activeSpecials.filter(special => isSpecialActiveToday(special));
+  const weeklySpecials = activeSpecials.filter(special => special.type === "weekly");
+  const dailySpecials = activeSpecials.filter(special => special.type === "daily");
+  const hourlySpecials = activeSpecials.filter(special => special.type === "hourly");
 
   return (
     <div className="min-h-screen bg-gray-50">
