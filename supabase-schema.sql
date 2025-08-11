@@ -122,6 +122,7 @@ CREATE TABLE about_sections (
   image_alt_text VARCHAR(255),
   links JSONB DEFAULT '[]', -- Array of {text, url, type: 'text'|'image'}
   text_overlay JSONB, -- {text, position: 'top'|'center'|'bottom', style}
+  columns INTEGER DEFAULT 1 CHECK (columns IN (1, 2, 3)), -- Column span (1-3)
   order_num INTEGER DEFAULT 1,
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
