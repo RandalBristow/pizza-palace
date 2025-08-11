@@ -47,7 +47,7 @@ export default function Admin() {
   // Show loading state while data is being fetched
   const isLoading = categoriesLoading || menuItemsLoading || toppingsLoading ||
                    toppingCategoriesLoading || specialsLoading || carouselLoading ||
-                   favoritesLoading || settingsLoading;
+                   favoritesLoading || settingsLoading || aboutLoading;
 
   if (isLoading) {
     return (
