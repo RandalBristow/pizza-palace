@@ -91,11 +91,13 @@ const getRestaurantSettings = () => {
 
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [carouselImages, setCarouselImages] = useState(getCarouselImages());
-  const [customerFavorites, setCustomerFavorites] = useState(
-    getCustomerFavorites(),
-  );
+  const { carouselImages: dbCarouselImages, loading: carouselLoading } = useCarouselImages();
+  const { customerFavorites: dbCustomerFavorites, loading: favoritesLoading } = useCustomerFavorites();
   const [settings, setSettings] = useState(getRestaurantSettings());
+
+  // Use database data with fallback
+  const carouselImages = dbCarouselImages.length > 0 ? dbCarouselImages : [];
+  const customerFavorites = dbCustomerFavorites.length > 0 ? dbCustomerFavorites : getCustomerFavorites();
 
   // Format business hours for display
   const formatBusinessHours = () => {
