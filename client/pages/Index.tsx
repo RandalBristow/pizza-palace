@@ -136,22 +136,6 @@ export default function Index() {
 
   useEffect(() => {
     setIsLoaded(true);
-
-    // Listen for updates from admin
-    const handleStorageChange = () => {
-      setCarouselImages(getCarouselImages());
-      setCustomerFavorites(getCustomerFavorites());
-      setSettings(getRestaurantSettings());
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    // Also check for updates every few seconds in case of same-tab updates
-    const interval = setInterval(handleStorageChange, 2000);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      clearInterval(interval);
-    };
   }, []);
 
   return (
