@@ -117,6 +117,7 @@ export default function AboutPageForm({
       imageAltText: section.imageAltText || "",
       links: section.links || [],
       textOverlay: section.textOverlay,
+      columns: section.columns || 1,
       order: section.order || 1,
       isActive: section.isActive ?? true,
     });
