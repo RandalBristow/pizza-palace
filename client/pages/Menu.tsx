@@ -38,6 +38,16 @@ export default function Menu() {
   const { categories: dbCategories, loading: categoriesLoading } = useCategories();
   const { menuItems: dbMenuItems, loading: menuItemsLoading } = useMenuItems();
 
+  // Set initial category when data loads
+  useEffect(() => {
+    if (!categoriesLoading && dbCategories.length > 0 && !selectedCategory) {
+      const firstActiveCategory = dbCategories.find(cat => cat.isActive);
+      if (firstActiveCategory) {
+        setSelectedCategory(firstActiveCategory.id);
+      }
+    }
+  }, [dbCategories, categoriesLoading, selectedCategory]);
+
   // Use database categories and filter active ones
   const categories = dbCategories
     .filter((cat) => cat.isActive)
