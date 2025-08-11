@@ -331,17 +331,37 @@ export default function AboutPageForm({
         </>
       )}
 
-      <div>
-        <Label htmlFor="sectionOrder">Order</Label>
-        <Input
-          id="sectionOrder"
-          type="number"
-          min="1"
-          value={newSection.order}
-          onChange={(e) =>
-            setNewSection({ ...newSection, order: parseInt(e.target.value) || 1 })
-          }
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="sectionColumns">Column Span</Label>
+          <Select
+            value={newSection.columns?.toString() || "1"}
+            onValueChange={(value) =>
+              setNewSection({ ...newSection, columns: parseInt(value) })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select column span" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">1 Column (1/3 width)</SelectItem>
+              <SelectItem value="2">2 Columns (2/3 width)</SelectItem>
+              <SelectItem value="3">3 Columns (Full width)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="sectionOrder">Order</Label>
+          <Input
+            id="sectionOrder"
+            type="number"
+            min="1"
+            value={newSection.order}
+            onChange={(e) =>
+              setNewSection({ ...newSection, order: parseInt(e.target.value) || 1 })
+            }
+          />
+        </div>
       </div>
 
       {/* Links Section */}
