@@ -117,6 +117,7 @@ export default function AboutPageForm({
       content: section.content || "",
       imageUrl: section.imageUrl || "",
       imageAltText: section.imageAltText || "",
+      imagePosition: section.imagePosition || "right",
       links: section.links || [],
       textOverlay: section.textOverlay,
       columns: section.columns || 1,
