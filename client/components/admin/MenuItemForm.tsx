@@ -100,6 +100,7 @@ export default function MenuItemForm({
     description: "",
     price: 0,
     category: "",
+    imageId: undefined,
     defaultToppings: [],
     isActive: true,
   });
@@ -109,13 +110,17 @@ export default function MenuItemForm({
 
   const handleAddMenuItem = async () => {
     try {
-      await createMenuItem(newMenuItem);
+      await createMenuItem({
+        ...newMenuItem,
+        imageId: selectedImageId,
+      });
       setIsAddingMenuItem(false);
       setNewMenuItem({
         name: "",
         description: "",
         price: 0,
         category: "",
+        imageId: undefined,
         defaultToppings: [],
         isActive: true,
       });
