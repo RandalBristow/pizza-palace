@@ -77,6 +77,7 @@ export default function AboutPageForm({
     order: aboutSections.length + 1,
     isActive: true,
   });
+  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(undefined);
 
   const handleAddSection = async () => {
     setError(null);
