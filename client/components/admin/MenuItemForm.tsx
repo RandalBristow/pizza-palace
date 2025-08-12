@@ -138,20 +138,22 @@ export default function MenuItemForm({
       description: menuItem.description || "",
       price: menuItem.price || 0,
       category: menuItem.category || "",
+      imageId: menuItem.imageId,
       defaultToppings: menuItem.defaultToppings || [],
       isActive: menuItem.isActive ?? true,
     });
 
-    // Find the image ID from the URL
-    const selectedImage = images.find((img) => img.url === menuItem.image);
-    setSelectedImageId(selectedImage?.id);
+    setSelectedImageId(menuItem.imageId);
   };
 
   const handleUpdateMenuItem = async () => {
     if (!editingMenuItem) return;
 
     try {
-      await updateMenuItem(editingMenuItem.id, newMenuItem);
+      await updateMenuItem(editingMenuItem.id, {
+        ...newMenuItem,
+        imageId: selectedImageId,
+      });
       setEditingMenuItem(null);
       setNewMenuItem({
         name: "",
