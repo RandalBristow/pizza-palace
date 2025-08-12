@@ -63,6 +63,7 @@ export default function AboutPageForm({
   const [editingSection, setEditingSection] = useState<AboutSection | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { images } = useImages();
   const [newSection, setNewSection] = useState<Partial<AboutSection>>({
     type: "text",
     title: "",
