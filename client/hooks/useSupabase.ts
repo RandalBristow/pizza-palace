@@ -1196,3 +1196,168 @@ export const useAboutSections = () => {
     refetch: fetchAboutSections,
   }
 };
+
+export const useImages = () => {
+  const [images, setImages] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchImages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.IMAGES)
+        .select('*')
+        .order('name', { ascending: true })
+
+      if (error) throw error
+
+      setImages(data ? data.map(transformImage) : [])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch images')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const createImage = async (image: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.IMAGES)
+        .insert({
+          name: image.name,
+          url: image.url,
+          alt_text: image.altText,
+          file_size: image.fileSize,
+          width: image.width,
+          height: image.height,
+          mime_type: image.mimeType,
+          is_active: image.isActive,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      const newImage = transformImage(data)
+      setImages(prev => [...prev, newImage])
+      return newImage
+    } catch (err) {
+      let errorMessage = 'Failed to create image';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('error' in err && typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if ('details' in err && typeof err.details === 'string') {
+          errorMessage = err.details;
+        } else {
+          errorMessage = `Failed to create image: ${JSON.stringify(err)}`;
+        }
+      }
+
+      setError(errorMessage)
+      throw err
+    }
+  }
+
+  const updateImage = async (id: string, updates: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.IMAGES)
+        .update({
+          name: updates.name,
+          url: updates.url,
+          alt_text: updates.altText,
+          file_size: updates.fileSize,
+          width: updates.width,
+          height: updates.height,
+          mime_type: updates.mimeType,
+          is_active: updates.isActive,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) throw error
+
+      const updatedImage = transformImage(data)
+      setImages(prev => prev.map(img => img.id === id ? updatedImage : img))
+      return updatedImage
+    } catch (err) {
+      let errorMessage = 'Failed to update image';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('error' in err && typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if ('details' in err && typeof err.details === 'string') {
+          errorMessage = err.details;
+        } else {
+          errorMessage = `Failed to update image: ${JSON.stringify(err)}`;
+        }
+      }
+
+      setError(errorMessage)
+      throw err
+    }
+  }
+
+  const deleteImage = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.IMAGES)
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+
+      setImages(prev => prev.filter(img => img.id !== id))
+    } catch (err) {
+      let errorMessage = 'Failed to delete image';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('error' in err && typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if ('details' in err && typeof err.details === 'string') {
+          errorMessage = err.details;
+        } else {
+          errorMessage = `Failed to delete image: ${JSON.stringify(err)}`;
+        }
+      }
+
+      setError(errorMessage)
+      throw err
+    }
+  }
+
+  useEffect(() => {
+    fetchImages()
+  }, [])
+
+  return {
+    images,
+    loading,
+    error,
+    createImage,
+    updateImage,
+    deleteImage,
+    refetch: fetchImages,
+  }
+};
