@@ -160,6 +160,7 @@ export default function MenuItemForm({
         description: "",
         price: 0,
         category: "",
+        imageId: undefined,
         defaultToppings: [],
         isActive: true,
       });
