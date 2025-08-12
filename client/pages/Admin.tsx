@@ -206,7 +206,8 @@ export default function Admin() {
         return (
           <ImageManagerForm
             images={images}
-            createImage={createImage}
+            uploadImageFile={uploadImageFile}
+            createImageFromUrl={createImageFromUrl}
             updateImage={updateImage}
             deleteImage={deleteImage}
           />
