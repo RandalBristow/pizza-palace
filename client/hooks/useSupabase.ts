@@ -1058,6 +1058,7 @@ export const useAboutSections = () => {
           content: aboutSection.content,
           image_url: aboutSection.imageUrl,
           image_alt_text: aboutSection.imageAltText,
+          image_position: aboutSection.imagePosition,
           links: aboutSection.links,
           text_overlay: aboutSection.textOverlay,
           columns: aboutSection.columns,
