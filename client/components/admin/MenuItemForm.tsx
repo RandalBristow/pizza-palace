@@ -116,6 +116,7 @@ export default function MenuItemForm({
         defaultToppings: [],
         isActive: true,
       });
+      setSelectedImageId(undefined);
     } catch (error) {
       console.error('Failed to create menu item:', error);
     }
