@@ -83,6 +83,10 @@ export default function CarouselForm({
       order: carouselImage.order || 1,
       isActive: carouselImage.isActive ?? true,
     });
+
+    // Find the image ID from the URL
+    const selectedImage = images.find(img => img.url === carouselImage.url);
+    setSelectedImageId(selectedImage?.id);
   };
 
   const handleUpdateCarouselImage = async () => {
