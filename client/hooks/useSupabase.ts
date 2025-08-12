@@ -272,6 +272,7 @@ export const useMenuItems = () => {
           description: menuItem.description,
           price: menuItem.price,
           category_id: menuItem.category,
+          image_id: menuItem.imageId,
           default_toppings: menuItem.defaultToppings,
           is_active: menuItem.isActive,
         })
