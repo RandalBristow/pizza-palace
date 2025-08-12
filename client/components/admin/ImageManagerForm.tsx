@@ -222,6 +222,8 @@ export default function ImageManagerForm({
       altText: "",
       isActive: true,
     });
+    setSelectedFile(null);
+    setUploadType("file");
     setError(null);
   };
 
