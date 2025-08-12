@@ -295,7 +295,7 @@ export default function ImageManagerForm({
           <Input
             id="imageUrl"
             placeholder="https://example.com/image.jpg"
-            value={newImage.url}
+            value={newImage.url || ""}
             onChange={(e) =>
               setNewImage({ ...newImage, url: e.target.value })
             }
