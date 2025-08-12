@@ -128,6 +128,7 @@ export default function CarouselForm({
       order: 1,
       isActive: true,
     });
+    setSelectedImageId(undefined);
   };
 
   return (
