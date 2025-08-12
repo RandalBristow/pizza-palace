@@ -250,7 +250,7 @@ export default function ImageManagerForm({
 
       <div>
         <Label htmlFor="uploadType">Upload Method</Label>
-        <Select value={uploadType} onValueChange={(value: any) => setUploadType(value)}>
+        <Select value={uploadType} onValueChange={(value: "file" | "url") => setUploadType(value || "file")}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -395,7 +395,7 @@ export default function ImageManagerForm({
         </div>
         <div className="flex items-center space-x-2">
           <Label>Thumbnail Size:</Label>
-          <Select value={thumbnailSize} onValueChange={(value: any) => setThumbnailSize(value)}>
+          <Select value={thumbnailSize} onValueChange={(value: "small" | "medium" | "large") => setThumbnailSize(value || "medium")}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
