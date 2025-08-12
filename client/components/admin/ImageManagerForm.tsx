@@ -62,6 +62,8 @@ export default function ImageManagerForm({
   const [isLoading, setIsLoading] = useState(false);
   const [searchFilter, setSearchFilter] = useState("");
   const [thumbnailSize, setThumbnailSize] = useState<"small" | "medium" | "large">("medium");
+  const [uploadType, setUploadType] = useState<"file" | "url">("file");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [newImage, setNewImage] = useState<Partial<Image>>({
     name: "",
     url: "",
