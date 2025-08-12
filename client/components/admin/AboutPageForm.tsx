@@ -128,6 +128,10 @@ export default function AboutPageForm({
       order: section.order || 1,
       isActive: section.isActive ?? true,
     });
+
+    // Find the image ID from the URL
+    const selectedImage = images.find(img => img.url === section.imageUrl);
+    setSelectedImageId(selectedImage?.id);
   };
 
   const handleUpdateSection = async () => {
