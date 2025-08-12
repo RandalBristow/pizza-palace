@@ -277,6 +277,7 @@ export default function ImageManagerForm({
         <div>
           <Label htmlFor="imageFile">Select Image File *</Label>
           <Input
+            key={`file-input-${isAddingImage ? 'add' : editingImage?.id || 'edit'}`}
             id="imageFile"
             type="file"
             accept="image/*"
