@@ -54,6 +54,7 @@ export default function CarouselForm({
   const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
   const [editingCarouselImage, setEditingCarouselImage] =
     useState<CarouselImage | null>(null);
+  const { images } = useImages();
   const [newCarouselImage, setNewCarouselImage] = useState({
     url: "",
     title: "",
