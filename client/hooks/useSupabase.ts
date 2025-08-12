@@ -95,6 +95,18 @@ export const transformSettings = (dbSettings: DatabaseSettings) => ({
   businessHours: dbSettings.business_hours,
 });
 
+export const transformImage = (dbImage: DatabaseImage) => ({
+  id: dbImage.id,
+  name: dbImage.name,
+  url: dbImage.url,
+  altText: dbImage.alt_text,
+  fileSize: dbImage.file_size,
+  width: dbImage.width,
+  height: dbImage.height,
+  mimeType: dbImage.mime_type,
+  isActive: dbImage.is_active,
+});
+
 export const transformAboutSection = (dbAboutSection: DatabaseAboutSection) => ({
   id: dbAboutSection.id,
   type: dbAboutSection.type,
@@ -102,6 +114,7 @@ export const transformAboutSection = (dbAboutSection: DatabaseAboutSection) => (
   content: dbAboutSection.content,
   imageUrl: dbAboutSection.image_url,
   imageAltText: dbAboutSection.image_alt_text,
+  imagePosition: dbAboutSection.image_position,
   links: dbAboutSection.links,
   textOverlay: dbAboutSection.text_overlay,
   columns: dbAboutSection.columns,
