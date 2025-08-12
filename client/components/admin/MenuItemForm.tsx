@@ -132,6 +132,10 @@ export default function MenuItemForm({
       defaultToppings: menuItem.defaultToppings || [],
       isActive: menuItem.isActive ?? true,
     });
+
+    // Find the image ID from the URL
+    const selectedImage = images.find(img => img.url === menuItem.image);
+    setSelectedImageId(selectedImage?.id);
   };
 
   const handleUpdateMenuItem = async () => {
