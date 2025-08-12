@@ -795,6 +795,7 @@ export const useCarouselImages = () => {
           url: carouselImage.url,
           title: carouselImage.title,
           subtitle: carouselImage.subtitle,
+          image_id: carouselImage.imageId,
           order_num: carouselImage.order,
           is_active: carouselImage.isActive,
         })
