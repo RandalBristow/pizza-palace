@@ -148,20 +148,21 @@ export default function CarouselForm({
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="imageUrl">Image URL</Label>
-                <Input
-                  id="imageUrl"
-                  placeholder="https://example.com/image.jpg"
-                  value={newCarouselImage.url}
-                  onChange={(e) =>
-                    setNewCarouselImage({
-                      ...newCarouselImage,
-                      url: e.target.value,
-                    })
-                  }
-                />
-              </div>
+              <ImageSelector
+                images={images}
+                selectedImageId={selectedImageId}
+                onImageSelect={(imageId, imageUrl) => {
+                  setSelectedImageId(imageId);
+                  setNewCarouselImage({
+                    ...newCarouselImage,
+                    url: imageUrl || ""
+                  });
+                }}
+                label="Carousel Image"
+                placeholder="Select an image..."
+                required={true}
+                showPreview={true}
+              />
               <div>
                 <Label htmlFor="imageTitle">Title</Label>
                 <Input
