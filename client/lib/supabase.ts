@@ -117,6 +117,20 @@ export interface DatabaseSettings {
   updated_at: string;
 }
 
+export interface DatabaseImage {
+  id: string;
+  name: string;
+  url: string;
+  alt_text?: string;
+  file_size?: number;
+  width?: number;
+  height?: number;
+  mime_type?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DatabaseAboutSection {
   id: string;
   type: "text" | "image" | "text_with_image";
@@ -124,6 +138,7 @@ export interface DatabaseAboutSection {
   content?: string;
   image_url?: string;
   image_alt_text?: string;
+  image_position?: "left" | "right";
   links: { text: string; url: string; type: "text" | "image" }[];
   text_overlay?: { text: string; position: "top" | "center" | "bottom"; style?: any };
   columns: number;
