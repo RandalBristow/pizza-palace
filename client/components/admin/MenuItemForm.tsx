@@ -102,6 +102,7 @@ export default function MenuItemForm({
     defaultToppings: [],
     isActive: true,
   });
+  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(undefined);
 
   const handleAddMenuItem = async () => {
     try {
