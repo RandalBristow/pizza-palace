@@ -332,6 +332,25 @@ export default function AboutPageForm({
               }
             />
           </div>
+          {newSection.type === "text_with_image" && (
+            <div>
+              <Label htmlFor="imagePosition">Image Position</Label>
+              <Select
+                value={newSection.imagePosition || "right"}
+                onValueChange={(value: any) =>
+                  setNewSection({ ...newSection, imagePosition: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select image position" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="left">Left of text</SelectItem>
+                  <SelectItem value="right">Right of text</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </>
       )}
 
