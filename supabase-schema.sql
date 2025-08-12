@@ -112,6 +112,21 @@ CREATE TABLE settings (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Images table for centralized image management
+CREATE TABLE images (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(255) NOT NULL,
+  url TEXT NOT NULL,
+  alt_text VARCHAR(255),
+  file_size INTEGER, -- Size in bytes
+  width INTEGER,
+  height INTEGER,
+  mime_type VARCHAR(100),
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- About page sections table
 CREATE TABLE about_sections (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -120,6 +135,7 @@ CREATE TABLE about_sections (
   content TEXT,
   image_url TEXT,
   image_alt_text VARCHAR(255),
+  image_position VARCHAR(10) CHECK (image_position IN ('left', 'right')) DEFAULT 'right', -- For text_with_image sections
   links JSONB DEFAULT '[]', -- Array of {text, url, type: 'text'|'image'}
   text_overlay JSONB, -- {text, position: 'top'|'center'|'bottom', style}
   columns INTEGER DEFAULT 1 CHECK (columns IN (1, 2, 3)), -- Column span (1-3)
