@@ -1220,19 +1220,36 @@ export const useImages = () => {
     }
   }
 
-  const createImage = async (image: any) => {
+  const uploadImageFile = async (file: File, name: string) => {
     try {
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+      const filePath = `images/${fileName}`
+
+      // Upload file to Supabase storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath)
+
+      // Insert image metadata
       const { data, error } = await supabase
         .from(TABLES.IMAGES)
         .insert({
-          name: image.name,
-          url: image.url,
-          alt_text: image.altText,
-          file_size: image.fileSize,
-          width: image.width,
-          height: image.height,
-          mime_type: image.mimeType,
-          is_active: image.isActive,
+          name: name,
+          storage_path: filePath,
+          public_url: urlData.publicUrl,
+          alt_text: name,
+          file_size: file.size,
+          mime_type: file.type,
+          is_active: true,
         })
         .select()
         .single()
@@ -1243,7 +1260,7 @@ export const useImages = () => {
       setImages(prev => [...prev, newImage])
       return newImage
     } catch (err) {
-      let errorMessage = 'Failed to create image';
+      let errorMessage = 'Failed to upload image';
 
       if (err instanceof Error) {
         errorMessage = err.message;
@@ -1257,7 +1274,51 @@ export const useImages = () => {
         } else if ('details' in err && typeof err.details === 'string') {
           errorMessage = err.details;
         } else {
-          errorMessage = `Failed to create image: ${JSON.stringify(err)}`;
+          errorMessage = `Failed to upload image: ${JSON.stringify(err)}`;
+        }
+      }
+
+      setError(errorMessage)
+      throw err
+    }
+  }
+
+  const createImageFromUrl = async (imageUrl: string, name: string, altText?: string) => {
+    try {
+      // For URL-based images, we still store the URL as both storage_path and public_url
+      const { data, error } = await supabase
+        .from(TABLES.IMAGES)
+        .insert({
+          name: name,
+          storage_path: imageUrl, // For external URLs, we store the URL itself
+          public_url: imageUrl,
+          alt_text: altText || name,
+          is_active: true,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      const newImage = transformImage(data)
+      setImages(prev => [...prev, newImage])
+      return newImage
+    } catch (err) {
+      let errorMessage = 'Failed to create image from URL';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err && typeof err === 'object') {
+        if ('message' in err && typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if ('error' in err && typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if ('details' in err && typeof err.details === 'string') {
+          errorMessage = err.details;
+        } else {
+          errorMessage = `Failed to create image from URL: ${JSON.stringify(err)}`;
         }
       }
 
