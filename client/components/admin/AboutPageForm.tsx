@@ -241,6 +241,7 @@ export default function AboutPageForm({
       order: aboutSections.length + 1,
       isActive: true,
     });
+    setSelectedImageId(undefined);
     setError(null);
   };
 
