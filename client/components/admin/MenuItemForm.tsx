@@ -30,6 +30,7 @@ import {
   Upload,
   ThumbsUp,
   ThumbsDown,
+  Pizza,
 } from "lucide-react";
 import {
   Tooltip,
