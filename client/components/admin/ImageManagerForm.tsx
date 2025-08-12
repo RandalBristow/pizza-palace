@@ -20,7 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Upload, Search } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  ThumbsUp,
+  ThumbsDown,
+  Upload,
+  Search,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -44,7 +53,11 @@ export interface Image {
 interface ImageManagerFormProps {
   images: Image[];
   uploadImageFile: (file: File, name: string) => Promise<any>;
-  createImageFromUrl: (url: string, name: string, altText?: string) => Promise<any>;
+  createImageFromUrl: (
+    url: string,
+    name: string,
+    altText?: string,
+  ) => Promise<any>;
   updateImage: (id: string, updates: any) => Promise<any>;
   deleteImage: (id: string) => Promise<void>;
 }
@@ -54,14 +67,16 @@ export default function ImageManagerForm({
   uploadImageFile,
   createImageFromUrl,
   updateImage,
-  deleteImage
+  deleteImage,
 }: ImageManagerFormProps) {
   const [isAddingImage, setIsAddingImage] = useState(false);
   const [editingImage, setEditingImage] = useState<Image | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchFilter, setSearchFilter] = useState("");
-  const [thumbnailSize, setThumbnailSize] = useState<"small" | "medium" | "large">("medium");
+  const [thumbnailSize, setThumbnailSize] = useState<
+    "small" | "medium" | "large"
+  >("medium");
   const [uploadType, setUploadType] = useState<"file" | "url">("file");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [newImage, setNewImage] = useState<Partial<Image>>({
@@ -76,10 +91,25 @@ export default function ImageManagerForm({
     setIsLoading(true);
 
     try {
-      if (uploadType === "file" && selectedFile && (newImage.name || "").trim()) {
-        await uploadImageFile(selectedFile, (newImage.name || selectedFile.name).trim());
-      } else if (uploadType === "url" && (newImage.url || "").trim() && (newImage.name || "").trim()) {
-        await createImageFromUrl((newImage.url || "").trim(), (newImage.name || "Uploaded Image").trim(), (newImage.altText || "").trim());
+      if (
+        uploadType === "file" &&
+        selectedFile &&
+        (newImage.name || "").trim()
+      ) {
+        await uploadImageFile(
+          selectedFile,
+          (newImage.name || selectedFile.name).trim(),
+        );
+      } else if (
+        uploadType === "url" &&
+        (newImage.url || "").trim() &&
+        (newImage.name || "").trim()
+      ) {
+        await createImageFromUrl(
+          (newImage.url || "").trim(),
+          (newImage.name || "Uploaded Image").trim(),
+          (newImage.altText || "").trim(),
+        );
       } else {
         throw new Error("Please provide a name and either a file or URL");
       }
@@ -87,18 +117,18 @@ export default function ImageManagerForm({
       setIsAddingImage(false);
       resetForm();
     } catch (error) {
-      let errorMessage = 'Failed to create image';
+      let errorMessage = "Failed to create image";
 
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        if ('message' in error && typeof error.message === 'string') {
+      } else if (error && typeof error === "object") {
+        if ("message" in error && typeof error.message === "string") {
           errorMessage = error.message;
-        } else if ('error' in error && typeof error.error === 'string') {
+        } else if ("error" in error && typeof error.error === "string") {
           errorMessage = error.error;
-        } else if ('details' in error && typeof error.details === 'string') {
+        } else if ("details" in error && typeof error.details === "string") {
           errorMessage = error.details;
         } else {
           errorMessage = `Failed to create image: ${JSON.stringify(error)}`;
@@ -106,7 +136,7 @@ export default function ImageManagerForm({
       }
 
       setError(errorMessage);
-      console.error('Failed to create image:', error);
+      console.error("Failed to create image:", error);
     } finally {
       setIsLoading(false);
     }
@@ -133,18 +163,18 @@ export default function ImageManagerForm({
       setEditingImage(null);
       resetForm();
     } catch (error) {
-      let errorMessage = 'Failed to update image';
+      let errorMessage = "Failed to update image";
 
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        if ('message' in error && typeof error.message === 'string') {
+      } else if (error && typeof error === "object") {
+        if ("message" in error && typeof error.message === "string") {
           errorMessage = error.message;
-        } else if ('error' in error && typeof error.error === 'string') {
+        } else if ("error" in error && typeof error.error === "string") {
           errorMessage = error.error;
-        } else if ('details' in error && typeof error.details === 'string') {
+        } else if ("details" in error && typeof error.details === "string") {
           errorMessage = error.details;
         } else {
           errorMessage = `Failed to update image: ${JSON.stringify(error)}`;
@@ -152,7 +182,7 @@ export default function ImageManagerForm({
       }
 
       setError(errorMessage);
-      console.error('Failed to update image:', error);
+      console.error("Failed to update image:", error);
     } finally {
       setIsLoading(false);
     }
@@ -162,18 +192,18 @@ export default function ImageManagerForm({
     try {
       await deleteImage(id);
     } catch (error) {
-      let errorMessage = 'Failed to delete image';
+      let errorMessage = "Failed to delete image";
 
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        if ('message' in error && typeof error.message === 'string') {
+      } else if (error && typeof error === "object") {
+        if ("message" in error && typeof error.message === "string") {
           errorMessage = error.message;
-        } else if ('error' in error && typeof error.error === 'string') {
+        } else if ("error" in error && typeof error.error === "string") {
           errorMessage = error.error;
-        } else if ('details' in error && typeof error.details === 'string') {
+        } else if ("details" in error && typeof error.details === "string") {
           errorMessage = error.details;
         } else {
           errorMessage = `Failed to delete image: ${JSON.stringify(error)}`;
@@ -181,29 +211,29 @@ export default function ImageManagerForm({
       }
 
       setError(errorMessage);
-      console.error('Failed to delete image:', error);
+      console.error("Failed to delete image:", error);
     }
   };
 
   const toggleImageStatus = async (id: string) => {
-    const image = images.find(img => img.id === id);
+    const image = images.find((img) => img.id === id);
     if (!image) return;
 
     try {
       await updateImage(id, { ...image, isActive: !image.isActive });
     } catch (error) {
-      let errorMessage = 'Failed to toggle image status';
+      let errorMessage = "Failed to toggle image status";
 
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        if ('message' in error && typeof error.message === 'string') {
+      } else if (error && typeof error === "object") {
+        if ("message" in error && typeof error.message === "string") {
           errorMessage = error.message;
-        } else if ('error' in error && typeof error.error === 'string') {
+        } else if ("error" in error && typeof error.error === "string") {
           errorMessage = error.error;
-        } else if ('details' in error && typeof error.details === 'string') {
+        } else if ("details" in error && typeof error.details === "string") {
           errorMessage = error.details;
         } else {
           errorMessage = `Failed to toggle image status: ${JSON.stringify(error)}`;
@@ -211,7 +241,7 @@ export default function ImageManagerForm({
       }
 
       setError(errorMessage);
-      console.error('Failed to toggle image status:', error);
+      console.error("Failed to toggle image status:", error);
     }
   };
 
@@ -229,15 +259,19 @@ export default function ImageManagerForm({
 
   const getThumbnailSize = () => {
     switch (thumbnailSize) {
-      case "small": return "w-20 h-20";
-      case "medium": return "w-32 h-32";
-      case "large": return "w-48 h-48";
-      default: return "w-32 h-32";
+      case "small":
+        return "w-20 h-20";
+      case "medium":
+        return "w-32 h-32";
+      case "large":
+        return "w-48 h-48";
+      default:
+        return "w-32 h-32";
     }
   };
 
-  const filteredImages = images.filter(image =>
-    image.name.toLowerCase().includes(searchFilter.toLowerCase())
+  const filteredImages = images.filter((image) =>
+    image.name.toLowerCase().includes(searchFilter.toLowerCase()),
   );
 
   const renderImageForm = (isEdit: boolean = false) => (
@@ -250,7 +284,12 @@ export default function ImageManagerForm({
 
       <div>
         <Label htmlFor="uploadType">Upload Method</Label>
-        <Select value={uploadType} onValueChange={(value: "file" | "url") => setUploadType(value || "file")}>
+        <Select
+          value={uploadType}
+          onValueChange={(value: "file" | "url") =>
+            setUploadType(value || "file")
+          }
+        >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -265,7 +304,11 @@ export default function ImageManagerForm({
         <Label htmlFor="imageName">Name *</Label>
         <Input
           id="imageName"
-          placeholder={selectedFile ? selectedFile.name || "Enter image name" : "Enter image name"}
+          placeholder={
+            selectedFile
+              ? selectedFile.name || "Enter image name"
+              : "Enter image name"
+          }
           value={newImage.name || ""}
           onChange={(e) =>
             setNewImage({ ...newImage, name: e.target.value || "" })
@@ -277,7 +320,7 @@ export default function ImageManagerForm({
         <div>
           <Label htmlFor="imageFile">Select Image File *</Label>
           <Input
-            key={`file-input-${isAddingImage ? 'add' : editingImage?.id || 'edit'}`}
+            key={`file-input-${isAddingImage ? "add" : editingImage?.id || "edit"}`}
             id="imageFile"
             type="file"
             accept="image/*"
@@ -285,7 +328,10 @@ export default function ImageManagerForm({
               const file = e.target.files?.[0];
               setSelectedFile(file || null);
               if (file && !(newImage.name || "").trim()) {
-                setNewImage({ ...newImage, name: file.name.split('.').slice(0, -1).join('.') || "" });
+                setNewImage({
+                  ...newImage,
+                  name: file.name.split(".").slice(0, -1).join(".") || "",
+                });
               }
             }}
           />
@@ -321,11 +367,15 @@ export default function ImageManagerForm({
           <Label>Preview</Label>
           <div className="mt-2 border rounded-lg p-4">
             <img
-              src={selectedFile ? URL.createObjectURL(selectedFile) : (newImage.url || "")}
+              src={
+                selectedFile
+                  ? URL.createObjectURL(selectedFile)
+                  : newImage.url || ""
+              }
               alt={newImage.altText || "Preview"}
               className="max-w-full max-h-48 object-contain"
               onError={(e) => {
-                e.currentTarget.style.display = 'none';
+                e.currentTarget.style.display = "none";
               }}
             />
           </div>
@@ -349,10 +399,16 @@ export default function ImageManagerForm({
         </Button>
         <Button
           onClick={isEdit ? handleUpdateImage : handleAddImage}
-          disabled={isLoading || !(newImage.name || "").trim() || (uploadType === "file" ? !selectedFile : !(newImage.url || "").trim())}
+          disabled={
+            isLoading ||
+            !(newImage.name || "").trim() ||
+            (uploadType === "file"
+              ? !selectedFile
+              : !(newImage.url || "").trim())
+          }
         >
           <Save className="h-4 w-4 mr-2" />
-          {isLoading ? "Saving..." : (isEdit ? "Update Image" : "Save Image")}
+          {isLoading ? "Saving..." : isEdit ? "Update Image" : "Save Image"}
         </Button>
       </div>
     </div>
@@ -396,7 +452,12 @@ export default function ImageManagerForm({
         </div>
         <div className="flex items-center space-x-2">
           <Label>Thumbnail Size:</Label>
-          <Select value={thumbnailSize} onValueChange={(value: "small" | "medium" | "large") => setThumbnailSize(value || "medium")}>
+          <Select
+            value={thumbnailSize}
+            onValueChange={(value: "small" | "medium" | "large") =>
+              setThumbnailSize(value || "medium")
+            }
+          >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
@@ -426,7 +487,8 @@ export default function ImageManagerForm({
                   alt={image.altText || image.name}
                   className={`${getThumbnailSize()} object-cover w-full`}
                   onError={(e) => {
-                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4=';
+                    e.currentTarget.src =
+                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4=";
                   }}
                 />
                 <div className="absolute top-2 right-2">
@@ -442,7 +504,9 @@ export default function ImageManagerForm({
                 </div>
               </div>
               <div className="p-3">
-                <h4 className="font-medium text-sm truncate mb-2">{image.name}</h4>
+                <h4 className="font-medium text-sm truncate mb-2">
+                  {image.name}
+                </h4>
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-1">
                     <TooltipProvider>
@@ -508,7 +572,9 @@ export default function ImageManagerForm({
             {searchFilter ? "No images found" : "No images uploaded"}
           </h3>
           <p className="text-gray-500 mb-4">
-            {searchFilter ? "Try adjusting your search term" : "Get started by uploading your first image"}
+            {searchFilter
+              ? "Try adjusting your search term"
+              : "Get started by uploading your first image"}
           </p>
           {!searchFilter && (
             <Button onClick={() => setIsAddingImage(true)}>

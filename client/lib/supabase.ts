@@ -141,7 +141,11 @@ export interface DatabaseAboutSection {
   image_alt_text?: string;
   image_position?: "left" | "right";
   links: { text: string; url: string; type: "text" | "image" }[];
-  text_overlay?: { text: string; position: "top" | "center" | "bottom"; style?: any };
+  text_overlay?: {
+    text: string;
+    position: "top" | "center" | "bottom";
+    style?: any;
+  };
   columns: number;
   order_num: number;
   is_active: boolean;

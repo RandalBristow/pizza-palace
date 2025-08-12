@@ -89,7 +89,7 @@ export default function MenuItemForm({
   onSelectedCategoryChange,
   createMenuItem,
   updateMenuItem,
-  deleteMenuItem
+  deleteMenuItem,
 }: MenuItemFormProps) {
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
@@ -102,7 +102,9 @@ export default function MenuItemForm({
     defaultToppings: [],
     isActive: true,
   });
-  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(undefined);
+  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(
+    undefined,
+  );
 
   const handleAddMenuItem = async () => {
     try {
@@ -118,7 +120,7 @@ export default function MenuItemForm({
       });
       setSelectedImageId(undefined);
     } catch (error) {
-      console.error('Failed to create menu item:', error);
+      console.error("Failed to create menu item:", error);
     }
   };
 
@@ -135,7 +137,7 @@ export default function MenuItemForm({
     });
 
     // Find the image ID from the URL
-    const selectedImage = images.find(img => img.url === menuItem.image);
+    const selectedImage = images.find((img) => img.url === menuItem.image);
     setSelectedImageId(selectedImage?.id);
   };
 
@@ -155,7 +157,7 @@ export default function MenuItemForm({
       });
       setSelectedImageId(undefined);
     } catch (error) {
-      console.error('Failed to update menu item:', error);
+      console.error("Failed to update menu item:", error);
     }
   };
 
@@ -163,18 +165,18 @@ export default function MenuItemForm({
     try {
       await deleteMenuItem(id);
     } catch (error) {
-      console.error('Failed to delete menu item:', error);
+      console.error("Failed to delete menu item:", error);
     }
   };
 
   const toggleMenuItemStatus = async (id: string) => {
-    const menuItem = menuItems.find(item => item.id === id);
+    const menuItem = menuItems.find((item) => item.id === id);
     if (!menuItem) return;
 
     try {
       await updateMenuItem(id, { ...menuItem, isActive: !menuItem.isActive });
     } catch (error) {
-      console.error('Failed to toggle menu item status:', error);
+      console.error("Failed to toggle menu item status:", error);
     }
   };
 

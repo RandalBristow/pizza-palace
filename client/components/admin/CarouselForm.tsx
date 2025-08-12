@@ -49,7 +49,7 @@ export default function CarouselForm({
   carouselImages,
   createCarouselImage,
   updateCarouselImage,
-  deleteCarouselImage
+  deleteCarouselImage,
 }: CarouselFormProps) {
   const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
   const [editingCarouselImage, setEditingCarouselImage] =
@@ -62,7 +62,9 @@ export default function CarouselForm({
     order: 1,
     isActive: true,
   });
-  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(undefined);
+  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(
+    undefined,
+  );
 
   const handleAddCarouselImage = async () => {
     try {
@@ -70,7 +72,7 @@ export default function CarouselForm({
       setIsAddingCarouselImage(false);
       resetForm();
     } catch (error) {
-      console.error('Failed to create carousel image:', error);
+      console.error("Failed to create carousel image:", error);
     }
   };
 
@@ -85,7 +87,7 @@ export default function CarouselForm({
     });
 
     // Find the image ID from the URL
-    const selectedImage = images.find(img => img.url === carouselImage.url);
+    const selectedImage = images.find((img) => img.url === carouselImage.url);
     setSelectedImageId(selectedImage?.id);
   };
 
@@ -97,7 +99,7 @@ export default function CarouselForm({
       setEditingCarouselImage(null);
       resetForm();
     } catch (error) {
-      console.error('Failed to update carousel image:', error);
+      console.error("Failed to update carousel image:", error);
     }
   };
 
@@ -105,18 +107,18 @@ export default function CarouselForm({
     try {
       await deleteCarouselImage(id);
     } catch (error) {
-      console.error('Failed to delete carousel image:', error);
+      console.error("Failed to delete carousel image:", error);
     }
   };
 
   const toggleCarouselImageStatus = async (id: string) => {
-    const image = carouselImages.find(img => img.id === id);
+    const image = carouselImages.find((img) => img.id === id);
     if (!image) return;
 
     try {
       await updateCarouselImage(id, { ...image, isActive: !image.isActive });
     } catch (error) {
-      console.error('Failed to toggle carousel image status:', error);
+      console.error("Failed to toggle carousel image status:", error);
     }
   };
 
@@ -160,7 +162,7 @@ export default function CarouselForm({
                   setSelectedImageId(imageId);
                   setNewCarouselImage({
                     ...newCarouselImage,
-                    url: imageUrl || ""
+                    url: imageUrl || "",
                   });
                 }}
                 label="Carousel Image"
@@ -341,7 +343,7 @@ export default function CarouselForm({
                 setSelectedImageId(imageId);
                 setNewCarouselImage({
                   ...newCarouselImage,
-                  url: imageUrl || ""
+                  url: imageUrl || "",
                 });
               }}
               label="Carousel Image"

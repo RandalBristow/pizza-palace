@@ -108,7 +108,9 @@ export const transformImage = (dbImage: DatabaseImage) => ({
   isActive: dbImage.is_active,
 });
 
-export const transformAboutSection = (dbAboutSection: DatabaseAboutSection) => ({
+export const transformAboutSection = (
+  dbAboutSection: DatabaseAboutSection,
+) => ({
   id: dbAboutSection.id,
   type: dbAboutSection.type,
   title: dbAboutSection.title,
@@ -236,26 +238,28 @@ export const useCategories = () => {
 };
 
 export const useMenuItems = () => {
-  const [menuItems, setMenuItems] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchMenuItems = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.MENU_ITEMS)
-        .select('*')
-        .order('name', { ascending: true })
+        .select("*")
+        .order("name", { ascending: true });
 
-      if (error) throw error
+      if (error) throw error;
 
-      setMenuItems(data ? data.map(transformMenuItem) : [])
+      setMenuItems(data ? data.map(transformMenuItem) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch menu items')
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch menu items",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createMenuItem = async (menuItem: any) => {
     try {
@@ -270,18 +274,20 @@ export const useMenuItems = () => {
           is_active: menuItem.isActive,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newMenuItem = transformMenuItem(data)
-      setMenuItems(prev => [...prev, newMenuItem])
-      return newMenuItem
+      const newMenuItem = transformMenuItem(data);
+      setMenuItems((prev) => [...prev, newMenuItem]);
+      return newMenuItem;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create menu item')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to create menu item",
+      );
+      throw err;
     }
-  }
+  };
 
   const updateMenuItem = async (id: string, updates: any) => {
     try {
@@ -296,40 +302,46 @@ export const useMenuItems = () => {
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const updatedMenuItem = transformMenuItem(data)
-      setMenuItems(prev => prev.map(item => item.id === id ? updatedMenuItem : item))
-      return updatedMenuItem
+      const updatedMenuItem = transformMenuItem(data);
+      setMenuItems((prev) =>
+        prev.map((item) => (item.id === id ? updatedMenuItem : item)),
+      );
+      return updatedMenuItem;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update menu item')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to update menu item",
+      );
+      throw err;
     }
-  }
+  };
 
   const deleteMenuItem = async (id: string) => {
     try {
       const { error } = await supabase
         .from(TABLES.MENU_ITEMS)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setMenuItems(prev => prev.filter(item => item.id !== id))
+      setMenuItems((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete menu item')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to delete menu item",
+      );
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchMenuItems()
-  }, [])
+    fetchMenuItems();
+  }, []);
 
   return {
     menuItems,
@@ -339,30 +351,30 @@ export const useMenuItems = () => {
     updateMenuItem,
     deleteMenuItem,
     refetch: fetchMenuItems,
-  }
-}
+  };
+};
 
 export const useToppings = () => {
-  const [toppings, setToppings] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [toppings, setToppings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchToppings = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.TOPPINGS)
-        .select('*')
-        .order('name', { ascending: true })
+        .select("*")
+        .order("name", { ascending: true });
 
-      if (error) throw error
+      if (error) throw error;
 
-      setToppings(data ? data.map(transformTopping) : [])
+      setToppings(data ? data.map(transformTopping) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch toppings')
+      setError(err instanceof Error ? err.message : "Failed to fetch toppings");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createTopping = async (topping: any) => {
     try {
@@ -376,18 +388,18 @@ export const useToppings = () => {
           is_active: topping.isActive,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newTopping = transformTopping(data)
-      setToppings(prev => [...prev, newTopping])
-      return newTopping
+      const newTopping = transformTopping(data);
+      setToppings((prev) => [...prev, newTopping]);
+      return newTopping;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create topping')
-      throw err
+      setError(err instanceof Error ? err.message : "Failed to create topping");
+      throw err;
     }
-  }
+  };
 
   const updateTopping = async (id: string, updates: any) => {
     try {
@@ -401,40 +413,42 @@ export const useToppings = () => {
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const updatedTopping = transformTopping(data)
-      setToppings(prev => prev.map(topping => topping.id === id ? updatedTopping : topping))
-      return updatedTopping
+      const updatedTopping = transformTopping(data);
+      setToppings((prev) =>
+        prev.map((topping) => (topping.id === id ? updatedTopping : topping)),
+      );
+      return updatedTopping;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update topping')
-      throw err
+      setError(err instanceof Error ? err.message : "Failed to update topping");
+      throw err;
     }
-  }
+  };
 
   const deleteTopping = async (id: string) => {
     try {
       const { error } = await supabase
         .from(TABLES.TOPPINGS)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setToppings(prev => prev.filter(topping => topping.id !== id))
+      setToppings((prev) => prev.filter((topping) => topping.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete topping')
-      throw err
+      setError(err instanceof Error ? err.message : "Failed to delete topping");
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchToppings()
-  }, [])
+    fetchToppings();
+  }, []);
 
   return {
     toppings,
@@ -444,30 +458,34 @@ export const useToppings = () => {
     updateTopping,
     deleteTopping,
     refetch: fetchToppings,
-  }
-}
+  };
+};
 
 export const useToppingCategories = () => {
-  const [toppingCategories, setToppingCategories] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [toppingCategories, setToppingCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchToppingCategories = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.TOPPING_CATEGORIES)
-        .select('*')
-        .order('order_num', { ascending: true })
+        .select("*")
+        .order("order_num", { ascending: true });
 
-      if (error) throw error
+      if (error) throw error;
 
-      setToppingCategories(data ? data.map(transformToppingCategory) : [])
+      setToppingCategories(data ? data.map(transformToppingCategory) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch topping categories')
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to fetch topping categories",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createToppingCategory = async (toppingCategory: any) => {
     try {
@@ -480,18 +498,22 @@ export const useToppingCategories = () => {
           is_active: toppingCategory.isActive,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newToppingCategory = transformToppingCategory(data)
-      setToppingCategories(prev => [...prev, newToppingCategory])
-      return newToppingCategory
+      const newToppingCategory = transformToppingCategory(data);
+      setToppingCategories((prev) => [...prev, newToppingCategory]);
+      return newToppingCategory;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create topping category')
-      throw err
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to create topping category",
+      );
+      throw err;
     }
-  }
+  };
 
   const updateToppingCategory = async (id: string, updates: any) => {
     try {
@@ -504,40 +526,50 @@ export const useToppingCategories = () => {
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const updatedToppingCategory = transformToppingCategory(data)
-      setToppingCategories(prev => prev.map(tc => tc.id === id ? updatedToppingCategory : tc))
-      return updatedToppingCategory
+      const updatedToppingCategory = transformToppingCategory(data);
+      setToppingCategories((prev) =>
+        prev.map((tc) => (tc.id === id ? updatedToppingCategory : tc)),
+      );
+      return updatedToppingCategory;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update topping category')
-      throw err
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to update topping category",
+      );
+      throw err;
     }
-  }
+  };
 
   const deleteToppingCategory = async (id: string) => {
     try {
       const { error } = await supabase
         .from(TABLES.TOPPING_CATEGORIES)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setToppingCategories(prev => prev.filter(tc => tc.id !== id))
+      setToppingCategories((prev) => prev.filter((tc) => tc.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete topping category')
-      throw err
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to delete topping category",
+      );
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchToppingCategories()
-  }, [])
+    fetchToppingCategories();
+  }, []);
 
   return {
     toppingCategories,
@@ -547,30 +579,30 @@ export const useToppingCategories = () => {
     updateToppingCategory,
     deleteToppingCategory,
     refetch: fetchToppingCategories,
-  }
-}
+  };
+};
 
 export const useSpecials = () => {
-  const [specials, setSpecials] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [specials, setSpecials] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchSpecials = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.SPECIALS)
-        .select('*')
-        .order('name', { ascending: true })
+        .select("*")
+        .order("name", { ascending: true });
 
-      if (error) throw error
+      if (error) throw error;
 
-      setSpecials(data ? data.map(transformSpecial) : [])
+      setSpecials(data ? data.map(transformSpecial) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch specials')
+      setError(err instanceof Error ? err.message : "Failed to fetch specials");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createSpecial = async (special: any) => {
     try {
@@ -592,36 +624,36 @@ export const useSpecials = () => {
           is_active: special.isActive,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newSpecial = transformSpecial(data)
-      setSpecials(prev => [...prev, newSpecial])
-      return newSpecial
+      const newSpecial = transformSpecial(data);
+      setSpecials((prev) => [...prev, newSpecial]);
+      return newSpecial;
     } catch (err) {
-      let errorMessage = 'Failed to create special';
+      let errorMessage = "Failed to create special";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to create special: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   const updateSpecial = async (id: string, updates: any) => {
     try {
@@ -643,76 +675,78 @@ export const useSpecials = () => {
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const updatedSpecial = transformSpecial(data)
-      setSpecials(prev => prev.map(special => special.id === id ? updatedSpecial : special))
-      return updatedSpecial
+      const updatedSpecial = transformSpecial(data);
+      setSpecials((prev) =>
+        prev.map((special) => (special.id === id ? updatedSpecial : special)),
+      );
+      return updatedSpecial;
     } catch (err) {
-      let errorMessage = 'Failed to update special';
+      let errorMessage = "Failed to update special";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to update special: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   const deleteSpecial = async (id: string) => {
     try {
       const { error } = await supabase
         .from(TABLES.SPECIALS)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setSpecials(prev => prev.filter(special => special.id !== id))
+      setSpecials((prev) => prev.filter((special) => special.id !== id));
     } catch (err) {
-      let errorMessage = 'Failed to delete special';
+      let errorMessage = "Failed to delete special";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to delete special: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchSpecials()
-  }, [])
+    fetchSpecials();
+  }, []);
 
   return {
     specials,
@@ -722,30 +756,32 @@ export const useSpecials = () => {
     updateSpecial,
     deleteSpecial,
     refetch: fetchSpecials,
-  }
-}
+  };
+};
 
 export const useCarouselImages = () => {
-  const [carouselImages, setCarouselImages] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [carouselImages, setCarouselImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCarouselImages = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.CAROUSEL_IMAGES)
-        .select('*')
-        .order('order_num', { ascending: true })
+        .select("*")
+        .order("order_num", { ascending: true });
 
-      if (error) throw error
+      if (error) throw error;
 
-      setCarouselImages(data ? data.map(transformCarouselImage) : [])
+      setCarouselImages(data ? data.map(transformCarouselImage) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch carousel images')
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch carousel images",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createCarouselImage = async (carouselImage: any) => {
     try {
@@ -759,18 +795,20 @@ export const useCarouselImages = () => {
           is_active: carouselImage.isActive,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newCarouselImage = transformCarouselImage(data)
-      setCarouselImages(prev => [...prev, newCarouselImage])
-      return newCarouselImage
+      const newCarouselImage = transformCarouselImage(data);
+      setCarouselImages((prev) => [...prev, newCarouselImage]);
+      return newCarouselImage;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create carousel image')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to create carousel image",
+      );
+      throw err;
     }
-  }
+  };
 
   const updateCarouselImage = async (id: string, updates: any) => {
     try {
@@ -784,40 +822,46 @@ export const useCarouselImages = () => {
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const updatedCarouselImage = transformCarouselImage(data)
-      setCarouselImages(prev => prev.map(img => img.id === id ? updatedCarouselImage : img))
-      return updatedCarouselImage
+      const updatedCarouselImage = transformCarouselImage(data);
+      setCarouselImages((prev) =>
+        prev.map((img) => (img.id === id ? updatedCarouselImage : img)),
+      );
+      return updatedCarouselImage;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update carousel image')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to update carousel image",
+      );
+      throw err;
     }
-  }
+  };
 
   const deleteCarouselImage = async (id: string) => {
     try {
       const { error } = await supabase
         .from(TABLES.CAROUSEL_IMAGES)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setCarouselImages(prev => prev.filter(img => img.id !== id))
+      setCarouselImages((prev) => prev.filter((img) => img.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete carousel image')
-      throw err
+      setError(
+        err instanceof Error ? err.message : "Failed to delete carousel image",
+      );
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchCarouselImages()
-  }, [])
+    fetchCarouselImages();
+  }, []);
 
   return {
     carouselImages,
@@ -827,30 +871,34 @@ export const useCarouselImages = () => {
     updateCarouselImage,
     deleteCarouselImage,
     refetch: fetchCarouselImages,
-  }
-}
+  };
+};
 
 export const useCustomerFavorites = () => {
-  const [customerFavorites, setCustomerFavorites] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [customerFavorites, setCustomerFavorites] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCustomerFavorites = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.CUSTOMER_FAVORITES)
-        .select('*')
-        .order('order_num', { ascending: true })
+        .select("*")
+        .order("order_num", { ascending: true });
 
-      if (error) throw error
+      if (error) throw error;
 
-      setCustomerFavorites(data ? data.map(transformCustomerFavorite) : [])
+      setCustomerFavorites(data ? data.map(transformCustomerFavorite) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch customer favorites')
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to fetch customer favorites",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createCustomerFavorite = async (customerFavorite: any) => {
     try {
@@ -864,18 +912,22 @@ export const useCustomerFavorites = () => {
           is_active: customerFavorite.isActive,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newCustomerFavorite = transformCustomerFavorite(data)
-      setCustomerFavorites(prev => [...prev, newCustomerFavorite])
-      return newCustomerFavorite
+      const newCustomerFavorite = transformCustomerFavorite(data);
+      setCustomerFavorites((prev) => [...prev, newCustomerFavorite]);
+      return newCustomerFavorite;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create customer favorite')
-      throw err
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to create customer favorite",
+      );
+      throw err;
     }
-  }
+  };
 
   const updateCustomerFavorite = async (id: string, updates: any) => {
     try {
@@ -889,40 +941,50 @@ export const useCustomerFavorites = () => {
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const updatedCustomerFavorite = transformCustomerFavorite(data)
-      setCustomerFavorites(prev => prev.map(fav => fav.id === id ? updatedCustomerFavorite : fav))
-      return updatedCustomerFavorite
+      const updatedCustomerFavorite = transformCustomerFavorite(data);
+      setCustomerFavorites((prev) =>
+        prev.map((fav) => (fav.id === id ? updatedCustomerFavorite : fav)),
+      );
+      return updatedCustomerFavorite;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update customer favorite')
-      throw err
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to update customer favorite",
+      );
+      throw err;
     }
-  }
+  };
 
   const deleteCustomerFavorite = async (id: string) => {
     try {
       const { error } = await supabase
         .from(TABLES.CUSTOMER_FAVORITES)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setCustomerFavorites(prev => prev.filter(fav => fav.id !== id))
+      setCustomerFavorites((prev) => prev.filter((fav) => fav.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete customer favorite')
-      throw err
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to delete customer favorite",
+      );
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchCustomerFavorites()
-  }, [])
+    fetchCustomerFavorites();
+  }, []);
 
   return {
     customerFavorites,
@@ -932,8 +994,8 @@ export const useCustomerFavorites = () => {
     updateCustomerFavorite,
     deleteCustomerFavorite,
     refetch: fetchCustomerFavorites,
-  }
-}
+  };
+};
 
 export const useSettings = () => {
   const [settings, setSettings] = useState<any>(null);
@@ -1028,26 +1090,28 @@ export const useSettings = () => {
 };
 
 export const useAboutSections = () => {
-  const [aboutSections, setAboutSections] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [aboutSections, setAboutSections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchAboutSections = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.ABOUT_SECTIONS)
-        .select('*')
-        .order('order_num', { ascending: true })
+        .select("*")
+        .order("order_num", { ascending: true });
 
-      if (error) throw error
+      if (error) throw error;
 
-      setAboutSections(data ? data.map(transformAboutSection) : [])
+      setAboutSections(data ? data.map(transformAboutSection) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch about sections')
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch about sections",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const createAboutSection = async (aboutSection: any) => {
     try {
@@ -1067,36 +1131,36 @@ export const useAboutSections = () => {
           is_active: aboutSection.isActive,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newAboutSection = transformAboutSection(data)
-      setAboutSections(prev => [...prev, newAboutSection])
-      return newAboutSection
+      const newAboutSection = transformAboutSection(data);
+      setAboutSections((prev) => [...prev, newAboutSection]);
+      return newAboutSection;
     } catch (err) {
-      let errorMessage = 'Failed to create about section';
+      let errorMessage = "Failed to create about section";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to create about section: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   const updateAboutSection = async (id: string, updates: any) => {
     try {
@@ -1116,76 +1180,80 @@ export const useAboutSections = () => {
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const updatedAboutSection = transformAboutSection(data)
-      setAboutSections(prev => prev.map(section => section.id === id ? updatedAboutSection : section))
-      return updatedAboutSection
+      const updatedAboutSection = transformAboutSection(data);
+      setAboutSections((prev) =>
+        prev.map((section) =>
+          section.id === id ? updatedAboutSection : section,
+        ),
+      );
+      return updatedAboutSection;
     } catch (err) {
-      let errorMessage = 'Failed to update about section';
+      let errorMessage = "Failed to update about section";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to update about section: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   const deleteAboutSection = async (id: string) => {
     try {
       const { error } = await supabase
         .from(TABLES.ABOUT_SECTIONS)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setAboutSections(prev => prev.filter(section => section.id !== id))
+      setAboutSections((prev) => prev.filter((section) => section.id !== id));
     } catch (err) {
-      let errorMessage = 'Failed to delete about section';
+      let errorMessage = "Failed to delete about section";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to delete about section: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchAboutSections()
-  }, [])
+    fetchAboutSections();
+  }, []);
 
   return {
     aboutSections,
@@ -1195,49 +1263,49 @@ export const useAboutSections = () => {
     updateAboutSection,
     deleteAboutSection,
     refetch: fetchAboutSections,
-  }
+  };
 };
 
 export const useImages = () => {
-  const [images, setImages] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [images, setImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchImages = async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.IMAGES)
-        .select('*')
-        .order('name', { ascending: true })
+        .select("*")
+        .order("name", { ascending: true });
 
-      if (error) throw error
+      if (error) throw error;
 
-      setImages(data ? data.map(transformImage) : [])
+      setImages(data ? data.map(transformImage) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch images')
+      setError(err instanceof Error ? err.message : "Failed to fetch images");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const uploadImageFile = async (file: File, name: string) => {
     try {
       // Generate unique filename
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-      const filePath = `images/${fileName}`
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `images/${fileName}`;
 
       // Upload file to Supabase storage
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, file)
+        .from("images")
+        .upload(filePath, file);
 
-      if (uploadError) throw uploadError
+      if (uploadError) throw uploadError;
 
       // Get public URL
       const { data: urlData } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath)
+        .from("images")
+        .getPublicUrl(filePath);
 
       // Insert image metadata
       const { data, error } = await supabase
@@ -1252,38 +1320,42 @@ export const useImages = () => {
           is_active: true,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newImage = transformImage(data)
-      setImages(prev => [...prev, newImage])
-      return newImage
+      const newImage = transformImage(data);
+      setImages((prev) => [...prev, newImage]);
+      return newImage;
     } catch (err) {
-      let errorMessage = 'Failed to upload image';
+      let errorMessage = "Failed to upload image";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to upload image: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
-  const createImageFromUrl = async (imageUrl: string, name: string, altText?: string) => {
+  const createImageFromUrl = async (
+    imageUrl: string,
+    name: string,
+    altText?: string,
+  ) => {
     try {
       // For URL-based images, we still store the URL as both storage_path and public_url
       const { data, error } = await supabase
@@ -1296,36 +1368,36 @@ export const useImages = () => {
           is_active: true,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const newImage = transformImage(data)
-      setImages(prev => [...prev, newImage])
-      return newImage
+      const newImage = transformImage(data);
+      setImages((prev) => [...prev, newImage]);
+      return newImage;
     } catch (err) {
-      let errorMessage = 'Failed to create image from URL';
+      let errorMessage = "Failed to create image from URL";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to create image from URL: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   const updateImage = async (id: string, updates: any) => {
     try {
@@ -1337,88 +1409,94 @@ export const useImages = () => {
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const updatedImage = transformImage(data)
-      setImages(prev => prev.map(img => img.id === id ? updatedImage : img))
-      return updatedImage
+      const updatedImage = transformImage(data);
+      setImages((prev) =>
+        prev.map((img) => (img.id === id ? updatedImage : img)),
+      );
+      return updatedImage;
     } catch (err) {
-      let errorMessage = 'Failed to update image';
+      let errorMessage = "Failed to update image";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to update image: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   const deleteImage = async (id: string) => {
     try {
       // Get image to find storage path
-      const imageToDelete = images.find(img => img.id === id);
+      const imageToDelete = images.find((img) => img.id === id);
 
       // Delete from database first
       const { error } = await supabase
         .from(TABLES.IMAGES)
         .delete()
-        .eq('id', id)
+        .eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
       // If it's a storage-based image (not external URL), delete from storage
-      if (imageToDelete && imageToDelete.storagePath && imageToDelete.storagePath.startsWith('images/')) {
+      if (
+        imageToDelete &&
+        imageToDelete.storagePath &&
+        imageToDelete.storagePath.startsWith("images/")
+      ) {
         await supabase.storage
-          .from('images')
-          .remove([imageToDelete.storagePath])
+          .from("images")
+          .remove([imageToDelete.storagePath]);
         // Don't throw error if storage deletion fails, as the database record is already deleted
       }
 
-      setImages(prev => prev.filter(img => img.id !== id))
+      setImages((prev) => prev.filter((img) => img.id !== id));
     } catch (err) {
-      let errorMessage = 'Failed to delete image';
+      let errorMessage = "Failed to delete image";
 
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
-      } else if (err && typeof err === 'object') {
-        if ('message' in err && typeof err.message === 'string') {
+      } else if (err && typeof err === "object") {
+        if ("message" in err && typeof err.message === "string") {
           errorMessage = err.message;
-        } else if ('error' in err && typeof err.error === 'string') {
+        } else if ("error" in err && typeof err.error === "string") {
           errorMessage = err.error;
-        } else if ('details' in err && typeof err.details === 'string') {
+        } else if ("details" in err && typeof err.details === "string") {
           errorMessage = err.details;
         } else {
           errorMessage = `Failed to delete image: ${JSON.stringify(err)}`;
         }
       }
 
-      setError(errorMessage)
-      throw err
+      setError(errorMessage);
+      throw err;
     }
-  }
+  };
 
   useEffect(() => {
-    fetchImages()
-  }, [])
+    fetchImages();
+  }, []);
 
   return {
     images,
@@ -1429,5 +1507,5 @@ export const useImages = () => {
     updateImage,
     deleteImage,
     refetch: fetchImages,
-  }
+  };
 };

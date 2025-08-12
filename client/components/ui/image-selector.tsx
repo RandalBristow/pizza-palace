@@ -39,24 +39,26 @@ export default function ImageSelector({
   required = false,
   showPreview = true,
 }: ImageSelectorProps) {
-  const activeImages = images.filter(img => img.isActive);
-  const selectedImage = activeImages.find(img => img.id === selectedImageId);
+  const activeImages = images.filter((img) => img.isActive);
+  const selectedImage = activeImages.find((img) => img.id === selectedImageId);
 
   const handleSelectionChange = (value: string) => {
     if (value === "none") {
       onImageSelect(undefined, undefined);
     } else {
-      const selected = activeImages.find(img => img.id === value);
+      const selected = activeImages.find((img) => img.id === value);
       onImageSelect(value, selected?.url);
     }
   };
 
   return (
     <div className="space-y-2">
-      <Label>{label} {required && "*"}</Label>
-      
-      <Select 
-        value={selectedImageId || "none"} 
+      <Label>
+        {label} {required && "*"}
+      </Label>
+
+      <Select
+        value={selectedImageId || "none"}
         onValueChange={handleSelectionChange}
       >
         <SelectTrigger>

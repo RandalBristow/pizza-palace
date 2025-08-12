@@ -43,9 +43,13 @@ export default function About() {
                 className="w-full h-auto object-cover"
               />
               {section.textOverlay && section.textOverlay.text && (
-                <div className={`absolute inset-0 flex items-${section.textOverlay.position === 'top' ? 'start' : section.textOverlay.position === 'bottom' ? 'end' : 'center'} justify-center`}>
+                <div
+                  className={`absolute inset-0 flex items-${section.textOverlay.position === "top" ? "start" : section.textOverlay.position === "bottom" ? "end" : "center"} justify-center`}
+                >
                   <div className="bg-black bg-opacity-50 text-white p-4 rounded-md m-4">
-                    <p className="text-lg font-semibold">{section.textOverlay.text}</p>
+                    <p className="text-lg font-semibold">
+                      {section.textOverlay.text}
+                    </p>
                   </div>
                 </div>
               )}
@@ -69,7 +73,9 @@ export default function About() {
                     <div className="rounded-lg overflow-hidden">
                       <img
                         src={section.imageUrl}
-                        alt={section.imageAltText || section.title || "About image"}
+                        alt={
+                          section.imageAltText || section.title || "About image"
+                        }
                         className="w-full h-auto object-cover"
                       />
                     </div>
@@ -97,7 +103,9 @@ export default function About() {
                     <div className="rounded-lg overflow-hidden">
                       <img
                         src={section.imageUrl}
-                        alt={section.imageAltText || section.title || "About image"}
+                        alt={
+                          section.imageAltText || section.title || "About image"
+                        }
                         className="w-full h-auto object-cover"
                       />
                     </div>
@@ -143,10 +151,14 @@ export default function About() {
   // Helper function to get column span class
   const getColumnClass = (columns: number) => {
     switch (columns) {
-      case 1: return "md:col-span-1";
-      case 2: return "md:col-span-2";
-      case 3: return "md:col-span-3";
-      default: return "md:col-span-1";
+      case 1:
+        return "md:col-span-1";
+      case 2:
+        return "md:col-span-2";
+      case 3:
+        return "md:col-span-3";
+      default:
+        return "md:col-span-1";
     }
   };
 
@@ -164,7 +176,7 @@ export default function About() {
 
   // Filter active sections and sort by order
   const activeSections = aboutSections
-    .filter(section => section.isActive)
+    .filter((section) => section.isActive)
     .sort((a, b) => a.order - b.order);
 
   return (
@@ -190,10 +202,7 @@ export default function About() {
         {activeSections.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {activeSections.map((section) => (
-              <div
-                key={section.id}
-                className={getColumnClass(section.columns)}
-              >
+              <div key={section.id} className={getColumnClass(section.columns)}>
                 {renderSectionContent(section)}
               </div>
             ))}

@@ -21,7 +21,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Image as ImageIcon, Type, FileText } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  ThumbsUp,
+  ThumbsDown,
+  Image as ImageIcon,
+  Type,
+  FileText,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -40,7 +50,11 @@ export interface AboutSection {
   imageAltText?: string;
   imagePosition?: "left" | "right";
   links: { text: string; url: string; type: "text" | "image" }[];
-  textOverlay?: { text: string; position: "top" | "center" | "bottom"; style?: any };
+  textOverlay?: {
+    text: string;
+    position: "top" | "center" | "bottom";
+    style?: any;
+  };
   columns: number;
   order: number;
   isActive: boolean;
@@ -57,10 +71,12 @@ export default function AboutPageForm({
   aboutSections,
   createAboutSection,
   updateAboutSection,
-  deleteAboutSection
+  deleteAboutSection,
 }: AboutPageFormProps) {
   const [isAddingSection, setIsAddingSection] = useState(false);
-  const [editingSection, setEditingSection] = useState<AboutSection | null>(null);
+  const [editingSection, setEditingSection] = useState<AboutSection | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { images } = useImages();
@@ -77,7 +93,9 @@ export default function AboutPageForm({
     order: aboutSections.length + 1,
     isActive: true,
   });
-  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(undefined);
+  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(
+    undefined,
+  );
 
   const handleAddSection = async () => {
     setError(null);
@@ -88,18 +106,18 @@ export default function AboutPageForm({
       setIsAddingSection(false);
       resetForm();
     } catch (error) {
-      let errorMessage = 'Failed to create section';
+      let errorMessage = "Failed to create section";
 
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        if ('message' in error && typeof error.message === 'string') {
+      } else if (error && typeof error === "object") {
+        if ("message" in error && typeof error.message === "string") {
           errorMessage = error.message;
-        } else if ('error' in error && typeof error.error === 'string') {
+        } else if ("error" in error && typeof error.error === "string") {
           errorMessage = error.error;
-        } else if ('details' in error && typeof error.details === 'string') {
+        } else if ("details" in error && typeof error.details === "string") {
           errorMessage = error.details;
         } else {
           errorMessage = `Failed to create section: ${JSON.stringify(error)}`;
@@ -107,7 +125,7 @@ export default function AboutPageForm({
       }
 
       setError(errorMessage);
-      console.error('Failed to create section:', error);
+      console.error("Failed to create section:", error);
     } finally {
       setIsLoading(false);
     }
@@ -130,7 +148,7 @@ export default function AboutPageForm({
     });
 
     // Find the image ID from the URL
-    const selectedImage = images.find(img => img.url === section.imageUrl);
+    const selectedImage = images.find((img) => img.url === section.imageUrl);
     setSelectedImageId(selectedImage?.id);
   };
 
@@ -145,18 +163,18 @@ export default function AboutPageForm({
       setEditingSection(null);
       resetForm();
     } catch (error) {
-      let errorMessage = 'Failed to update section';
+      let errorMessage = "Failed to update section";
 
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        if ('message' in error && typeof error.message === 'string') {
+      } else if (error && typeof error === "object") {
+        if ("message" in error && typeof error.message === "string") {
           errorMessage = error.message;
-        } else if ('error' in error && typeof error.error === 'string') {
+        } else if ("error" in error && typeof error.error === "string") {
           errorMessage = error.error;
-        } else if ('details' in error && typeof error.details === 'string') {
+        } else if ("details" in error && typeof error.details === "string") {
           errorMessage = error.details;
         } else {
           errorMessage = `Failed to update section: ${JSON.stringify(error)}`;
@@ -164,7 +182,7 @@ export default function AboutPageForm({
       }
 
       setError(errorMessage);
-      console.error('Failed to update section:', error);
+      console.error("Failed to update section:", error);
     } finally {
       setIsLoading(false);
     }
@@ -174,18 +192,18 @@ export default function AboutPageForm({
     try {
       await deleteAboutSection(id);
     } catch (error) {
-      let errorMessage = 'Failed to delete section';
+      let errorMessage = "Failed to delete section";
 
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        if ('message' in error && typeof error.message === 'string') {
+      } else if (error && typeof error === "object") {
+        if ("message" in error && typeof error.message === "string") {
           errorMessage = error.message;
-        } else if ('error' in error && typeof error.error === 'string') {
+        } else if ("error" in error && typeof error.error === "string") {
           errorMessage = error.error;
-        } else if ('details' in error && typeof error.details === 'string') {
+        } else if ("details" in error && typeof error.details === "string") {
           errorMessage = error.details;
         } else {
           errorMessage = `Failed to delete section: ${JSON.stringify(error)}`;
@@ -193,29 +211,29 @@ export default function AboutPageForm({
       }
 
       setError(errorMessage);
-      console.error('Failed to delete section:', error);
+      console.error("Failed to delete section:", error);
     }
   };
 
   const toggleSectionStatus = async (id: string) => {
-    const section = aboutSections.find(s => s.id === id);
+    const section = aboutSections.find((s) => s.id === id);
     if (!section) return;
 
     try {
       await updateAboutSection(id, { ...section, isActive: !section.isActive });
     } catch (error) {
-      let errorMessage = 'Failed to toggle section status';
+      let errorMessage = "Failed to toggle section status";
 
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        if ('message' in error && typeof error.message === 'string') {
+      } else if (error && typeof error === "object") {
+        if ("message" in error && typeof error.message === "string") {
           errorMessage = error.message;
-        } else if ('error' in error && typeof error.error === 'string') {
+        } else if ("error" in error && typeof error.error === "string") {
           errorMessage = error.error;
-        } else if ('details' in error && typeof error.details === 'string') {
+        } else if ("details" in error && typeof error.details === "string") {
           errorMessage = error.details;
         } else {
           errorMessage = `Failed to toggle section status: ${JSON.stringify(error)}`;
@@ -223,7 +241,7 @@ export default function AboutPageForm({
       }
 
       setError(errorMessage);
-      console.error('Failed to toggle section status:', error);
+      console.error("Failed to toggle section status:", error);
     }
   };
 
@@ -248,7 +266,7 @@ export default function AboutPageForm({
   const addLink = () => {
     setNewSection({
       ...newSection,
-      links: [...(newSection.links || []), { text: "", url: "", type: "text" }]
+      links: [...(newSection.links || []), { text: "", url: "", type: "text" }],
     });
   };
 
@@ -302,7 +320,8 @@ export default function AboutPageForm({
         />
       </div>
 
-      {(newSection.type === "text" || newSection.type === "text_with_image") && (
+      {(newSection.type === "text" ||
+        newSection.type === "text_with_image") && (
         <div>
           <Label htmlFor="sectionContent">Content</Label>
           <Textarea
@@ -317,7 +336,8 @@ export default function AboutPageForm({
         </div>
       )}
 
-      {(newSection.type === "image" || newSection.type === "text_with_image") && (
+      {(newSection.type === "image" ||
+        newSection.type === "text_with_image") && (
         <>
           <ImageSelector
             images={images}
@@ -327,7 +347,9 @@ export default function AboutPageForm({
               setNewSection({
                 ...newSection,
                 imageUrl: imageUrl || "",
-                imageAltText: imageId ? images.find(img => img.id === imageId)?.altText || "" : ""
+                imageAltText: imageId
+                  ? images.find((img) => img.id === imageId)?.altText || ""
+                  : "",
               });
             }}
             label="Select Image"
@@ -385,7 +407,10 @@ export default function AboutPageForm({
             min="1"
             value={newSection.order}
             onChange={(e) =>
-              setNewSection({ ...newSection, order: parseInt(e.target.value) || 1 })
+              setNewSection({
+                ...newSection,
+                order: parseInt(e.target.value) || 1,
+              })
             }
           />
         </div>
@@ -453,8 +478,8 @@ export default function AboutPageForm({
                   textOverlay: {
                     ...newSection.textOverlay,
                     text: e.target.value,
-                    position: newSection.textOverlay?.position || "center"
-                  }
+                    position: newSection.textOverlay?.position || "center",
+                  },
                 })
               }
             />
@@ -466,8 +491,8 @@ export default function AboutPageForm({
                   textOverlay: {
                     ...newSection.textOverlay,
                     text: newSection.textOverlay?.text || "",
-                    position: value
-                  }
+                    position: value,
+                  },
                 })
               }
             >
@@ -504,7 +529,7 @@ export default function AboutPageForm({
           disabled={isLoading}
         >
           <Save className="h-4 w-4 mr-2" />
-          {isLoading ? "Saving..." : (isEdit ? "Update Section" : "Save Section")}
+          {isLoading ? "Saving..." : isEdit ? "Update Section" : "Save Section"}
         </Button>
       </div>
     </div>
@@ -512,10 +537,14 @@ export default function AboutPageForm({
 
   const getSectionIcon = (type: string) => {
     switch (type) {
-      case "text": return <Type className="h-4 w-4" />;
-      case "image": return <ImageIcon className="h-4 w-4" />;
-      case "text_with_image": return <FileText className="h-4 w-4" />;
-      default: return <Type className="h-4 w-4" />;
+      case "text":
+        return <Type className="h-4 w-4" />;
+      case "image":
+        return <ImageIcon className="h-4 w-4" />;
+      case "text_with_image":
+        return <FileText className="h-4 w-4" />;
+      default:
+        return <Type className="h-4 w-4" />;
     }
   };
 
@@ -534,7 +563,8 @@ export default function AboutPageForm({
             <DialogHeader>
               <DialogTitle>Add New Section</DialogTitle>
               <DialogDescription>
-                Create a new section for the about page with text, images, and links
+                Create a new section for the about page with text, images, and
+                links
               </DialogDescription>
             </DialogHeader>
             {renderSectionForm(false)}
@@ -552,101 +582,100 @@ export default function AboutPageForm({
         {aboutSections
           .sort((a, b) => a.order - b.order)
           .map((section) => (
-          <Card key={section.id}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    {getSectionIcon(section.type)}
-                    <h3 className="font-semibold">
-                      {section.title || `${section.type} Section`}
-                    </h3>
-                    <Badge variant="outline">
-                      Order: {section.order}
-                    </Badge>
-                    <Badge variant="outline">
-                      {section.columns} Column{section.columns !== 1 ? 's' : ''}
-                    </Badge>
-                    <Badge
-                      className={
-                        section.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }
-                    >
-                      {section.isActive ? "Active" : "Inactive"}
-                    </Badge>
+            <Card key={section.id}>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      {getSectionIcon(section.type)}
+                      <h3 className="font-semibold">
+                        {section.title || `${section.type} Section`}
+                      </h3>
+                      <Badge variant="outline">Order: {section.order}</Badge>
+                      <Badge variant="outline">
+                        {section.columns} Column
+                        {section.columns !== 1 ? "s" : ""}
+                      </Badge>
+                      <Badge
+                        className={
+                          section.isActive
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }
+                      >
+                        {section.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
+                    {section.content && (
+                      <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                        {section.content}
+                      </p>
+                    )}
+                    {section.imageUrl && (
+                      <div className="text-xs text-gray-500 mb-2">
+                        Image: {section.imageUrl}
+                      </div>
+                    )}
+                    {section.links && section.links.length > 0 && (
+                      <div className="text-xs text-gray-500">
+                        Links: {section.links.length}
+                      </div>
+                    )}
                   </div>
-                  {section.content && (
-                    <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                      {section.content}
-                    </p>
-                  )}
-                  {section.imageUrl && (
-                    <div className="text-xs text-gray-500 mb-2">
-                      Image: {section.imageUrl}
-                    </div>
-                  )}
-                  {section.links && section.links.length > 0 && (
-                    <div className="text-xs text-gray-500">
-                      Links: {section.links.length}
-                    </div>
-                  )}
+                  <div className="flex flex-col items-center space-y-1">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleSectionStatus(section.id)}
+                          >
+                            {section.isActive ? (
+                              <ThumbsUp className="h-4 w-4" />
+                            ) : (
+                              <ThumbsDown className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {section.isActive ? "Deactivate" : "Activate"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditSection(section)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit Section</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteSection(section.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete Section</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </div>
-                <div className="flex flex-col items-center space-y-1">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleSectionStatus(section.id)}
-                        >
-                          {section.isActive ? (
-                            <ThumbsUp className="h-4 w-4" />
-                          ) : (
-                            <ThumbsDown className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {section.isActive ? "Deactivate" : "Activate"}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditSection(section)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Edit Section</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDeleteSection(section.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Delete Section</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
       </div>
 
       {/* Edit Section Dialog */}

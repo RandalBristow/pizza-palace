@@ -30,16 +30,71 @@ import ImageManagerForm from "../components/admin/ImageManagerForm";
 
 export default function Admin() {
   // Supabase hooks
-  const { categories, loading: categoriesLoading, createCategory, updateCategory, deleteCategory } = useCategories();
-  const { menuItems, loading: menuItemsLoading, createMenuItem, updateMenuItem, deleteMenuItem } = useMenuItems();
-  const { toppings, loading: toppingsLoading, createTopping, updateTopping, deleteTopping } = useToppings();
-  const { toppingCategories, loading: toppingCategoriesLoading, createToppingCategory, updateToppingCategory, deleteToppingCategory } = useToppingCategories();
-  const { specials, loading: specialsLoading, createSpecial, updateSpecial, deleteSpecial } = useSpecials();
-  const { carouselImages, loading: carouselLoading, createCarouselImage, updateCarouselImage, deleteCarouselImage } = useCarouselImages();
-  const { customerFavorites, loading: favoritesLoading, createCustomerFavorite, updateCustomerFavorite, deleteCustomerFavorite } = useCustomerFavorites();
+  const {
+    categories,
+    loading: categoriesLoading,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+  } = useCategories();
+  const {
+    menuItems,
+    loading: menuItemsLoading,
+    createMenuItem,
+    updateMenuItem,
+    deleteMenuItem,
+  } = useMenuItems();
+  const {
+    toppings,
+    loading: toppingsLoading,
+    createTopping,
+    updateTopping,
+    deleteTopping,
+  } = useToppings();
+  const {
+    toppingCategories,
+    loading: toppingCategoriesLoading,
+    createToppingCategory,
+    updateToppingCategory,
+    deleteToppingCategory,
+  } = useToppingCategories();
+  const {
+    specials,
+    loading: specialsLoading,
+    createSpecial,
+    updateSpecial,
+    deleteSpecial,
+  } = useSpecials();
+  const {
+    carouselImages,
+    loading: carouselLoading,
+    createCarouselImage,
+    updateCarouselImage,
+    deleteCarouselImage,
+  } = useCarouselImages();
+  const {
+    customerFavorites,
+    loading: favoritesLoading,
+    createCustomerFavorite,
+    updateCustomerFavorite,
+    deleteCustomerFavorite,
+  } = useCustomerFavorites();
   const { settings, loading: settingsLoading, updateSettings } = useSettings();
-  const { aboutSections, loading: aboutLoading, createAboutSection, updateAboutSection, deleteAboutSection } = useAboutSections();
-  const { images, loading: imagesLoading, uploadImageFile, createImageFromUrl, updateImage, deleteImage } = useImages();
+  const {
+    aboutSections,
+    loading: aboutLoading,
+    createAboutSection,
+    updateAboutSection,
+    deleteAboutSection,
+  } = useAboutSections();
+  const {
+    images,
+    loading: imagesLoading,
+    uploadImageFile,
+    createImageFromUrl,
+    updateImage,
+    deleteImage,
+  } = useImages();
 
   const [selectedItem, setSelectedItem] = useState("categories");
 
@@ -48,9 +103,17 @@ export default function Admin() {
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
   // Show loading state while data is being fetched
-  const isLoading = categoriesLoading || menuItemsLoading || toppingsLoading ||
-                   toppingCategoriesLoading || specialsLoading || carouselLoading ||
-                   favoritesLoading || settingsLoading || aboutLoading || imagesLoading;
+  const isLoading =
+    categoriesLoading ||
+    menuItemsLoading ||
+    toppingsLoading ||
+    toppingCategoriesLoading ||
+    specialsLoading ||
+    carouselLoading ||
+    favoritesLoading ||
+    settingsLoading ||
+    aboutLoading ||
+    imagesLoading;
 
   if (isLoading) {
     return (
@@ -127,7 +190,9 @@ export default function Admin() {
       case "settings":
         return (
           <SettingsForm
-            settings={settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }}
+            settings={
+              settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
+            }
             onSettingsChange={updateSettings}
           />
         );
@@ -233,7 +298,9 @@ export default function Admin() {
       default:
         return (
           <SettingsForm
-            settings={settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }}
+            settings={
+              settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
+            }
             onSettingsChange={updateSettings}
           />
         );
