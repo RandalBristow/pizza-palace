@@ -1107,6 +1107,7 @@ export const useAboutSections = () => {
           content: updates.content,
           image_url: updates.imageUrl,
           image_alt_text: updates.imageAltText,
+          image_position: updates.imagePosition,
           links: updates.links,
           text_overlay: updates.textOverlay,
           columns: updates.columns,
