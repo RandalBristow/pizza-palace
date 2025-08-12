@@ -31,7 +31,8 @@ import {
 export interface Image {
   id: string;
   name: string;
-  url: string;
+  storagePath?: string;
+  url?: string;
   altText?: string;
   fileSize?: number;
   width?: number;
@@ -42,7 +43,8 @@ export interface Image {
 
 interface ImageManagerFormProps {
   images: Image[];
-  createImage: (image: any) => Promise<any>;
+  uploadImageFile: (file: File, name: string) => Promise<any>;
+  createImageFromUrl: (url: string, name: string, altText?: string) => Promise<any>;
   updateImage: (id: string, updates: any) => Promise<any>;
   deleteImage: (id: string) => Promise<void>;
 }
@@ -69,14 +71,14 @@ export default function ImageManagerForm({
   const handleAddImage = async () => {
     setError(null);
     setIsLoading(true);
-    
+
     try {
       await createImage(newImage);
       setIsAddingImage(false);
       resetForm();
     } catch (error) {
       let errorMessage = 'Failed to create image';
-      
+
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === 'string') {
@@ -92,7 +94,7 @@ export default function ImageManagerForm({
           errorMessage = `Failed to create image: ${JSON.stringify(error)}`;
         }
       }
-      
+
       setError(errorMessage);
       console.error('Failed to create image:', error);
     } finally {
@@ -115,14 +117,14 @@ export default function ImageManagerForm({
 
     setError(null);
     setIsLoading(true);
-    
+
     try {
       await updateImage(editingImage.id, newImage);
       setEditingImage(null);
       resetForm();
     } catch (error) {
       let errorMessage = 'Failed to update image';
-      
+
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === 'string') {
@@ -138,7 +140,7 @@ export default function ImageManagerForm({
           errorMessage = `Failed to update image: ${JSON.stringify(error)}`;
         }
       }
-      
+
       setError(errorMessage);
       console.error('Failed to update image:', error);
     } finally {
@@ -151,7 +153,7 @@ export default function ImageManagerForm({
       await deleteImage(id);
     } catch (error) {
       let errorMessage = 'Failed to delete image';
-      
+
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === 'string') {
@@ -167,7 +169,7 @@ export default function ImageManagerForm({
           errorMessage = `Failed to delete image: ${JSON.stringify(error)}`;
         }
       }
-      
+
       setError(errorMessage);
       console.error('Failed to delete image:', error);
     }
@@ -181,7 +183,7 @@ export default function ImageManagerForm({
       await updateImage(id, { ...image, isActive: !image.isActive });
     } catch (error) {
       let errorMessage = 'Failed to toggle image status';
-      
+
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === 'string') {
@@ -197,7 +199,7 @@ export default function ImageManagerForm({
           errorMessage = `Failed to toggle image status: ${JSON.stringify(error)}`;
         }
       }
-      
+
       setError(errorMessage);
       console.error('Failed to toggle image status:', error);
     }
@@ -301,7 +303,7 @@ export default function ImageManagerForm({
         >
           Cancel
         </Button>
-        <Button 
+        <Button
           onClick={isEdit ? handleUpdateImage : handleAddImage}
           disabled={isLoading || !newImage.name || !newImage.url}
         >
