@@ -823,6 +823,7 @@ export const useCarouselImages = () => {
           url: updates.url,
           title: updates.title,
           subtitle: updates.subtitle,
+          image_id: updates.imageId,
           order_num: updates.order,
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
