@@ -67,6 +67,7 @@ export default function AboutPageForm({
     content: "",
     imageUrl: "",
     imageAltText: "",
+    imagePosition: "right",
     links: [],
     textOverlay: undefined,
     columns: 1,
