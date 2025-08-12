@@ -102,7 +102,10 @@ export default function CarouselForm({
     if (!editingCarouselImage) return;
 
     try {
-      await updateCarouselImage(editingCarouselImage.id, newCarouselImage);
+      await updateCarouselImage(editingCarouselImage.id, {
+        ...newCarouselImage,
+        imageId: selectedImageId,
+      });
       setEditingCarouselImage(null);
       resetForm();
     } catch (error) {
