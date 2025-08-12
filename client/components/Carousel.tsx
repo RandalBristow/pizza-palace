@@ -77,9 +77,11 @@ export default function Carousel({
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {activeImages.map((image, index) => {
-          const dbImage = image.imageId ? dbImages.find(img => img.id === image.imageId) : null;
+          const dbImage = image.imageId
+            ? dbImages.find((img) => img.id === image.imageId)
+            : null;
           const imageUrl = dbImage?.url || image.url;
-          
+
           return (
             <div
               key={image.id}

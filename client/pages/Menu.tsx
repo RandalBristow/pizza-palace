@@ -35,14 +35,15 @@ export default function Menu() {
   const navigate = useNavigate();
 
   // Load data from database
-  const { categories: dbCategories, loading: categoriesLoading } = useCategories();
+  const { categories: dbCategories, loading: categoriesLoading } =
+    useCategories();
   const { menuItems: dbMenuItems, loading: menuItemsLoading } = useMenuItems();
   const { images, loading: imagesLoading } = useImages();
 
   // Set initial category when data loads
   useEffect(() => {
     if (!categoriesLoading && dbCategories.length > 0 && !selectedCategory) {
-      const firstActiveCategory = dbCategories.find(cat => cat.isActive);
+      const firstActiveCategory = dbCategories.find((cat) => cat.isActive);
       if (firstActiveCategory) {
         setSelectedCategory(firstActiveCategory.id);
       }
@@ -165,7 +166,9 @@ export default function Menu() {
                     <Card key={item.id} className="flex flex-col h-full">
                       <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
                         {(() => {
-                          const menuItemImage = item.imageId ? images.find(img => img.id === item.imageId) : null;
+                          const menuItemImage = item.imageId
+                            ? images.find((img) => img.id === item.imageId)
+                            : null;
                           return menuItemImage ? (
                             <img
                               src={menuItemImage.url}
