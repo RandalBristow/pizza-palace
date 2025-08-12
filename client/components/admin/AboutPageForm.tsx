@@ -36,6 +36,7 @@ export interface AboutSection {
   content?: string;
   imageUrl?: string;
   imageAltText?: string;
+  imagePosition?: "left" | "right";
   links: { text: string; url: string; type: "text" | "image" }[];
   textOverlay?: { text: string; position: "top" | "center" | "bottom"; style?: any };
   columns: number;
