@@ -319,28 +319,23 @@ export default function AboutPageForm({
 
       {(newSection.type === "image" || newSection.type === "text_with_image") && (
         <>
-          <div>
-            <Label htmlFor="imageUrl">Image URL</Label>
-            <Input
-              id="imageUrl"
-              placeholder="https://example.com/image.jpg"
-              value={newSection.imageUrl}
-              onChange={(e) =>
-                setNewSection({ ...newSection, imageUrl: e.target.value })
-              }
-            />
-          </div>
-          <div>
-            <Label htmlFor="imageAltText">Image Alt Text</Label>
-            <Input
-              id="imageAltText"
-              placeholder="Description of the image"
-              value={newSection.imageAltText}
-              onChange={(e) =>
-                setNewSection({ ...newSection, imageAltText: e.target.value })
-              }
-            />
-          </div>
+          <ImageSelector
+            images={images}
+            selectedImageId={selectedImageId}
+            onImageSelect={(imageId, imageUrl) => {
+              setSelectedImageId(imageId);
+              setNewSection({
+                ...newSection,
+                imageUrl: imageUrl || "",
+                imageAltText: imageId ? images.find(img => img.id === imageId)?.altText || "" : ""
+              });
+            }}
+            label="Select Image"
+            placeholder="Choose an image..."
+            required={true}
+            showPreview={true}
+          />
+
           {newSection.type === "text_with_image" && (
             <div>
               <Label htmlFor="imagePosition">Image Position</Label>
