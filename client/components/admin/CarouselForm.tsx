@@ -34,6 +34,7 @@ export interface CarouselImage {
   url: string;
   title: string;
   subtitle: string;
+  imageId?: string;
   isActive: boolean;
   order: number;
 }
