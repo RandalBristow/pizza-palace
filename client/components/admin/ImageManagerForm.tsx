@@ -348,7 +348,7 @@ export default function ImageManagerForm({
         </Button>
         <Button
           onClick={isEdit ? handleUpdateImage : handleAddImage}
-          disabled={isLoading || !newImage.name || (uploadType === "file" ? !selectedFile : !newImage.url)}
+          disabled={isLoading || !(newImage.name || "").trim() || (uploadType === "file" ? !selectedFile : !(newImage.url || "").trim())}
         >
           <Save className="h-4 w-4 mr-2" />
           {isLoading ? "Saving..." : (isEdit ? "Update Image" : "Save Image")}
