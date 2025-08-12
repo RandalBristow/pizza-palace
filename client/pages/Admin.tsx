@@ -13,6 +13,7 @@ import {
   useCustomerFavorites,
   useSettings,
   useAboutSections,
+  useImages,
 } from "../hooks/useSupabase";
 
 // Import form components
