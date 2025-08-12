@@ -1440,7 +1440,7 @@ export const useImages = () => {
       }
 
       setError(errorMessage);
-      throw err;
+      throw new Error(errorMessage);
     }
   };
 
