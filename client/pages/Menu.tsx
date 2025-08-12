@@ -37,6 +37,7 @@ export default function Menu() {
   // Load data from database
   const { categories: dbCategories, loading: categoriesLoading } = useCategories();
   const { menuItems: dbMenuItems, loading: menuItemsLoading } = useMenuItems();
+  const { images, loading: imagesLoading } = useImages();
 
   // Set initial category when data loads
   useEffect(() => {
