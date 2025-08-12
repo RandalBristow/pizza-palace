@@ -37,6 +37,7 @@ export interface DatabaseMenuItem {
   description: string;
   price: number;
   category_id: string;
+  image_id?: string;
   default_toppings: string[];
   is_active: boolean;
   created_at: string;
@@ -88,6 +89,7 @@ export interface DatabaseCarouselImage {
   url: string;
   title: string;
   subtitle: string;
+  image_id?: string;
   is_active: boolean;
   order_num: number;
   created_at: string;
