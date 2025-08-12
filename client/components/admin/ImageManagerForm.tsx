@@ -266,7 +266,7 @@ export default function ImageManagerForm({
         <Input
           id="imageName"
           placeholder={selectedFile ? selectedFile.name : "Enter image name"}
-          value={newImage.name}
+          value={newImage.name || ""}
           onChange={(e) =>
             setNewImage({ ...newImage, name: e.target.value })
           }
