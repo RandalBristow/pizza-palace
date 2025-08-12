@@ -1333,12 +1333,7 @@ export const useImages = () => {
         .from(TABLES.IMAGES)
         .update({
           name: updates.name,
-          url: updates.url,
           alt_text: updates.altText,
-          file_size: updates.fileSize,
-          width: updates.width,
-          height: updates.height,
-          mime_type: updates.mimeType,
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
         })
