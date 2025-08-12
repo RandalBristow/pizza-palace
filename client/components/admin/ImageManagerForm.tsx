@@ -308,7 +308,7 @@ export default function ImageManagerForm({
         <Input
           id="imageAltText"
           placeholder="Description of the image"
-          value={newImage.altText}
+          value={newImage.altText || ""}
           onChange={(e) =>
             setNewImage({ ...newImage, altText: e.target.value })
           }
