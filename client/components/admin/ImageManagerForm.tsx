@@ -51,7 +51,8 @@ interface ImageManagerFormProps {
 
 export default function ImageManagerForm({
   images,
-  createImage,
+  uploadImageFile,
+  createImageFromUrl,
   updateImage,
   deleteImage
 }: ImageManagerFormProps) {
