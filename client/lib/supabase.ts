@@ -18,6 +18,7 @@ export const TABLES = {
   CUSTOMER_FAVORITES: "customer_favorites",
   SETTINGS: "settings",
   ABOUT_SECTIONS: "about_sections",
+  IMAGES: "images",
 } as const;
 
 // Type definitions for Supabase tables
