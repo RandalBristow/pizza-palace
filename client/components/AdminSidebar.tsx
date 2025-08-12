@@ -58,8 +58,13 @@ const sidebarItems: SidebarItem[] = [
     icon: FileText,
   },
   {
-    id: "images",
+    id: "image-manager",
     label: "Images",
+    icon: ImageIcon,
+  },
+  {
+    id: "website-content",
+    label: "Website Content",
     icon: ImageIcon,
     children: [
       { id: "carousel-images", label: "Carousel Images" },
