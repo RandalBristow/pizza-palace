@@ -279,15 +279,18 @@ export default function MenuItemForm({
             required
           />
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline">
-            <Upload className="h-4 w-4 mr-2" />
-            Upload Image
-          </Button>
-          <span className="text-sm text-gray-500">
-            Optional: Add item image
-          </span>
-        </div>
+        <ImageSelector
+          images={images}
+          selectedImageId={selectedImageId}
+          onImageSelect={(imageId, imageUrl) => {
+            setSelectedImageId(imageId);
+            setNewMenuItem({ ...newMenuItem, image: imageUrl || "" });
+          }}
+          label="Menu Item Image"
+          placeholder="Select an image (optional)..."
+          required={false}
+          showPreview={true}
+        />
       </div>
 
       {/* Right Column - Default Toppings */}
