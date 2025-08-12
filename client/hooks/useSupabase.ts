@@ -75,6 +75,7 @@ export const transformCarouselImage = (
   url: dbCarouselImage.url,
   title: dbCarouselImage.title,
   subtitle: dbCarouselImage.subtitle,
+  imageId: dbCarouselImage.image_id,
   isActive: dbCarouselImage.is_active,
   order: dbCarouselImage.order_num,
 });
