@@ -301,6 +301,7 @@ export const useMenuItems = () => {
           description: updates.description,
           price: updates.price,
           category_id: updates.category,
+          image_id: updates.imageId,
           default_toppings: updates.defaultToppings,
           is_active: updates.isActive,
           updated_at: new Date().toISOString(),
