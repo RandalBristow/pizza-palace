@@ -26,6 +26,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import ImageSelector from "../ui/image-selector";
+import { useImages } from "../../hooks/useSupabase";
 
 export interface CarouselImage {
   id: string;
