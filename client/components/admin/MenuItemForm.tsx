@@ -482,30 +482,46 @@ export default function MenuItemForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredMenuItems.map((menuItem) => (
-          <Card key={menuItem.id}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-semibold">{menuItem.name}</h3>
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {menuItem.description}
-                  </p>
-                  <p className="text-lg font-bold text-green-600">
-                    ${menuItem.price.toFixed(2)}
-                  </p>
-                </div>
-                <Badge
-                  className={
-                    menuItem.isActive
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }
-                >
-                  {menuItem.isActive ? "Active" : "Inactive"}
-                </Badge>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredMenuItems.map((menuItem) => {
+            const menuItemImage = menuItem.imageId
+              ? images.find((img) => img.id === menuItem.imageId)
+              : null;
+
+            return (
+              <Card key={menuItem.id}>
+                <CardContent className="p-4">
+                  {menuItemImage ? (
+                    <img
+                      src={menuItemImage.url}
+                      alt={menuItemImage.altText || menuItem.name}
+                      className="w-full h-32 object-cover rounded mb-3"
+                    />
+                  ) : (
+                    <div className="w-full h-32 bg-gray-200 rounded mb-3 flex items-center justify-center">
+                      <Pizza className="h-12 w-12 text-gray-400" />
+                    </div>
+                  )}
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-semibold">{menuItem.name}</h3>
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {menuItem.description}
+                      </p>
+                      <p className="text-lg font-bold text-green-600">
+                        ${menuItem.price.toFixed(2)}
+                      </p>
+                    </div>
+                    <Badge
+                      className={
+                        menuItem.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
+                    >
+                      {menuItem.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
               <div className="flex justify-between items-center mt-3">
                 <div className="flex items-center space-x-1">
                   <TooltipProvider>
@@ -557,11 +573,12 @@ export default function MenuItemForm({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                </div>
+              </CardContent>
+            </Card>
+            );
+          })}
+        </div>
 
       {/* Edit Menu Item Dialog */}
       <Dialog
