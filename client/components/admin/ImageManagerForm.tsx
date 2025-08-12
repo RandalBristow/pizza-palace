@@ -283,8 +283,8 @@ export default function ImageManagerForm({
             onChange={(e) => {
               const file = e.target.files?.[0];
               setSelectedFile(file || null);
-              if (file && !newImage.name) {
-                setNewImage({ ...newImage, name: file.name.split('.').slice(0, -1).join('.') });
+              if (file && !(newImage.name || "").trim()) {
+                setNewImage({ ...newImage, name: file.name.split('.').slice(0, -1).join('.') || "" });
               }
             }}
           />
