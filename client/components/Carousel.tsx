@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useImages } from "../hooks/useSupabase";
 
 interface CarouselImage {
   id: string;
   url: string;
   title: string;
   subtitle: string;
+  imageId?: string;
   isActive: boolean;
 }
 
@@ -22,6 +24,7 @@ export default function Carousel({
   interval = 5000,
 }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { images: dbImages } = useImages();
 
   const activeImages = images.filter((img) => img.isActive);
 
