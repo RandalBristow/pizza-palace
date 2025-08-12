@@ -62,23 +62,47 @@ export default function About() {
                 {section.title}
               </h2>
             )}
-            <div className="grid md:grid-cols-2 gap-6 items-center">
-              <div>
-                {section.content && (
-                  <div className="text-gray-600 whitespace-pre-wrap leading-relaxed">
-                    {section.content}
+            <div className="grid md:grid-cols-2 gap-6 items-start">
+              {section.imagePosition === "left" ? (
+                <>
+                  {section.imageUrl && (
+                    <div className="rounded-lg overflow-hidden">
+                      <img
+                        src={section.imageUrl}
+                        alt={section.imageAltText || section.title || "About image"}
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    {section.content && (
+                      <div className="text-gray-600 whitespace-pre-wrap leading-relaxed">
+                        {section.content}
+                      </div>
+                    )}
+                    {renderLinks(section.links)}
                   </div>
-                )}
-                {renderLinks(section.links)}
-              </div>
-              {section.imageUrl && (
-                <div className="rounded-lg overflow-hidden">
-                  <img
-                    src={section.imageUrl}
-                    alt={section.imageAltText || section.title || "About image"}
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    {section.content && (
+                      <div className="text-gray-600 whitespace-pre-wrap leading-relaxed">
+                        {section.content}
+                      </div>
+                    )}
+                    {renderLinks(section.links)}
+                  </div>
+                  {section.imageUrl && (
+                    <div className="rounded-lg overflow-hidden">
+                      <img
+                        src={section.imageUrl}
+                        alt={section.imageAltText || section.title || "About image"}
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
