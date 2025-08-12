@@ -19,7 +19,7 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { Pizza, Coffee, Star } from "lucide-react";
-import { useCategories, useMenuItems } from "../hooks/useSupabase";
+import { useCategories, useMenuItems, useImages } from "../hooks/useSupabase";
 import { type MenuItem } from "../data/mockData";
 
 export default function Menu() {
