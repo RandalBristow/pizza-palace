@@ -76,7 +76,14 @@ export default function ImageManagerForm({
     setIsLoading(true);
 
     try {
-      await createImage(newImage);
+      if (uploadType === "file" && selectedFile) {
+        await uploadImageFile(selectedFile, newImage.name || selectedFile.name);
+      } else if (uploadType === "url" && newImage.url) {
+        await createImageFromUrl(newImage.url, newImage.name || "Uploaded Image", newImage.altText);
+      } else {
+        throw new Error("Please provide either a file or URL");
+      }
+
       setIsAddingImage(false);
       resetForm();
     } catch (error) {
