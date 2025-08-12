@@ -265,10 +265,10 @@ export default function ImageManagerForm({
         <Label htmlFor="imageName">Name *</Label>
         <Input
           id="imageName"
-          placeholder={selectedFile ? selectedFile.name : "Enter image name"}
+          placeholder={selectedFile ? selectedFile.name || "Enter image name" : "Enter image name"}
           value={newImage.name || ""}
           onChange={(e) =>
-            setNewImage({ ...newImage, name: e.target.value })
+            setNewImage({ ...newImage, name: e.target.value || "" })
           }
         />
       </div>
@@ -297,7 +297,7 @@ export default function ImageManagerForm({
             placeholder="https://example.com/image.jpg"
             value={newImage.url || ""}
             onChange={(e) =>
-              setNewImage({ ...newImage, url: e.target.value })
+              setNewImage({ ...newImage, url: e.target.value || "" })
             }
           />
         </div>
@@ -310,7 +310,7 @@ export default function ImageManagerForm({
           placeholder="Description of the image"
           value={newImage.altText || ""}
           onChange={(e) =>
-            setNewImage({ ...newImage, altText: e.target.value })
+            setNewImage({ ...newImage, altText: e.target.value || "" })
           }
         />
       </div>
