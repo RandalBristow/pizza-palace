@@ -98,7 +98,8 @@ export const transformSettings = (dbSettings: DatabaseSettings) => ({
 export const transformImage = (dbImage: DatabaseImage) => ({
   id: dbImage.id,
   name: dbImage.name,
-  url: dbImage.url,
+  storagePath: dbImage.storage_path,
+  url: dbImage.public_url,
   altText: dbImage.alt_text,
   fileSize: dbImage.file_size,
   width: dbImage.width,
