@@ -315,12 +315,12 @@ export default function ImageManagerForm({
         />
       </div>
 
-      {newImage.url && (
+      {(newImage.url || selectedFile) && (
         <div>
           <Label>Preview</Label>
           <div className="mt-2 border rounded-lg p-4">
             <img
-              src={newImage.url}
+              src={selectedFile ? URL.createObjectURL(selectedFile) : newImage.url}
               alt={newImage.altText || "Preview"}
               className="max-w-full max-h-48 object-contain"
               onError={(e) => {
