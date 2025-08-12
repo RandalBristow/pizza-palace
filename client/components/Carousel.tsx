@@ -76,14 +76,19 @@ export default function Carousel({
         className="flex transition-transform duration-700 ease-in-out h-full"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
-        {activeImages.map((image, index) => (
-          <div
-            key={image.id}
-            className="w-full h-full flex-shrink-0 relative bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url('${image.url}')`,
-            }}
-          >
+        {activeImages.map((image, index) => {
+          const dbImage = image.imageId ? dbImages.find(img => img.id === image.imageId) : null;
+          const imageUrl = dbImage?.url || image.url;
+
+          return (
+            <div
+              key={image.id}
+              className="w-full h-full flex-shrink-0 relative bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: `url('${imageUrl}')`,
+              }}
+            >
+        })}
             <div className="absolute inset-0 bg-black bg-opacity-50" />
             {/* Content Overlay */}
             <div className="relative h-full flex items-center justify-center text-center text-white">
