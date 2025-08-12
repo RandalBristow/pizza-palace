@@ -202,6 +202,15 @@ export default function Admin() {
             deleteAboutSection={deleteAboutSection}
           />
         );
+      case "image-manager":
+        return (
+          <ImageManagerForm
+            images={images}
+            createImage={createImage}
+            updateImage={updateImage}
+            deleteImage={deleteImage}
+          />
+        );
       case "carousel-images":
         return (
           <CarouselForm
