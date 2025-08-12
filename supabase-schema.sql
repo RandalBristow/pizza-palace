@@ -112,11 +112,12 @@ CREATE TABLE settings (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Images table for centralized image management
+-- Images table for centralized image management using Supabase Storage
 CREATE TABLE images (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(255) NOT NULL,
-  url TEXT NOT NULL,
+  storage_path TEXT NOT NULL, -- Path in Supabase storage bucket
+  public_url TEXT, -- Generated public URL from Supabase storage
   alt_text VARCHAR(255),
   file_size INTEGER, -- Size in bytes
   width INTEGER,
