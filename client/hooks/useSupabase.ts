@@ -1372,12 +1372,24 @@ export const useImages = () => {
 
   const deleteImage = async (id: string) => {
     try {
+      // Get image to find storage path
+      const imageToDelete = images.find(img => img.id === id);
+
+      // Delete from database first
       const { error } = await supabase
         .from(TABLES.IMAGES)
         .delete()
         .eq('id', id)
 
       if (error) throw error
+
+      // If it's a storage-based image (not external URL), delete from storage
+      if (imageToDelete && imageToDelete.storagePath && imageToDelete.storagePath.startsWith('images/')) {
+        await supabase.storage
+          .from('images')
+          .remove([imageToDelete.storagePath])
+        // Don't throw error if storage deletion fails, as the database record is already deleted
+      }
 
       setImages(prev => prev.filter(img => img.id !== id))
     } catch (err) {
