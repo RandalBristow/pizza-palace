@@ -62,6 +62,7 @@ export default function CarouselForm({
     order: 1,
     isActive: true,
   });
+  const [selectedImageId, setSelectedImageId] = useState<string | undefined>(undefined);
 
   const handleAddCarouselImage = async () => {
     try {
