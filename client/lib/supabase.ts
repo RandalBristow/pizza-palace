@@ -120,7 +120,8 @@ export interface DatabaseSettings {
 export interface DatabaseImage {
   id: string;
   name: string;
-  url: string;
+  storage_path: string;
+  public_url?: string;
   alt_text?: string;
   file_size?: number;
   width?: number;
