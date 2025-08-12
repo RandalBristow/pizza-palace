@@ -249,10 +249,23 @@ export default function ImageManagerForm({
       )}
 
       <div>
+        <Label htmlFor="uploadType">Upload Method</Label>
+        <Select value={uploadType} onValueChange={(value: any) => setUploadType(value)}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="file">Upload File</SelectItem>
+            <SelectItem value="url">From URL</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
         <Label htmlFor="imageName">Name *</Label>
         <Input
           id="imageName"
-          placeholder="Enter image name"
+          placeholder={selectedFile ? selectedFile.name : "Enter image name"}
           value={newImage.name}
           onChange={(e) =>
             setNewImage({ ...newImage, name: e.target.value })
@@ -260,17 +273,35 @@ export default function ImageManagerForm({
         />
       </div>
 
-      <div>
-        <Label htmlFor="imageUrl">Image URL *</Label>
-        <Input
-          id="imageUrl"
-          placeholder="https://example.com/image.jpg or upload file"
-          value={newImage.url}
-          onChange={(e) =>
-            setNewImage({ ...newImage, url: e.target.value })
-          }
-        />
-      </div>
+      {uploadType === "file" ? (
+        <div>
+          <Label htmlFor="imageFile">Select Image File *</Label>
+          <Input
+            id="imageFile"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              setSelectedFile(file || null);
+              if (file && !newImage.name) {
+                setNewImage({ ...newImage, name: file.name.split('.').slice(0, -1).join('.') });
+              }
+            }}
+          />
+        </div>
+      ) : (
+        <div>
+          <Label htmlFor="imageUrl">Image URL *</Label>
+          <Input
+            id="imageUrl"
+            placeholder="https://example.com/image.jpg"
+            value={newImage.url}
+            onChange={(e) =>
+              setNewImage({ ...newImage, url: e.target.value })
+            }
+          />
+        </div>
+      )}
 
       <div>
         <Label htmlFor="imageAltText">Alt Text</Label>
