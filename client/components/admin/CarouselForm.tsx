@@ -60,6 +60,7 @@ export default function CarouselForm({
     url: "",
     title: "",
     subtitle: "",
+    imageId: undefined,
     order: 1,
     isActive: true,
   });
@@ -69,7 +70,10 @@ export default function CarouselForm({
 
   const handleAddCarouselImage = async () => {
     try {
-      await createCarouselImage(newCarouselImage);
+      await createCarouselImage({
+        ...newCarouselImage,
+        imageId: selectedImageId,
+      });
       setIsAddingCarouselImage(false);
       resetForm();
     } catch (error) {
@@ -83,9 +87,11 @@ export default function CarouselForm({
       url: carouselImage.url || "",
       title: carouselImage.title || "",
       subtitle: carouselImage.subtitle || "",
+      imageId: carouselImage.imageId,
       order: carouselImage.order || 1,
       isActive: carouselImage.isActive ?? true,
     });
+    setSelectedImageId(carouselImage.imageId);
 
     // Find the image ID from the URL
     const selectedImage = images.find((img) => img.url === carouselImage.url);
@@ -128,6 +134,7 @@ export default function CarouselForm({
       url: "",
       title: "",
       subtitle: "",
+      imageId: undefined,
       order: 1,
       isActive: true,
     });
