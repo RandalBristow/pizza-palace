@@ -42,7 +42,7 @@ export default function About() {
                 alt={section.imageAltText || section.title || "About image"}
                 className="w-full h-auto object-cover"
               />
-              {section.textOverlay && (
+              {section.textOverlay && section.textOverlay.text && (
                 <div className={`absolute inset-0 flex items-${section.textOverlay.position === 'top' ? 'start' : section.textOverlay.position === 'bottom' ? 'end' : 'center'} justify-center`}>
                   <div className="bg-black bg-opacity-50 text-white p-4 rounded-md m-4">
                     <p className="text-lg font-semibold">{section.textOverlay.text}</p>
