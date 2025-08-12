@@ -117,7 +117,7 @@ export default function Menu() {
   };
 
   // Show loading state while data is being fetched
-  if (categoriesLoading || menuItemsLoading) {
+  if (categoriesLoading || menuItemsLoading || imagesLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -164,17 +164,20 @@ export default function Menu() {
                   filteredItems.map((item) => (
                     <Card key={item.id} className="flex flex-col h-full">
                       <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
-                        {item.image ? (
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <Pizza className="h-16 w-16" />
-                          </div>
-                        )}
+                        {(() => {
+                          const menuItemImage = item.imageId ? images.find(img => img.id === item.imageId) : null;
+                          return menuItemImage ? (
+                            <img
+                              src={menuItemImage.url}
+                              alt={menuItemImage.altText || item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              <Pizza className="h-16 w-16" />
+                            </div>
+                          );
+                        })()}
                       </div>
                       <CardContent className="flex flex-col flex-1 p-4">
                         <div className="flex-1">
