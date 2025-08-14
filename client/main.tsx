@@ -1,5 +1,16 @@
 import "./global.css";
 import { createRoot } from "react-dom/client";
+
+// Suppress ResizeObserver loop warning from Radix UI components
+const resizeObserverError = (e: ErrorEvent) => {
+  if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
+    e.stopImmediatePropagation();
+    return false;
+  }
+  return true;
+};
+
+window.addEventListener('error', resizeObserverError);
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { OrderProvider } from "./context/OrderContext";
 import Index from "./pages/Index";
