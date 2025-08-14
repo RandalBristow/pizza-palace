@@ -307,7 +307,7 @@ export default function MenuItemForm({
           label="Menu Item Image"
           placeholder="Select an image (optional)..."
           required={false}
-          showPreview={true}
+          showPreview={false}
         />
       </div>
 
