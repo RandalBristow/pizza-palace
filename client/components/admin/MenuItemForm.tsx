@@ -143,6 +143,7 @@ export default function MenuItemForm({
       description: menuItem.description || "",
       price: menuItem.price || 0,
       category: menuItem.category || "",
+      subCategoryId: menuItem.subCategoryId,
       imageId: menuItem.imageId,
       defaultToppings: menuItem.defaultToppings || [],
       isActive: menuItem.isActive ?? true,
