@@ -211,9 +211,10 @@ export default function MenuCategoryForm({
       </div>
 
       <Tabs defaultValue="categories" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="subcategories">Sub-Categories</TabsTrigger>
+          <TabsTrigger value="sizes">Sizes</TabsTrigger>
         </TabsList>
 
         <TabsContent value="categories" className="space-y-6">
