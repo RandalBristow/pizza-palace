@@ -121,6 +121,16 @@ export const transformSubCategory = (
   isActive: dbSubCategory.is_active,
 });
 
+export const transformCategorySize = (
+  dbCategorySize: DatabaseCategorySize,
+) => ({
+  id: dbCategorySize.id,
+  categoryId: dbCategorySize.category_id,
+  sizeName: dbCategorySize.size_name,
+  displayOrder: dbCategorySize.display_order,
+  isActive: dbCategorySize.is_active,
+});
+
 export const transformAboutSection = (
   dbAboutSection: DatabaseAboutSection,
 ) => ({
