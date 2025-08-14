@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Folder, FolderOpen } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -26,6 +26,14 @@ export interface Category {
   name: string;
   isActive: boolean;
   order: number;
+}
+
+export interface SubCategory {
+  id: string;
+  name: string;
+  categoryId: string;
+  displayOrder: number;
+  isActive: boolean;
 }
 
 interface MenuCategoryFormProps {
