@@ -220,17 +220,18 @@ export default function Admin() {
         );
       case "menu-items":
         return (
-          <MenuItemForm
-            menuItems={menuItems}
-            categories={categories}
-            toppingCategories={toppingCategories}
-            toppings={toppings}
-            selectedMenuCategory={selectedMenuCategory}
-            onSelectedCategoryChange={setSelectedMenuCategory}
-            createMenuItem={createMenuItem}
-            updateMenuItem={updateMenuItem}
-            deleteMenuItem={deleteMenuItem}
-          />
+              <MenuItemForm
+                menuItems={menuItems}
+                categories={categories}
+                subCategories={subCategories}
+                toppingCategories={toppingCategories}
+                toppings={toppings}
+                selectedMenuCategory={selectedMenuCategory}
+                onSelectedCategoryChange={setSelectedMenuCategory}
+                createMenuItem={createMenuItem}
+                updateMenuItem={updateMenuItem}
+                deleteMenuItem={deleteMenuItem}
+              />
         );
       case "topping-categories":
         return (
