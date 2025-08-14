@@ -21,6 +21,8 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { useCategories } from "../../hooks/useSupabase";
+import SubCategoryForm from "./SubCategoryForm";
+import CategorySizesForm from "./CategorySizesForm";
 
 export interface Category {
   id: string;
