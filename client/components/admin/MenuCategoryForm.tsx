@@ -38,20 +38,28 @@ export interface SubCategory {
 
 interface MenuCategoryFormProps {
   categories: Category[];
+  subCategories?: SubCategory[];
   menuItems?: any[];
   toppingCategories?: any[];
   createCategory: (category: any) => Promise<any>;
   updateCategory: (id: string, updates: any) => Promise<any>;
   deleteCategory: (id: string) => Promise<void>;
+  createSubCategory?: (subCategory: any) => Promise<any>;
+  updateSubCategory?: (id: string, updates: any) => Promise<any>;
+  deleteSubCategory?: (id: string) => Promise<void>;
 }
 
 export default function MenuCategoryForm({
   categories,
+  subCategories = [],
   menuItems = [],
   toppingCategories = [],
   createCategory,
   updateCategory,
   deleteCategory,
+  createSubCategory,
+  updateSubCategory,
+  deleteSubCategory,
 }: MenuCategoryFormProps) {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
