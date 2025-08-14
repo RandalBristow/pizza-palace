@@ -248,6 +248,111 @@ export const useCategories = () => {
   };
 };
 
+export const useSubCategories = () => {
+  const [subCategories, setSubCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchSubCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_SUB_CATEGORIES)
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+
+      setSubCategories(data ? data.map(transformSubCategory) : []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch sub-categories");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createSubCategory = async (subCategory: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_SUB_CATEGORIES)
+        .insert({
+          name: subCategory.name,
+          category_id: subCategory.categoryId,
+          display_order: subCategory.displayOrder,
+          is_active: subCategory.isActive,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newSubCategory = transformSubCategory(data);
+      setSubCategories((prev) => [...prev, newSubCategory]);
+      return newSubCategory;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create sub-category");
+      throw err;
+    }
+  };
+
+  const updateSubCategory = async (id: string, updates: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_SUB_CATEGORIES)
+        .update({
+          name: updates.name,
+          category_id: updates.categoryId,
+          display_order: updates.displayOrder,
+          is_active: updates.isActive,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const updatedSubCategory = transformSubCategory(data);
+      setSubCategories((prev) =>
+        prev.map((sub) => (sub.id === id ? updatedSubCategory : sub))
+      );
+      return updatedSubCategory;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update sub-category");
+      throw err;
+    }
+  };
+
+  const deleteSubCategory = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.MENU_SUB_CATEGORIES)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setSubCategories((prev) => prev.filter((sub) => sub.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete sub-category");
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchSubCategories();
+  }, []);
+
+  return {
+    subCategories,
+    loading,
+    error,
+    createSubCategory,
+    updateSubCategory,
+    deleteSubCategory,
+    refetch: fetchSubCategories,
+  };
+};
+
 export const useMenuItems = () => {
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
