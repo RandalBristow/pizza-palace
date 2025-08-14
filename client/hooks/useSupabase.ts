@@ -111,7 +111,9 @@ export const transformImage = (dbImage: DatabaseImage) => ({
   isActive: dbImage.is_active,
 });
 
-export const transformSubCategory = (dbSubCategory: DatabaseMenuSubCategory) => ({
+export const transformSubCategory = (
+  dbSubCategory: DatabaseMenuSubCategory,
+) => ({
   id: dbSubCategory.id,
   name: dbSubCategory.name,
   categoryId: dbSubCategory.category_id,
@@ -264,7 +266,9 @@ export const useSubCategories = () => {
 
       setSubCategories(data ? data.map(transformSubCategory) : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch sub-categories");
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch sub-categories",
+      );
     } finally {
       setLoading(false);
     }
@@ -289,7 +293,9 @@ export const useSubCategories = () => {
       setSubCategories((prev) => [...prev, newSubCategory]);
       return newSubCategory;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create sub-category");
+      setError(
+        err instanceof Error ? err.message : "Failed to create sub-category",
+      );
       throw err;
     }
   };
@@ -313,11 +319,13 @@ export const useSubCategories = () => {
 
       const updatedSubCategory = transformSubCategory(data);
       setSubCategories((prev) =>
-        prev.map((sub) => (sub.id === id ? updatedSubCategory : sub))
+        prev.map((sub) => (sub.id === id ? updatedSubCategory : sub)),
       );
       return updatedSubCategory;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update sub-category");
+      setError(
+        err instanceof Error ? err.message : "Failed to update sub-category",
+      );
       throw err;
     }
   };
@@ -333,7 +341,9 @@ export const useSubCategories = () => {
 
       setSubCategories((prev) => prev.filter((sub) => sub.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete sub-category");
+      setError(
+        err instanceof Error ? err.message : "Failed to delete sub-category",
+      );
       throw err;
     }
   };

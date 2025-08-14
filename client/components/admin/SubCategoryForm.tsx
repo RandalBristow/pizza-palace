@@ -68,7 +68,10 @@ interface SubCategoryFormProps {
   createSubCategory: (subCategory: any) => Promise<any>;
   updateSubCategory: (id: string, updates: any) => Promise<any>;
   deleteSubCategory: (id: string) => Promise<void>;
-  updateSubCategorySizes: (subCategoryId: string, sizeIds: string[]) => Promise<void>;
+  updateSubCategorySizes: (
+    subCategoryId: string,
+    sizeIds: string[],
+  ) => Promise<void>;
 }
 
 export default function SubCategoryForm({
@@ -82,7 +85,8 @@ export default function SubCategoryForm({
   updateSubCategorySizes,
 }: SubCategoryFormProps) {
   const [isAddingSubCategory, setIsAddingSubCategory] = useState(false);
-  const [editingSubCategory, setEditingSubCategory] = useState<SubCategory | null>(null);
+  const [editingSubCategory, setEditingSubCategory] =
+    useState<SubCategory | null>(null);
   const [newSubCategory, setNewSubCategory] = useState({
     name: "",
     categoryId: "",
@@ -100,7 +104,7 @@ export default function SubCategoryForm({
       setIsAddingSubCategory(false);
       resetForm();
     } catch (error) {
-      console.error('Failed to create sub-category:', error);
+      console.error("Failed to create sub-category:", error);
     }
   };
 
@@ -112,11 +116,11 @@ export default function SubCategoryForm({
       displayOrder: subCategory.displayOrder || 1,
       isActive: subCategory.isActive ?? true,
     });
-    
+
     // Load existing sizes for this sub-category
     const existingSizes = subCategorySizes
-      .filter(scs => scs.subCategoryId === subCategory.id)
-      .map(scs => scs.categorySizeId);
+      .filter((scs) => scs.subCategoryId === subCategory.id)
+      .map((scs) => scs.categorySizeId);
     setSelectedSizes(existingSizes);
   };
 
@@ -129,7 +133,7 @@ export default function SubCategoryForm({
       setEditingSubCategory(null);
       resetForm();
     } catch (error) {
-      console.error('Failed to update sub-category:', error);
+      console.error("Failed to update sub-category:", error);
     }
   };
 
@@ -137,18 +141,21 @@ export default function SubCategoryForm({
     try {
       await deleteSubCategory(id);
     } catch (error) {
-      console.error('Failed to delete sub-category:', error);
+      console.error("Failed to delete sub-category:", error);
     }
   };
 
   const toggleSubCategoryStatus = async (id: string) => {
-    const subCategory = subCategories.find(sub => sub.id === id);
+    const subCategory = subCategories.find((sub) => sub.id === id);
     if (!subCategory) return;
 
     try {
-      await updateSubCategory(id, { ...subCategory, isActive: !subCategory.isActive });
+      await updateSubCategory(id, {
+        ...subCategory,
+        isActive: !subCategory.isActive,
+      });
     } catch (error) {
-      console.error('Failed to toggle sub-category status:', error);
+      console.error("Failed to toggle sub-category status:", error);
     }
   };
 
@@ -164,15 +171,15 @@ export default function SubCategoryForm({
 
   const handleSizeToggle = (sizeId: string, checked: boolean) => {
     if (checked) {
-      setSelectedSizes(prev => [...prev, sizeId]);
+      setSelectedSizes((prev) => [...prev, sizeId]);
     } else {
-      setSelectedSizes(prev => prev.filter(id => id !== sizeId));
+      setSelectedSizes((prev) => prev.filter((id) => id !== sizeId));
     }
   };
 
   const getAvailableSizes = (categoryId: string) => {
     return categorySizes
-      .filter(size => size.categoryId === categoryId && size.isActive)
+      .filter((size) => size.categoryId === categoryId && size.isActive)
       .sort((a, b) => a.displayOrder - b.displayOrder);
   };
 
@@ -191,11 +198,13 @@ export default function SubCategoryForm({
             <SelectValue placeholder="Select a category..." />
           </SelectTrigger>
           <SelectContent>
-            {categories.filter(c => c.isActive).map(category => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.name}
-              </SelectItem>
-            ))}
+            {categories
+              .filter((c) => c.isActive)
+              .map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
@@ -206,7 +215,9 @@ export default function SubCategoryForm({
           id="subCategoryName"
           placeholder="e.g., Build Your Own"
           value={newSubCategory.name}
-          onChange={(e) => setNewSubCategory({ ...newSubCategory, name: e.target.value })}
+          onChange={(e) =>
+            setNewSubCategory({ ...newSubCategory, name: e.target.value })
+          }
         />
       </div>
 
@@ -217,7 +228,12 @@ export default function SubCategoryForm({
           type="number"
           placeholder="1"
           value={newSubCategory.displayOrder}
-          onChange={(e) => setNewSubCategory({ ...newSubCategory, displayOrder: parseInt(e.target.value) || 1 })}
+          onChange={(e) =>
+            setNewSubCategory({
+              ...newSubCategory,
+              displayOrder: parseInt(e.target.value) || 1,
+            })
+          }
         />
       </div>
 
@@ -226,14 +242,18 @@ export default function SubCategoryForm({
           <Label>Available Sizes</Label>
           <div className="mt-2 space-y-2 border rounded-lg p-4">
             {getAvailableSizes(newSubCategory.categoryId).length === 0 ? (
-              <p className="text-sm text-gray-500">No sizes defined for this category</p>
+              <p className="text-sm text-gray-500">
+                No sizes defined for this category
+              </p>
             ) : (
-              getAvailableSizes(newSubCategory.categoryId).map(size => (
+              getAvailableSizes(newSubCategory.categoryId).map((size) => (
                 <div key={size.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={`size-${size.id}`}
                     checked={selectedSizes.includes(size.id)}
-                    onCheckedChange={(checked) => handleSizeToggle(size.id, checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleSizeToggle(size.id, checked as boolean)
+                    }
                   />
                   <Label htmlFor={`size-${size.id}`} className="text-sm">
                     {size.sizeName}
@@ -274,7 +294,10 @@ export default function SubCategoryForm({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Sub-Categories</h3>
-        <Dialog open={isAddingSubCategory} onOpenChange={setIsAddingSubCategory}>
+        <Dialog
+          open={isAddingSubCategory}
+          onOpenChange={setIsAddingSubCategory}
+        >
           <DialogTrigger asChild>
             <Button disabled={categories.length === 0}>
               <Plus className="h-4 w-4 mr-2" />
@@ -285,7 +308,8 @@ export default function SubCategoryForm({
             <DialogHeader>
               <DialogTitle>Add New Sub-Category</DialogTitle>
               <DialogDescription>
-                Create a new sub-category within a menu category and select available sizes
+                Create a new sub-category within a menu category and select
+                available sizes
               </DialogDescription>
             </DialogHeader>
             {renderSubCategoryForm(false)}
@@ -299,14 +323,18 @@ export default function SubCategoryForm({
           <div className="text-center py-8">
             <Folder className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500">No sub-categories yet.</p>
-            <p className="text-sm text-gray-400">Create sub-categories to organize your menu items.</p>
+            <p className="text-sm text-gray-400">
+              Create sub-categories to organize your menu items.
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {categories.map(category => {
-              const categorySubCategories = subCategories.filter(sub => sub.categoryId === category.id);
+            {categories.map((category) => {
+              const categorySubCategories = subCategories.filter(
+                (sub) => sub.categoryId === category.id,
+              );
               if (categorySubCategories.length === 0) return null;
-              
+
               return (
                 <div key={category.id} className="border rounded-lg p-4">
                   <h4 className="font-semibold text-lg mb-3 flex items-center">
@@ -316,30 +344,48 @@ export default function SubCategoryForm({
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {categorySubCategories
                       .sort((a, b) => a.displayOrder - b.displayOrder)
-                      .map(subCategory => {
+                      .map((subCategory) => {
                         const subCategorySizeIds = subCategorySizes
-                          .filter(scs => scs.subCategoryId === subCategory.id)
-                          .map(scs => scs.categorySizeId);
+                          .filter((scs) => scs.subCategoryId === subCategory.id)
+                          .map((scs) => scs.categorySizeId);
                         const subCategorySizeNames = categorySizes
-                          .filter(size => subCategorySizeIds.includes(size.id))
-                          .map(size => size.sizeName);
-                        
+                          .filter((size) =>
+                            subCategorySizeIds.includes(size.id),
+                          )
+                          .map((size) => size.sizeName);
+
                         return (
                           <Card key={subCategory.id}>
                             <CardContent className="p-4">
                               <div className="flex justify-between items-start mb-2">
-                                <h5 className="font-medium">{subCategory.name}</h5>
-                                <Badge className={subCategory.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                                <h5 className="font-medium">
+                                  {subCategory.name}
+                                </h5>
+                                <Badge
+                                  className={
+                                    subCategory.isActive
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-red-100 text-red-800"
+                                  }
+                                >
                                   {subCategory.isActive ? "Active" : "Inactive"}
                                 </Badge>
                               </div>
-                              <p className="text-sm text-gray-500 mb-2">Order: {subCategory.displayOrder}</p>
+                              <p className="text-sm text-gray-500 mb-2">
+                                Order: {subCategory.displayOrder}
+                              </p>
                               {subCategorySizeNames.length > 0 && (
                                 <div className="mb-3">
-                                  <p className="text-xs text-gray-600 mb-1">Sizes:</p>
+                                  <p className="text-xs text-gray-600 mb-1">
+                                    Sizes:
+                                  </p>
                                   <div className="flex flex-wrap gap-1">
-                                    {subCategorySizeNames.map(sizeName => (
-                                      <Badge key={sizeName} variant="outline" className="text-xs">
+                                    {subCategorySizeNames.map((sizeName) => (
+                                      <Badge
+                                        key={sizeName}
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
                                         {sizeName}
                                       </Badge>
                                     ))}
@@ -351,32 +397,66 @@ export default function SubCategoryForm({
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="outline" size="sm" onClick={() => toggleSubCategoryStatus(subCategory.id)}>
-                                          {subCategory.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() =>
+                                            toggleSubCategoryStatus(
+                                              subCategory.id,
+                                            )
+                                          }
+                                        >
+                                          {subCategory.isActive ? (
+                                            <ThumbsUp className="h-4 w-4" />
+                                          ) : (
+                                            <ThumbsDown className="h-4 w-4" />
+                                          )}
                                         </Button>
                                       </TooltipTrigger>
-                                      <TooltipContent>{subCategory.isActive ? "Deactivate" : "Activate"}</TooltipContent>
+                                      <TooltipContent>
+                                        {subCategory.isActive
+                                          ? "Deactivate"
+                                          : "Activate"}
+                                      </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="outline" size="sm" onClick={() => handleEditSubCategory(subCategory)}>
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() =>
+                                            handleEditSubCategory(subCategory)
+                                          }
+                                        >
                                           <Edit className="h-4 w-4" />
                                         </Button>
                                       </TooltipTrigger>
-                                      <TooltipContent>Edit Sub-Category</TooltipContent>
+                                      <TooltipContent>
+                                        Edit Sub-Category
+                                      </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
                                 </div>
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="outline" size="sm" onClick={() => handleDeleteSubCategory(subCategory.id)}>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                          handleDeleteSubCategory(
+                                            subCategory.id,
+                                          )
+                                        }
+                                      >
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
                                     </TooltipTrigger>
-                                    <TooltipContent>Delete Sub-Category</TooltipContent>
+                                    <TooltipContent>
+                                      Delete Sub-Category
+                                    </TooltipContent>
                                   </Tooltip>
                                 </TooltipProvider>
                               </div>

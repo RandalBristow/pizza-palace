@@ -267,7 +267,10 @@ export default function MenuItemForm({
             <SelectContent>
               <SelectItem value="none">No sub-category</SelectItem>
               {subCategories
-                .filter((sub) => sub.categoryId === newMenuItem.category && sub.isActive)
+                .filter(
+                  (sub) =>
+                    sub.categoryId === newMenuItem.category && sub.isActive,
+                )
                 .sort((a, b) => a.displayOrder - b.displayOrder)
                 .map((subCategory) => (
                   <SelectItem key={subCategory.id} value={subCategory.id}>

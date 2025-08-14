@@ -80,7 +80,7 @@ export default function CategorySizesForm({
       setIsAddingSize(false);
       resetForm();
     } catch (error) {
-      console.error('Failed to create category size:', error);
+      console.error("Failed to create category size:", error);
     }
   };
 
@@ -102,7 +102,7 @@ export default function CategorySizesForm({
       setEditingSize(null);
       resetForm();
     } catch (error) {
-      console.error('Failed to update category size:', error);
+      console.error("Failed to update category size:", error);
     }
   };
 
@@ -110,18 +110,18 @@ export default function CategorySizesForm({
     try {
       await deleteCategorySize(id);
     } catch (error) {
-      console.error('Failed to delete category size:', error);
+      console.error("Failed to delete category size:", error);
     }
   };
 
   const toggleSizeStatus = async (id: string) => {
-    const size = categorySizes.find(s => s.id === id);
+    const size = categorySizes.find((s) => s.id === id);
     if (!size) return;
 
     try {
       await updateCategorySize(id, { ...size, isActive: !size.isActive });
     } catch (error) {
-      console.error('Failed to toggle size status:', error);
+      console.error("Failed to toggle size status:", error);
     }
   };
 
@@ -140,17 +140,21 @@ export default function CategorySizesForm({
         <Label htmlFor="sizeCategory">Category</Label>
         <Select
           value={newSize.categoryId}
-          onValueChange={(value) => setNewSize({ ...newSize, categoryId: value })}
+          onValueChange={(value) =>
+            setNewSize({ ...newSize, categoryId: value })
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a category..." />
           </SelectTrigger>
           <SelectContent>
-            {categories.filter(c => c.isActive).map(category => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.name}
-              </SelectItem>
-            ))}
+            {categories
+              .filter((c) => c.isActive)
+              .map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
@@ -172,7 +176,12 @@ export default function CategorySizesForm({
           type="number"
           placeholder="1"
           value={newSize.displayOrder}
-          onChange={(e) => setNewSize({ ...newSize, displayOrder: parseInt(e.target.value) || 1 })}
+          onChange={(e) =>
+            setNewSize({
+              ...newSize,
+              displayOrder: parseInt(e.target.value) || 1,
+            })
+          }
         />
       </div>
 
@@ -216,7 +225,8 @@ export default function CategorySizesForm({
             <DialogHeader>
               <DialogTitle>Add New Size</DialogTitle>
               <DialogDescription>
-                Create a new size for a category (e.g., pizza sizes, wing portions)
+                Create a new size for a category (e.g., pizza sizes, wing
+                portions)
               </DialogDescription>
             </DialogHeader>
             {renderSizeForm(false)}
@@ -230,17 +240,19 @@ export default function CategorySizesForm({
           <div className="text-center py-8">
             <Ruler className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500">No sizes defined yet.</p>
-            <p className="text-sm text-gray-400">Add sizes for your menu categories.</p>
+            <p className="text-sm text-gray-400">
+              Add sizes for your menu categories.
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {categories.map(category => {
+            {categories.map((category) => {
               const categorySizeList = categorySizes
-                .filter(size => size.categoryId === category.id)
+                .filter((size) => size.categoryId === category.id)
                 .sort((a, b) => a.displayOrder - b.displayOrder);
-              
+
               if (categorySizeList.length === 0) return null;
-              
+
               return (
                 <div key={category.id} className="border rounded-lg p-4">
                   <h4 className="font-semibold text-lg mb-3 flex items-center">
@@ -248,32 +260,54 @@ export default function CategorySizesForm({
                     {category.name}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                    {categorySizeList.map(size => (
+                    {categorySizeList.map((size) => (
                       <Card key={size.id}>
                         <CardContent className="p-3">
                           <div className="flex justify-between items-start mb-2">
                             <h5 className="font-medium">{size.sizeName}</h5>
-                            <Badge className={size.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                            <Badge
+                              className={
+                                size.isActive
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
+                              }
+                            >
                               {size.isActive ? "Active" : "Inactive"}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-500 mb-3">Order: {size.displayOrder}</p>
+                          <p className="text-sm text-gray-500 mb-3">
+                            Order: {size.displayOrder}
+                          </p>
                           <div className="flex justify-between items-center">
                             <div className="flex space-x-1">
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button variant="outline" size="sm" onClick={() => toggleSizeStatus(size.id)}>
-                                      {size.isActive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />}
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => toggleSizeStatus(size.id)}
+                                    >
+                                      {size.isActive ? (
+                                        <ThumbsUp className="h-4 w-4" />
+                                      ) : (
+                                        <ThumbsDown className="h-4 w-4" />
+                                      )}
                                     </Button>
                                   </TooltipTrigger>
-                                  <TooltipContent>{size.isActive ? "Deactivate" : "Activate"}</TooltipContent>
+                                  <TooltipContent>
+                                    {size.isActive ? "Deactivate" : "Activate"}
+                                  </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button variant="outline" size="sm" onClick={() => handleEditSize(size)}>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleEditSize(size)}
+                                    >
                                       <Edit className="h-4 w-4" />
                                     </Button>
                                   </TooltipTrigger>
@@ -284,7 +318,11 @@ export default function CategorySizesForm({
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button variant="outline" size="sm" onClick={() => handleDeleteSize(size.id)}>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDeleteSize(size.id)}
+                                  >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
                                 </TooltipTrigger>
@@ -311,9 +349,7 @@ export default function CategorySizesForm({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Size</DialogTitle>
-            <DialogDescription>
-              Update the size details
-            </DialogDescription>
+            <DialogDescription>Update the size details</DialogDescription>
           </DialogHeader>
           {renderSizeForm(true)}
         </DialogContent>
