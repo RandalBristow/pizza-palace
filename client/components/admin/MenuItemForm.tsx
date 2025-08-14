@@ -250,13 +250,13 @@ export default function MenuItemForm({
         </div>
 
         <div>
-          <Label htmlFor="subCategory">Sub-Category</Label>
+          <Label htmlFor="subCategory">Sub-Category</label>
           <Select
-            value={newMenuItem.subCategoryId || ""}
+            value={newMenuItem.subCategoryId || "none"}
             onValueChange={(value) => {
               setNewMenuItem({
                 ...newMenuItem,
-                subCategoryId: value || undefined,
+                subCategoryId: value === "none" ? undefined : value,
               });
             }}
             disabled={!newMenuItem.category}
@@ -265,7 +265,7 @@ export default function MenuItemForm({
               <SelectValue placeholder="Select sub-category (optional)" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">No sub-category</SelectItem>
+              <SelectItem value="none">No sub-category</SelectItem>
               {subCategories
                 .filter((sub) => sub.categoryId === newMenuItem.category && sub.isActive)
                 .sort((a, b) => a.displayOrder - b.displayOrder)
