@@ -225,6 +225,7 @@ export default function MenuItemForm({
               setNewMenuItem({
                 ...newMenuItem,
                 category: value,
+                subCategoryId: undefined, // Reset sub-category when category changes
                 defaultToppings: [], // Reset toppings when category changes
               });
             }}
@@ -239,6 +240,35 @@ export default function MenuItemForm({
                 .map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="subCategory">Sub-Category</Label>
+          <Select
+            value={newMenuItem.subCategoryId || ""}
+            onValueChange={(value) => {
+              setNewMenuItem({
+                ...newMenuItem,
+                subCategoryId: value || undefined,
+              });
+            }}
+            disabled={!newMenuItem.category}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select sub-category (optional)" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">No sub-category</SelectItem>
+              {subCategories
+                .filter((sub) => sub.categoryId === newMenuItem.category && sub.isActive)
+                .sort((a, b) => a.displayOrder - b.displayOrder)
+                .map((subCategory) => (
+                  <SelectItem key={subCategory.id} value={subCategory.id}>
+                    {subCategory.name}
                   </SelectItem>
                 ))}
             </SelectContent>
