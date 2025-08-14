@@ -39,6 +39,12 @@ export default function Admin() {
     deleteCategory,
   } = useCategories();
   const {
+    subCategories,
+    createSubCategory,
+    updateSubCategory,
+    deleteSubCategory,
+  } = useSubCategories();
+  const {
     menuItems,
     loading: menuItemsLoading,
     createMenuItem,
