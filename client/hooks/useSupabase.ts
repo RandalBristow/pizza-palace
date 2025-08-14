@@ -111,6 +111,14 @@ export const transformImage = (dbImage: DatabaseImage) => ({
   isActive: dbImage.is_active,
 });
 
+export const transformSubCategory = (dbSubCategory: DatabaseMenuSubCategory) => ({
+  id: dbSubCategory.id,
+  name: dbSubCategory.name,
+  categoryId: dbSubCategory.category_id,
+  displayOrder: dbSubCategory.display_order,
+  isActive: dbSubCategory.is_active,
+});
+
 export const transformAboutSection = (
   dbAboutSection: DatabaseAboutSection,
 ) => ({
