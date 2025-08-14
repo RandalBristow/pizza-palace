@@ -48,6 +48,7 @@ export interface MenuItem {
   description: string;
   price: number;
   category: string;
+  subCategoryId?: string;
   imageId?: string;
   defaultToppings: string[];
   isActive: boolean;
