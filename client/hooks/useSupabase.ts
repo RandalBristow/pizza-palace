@@ -27,6 +27,7 @@ export const transformMenuItem = (dbMenuItem: DatabaseMenuItem) => ({
   description: dbMenuItem.description,
   price: dbMenuItem.price,
   category: dbMenuItem.category_id,
+  subCategoryId: dbMenuItem.sub_category_id,
   imageId: dbMenuItem.image_id,
   defaultToppings: dbMenuItem.default_toppings,
   isActive: dbMenuItem.is_active,
