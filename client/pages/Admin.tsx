@@ -5,6 +5,7 @@ import AdminSidebar from "../components/AdminSidebar";
 import { FileText } from "lucide-react";
 import {
   useCategories,
+  useSubCategories,
   useMenuItems,
   useToppings,
   useToppingCategories,
@@ -198,14 +199,18 @@ export default function Admin() {
         );
       case "categories":
         return (
-          <MenuCategoryForm
-            categories={categories}
-            menuItems={menuItems}
-            toppingCategories={toppingCategories}
-            createCategory={createCategory}
-            updateCategory={updateCategory}
-            deleteCategory={deleteCategory}
-          />
+              <MenuCategoryForm
+                categories={categories}
+                subCategories={subCategories}
+                menuItems={menuItems}
+                toppingCategories={toppingCategories}
+                createCategory={createCategory}
+                updateCategory={updateCategory}
+                deleteCategory={deleteCategory}
+                createSubCategory={createSubCategory}
+                updateSubCategory={updateSubCategory}
+                deleteSubCategory={deleteSubCategory}
+              />
         );
       case "menu-items":
         return (
