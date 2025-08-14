@@ -69,6 +69,17 @@ export default function MenuCategoryForm({
     order: 1,
   });
 
+  // Sub-category states
+  const [isAddingSubCategory, setIsAddingSubCategory] = useState(false);
+  const [editingSubCategory, setEditingSubCategory] = useState<SubCategory | null>(null);
+  const [selectedCategoryForSub, setSelectedCategoryForSub] = useState<string>("");
+  const [newSubCategory, setNewSubCategory] = useState({
+    name: "",
+    categoryId: "",
+    displayOrder: 1,
+    isActive: true,
+  });
+
   const handleAddCategory = async () => {
     try {
       await createCategory(newCategory);
