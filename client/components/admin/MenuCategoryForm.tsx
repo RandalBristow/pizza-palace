@@ -145,6 +145,64 @@ export default function MenuCategoryForm({
     }
   };
 
+  // Sub-category handlers
+  const handleAddSubCategory = async () => {
+    if (!createSubCategory) return;
+
+    try {
+      await createSubCategory(newSubCategory);
+      setIsAddingSubCategory(false);
+      setNewSubCategory({ name: "", categoryId: "", displayOrder: 1, isActive: true });
+    } catch (error) {
+      console.error('Failed to create sub-category:', error);
+    }
+  };
+
+  const handleEditSubCategory = (subCategory: SubCategory) => {
+    setEditingSubCategory(subCategory);
+    setNewSubCategory({
+      name: subCategory.name || "",
+      categoryId: subCategory.categoryId || "",
+      displayOrder: subCategory.displayOrder || 1,
+      isActive: subCategory.isActive ?? true,
+    });
+  };
+
+  const handleUpdateSubCategory = async () => {
+    if (!editingSubCategory || !updateSubCategory) return;
+
+    try {
+      await updateSubCategory(editingSubCategory.id, newSubCategory);
+      setEditingSubCategory(null);
+      setNewSubCategory({ name: "", categoryId: "", displayOrder: 1, isActive: true });
+    } catch (error) {
+      console.error('Failed to update sub-category:', error);
+    }
+  };
+
+  const handleDeleteSubCategory = async (id: string) => {
+    if (!deleteSubCategory) return;
+
+    try {
+      await deleteSubCategory(id);
+    } catch (error) {
+      console.error('Failed to delete sub-category:', error);
+    }
+  };
+
+  const toggleSubCategoryStatus = async (id: string) => {
+    if (!updateSubCategory) return;
+
+    const subCategory = subCategories.find(sub => sub.id === id);
+    if (!subCategory) return;
+
+    try {
+      await updateSubCategory(id, { ...subCategory, isActive: !subCategory.isActive });
+    } catch (error) {
+      console.error('Failed to toggle sub-category status:', error);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
