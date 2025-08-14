@@ -139,6 +139,44 @@ export interface DatabaseImage {
   updated_at: string;
 }
 
+export interface DatabaseMenuSubCategory {
+  id: string;
+  name: string;
+  category_id: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseCategorySize {
+  id: string;
+  category_id: string;
+  size_name: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseMenuItemSize {
+  id: string;
+  menu_item_id: string;
+  category_size_id: string;
+  price: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseMenuItemSizeTopping {
+  id: string;
+  menu_item_size_id: string;
+  topping_id: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DatabaseAboutSection {
   id: string;
   type: "text" | "image" | "text_with_image";
