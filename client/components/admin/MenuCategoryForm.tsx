@@ -206,14 +206,25 @@ export default function MenuCategoryForm({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Menu Categories</h2>
-        <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Category
-            </Button>
-          </DialogTrigger>
+        <h2 className="text-xl font-semibold">Menu Categories & Sub-Categories</h2>
+      </div>
+
+      <Tabs defaultValue="categories" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="categories">Categories</TabsTrigger>
+          <TabsTrigger value="subcategories">Sub-Categories</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="categories" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">Menu Categories</h3>
+            <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Category
+                </Button>
+              </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Category</DialogTitle>
