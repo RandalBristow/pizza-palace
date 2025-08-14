@@ -74,6 +74,7 @@ export interface Topping {
 interface MenuItemFormProps {
   menuItems: MenuItem[];
   categories: Category[];
+  subCategories?: any[];
   toppingCategories: ToppingCategory[];
   toppings: Topping[];
   selectedMenuCategory: string;
@@ -86,6 +87,7 @@ interface MenuItemFormProps {
 export default function MenuItemForm({
   menuItems,
   categories,
+  subCategories = [],
   toppingCategories,
   toppings,
   selectedMenuCategory,
