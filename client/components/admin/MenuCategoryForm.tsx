@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown, Folder, FolderOpen } from "lucide-react";
 import {
   Tooltip,
