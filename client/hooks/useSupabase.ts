@@ -1651,3 +1651,186 @@ export const useImages = () => {
     refetch: fetchImages,
   };
 };
+
+export const useCategorySizes = () => {
+  const [categorySizes, setCategorySizes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCategorySizes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORY_SIZES)
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+
+      setCategorySizes(data ? data.map(transformCategorySize) : []);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch category sizes",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createCategorySize = async (categorySize: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORY_SIZES)
+        .insert({
+          category_id: categorySize.categoryId,
+          size_name: categorySize.sizeName,
+          display_order: categorySize.displayOrder,
+          is_active: categorySize.isActive,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newCategorySize = transformCategorySize(data);
+      setCategorySizes((prev) => [...prev, newCategorySize]);
+      return newCategorySize;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to create category size",
+      );
+      throw err;
+    }
+  };
+
+  const updateCategorySize = async (id: string, updates: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORY_SIZES)
+        .update({
+          category_id: updates.categoryId,
+          size_name: updates.sizeName,
+          display_order: updates.displayOrder,
+          is_active: updates.isActive,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const updatedCategorySize = transformCategorySize(data);
+      setCategorySizes((prev) =>
+        prev.map((size) => (size.id === id ? updatedCategorySize : size)),
+      );
+      return updatedCategorySize;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update category size",
+      );
+      throw err;
+    }
+  };
+
+  const deleteCategorySize = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CATEGORY_SIZES)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setCategorySizes((prev) => prev.filter((size) => size.id !== id));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to delete category size",
+      );
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCategorySizes();
+  }, []);
+
+  return {
+    categorySizes,
+    loading,
+    error,
+    createCategorySize,
+    updateCategorySize,
+    deleteCategorySize,
+    refetch: fetchCategorySizes,
+  };
+};
+
+export const useSubCategorySizes = () => {
+  const [subCategorySizes, setSubCategorySizes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchSubCategorySizes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.SUB_CATEGORY_SIZES)
+        .select("*");
+
+      if (error) throw error;
+
+      setSubCategorySizes(data || []);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch sub-category sizes",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateSubCategorySizes = async (subCategoryId: string, sizeIds: string[]) => {
+    try {
+      // First, delete existing associations
+      const { error: deleteError } = await supabase
+        .from(TABLES.SUB_CATEGORY_SIZES)
+        .delete()
+        .eq("sub_category_id", subCategoryId);
+
+      if (deleteError) throw deleteError;
+
+      // Then, insert new associations
+      if (sizeIds.length > 0) {
+        const insertData = sizeIds.map(sizeId => ({
+          sub_category_id: subCategoryId,
+          category_size_id: sizeId,
+        }));
+
+        const { error: insertError } = await supabase
+          .from(TABLES.SUB_CATEGORY_SIZES)
+          .insert(insertData);
+
+        if (insertError) throw insertError;
+      }
+
+      // Refresh the data
+      await fetchSubCategorySizes();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update sub-category sizes",
+      );
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchSubCategorySizes();
+  }, []);
+
+  return {
+    subCategorySizes,
+    loading,
+    error,
+    updateSubCategorySizes,
+    refetch: fetchSubCategorySizes,
+  };
+};
