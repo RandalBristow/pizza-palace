@@ -104,6 +104,7 @@ export default function MenuItemForm({
     description: "",
     price: 0,
     category: "",
+    subCategoryId: undefined,
     imageId: undefined,
     defaultToppings: [],
     isActive: true,
