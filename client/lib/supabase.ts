@@ -11,6 +11,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const TABLES = {
   CATEGORIES: "categories",
   MENU_SUB_CATEGORIES: "menu_sub_categories",
+  SUB_CATEGORY_SIZES: "sub_category_sizes",
   CATEGORY_SIZES: "category_sizes",
   MENU_ITEMS: "menu_items",
   MENU_ITEM_SIZES: "menu_item_sizes",
@@ -39,11 +40,9 @@ export interface DatabaseMenuItem {
   id: string;
   name: string;
   description: string;
-  price: number;
   category_id: string;
   sub_category_id?: string;
   image_id?: string;
-  default_toppings: string[];
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -175,6 +174,13 @@ export interface DatabaseMenuItemSizeTopping {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface DatabaseSubCategorySize {
+  id: string;
+  sub_category_id: string;
+  category_size_id: string;
+  created_at: string;
 }
 
 export interface DatabaseAboutSection {
