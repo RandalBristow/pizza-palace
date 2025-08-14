@@ -250,7 +250,7 @@ export default function MenuItemForm({
         </div>
 
         <div>
-          <Label htmlFor="subCategory">Sub-Category</label>
+          <Label htmlFor="subCategory">Sub-Category</Label>
           <Select
             value={newMenuItem.subCategoryId || "none"}
             onValueChange={(value) => {
