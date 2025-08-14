@@ -29,7 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { useCategories } from "../../hooks/useSupabase";
+import { useCategories, useCategorySizes, useSubCategorySizes } from "../../hooks/useSupabase";
 import SubCategoryForm from "./SubCategoryForm";
 import CategorySizesForm from "./CategorySizesForm";
 
