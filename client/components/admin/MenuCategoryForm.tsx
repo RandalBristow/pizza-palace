@@ -73,6 +73,8 @@ export default function MenuCategoryForm({
   updateSubCategory,
   deleteSubCategory,
 }: MenuCategoryFormProps) {
+  const { categorySizes, createCategorySize, updateCategorySize, deleteCategorySize } = useCategorySizes();
+  const { subCategorySizes, updateSubCategorySizes } = useSubCategorySizes();
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newCategory, setNewCategory] = useState({
