@@ -178,7 +178,7 @@ export default function Menu() {
   };
 
   // Show loading state while data is being fetched
-  if (categoriesLoading || menuItemsLoading || imagesLoading || categorySizesLoading || menuItemSizesLoading) {
+  if (categoriesLoading || menuItemsLoading || subCategoriesLoading || imagesLoading || categorySizesLoading || menuItemSizesLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
