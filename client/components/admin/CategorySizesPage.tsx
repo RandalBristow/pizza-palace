@@ -192,6 +192,7 @@ export default function CategorySizesPage({
         updateCategorySize={updateCategorySize}
         deleteCategorySize={deleteCategorySize}
         showTitle={false}
+        hideAddButton={true}
       />
     </div>
   );
