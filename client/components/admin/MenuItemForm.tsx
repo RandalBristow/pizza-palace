@@ -548,43 +548,59 @@ export default function MenuItemForm({
                         value={toppingCategory.id}
                         className="mt-0 space-y-2"
                       >
-                        {toppings
-                          .filter(
-                            (t) =>
-                              t.category === toppingCategory.id && t.isActive,
-                          )
-                          .map((topping) => {
-                            const isActive =
-                              sizeToppings[selectedSize]?.[topping.id] ?? true;
-                            return (
-                              <div
-                                key={topping.id}
-                                className="flex items-center justify-between p-2 border rounded"
-                              >
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-sm">
-                                    {topping.name}
-                                  </span>
-                                  <span className="text-xs text-gray-500">
-                                    +${topping.price.toFixed(2)}
-                                  </span>
-                                </div>
-                                <Button
-                                  variant={isActive ? "default" : "destructive"}
-                                  size="sm"
-                                  onClick={() =>
-                                    handleToppingToggle(topping.id, !isActive)
-                                  }
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {toppings
+                            .filter(
+                              (t) =>
+                                t.category === toppingCategory.id && t.isActive,
+                            )
+                            .map((topping) => {
+                              const isActive =
+                                sizeToppings[selectedSize]?.[topping.id] ?? true;
+                              const toppingPrice = getToppingPriceForSize
+                                ? getToppingPriceForSize(topping.id, selectedSize)
+                                : topping.price || 0;
+
+                              return (
+                                <div
+                                  key={topping.id}
+                                  className="flex items-center justify-between p-2 border rounded text-xs"
                                 >
-                                  {isActive ? (
-                                    <Power className="h-4 w-4" />
-                                  ) : (
-                                    <PowerOff className="h-4 w-4" />
-                                  )}
-                                </Button>
-                              </div>
-                            );
-                          })}
+                                  <div className="flex flex-col flex-1 min-w-0">
+                                    <span className="font-medium truncate">
+                                      {topping.name}
+                                    </span>
+                                    <span className="text-gray-500">
+                                      +${toppingPrice.toFixed(2)}
+                                    </span>
+                                  </div>
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="ml-2 h-6 w-6 p-0"
+                                          onClick={() =>
+                                            handleToppingToggle(topping.id, !isActive)
+                                          }
+                                        >
+                                          {isActive ? (
+                                            <ThumbsUp className="h-3 w-3" />
+                                          ) : (
+                                            <ThumbsDown className="h-3 w-3" />
+                                          )}
+                                        </Button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        {isActive ? "Deactivate" : "Activate"}
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                </div>
+                              );
+                            })}
+                        </div>
                       </TabsContent>
                     ))}
                   </div>
