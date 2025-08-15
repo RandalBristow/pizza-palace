@@ -64,7 +64,10 @@ interface MenuCategoryFormProps {
   createCategorySize: (categorySize: any) => Promise<any>;
   updateCategorySize: (id: string, updates: any) => Promise<any>;
   deleteCategorySize: (id: string) => Promise<void>;
-  updateSubCategorySizes: (subCategoryId: string, sizeIds: string[]) => Promise<void>;
+  updateSubCategorySizes: (
+    subCategoryId: string,
+    sizeIds: string[],
+  ) => Promise<void>;
 }
 
 export default function MenuCategoryForm({

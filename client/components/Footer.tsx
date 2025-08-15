@@ -21,10 +21,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <div className="space-y-2">
-              <Link
-                to="/menu"
-                className="block text-gray-400 hover:text-white"
-              >
+              <Link to="/menu" className="block text-gray-400 hover:text-white">
                 Menu
               </Link>
               <Link

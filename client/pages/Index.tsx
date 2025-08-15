@@ -20,7 +20,11 @@ import {
   Star,
   ShoppingCart,
 } from "lucide-react";
-import { useCarouselImages, useCustomerFavorites, useSettings } from "../hooks/useSupabase";
+import {
+  useCarouselImages,
+  useCustomerFavorites,
+  useSettings,
+} from "../hooks/useSupabase";
 
 // Get customer favorites from localStorage or use default (fallback)
 const getCustomerFavorites = () => {
@@ -91,13 +95,18 @@ const getRestaurantSettings = () => {
 
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const { carouselImages: dbCarouselImages, loading: carouselLoading } = useCarouselImages();
-  const { customerFavorites: dbCustomerFavorites, loading: favoritesLoading } = useCustomerFavorites();
+  const { carouselImages: dbCarouselImages, loading: carouselLoading } =
+    useCarouselImages();
+  const { customerFavorites: dbCustomerFavorites, loading: favoritesLoading } =
+    useCustomerFavorites();
   const { settings: dbSettings, loading: settingsLoading } = useSettings();
 
   // Use database data with fallback
   const carouselImages = dbCarouselImages.length > 0 ? dbCarouselImages : [];
-  const customerFavorites = dbCustomerFavorites.length > 0 ? dbCustomerFavorites : getCustomerFavorites();
+  const customerFavorites =
+    dbCustomerFavorites.length > 0
+      ? dbCustomerFavorites
+      : getCustomerFavorites();
   const settings = dbSettings || getRestaurantSettings();
 
   // Format business hours for display
@@ -400,7 +409,6 @@ export default function Index() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }

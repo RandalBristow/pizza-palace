@@ -26,14 +26,23 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { Pizza, Coffee, Star } from "lucide-react";
-import { useCategories, useMenuItems, useImages, useCategorySizes, useMenuItemSizes, useSubCategories } from "../hooks/useSupabase";
+import {
+  useCategories,
+  useMenuItems,
+  useImages,
+  useCategorySizes,
+  useMenuItemSizes,
+  useSubCategories,
+} from "../hooks/useSupabase";
 import { type MenuItem } from "../data/mockData";
 
 export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [cart, setCart] = useState<any[]>([]);
   const [showDeliverySelection, setShowDeliverySelection] = useState(false);
-  const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({});
+  const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>(
+    {},
+  );
   const [pendingAction, setPendingAction] = useState<{
     action: () => void;
     type: string;
@@ -46,7 +55,8 @@ export default function Menu() {
   const { categories: dbCategories, loading: categoriesLoading } =
     useCategories();
   const { menuItems: dbMenuItems, loading: menuItemsLoading } = useMenuItems();
-  const { subCategories: dbSubCategories, loading: subCategoriesLoading } = useSubCategories();
+  const { subCategories: dbSubCategories, loading: subCategoriesLoading } =
+    useSubCategories();
   const { images, loading: imagesLoading } = useImages();
   const { categorySizes, loading: categorySizesLoading } = useCategorySizes();
   const { menuItemSizes, loading: menuItemSizesLoading } = useMenuItemSizes();
@@ -63,10 +73,15 @@ export default function Menu() {
 
   // Set default size selections for items with multiple sizes
   useEffect(() => {
-    if (!menuItemsLoading && !categorySizesLoading && !menuItemSizesLoading && selectedCategory) {
+    if (
+      !menuItemsLoading &&
+      !categorySizesLoading &&
+      !menuItemSizesLoading &&
+      selectedCategory
+    ) {
       const newSelectedSizes: { [key: string]: string } = {};
-      
-      dbMenuItems.forEach(item => {
+
+      dbMenuItems.forEach((item) => {
         if (item.isActive && item.category === selectedCategory) {
           const sizeOptions = getItemSizeOptions(item);
           if (sizeOptions.length > 1 && !selectedSizes[item.id]) {
@@ -76,12 +91,18 @@ export default function Menu() {
           }
         }
       });
-      
+
       if (Object.keys(newSelectedSizes).length > 0) {
-        setSelectedSizes(prev => ({ ...prev, ...newSelectedSizes }));
+        setSelectedSizes((prev) => ({ ...prev, ...newSelectedSizes }));
       }
     }
-  }, [selectedCategory, dbMenuItems, menuItemsLoading, categorySizesLoading, menuItemSizesLoading]);
+  }, [
+    selectedCategory,
+    dbMenuItems,
+    menuItemsLoading,
+    categorySizesLoading,
+    menuItemSizesLoading,
+  ]);
 
   // Use database categories and filter active ones
   const categories = dbCategories
@@ -101,19 +122,21 @@ export default function Menu() {
   // Helper function to get sizes for a category
   const getCategorySizes = (categoryId: string) => {
     return categorySizes
-      .filter(size => size.categoryId === categoryId && size.isActive)
+      .filter((size) => size.categoryId === categoryId && size.isActive)
       .sort((a, b) => a.displayOrder - b.displayOrder);
   };
 
   // Helper function to get menu item size pricing
   const getMenuItemSizes = (menuItemId: string) => {
-    return menuItemSizes.filter(size => size.menu_item_id === menuItemId);
+    return menuItemSizes.filter((size) => size.menu_item_id === menuItemId);
   };
 
   // Helper function to get price for a menu item size
   const getSizePrice = (menuItemId: string, categorySizeId: string) => {
     const itemSize = menuItemSizes.find(
-      size => size.menu_item_id === menuItemId && size.category_size_id === categorySizeId
+      (size) =>
+        size.menu_item_id === menuItemId &&
+        size.category_size_id === categorySizeId,
     );
     return itemSize?.price ?? 0;
   };
@@ -123,7 +146,7 @@ export default function Menu() {
     const itemSizes = getMenuItemSizes(item.id);
     if (itemSizes.length > 0) {
       // Return the lowest price if multiple sizes
-      return Math.min(...itemSizes.map(size => size.price));
+      return Math.min(...itemSizes.map((size) => size.price));
     }
     return item.price ?? 0;
   };
@@ -137,31 +160,35 @@ export default function Menu() {
       return [];
     }
 
-    return categorySizesForItem.map(categorySize => {
-      const price = getSizePrice(item.id, categorySize.id);
-      return {
-        size: categorySize.sizeName,
-        price: price,
-        categorySizeId: categorySize.id
-      };
-    }).filter(option => option.price > 0); // Only show sizes with prices
+    return categorySizesForItem
+      .map((categorySize) => {
+        const price = getSizePrice(item.id, categorySize.id);
+        return {
+          size: categorySize.sizeName,
+          price: price,
+          categorySizeId: categorySize.id,
+        };
+      })
+      .filter((option) => option.price > 0); // Only show sizes with prices
   };
 
   const handleSizeChange = (itemId: string, size: string) => {
-    setSelectedSizes(prev => ({
+    setSelectedSizes((prev) => ({
       ...prev,
-      [itemId]: size
+      [itemId]: size,
     }));
   };
 
   const getSelectedSize = (itemId: string) => {
-    const sizeOptions = getItemSizeOptions(dbMenuItems.find(item => item.id === itemId) || {});
+    const sizeOptions = getItemSizeOptions(
+      dbMenuItems.find((item) => item.id === itemId) || {},
+    );
     const selectedSize = selectedSizes[itemId];
     // If no size is selected and there are size options, return the last one
     if (!selectedSize && sizeOptions.length > 0) {
       return sizeOptions[sizeOptions.length - 1].size;
     }
-    return selectedSize || '';
+    return selectedSize || "";
   };
 
   const addToCart = (item: MenuItem, size?: string) => {
@@ -220,7 +247,14 @@ export default function Menu() {
   };
 
   // Show loading state while data is being fetched
-  if (categoriesLoading || menuItemsLoading || subCategoriesLoading || imagesLoading || categorySizesLoading || menuItemSizesLoading) {
+  if (
+    categoriesLoading ||
+    menuItemsLoading ||
+    subCategoriesLoading ||
+    imagesLoading ||
+    categorySizesLoading ||
+    menuItemSizesLoading
+  ) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -234,7 +268,9 @@ export default function Menu() {
   const renderMenuItemCard = (item: any) => {
     const sizeOptions = getItemSizeOptions(item);
     const currentSelectedSize = getSelectedSize(item.id);
-    const selectedSizeOption = sizeOptions.find(opt => opt.size === currentSelectedSize);
+    const selectedSizeOption = sizeOptions.find(
+      (opt) => opt.size === currentSelectedSize,
+    );
 
     return (
       <Card key={item.id} className="flex flex-col h-full">
@@ -267,9 +303,7 @@ export default function Menu() {
                 <span>4.8</span>
               </div>
             </div>
-            <p className="text-gray-600 text-sm mb-3">
-              {item.description}
-            </p>
+            <p className="text-gray-600 text-sm mb-3">{item.description}</p>
           </div>
 
           <div className="mt-auto space-y-3">
@@ -283,8 +317,7 @@ export default function Menu() {
                     <SelectValue>
                       {selectedSizeOption
                         ? `${selectedSizeOption.size} - $${selectedSizeOption.price.toFixed(2)}`
-                        : `${sizeOptions[sizeOptions.length - 1]?.size} - $${sizeOptions[sizeOptions.length - 1]?.price.toFixed(2)}`
-                      }
+                        : `${sizeOptions[sizeOptions.length - 1]?.size} - $${sizeOptions[sizeOptions.length - 1]?.price.toFixed(2)}`}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
@@ -366,16 +399,23 @@ export default function Menu() {
           {categories.map((category) => {
             // Group items by sub-category
             const categorySubCategories = dbSubCategories
-              .filter(sub => sub.categoryId === category.id && sub.isActive)
+              .filter((sub) => sub.categoryId === category.id && sub.isActive)
               .sort((a, b) => a.displayOrder - b.displayOrder);
 
-            const itemsBySubCategory = categorySubCategories.reduce((acc, subCat) => {
-              acc[subCat.id] = filteredItems.filter(item => item.subCategoryId === subCat.id);
-              return acc;
-            }, {} as { [key: string]: any[] });
+            const itemsBySubCategory = categorySubCategories.reduce(
+              (acc, subCat) => {
+                acc[subCat.id] = filteredItems.filter(
+                  (item) => item.subCategoryId === subCat.id,
+                );
+                return acc;
+              },
+              {} as { [key: string]: any[] },
+            );
 
             // Items without sub-category
-            const itemsWithoutSubCategory = filteredItems.filter(item => !item.subCategoryId);
+            const itemsWithoutSubCategory = filteredItems.filter(
+              (item) => !item.subCategoryId,
+            );
 
             return (
               <TabsContent key={category.id} value={category.id}>
@@ -384,14 +424,17 @@ export default function Menu() {
                   {itemsWithoutSubCategory.length > 0 && (
                     <div>
                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {itemsWithoutSubCategory.map((item) => renderMenuItemCard(item))}
+                        {itemsWithoutSubCategory.map((item) =>
+                          renderMenuItemCard(item),
+                        )}
                       </div>
                     </div>
                   )}
 
                   {/* Items grouped by sub-category */}
                   {categorySubCategories.map((subCategory) => {
-                    const subCategoryItems = itemsBySubCategory[subCategory.id] || [];
+                    const subCategoryItems =
+                      itemsBySubCategory[subCategory.id] || [];
                     if (subCategoryItems.length === 0) return null;
 
                     return (
@@ -400,7 +443,9 @@ export default function Menu() {
                           {subCategory.name}
                         </h2>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                          {subCategoryItems.map((item) => renderMenuItemCard(item))}
+                          {subCategoryItems.map((item) =>
+                            renderMenuItemCard(item),
+                          )}
                         </div>
                       </div>
                     );

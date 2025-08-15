@@ -102,7 +102,10 @@ interface MenuItemFormProps {
     menuItemSizeId: string,
     toppings: any[],
   ) => Promise<void>;
-  getToppingPriceForSize?: (toppingId: string, categorySizeId: string) => number;
+  getToppingPriceForSize?: (
+    toppingId: string,
+    categorySizeId: string,
+  ) => number;
 }
 
 export default function MenuItemForm({
@@ -148,7 +151,9 @@ export default function MenuItemForm({
   }>({});
 
   // Default toppings state (per menu item, not per size)
-  const [defaultToppings, setDefaultToppings] = useState<{ [key: string]: boolean }>({});
+  const [defaultToppings, setDefaultToppings] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   // Debug effect to monitor data changes
   useEffect(() => {
@@ -156,14 +161,19 @@ export default function MenuItemForm({
       subCategorySizes: subCategorySizes.length,
       categorySizes: categorySizes.length,
       selectedCategory: newMenuItem.category,
-      selectedSubCategory: newMenuItem.subCategoryId
+      selectedSubCategory: newMenuItem.subCategoryId,
     });
-  }, [subCategorySizes, categorySizes, newMenuItem.category, newMenuItem.subCategoryId]);
+  }, [
+    subCategorySizes,
+    categorySizes,
+    newMenuItem.category,
+    newMenuItem.subCategoryId,
+  ]);
 
   const handleAddMenuItem = async () => {
     try {
       const defaultToppingsArray = Object.keys(defaultToppings).filter(
-        (toppingId) => defaultToppings[toppingId]
+        (toppingId) => defaultToppings[toppingId],
       );
 
       const createdMenuItem = await createMenuItem({
@@ -185,12 +195,18 @@ export default function MenuItemForm({
       setIsAddingMenuItem(false);
       resetForm();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message :
-        typeof error === 'string' ? error :
-        error && typeof error === 'object' && 'message' in error ? String(error.message) :
-        error && typeof error === 'object' && 'details' in error ? String(error.details) :
-        error && typeof error === 'object' && 'hint' in error ? String(error.hint) :
-        'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : error && typeof error === "object" && "message" in error
+              ? String(error.message)
+              : error && typeof error === "object" && "details" in error
+                ? String(error.details)
+                : error && typeof error === "object" && "hint" in error
+                  ? String(error.hint)
+                  : "An unknown error occurred";
       console.error("Failed to create menu item:", errorMessage);
       alert(`Failed to create menu item: ${errorMessage}`);
     }
@@ -221,7 +237,10 @@ export default function MenuItemForm({
     setSizePrices(prices);
 
     // Set default selected size to first available size
-    const availableSizes = getAvailableSizes(menuItem.category, menuItem.subCategoryId);
+    const availableSizes = getAvailableSizes(
+      menuItem.category,
+      menuItem.subCategoryId,
+    );
     if (availableSizes.length > 0) {
       setSelectedSize(availableSizes[0].id);
     }
@@ -241,7 +260,7 @@ export default function MenuItemForm({
 
     try {
       const defaultToppingsArray = Object.keys(defaultToppings).filter(
-        (toppingId) => defaultToppings[toppingId]
+        (toppingId) => defaultToppings[toppingId],
       );
 
       console.log("Updating menu item with data:", {
@@ -269,12 +288,18 @@ export default function MenuItemForm({
       setEditingMenuItem(null);
       resetForm();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message :
-        typeof error === 'string' ? error :
-        error && typeof error === 'object' && 'message' in error ? String(error.message) :
-        error && typeof error === 'object' && 'details' in error ? String(error.details) :
-        error && typeof error === 'object' && 'hint' in error ? String(error.hint) :
-        'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : error && typeof error === "object" && "message" in error
+              ? String(error.message)
+              : error && typeof error === "object" && "details" in error
+                ? String(error.details)
+                : error && typeof error === "object" && "hint" in error
+                  ? String(error.hint)
+                  : "An unknown error occurred";
       console.error("Failed to update menu item:", errorMessage);
       alert(`Failed to update menu item: ${errorMessage}`);
     }
@@ -323,22 +348,23 @@ export default function MenuItemForm({
 
     // Get sizes that are linked to this sub-category
     const subCategorySizeIds = subCategorySizes
-      .filter(scs => scs.subCategoryId === subCategoryId)
-      .map(scs => scs.categorySizeId);
+      .filter((scs) => scs.subCategoryId === subCategoryId)
+      .map((scs) => scs.categorySizeId);
 
     console.log("getAvailableSizes debug:", {
       categoryId,
       subCategoryId,
       subCategorySizes,
       subCategorySizeIds,
-      categorySizes: categorySizes.filter(s => s.categoryId === categoryId)
+      categorySizes: categorySizes.filter((s) => s.categoryId === categoryId),
     });
 
     const availableSizes = categorySizes
-      .filter((size) =>
-        size.categoryId === categoryId &&
-        size.isActive &&
-        subCategorySizeIds.includes(size.id)
+      .filter(
+        (size) =>
+          size.categoryId === categoryId &&
+          size.isActive &&
+          subCategorySizeIds.includes(size.id),
       )
       .sort((a, b) => a.displayOrder - b.displayOrder);
 
@@ -373,7 +399,10 @@ export default function MenuItemForm({
     }
   };
 
-  const handleDefaultToppingToggle = (toppingId: string, isDefault: boolean) => {
+  const handleDefaultToppingToggle = (
+    toppingId: string,
+    isDefault: boolean,
+  ) => {
     setDefaultToppings((prev) => ({
       ...prev,
       [toppingId]: isDefault,
@@ -452,7 +481,9 @@ export default function MenuItemForm({
           </div>
 
           <div>
-            <Label htmlFor="subCategory" className="text-red-600">* Sub-Category</Label>
+            <Label htmlFor="subCategory" className="text-red-600">
+              * Sub-Category
+            </Label>
             <Select
               value={newMenuItem.subCategoryId || ""}
               onValueChange={(value) => {
@@ -549,22 +580,33 @@ export default function MenuItemForm({
           <div>
             <Label className="text-red-600">* Size-based Pricing</Label>
             <div className="mt-1 border rounded-lg py-1 px-4">
-              {getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).length === 0 ? (
+              {getAvailableSizes(
+                newMenuItem.category,
+                newMenuItem.subCategoryId,
+              ).length === 0 ? (
                 <div className="space-y-2">
                   <p className="text-sm text-gray-500">
-                    No sizes defined for this sub-category. Please configure sizes for the sub-category first.
+                    No sizes defined for this sub-category. Please configure
+                    sizes for the sub-category first.
                   </p>
                   <div className="text-xs text-gray-400 bg-gray-50 p-2 rounded">
-                    Debug Info:<br />
-                    Category: {newMenuItem.category}<br />
-                    SubCategory: {newMenuItem.subCategoryId}<br />
-                    SubCategorySizes loaded: {subCategorySizes.length}<br />
+                    Debug Info:
+                    <br />
+                    Category: {newMenuItem.category}
+                    <br />
+                    SubCategory: {newMenuItem.subCategoryId}
+                    <br />
+                    SubCategorySizes loaded: {subCategorySizes.length}
+                    <br />
                     CategorySizes loaded: {categorySizes.length}
                   </div>
                 </div>
               ) : (
                 <div className="space-y-1 max-h-40 overflow-y-auto pr-2">
-                  {getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).map((size) => (
+                  {getAvailableSizes(
+                    newMenuItem.category,
+                    newMenuItem.subCategoryId,
+                  ).map((size) => (
                     <div key={size.id} className="flex items-center space-x-2">
                       <Label className="text-xs min-w-[60px] font-medium">
                         {size.sizeName}:
@@ -608,13 +650,16 @@ export default function MenuItemForm({
             Topping Management
           </h2>
           <p className="text-sm text-gray-500">
-            Select a size to enable/disable toppings. Check boxes to set default toppings for this menu item.
+            Select a size to enable/disable toppings. Check boxes to set default
+            toppings for this menu item.
           </p>
         </div>
 
         {/* Size Dropdown */}
-        {newMenuItem.category && newMenuItem.subCategoryId &&
-          getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).length > 0 && (
+        {newMenuItem.category &&
+          newMenuItem.subCategoryId &&
+          getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId)
+            .length > 0 && (
             <div className="mb-4">
               <Label htmlFor="sizeSelect">Select Size</Label>
               <Select value={selectedSize} onValueChange={setSelectedSize}>
@@ -622,7 +667,10 @@ export default function MenuItemForm({
                   <SelectValue placeholder="Select a size to manage toppings..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).map((size) => (
+                  {getAvailableSizes(
+                    newMenuItem.category,
+                    newMenuItem.subCategoryId,
+                  ).map((size) => (
                     <SelectItem key={size.id} value={size.id}>
                       {size.sizeName} - $
                       {sizePrices[size.id]?.toFixed(2) || "0.00"}
@@ -673,10 +721,15 @@ export default function MenuItemForm({
                             )
                             .map((topping) => {
                               const isActive =
-                                sizeToppings[selectedSize]?.[topping.id] ?? true;
-                              const isDefault = defaultToppings[topping.id] ?? false;
+                                sizeToppings[selectedSize]?.[topping.id] ??
+                                true;
+                              const isDefault =
+                                defaultToppings[topping.id] ?? false;
                               const toppingPrice = getToppingPriceForSize
-                                ? getToppingPriceForSize(topping.id, selectedSize)
+                                ? getToppingPriceForSize(
+                                    topping.id,
+                                    selectedSize,
+                                  )
                                 : topping.price || 0;
 
                               return (
@@ -690,7 +743,10 @@ export default function MenuItemForm({
                                       checked={isDefault && isActive}
                                       disabled={!isActive}
                                       onCheckedChange={(checked) =>
-                                        handleDefaultToppingToggle(topping.id, !!checked)
+                                        handleDefaultToppingToggle(
+                                          topping.id,
+                                          !!checked,
+                                        )
                                       }
                                       className="w-3 h-3"
                                     />
@@ -711,7 +767,10 @@ export default function MenuItemForm({
                                           size="sm"
                                           className="ml-2 h-6 w-6 p-0"
                                           onClick={() =>
-                                            handleToppingToggle(topping.id, !isActive)
+                                            handleToppingToggle(
+                                              topping.id,
+                                              !isActive,
+                                            )
                                           }
                                         >
                                           {isActive ? (
@@ -765,8 +824,12 @@ export default function MenuItemForm({
               !newMenuItem.description ||
               !newMenuItem.category ||
               !newMenuItem.subCategoryId ||
-              getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).length === 0 ||
-              getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).some(size => !sizePrices[size.id] || sizePrices[size.id] <= 0)
+              getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId)
+                .length === 0 ||
+              getAvailableSizes(
+                newMenuItem.category,
+                newMenuItem.subCategoryId,
+              ).some((size) => !sizePrices[size.id] || sizePrices[size.id] <= 0)
             }
           >
             <Save className="h-4 w-4 mr-2" />

@@ -57,7 +57,10 @@ interface ToppingItemFormProps {
   createTopping: (topping: any) => Promise<any>;
   updateTopping: (id: string, updates: any) => Promise<any>;
   deleteTopping: (id: string) => Promise<void>;
-  updateToppingSizePrices: (toppingId: string, sizePrices: { categorySizeId: string; price: number }[]) => Promise<void>;
+  updateToppingSizePrices: (
+    toppingId: string,
+    sizePrices: { categorySizeId: string; price: number }[],
+  ) => Promise<void>;
   getToppingSizePrices: (toppingId: string) => any[];
   getToppingPriceForSize: (toppingId: string, categorySizeId: string) => number;
 }
@@ -90,7 +93,7 @@ export default function ToppingItemForm({
   // Get available sizes for the selected menu category
   const getAvailableSizes = (menuCategoryId: string) => {
     return categorySizes
-      .filter(size => size.categoryId === menuCategoryId && size.isActive)
+      .filter((size) => size.categoryId === menuCategoryId && size.isActive)
       .sort((a, b) => a.displayOrder - b.displayOrder);
   };
 
@@ -122,10 +125,14 @@ export default function ToppingItemForm({
       setIsAddingTopping(false);
       resetForm();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message :
-        typeof error === 'string' ? error :
-        error && typeof error === 'object' && 'message' in error ? String(error.message) :
-        'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : error && typeof error === "object" && "message" in error
+              ? String(error.message)
+              : "An unknown error occurred";
       console.error("Failed to create topping:", errorMessage);
       alert(`Failed to create topping: ${errorMessage}`);
     }
@@ -144,7 +151,7 @@ export default function ToppingItemForm({
     // Load existing size prices
     const existingPrices: Record<string, number> = {};
     const toppingSizes = getToppingSizePrices(topping.id);
-    toppingSizes.forEach(tp => {
+    toppingSizes.forEach((tp) => {
       existingPrices[tp.categorySizeId] = tp.price;
     });
     setSizePrices(existingPrices);
@@ -158,20 +165,27 @@ export default function ToppingItemForm({
       await updateTopping(editingTopping.id, newTopping);
 
       // Update size prices
-      const sizePriceEntries = Object.entries(sizePrices)
-        .map(([categorySizeId, price]) => ({ categorySizeId, price: price || 0 }));
+      const sizePriceEntries = Object.entries(sizePrices).map(
+        ([categorySizeId, price]) => ({ categorySizeId, price: price || 0 }),
+      );
 
       await updateToppingSizePrices(editingTopping.id, sizePriceEntries);
 
       setEditingTopping(null);
       resetForm();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message :
-        typeof error === 'string' ? error :
-        error && typeof error === 'object' && 'message' in error ? String(error.message) :
-        error && typeof error === 'object' && 'details' in error ? String(error.details) :
-        error && typeof error === 'object' && 'hint' in error ? String(error.hint) :
-        'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : error && typeof error === "object" && "message" in error
+              ? String(error.message)
+              : error && typeof error === "object" && "details" in error
+                ? String(error.details)
+                : error && typeof error === "object" && "hint" in error
+                  ? String(error.hint)
+                  : "An unknown error occurred";
       console.error("Failed to update topping:", errorMessage);
       alert(`Failed to update topping: ${errorMessage}`);
     }
@@ -182,9 +196,12 @@ export default function ToppingItemForm({
     try {
       await deleteTopping(id);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message :
-        typeof error === 'string' ? error :
-        'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : "An unknown error occurred";
       console.error("Failed to delete topping:", errorMessage);
       alert(`Failed to delete topping: ${errorMessage}`);
     }
@@ -198,9 +215,12 @@ export default function ToppingItemForm({
     try {
       await updateTopping(id, { ...topping, isActive: !topping.isActive });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message :
-        typeof error === 'string' ? error :
-        'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : "An unknown error occurred";
       console.error("Failed to toggle topping status:", errorMessage);
       alert(`Failed to toggle topping status: ${errorMessage}`);
     }
@@ -209,14 +229,15 @@ export default function ToppingItemForm({
   // Filter toppings by selected menu category
   const filteredToppings = toppings.filter(
     (topping) =>
-      selectedToppingCategory === "all" || topping.menuItemCategory === selectedToppingCategory
+      selectedToppingCategory === "all" ||
+      topping.menuItemCategory === selectedToppingCategory,
   );
 
   // Handle size price change
   const handleSizePriceChange = (categorySizeId: string, price: string) => {
-    setSizePrices(prev => ({
+    setSizePrices((prev) => ({
       ...prev,
-      [categorySizeId]: parseFloat(price) || 0
+      [categorySizeId]: parseFloat(price) || 0,
     }));
   };
 
@@ -225,12 +246,12 @@ export default function ToppingItemForm({
     if (newTopping.menuItemCategory) {
       const availableSizes = getAvailableSizes(newTopping.menuItemCategory);
       const newSizePrices: Record<string, number> = {};
-      availableSizes.forEach(size => {
+      availableSizes.forEach((size) => {
         if (!sizePrices[size.id]) {
           newSizePrices[size.id] = 0;
         }
       });
-      setSizePrices(prev => ({ ...newSizePrices, ...prev }));
+      setSizePrices((prev) => ({ ...newSizePrices, ...prev }));
     }
   }, [newTopping.menuItemCategory]);
 
@@ -239,7 +260,7 @@ export default function ToppingItemForm({
       {/* Left Side - Basic Info */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium mb-4">Basic Information</h3>
-        
+
         <div>
           <Label htmlFor="menuItemCategory">Menu Category *</Label>
           <Select
@@ -277,9 +298,11 @@ export default function ToppingItemForm({
             </SelectTrigger>
             <SelectContent>
               {toppingCategories
-                .filter((tc) => 
-                  tc.isActive && 
-                  (tc.menuItemCategory === newTopping.menuItemCategory || !newTopping.menuItemCategory)
+                .filter(
+                  (tc) =>
+                    tc.isActive &&
+                    (tc.menuItemCategory === newTopping.menuItemCategory ||
+                      !newTopping.menuItemCategory),
                 )
                 .map((category) => (
                   <SelectItem key={category.id} value={category.id}>
@@ -306,11 +329,14 @@ export default function ToppingItemForm({
       {/* Right Side - Size-based Pricing */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium mb-4">Size-based Pricing</h3>
-        
+
         {newTopping.menuItemCategory ? (
           <div className="space-y-3">
             {getAvailableSizes(newTopping.menuItemCategory).map((size) => (
-              <div key={size.id} className="flex items-center justify-between space-x-3">
+              <div
+                key={size.id}
+                className="flex items-center justify-between space-x-3"
+              >
                 <Label className="flex-1 text-sm font-medium">
                   {size.sizeName}
                 </Label>
@@ -323,7 +349,9 @@ export default function ToppingItemForm({
                     placeholder="0.00"
                     className="w-20 text-right"
                     value={sizePrices[size.id] || ""}
-                    onChange={(e) => handleSizePriceChange(size.id, e.target.value)}
+                    onChange={(e) =>
+                      handleSizePriceChange(size.id, e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -353,7 +381,11 @@ export default function ToppingItemForm({
         </Button>
         <Button
           onClick={isEdit ? handleUpdateTopping : handleAddTopping}
-          disabled={!newTopping.name || !newTopping.menuItemCategory || !newTopping.category}
+          disabled={
+            !newTopping.name ||
+            !newTopping.menuItemCategory ||
+            !newTopping.category
+          }
         >
           <Save className="h-4 w-4 mr-2" />
           {isEdit ? "Update Topping" : "Save Topping"}
@@ -370,7 +402,10 @@ export default function ToppingItemForm({
           {/* Menu Category Filter */}
           <div className="flex items-center space-x-2">
             <Label htmlFor="menuCategoryFilter">Filter by Menu Category:</Label>
-            <Select value={selectedToppingCategory} onValueChange={onSelectedCategoryChange}>
+            <Select
+              value={selectedToppingCategory}
+              onValueChange={onSelectedCategoryChange}
+            >
               <SelectTrigger className="w-48">
                 <SelectValue />
               </SelectTrigger>
@@ -410,8 +445,12 @@ export default function ToppingItemForm({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredToppings.map((topping) => {
           const toppingSizes = getToppingSizePrices(topping.id);
-          const menuCategory = categories.find(c => c.id === topping.menuItemCategory);
-          const toppingCategory = toppingCategories.find(tc => tc.id === topping.category);
+          const menuCategory = categories.find(
+            (c) => c.id === topping.menuItemCategory,
+          );
+          const toppingCategory = toppingCategories.find(
+            (tc) => tc.id === topping.category,
+          );
 
           return (
             <Card key={topping.id}>
@@ -428,10 +467,15 @@ export default function ToppingItemForm({
                     {topping.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </div>
-                
+
                 <div className="text-sm text-gray-600 mb-3">
-                  <p><strong>Menu:</strong> {menuCategory?.name || "Unknown"}</p>
-                  <p><strong>Category:</strong> {toppingCategory?.name || "Unknown"}</p>
+                  <p>
+                    <strong>Menu:</strong> {menuCategory?.name || "Unknown"}
+                  </p>
+                  <p>
+                    <strong>Category:</strong>{" "}
+                    {toppingCategory?.name || "Unknown"}
+                  </p>
                 </div>
 
                 {/* Size Prices */}
@@ -440,9 +484,14 @@ export default function ToppingItemForm({
                     <p className="text-xs text-gray-600 mb-1">Size Prices:</p>
                     <div className="space-y-1">
                       {toppingSizes.map((ts) => {
-                        const size = categorySizes.find(cs => cs.id === ts.categorySizeId);
+                        const size = categorySizes.find(
+                          (cs) => cs.id === ts.categorySizeId,
+                        );
                         return size ? (
-                          <div key={ts.id} className="flex justify-between text-xs">
+                          <div
+                            key={ts.id}
+                            className="flex justify-between text-xs"
+                          >
                             <span>{size.sizeName}:</span>
                             <span>${ts.price.toFixed(2)}</span>
                           </div>
@@ -512,7 +561,9 @@ export default function ToppingItemForm({
 
       {filteredToppings.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No toppings found for the selected category.</p>
+          <p className="text-gray-500">
+            No toppings found for the selected category.
+          </p>
         </div>
       )}
 

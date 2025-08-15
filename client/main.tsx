@@ -23,7 +23,7 @@ import NotFound from "./pages/NotFound";
 // Layout component that conditionally renders footer
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const isAdminPage = location.pathname === '/admin';
+  const isAdminPage = location.pathname === "/admin";
 
   return (
     <>

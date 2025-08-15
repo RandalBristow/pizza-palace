@@ -117,11 +117,28 @@ export default function Admin() {
     updateCategorySize,
     deleteCategorySize,
   } = useCategorySizes();
-  const { subCategorySizes, loading: subCategorySizesLoading, updateSubCategorySizes } = useSubCategorySizes();
-  const { menuItemSizes, loading: menuItemSizesLoading, updateMenuItemSizesForItem } = useMenuItemSizes();
-  const { menuItemSizeToppings, loading: menuItemSizeTopLoading, updateMenuItemSizeToppings } =
-    useMenuItemSizeToppings();
-  const { toppingSizePrices, loading: toppingSizePricesLoading, updateToppingSizePrices, getToppingSizePrices, getToppingPriceForSize } = useToppingSizePrices();
+  const {
+    subCategorySizes,
+    loading: subCategorySizesLoading,
+    updateSubCategorySizes,
+  } = useSubCategorySizes();
+  const {
+    menuItemSizes,
+    loading: menuItemSizesLoading,
+    updateMenuItemSizesForItem,
+  } = useMenuItemSizes();
+  const {
+    menuItemSizeToppings,
+    loading: menuItemSizeTopLoading,
+    updateMenuItemSizeToppings,
+  } = useMenuItemSizeToppings();
+  const {
+    toppingSizePrices,
+    loading: toppingSizePricesLoading,
+    updateToppingSizePrices,
+    getToppingSizePrices,
+    getToppingPriceForSize,
+  } = useToppingSizePrices();
 
   const [selectedItem, setSelectedItem] = useState("categories");
 
@@ -138,38 +155,41 @@ export default function Admin() {
   }, []);
 
   // Show loading state while data is being fetched
-  const isLoading = useMemo(() =>
-    categoriesLoading ||
-    menuItemsLoading ||
-    toppingsLoading ||
-    toppingCategoriesLoading ||
-    specialsLoading ||
-    carouselLoading ||
-    favoritesLoading ||
-    settingsLoading ||
-    aboutLoading ||
-    imagesLoading ||
-    categorySizesLoading ||
-    subCategorySizesLoading ||
-    menuItemSizesLoading ||
-    menuItemSizeTopLoading ||
-    toppingSizePricesLoading, [
-    categoriesLoading,
-    menuItemsLoading,
-    toppingsLoading,
-    toppingCategoriesLoading,
-    specialsLoading,
-    carouselLoading,
-    favoritesLoading,
-    settingsLoading,
-    aboutLoading,
-    imagesLoading,
-    categorySizesLoading,
-    subCategorySizesLoading,
-    menuItemSizesLoading,
-    menuItemSizeTopLoading,
-    toppingSizePricesLoading
-  ]);
+  const isLoading = useMemo(
+    () =>
+      categoriesLoading ||
+      menuItemsLoading ||
+      toppingsLoading ||
+      toppingCategoriesLoading ||
+      specialsLoading ||
+      carouselLoading ||
+      favoritesLoading ||
+      settingsLoading ||
+      aboutLoading ||
+      imagesLoading ||
+      categorySizesLoading ||
+      subCategorySizesLoading ||
+      menuItemSizesLoading ||
+      menuItemSizeTopLoading ||
+      toppingSizePricesLoading,
+    [
+      categoriesLoading,
+      menuItemsLoading,
+      toppingsLoading,
+      toppingCategoriesLoading,
+      specialsLoading,
+      carouselLoading,
+      favoritesLoading,
+      settingsLoading,
+      aboutLoading,
+      imagesLoading,
+      categorySizesLoading,
+      subCategorySizesLoading,
+      menuItemSizesLoading,
+      menuItemSizeTopLoading,
+      toppingSizePricesLoading,
+    ],
+  );
 
   if (isLoading) {
     return (

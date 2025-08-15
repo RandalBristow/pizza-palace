@@ -444,19 +444,27 @@ export const useMenuItems = () => {
 
       if (error) {
         console.error("Supabase error:", error);
-        throw new Error(`Database error: ${error.message || error.details || error.hint || 'Unknown database error'}`);
+        throw new Error(
+          `Database error: ${error.message || error.details || error.hint || "Unknown database error"}`,
+        );
       }
 
       const newMenuItem = transformMenuItem(data);
       setMenuItems((prev) => [...prev, newMenuItem]);
       return newMenuItem;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message :
-        typeof err === 'string' ? err :
-        err && typeof err === 'object' && 'message' in err ? String(err.message) :
-        err && typeof err === 'object' && 'details' in err ? String(err.details) :
-        err && typeof err === 'object' && 'hint' in err ? String(err.hint) :
-        'Failed to create menu item';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+            ? err
+            : err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : err && typeof err === "object" && "details" in err
+                ? String(err.details)
+                : err && typeof err === "object" && "hint" in err
+                  ? String(err.hint)
+                  : "Failed to create menu item";
       setError(errorMessage);
       throw new Error(errorMessage);
     }
@@ -491,10 +499,18 @@ export const useMenuItems = () => {
       if (error) {
         console.error("Supabase error:", error);
         // Check if it's a column doesn't exist error
-        if (error.code === '42703' || error.message?.includes('column') || error.message?.includes('does not exist')) {
-          throw new Error(`Database schema error: ${error.message}. You may need to add the default_toppings column to your menu_items table.`);
+        if (
+          error.code === "42703" ||
+          error.message?.includes("column") ||
+          error.message?.includes("does not exist")
+        ) {
+          throw new Error(
+            `Database schema error: ${error.message}. You may need to add the default_toppings column to your menu_items table.`,
+          );
         }
-        throw new Error(`Database error: ${error.message || error.details || error.hint || 'Unknown database error'}`);
+        throw new Error(
+          `Database error: ${error.message || error.details || error.hint || "Unknown database error"}`,
+        );
       }
 
       const updatedMenuItem = transformMenuItem(data);
@@ -503,12 +519,18 @@ export const useMenuItems = () => {
       );
       return updatedMenuItem;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message :
-        typeof err === 'string' ? err :
-        err && typeof err === 'object' && 'message' in err ? String(err.message) :
-        err && typeof err === 'object' && 'details' in err ? String(err.details) :
-        err && typeof err === 'object' && 'hint' in err ? String(err.hint) :
-        'Failed to update menu item';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+            ? err
+            : err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : err && typeof err === "object" && "details" in err
+                ? String(err.details)
+                : err && typeof err === "object" && "hint" in err
+                  ? String(err.hint)
+                  : "Failed to update menu item";
       setError(errorMessage);
       throw new Error(errorMessage);
     }
@@ -619,7 +641,9 @@ export const useToppings = () => {
 
       if (error) {
         console.error("Supabase error:", error);
-        throw new Error(`Database error: ${error.message || error.details || error.hint || 'Unknown database error'}`);
+        throw new Error(
+          `Database error: ${error.message || error.details || error.hint || "Unknown database error"}`,
+        );
       }
 
       const updatedTopping = transformTopping(data);
@@ -628,10 +652,14 @@ export const useToppings = () => {
       );
       return updatedTopping;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message :
-        typeof err === 'string' ? err :
-        err && typeof err === 'object' && 'message' in err ? String(err.message) :
-        'Failed to update topping';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+            ? err
+            : err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : "Failed to update topping";
       setError(errorMessage);
       throw new Error(errorMessage);
     }
@@ -1887,7 +1915,10 @@ export const useSubCategorySizes = () => {
           throw insertError;
         }
 
-        console.log("Successfully inserted sub-category sizes:", insertData_result);
+        console.log(
+          "Successfully inserted sub-category sizes:",
+          insertData_result,
+        );
       }
 
       // Refresh the data
@@ -2152,8 +2183,13 @@ export const useToppingSizePrices = () => {
 
       if (error) {
         // Check if table doesn't exist
-        if (error.code === '42P01' || error.message?.includes('does not exist')) {
-          console.warn("topping_size_prices table does not exist yet. This is expected if you haven't run the database migration script.");
+        if (
+          error.code === "42P01" ||
+          error.message?.includes("does not exist")
+        ) {
+          console.warn(
+            "topping_size_prices table does not exist yet. This is expected if you haven't run the database migration script.",
+          );
           setToppingSizePrices([]);
           return;
         }
@@ -2162,7 +2198,10 @@ export const useToppingSizePrices = () => {
 
       setToppingSizePrices(data ? data.map(transformToppingSizePrice) : []);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to fetch topping size prices";
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to fetch topping size prices";
       console.error("Error fetching topping size prices:", errorMessage);
       setError(errorMessage);
     } finally {
@@ -2175,7 +2214,12 @@ export const useToppingSizePrices = () => {
     sizePrices: { categorySizeId: string; price: number }[],
   ) => {
     try {
-      console.log("Updating topping size prices for topping:", toppingId, "with prices:", sizePrices);
+      console.log(
+        "Updating topping size prices for topping:",
+        toppingId,
+        "with prices:",
+        sizePrices,
+      );
 
       // First, delete existing prices for this topping
       const { error: deleteError } = await supabase
@@ -2185,11 +2229,18 @@ export const useToppingSizePrices = () => {
 
       if (deleteError) {
         // Check if table doesn't exist
-        if (deleteError.code === '42P01' || deleteError.message?.includes('does not exist')) {
-          throw new Error("The topping_size_prices table does not exist. Please run the database migration script first.");
+        if (
+          deleteError.code === "42P01" ||
+          deleteError.message?.includes("does not exist")
+        ) {
+          throw new Error(
+            "The topping_size_prices table does not exist. Please run the database migration script first.",
+          );
         }
         console.error("Delete error:", deleteError);
-        throw new Error(`Failed to delete existing prices: ${deleteError.message || deleteError.details || deleteError.hint || 'Unknown error'}`);
+        throw new Error(
+          `Failed to delete existing prices: ${deleteError.message || deleteError.details || deleteError.hint || "Unknown error"}`,
+        );
       }
 
       // Then, insert new prices
@@ -2208,21 +2259,32 @@ export const useToppingSizePrices = () => {
 
         if (insertError) {
           // Check if table doesn't exist
-          if (insertError.code === '42P01' || insertError.message?.includes('does not exist')) {
-            throw new Error("The topping_size_prices table does not exist. Please run the database migration script first.");
+          if (
+            insertError.code === "42P01" ||
+            insertError.message?.includes("does not exist")
+          ) {
+            throw new Error(
+              "The topping_size_prices table does not exist. Please run the database migration script first.",
+            );
           }
           console.error("Insert error:", insertError);
-          throw new Error(`Failed to insert new prices: ${insertError.message || insertError.details || insertError.hint || 'Unknown error'}`);
+          throw new Error(
+            `Failed to insert new prices: ${insertError.message || insertError.details || insertError.hint || "Unknown error"}`,
+          );
         }
       }
 
       // Refresh the data
       await fetchToppingSizePrices();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message :
-        typeof err === 'string' ? err :
-        err && typeof err === 'object' && 'message' in err ? String(err.message) :
-        'Failed to update topping size prices';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+            ? err
+            : err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : "Failed to update topping size prices";
       setError(errorMessage);
       throw new Error(errorMessage);
     }
@@ -2232,9 +2294,13 @@ export const useToppingSizePrices = () => {
     return toppingSizePrices.filter((tsp) => tsp.toppingId === toppingId);
   };
 
-  const getToppingPriceForSize = (toppingId: string, categorySizeId: string) => {
+  const getToppingPriceForSize = (
+    toppingId: string,
+    categorySizeId: string,
+  ) => {
     const sizePrice = toppingSizePrices.find(
-      (tsp) => tsp.toppingId === toppingId && tsp.categorySizeId === categorySizeId
+      (tsp) =>
+        tsp.toppingId === toppingId && tsp.categorySizeId === categorySizeId,
     );
     return sizePrice?.price ?? 0;
   };
