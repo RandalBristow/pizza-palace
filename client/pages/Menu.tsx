@@ -232,127 +232,273 @@ export default function Menu() {
             })}
           </TabsList>
 
-          {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id}>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((item) => (
-                    <Card key={item.id} className="flex flex-col h-full">
-                      <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
-                        {(() => {
-                          const menuItemImage = item.imageId
-                            ? images.find((img) => img.id === item.imageId)
-                            : null;
-                          return menuItemImage ? (
-                            <img
-                              src={menuItemImage.url}
-                              alt={menuItemImage.altText || item.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                              <Pizza className="h-16 w-16" />
-                            </div>
-                          );
-                        })()}
-                      </div>
-                      <CardContent className="flex flex-col flex-1 p-4">
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-2">
-                            <h3 className="font-semibold text-lg text-blue-600">
-                              {item.name}
-                            </h3>
-                            <div className="flex items-center text-sm text-gray-500">
-                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                              <span>4.8</span>
-                            </div>
-                          </div>
-                          <p className="text-gray-600 text-sm mb-3">
-                            {item.description}
-                          </p>
-                          <div className="flex items-center space-x-2 mb-3">
-                            <Badge variant="outline">
-                              ${getItemDisplayPrice(item).toFixed(2)}
-                            </Badge>
-                          </div>
-                        </div>
+          {categories.map((category) => {
+            // Group items by sub-category
+            const categorySubCategories = dbSubCategories
+              .filter(sub => sub.categoryId === category.id && sub.isActive)
+              .sort((a, b) => a.displayOrder - b.displayOrder);
 
-                        <div className="mt-auto space-y-2">
-                          {(() => {
-                            const sizeOptions = getItemSizeOptions(item);
-                            return sizeOptions.length > 1 ? (
-                              <div className="space-y-2">
-                                {sizeOptions.map((sizeOption) => (
-                                  <div
-                                    key={sizeOption.size}
-                                    className="flex items-center justify-between"
-                                  >
-                                    <span className="text-sm font-medium">
-                                      {sizeOption.size} - $
-                                      {sizeOption.price.toFixed(2)}
-                                    </span>
+            const itemsBySubCategory = categorySubCategories.reduce((acc, subCat) => {
+              acc[subCat.id] = filteredItems.filter(item => item.subCategoryId === subCat.id);
+              return acc;
+            }, {} as { [key: string]: any[] });
+
+            // Items without sub-category
+            const itemsWithoutSubCategory = filteredItems.filter(item => !item.subCategoryId);
+
+            return (
+              <TabsContent key={category.id} value={category.id}>
+                <div className="space-y-8">
+                  {/* Items without sub-category */}
+                  {itemsWithoutSubCategory.length > 0 && (
+                    <div>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {itemsWithoutSubCategory.map((item) => (
+                          <Card key={item.id} className="flex flex-col h-full">
+                            <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
+                              {(() => {
+                                const menuItemImage = item.imageId
+                                  ? images.find((img) => img.id === item.imageId)
+                                  : null;
+                                return menuItemImage ? (
+                                  <img
+                                    src={menuItemImage.url}
+                                    alt={menuItemImage.altText || item.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                    <Pizza className="h-16 w-16" />
+                                  </div>
+                                );
+                              })()}
+                            </div>
+                            <CardContent className="flex flex-col flex-1 p-4">
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between mb-2">
+                                  <h3 className="font-semibold text-lg text-blue-600">
+                                    {item.name}
+                                  </h3>
+                                  <div className="flex items-center text-sm text-gray-500">
+                                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                                    <span>4.8</span>
+                                  </div>
+                                </div>
+                                <p className="text-gray-600 text-sm mb-3">
+                                  {item.description}
+                                </p>
+                              </div>
+
+                              <div className="mt-auto space-y-3">
+                                {(() => {
+                                  const sizeOptions = getItemSizeOptions(item);
+                                  const selectedSize = getSelectedSize(item.id);
+                                  const selectedSizeOption = sizeOptions.find(opt => opt.size === selectedSize);
+
+                                  return sizeOptions.length > 1 ? (
+                                    <>
+                                      <Select
+                                        value={selectedSize}
+                                        onValueChange={(value) => handleSizeChange(item.id, value)}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select size...">
+                                            {selectedSizeOption
+                                              ? `${selectedSizeOption.size} - $${selectedSizeOption.price.toFixed(2)}`
+                                              : "Select size..."
+                                            }
+                                          </SelectValue>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {sizeOptions.map((sizeOption) => (
+                                            <SelectItem key={sizeOption.size} value={sizeOption.size}>
+                                              {sizeOption.size} - ${sizeOption.price.toFixed(2)}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                      <div className="flex space-x-2">
+                                        <Button
+                                          variant="outline"
+                                          className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
+                                          onClick={() => customizeItem(item)}
+                                          disabled={!selectedSize}
+                                        >
+                                          CUSTOMIZE
+                                        </Button>
+                                        <Button
+                                          className="flex-1 bg-red-600 hover:bg-red-700"
+                                          onClick={() => addToCart(item)}
+                                          disabled={!selectedSize}
+                                        >
+                                          ADD TO ORDER
+                                        </Button>
+                                      </div>
+                                    </>
+                                  ) : (
                                     <div className="flex space-x-2">
                                       <Button
-                                        size="sm"
                                         variant="outline"
-                                        onClick={() =>
-                                          customizeItem(item, sizeOption.size)
-                                        }
-                                        className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                                        className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
+                                        onClick={() => customizeItem(item)}
                                       >
                                         CUSTOMIZE
                                       </Button>
                                       <Button
-                                        size="sm"
-                                        onClick={() =>
-                                          addToCart(item, sizeOption.size)
-                                        }
-                                        className="bg-red-600 hover:bg-red-700"
+                                        className="flex-1 bg-red-600 hover:bg-red-700"
+                                        onClick={() => addToCart(item)}
                                       >
                                         ADD TO ORDER
                                       </Button>
                                     </div>
-                                  </div>
-                                ))}
+                                  );
+                                })()}
                               </div>
-                            ) : (
-                              <div className="flex space-x-2">
-                                <Button
-                                  variant="outline"
-                                  className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
-                                  onClick={() => customizeItem(item)}
-                                >
-                                  CUSTOMIZE
-                                </Button>
-                                <Button
-                                  className="flex-1 bg-red-600 hover:bg-red-700"
-                                  onClick={() => addToCart(item)}
-                                >
-                                  ADD TO ORDER
-                                </Button>
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-12">
-                    <div className="text-gray-400 mb-4">
-                      <Pizza className="h-16 w-16 mx-auto" />
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No items available
-                    </h3>
-                    <p className="text-gray-500">
-                      We're working on adding items to this category.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-          ))}
+                  )}
+
+                  {/* Items grouped by sub-category */}
+                  {categorySubCategories.map((subCategory) => {
+                    const subCategoryItems = itemsBySubCategory[subCategory.id] || [];
+                    if (subCategoryItems.length === 0) return null;
+
+                    return (
+                      <div key={subCategory.id}>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                          {subCategory.name}
+                        </h2>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {subCategoryItems.map((item) => (
+                            <Card key={item.id} className="flex flex-col h-full">
+                              <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
+                                {(() => {
+                                  const menuItemImage = item.imageId
+                                    ? images.find((img) => img.id === item.imageId)
+                                    : null;
+                                  return menuItemImage ? (
+                                    <img
+                                      src={menuItemImage.url}
+                                      alt={menuItemImage.altText || item.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                      <Pizza className="h-16 w-16" />
+                                    </div>
+                                  );
+                                })()}
+                              </div>
+                              <CardContent className="flex flex-col flex-1 p-4">
+                                <div className="flex-1">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <h3 className="font-semibold text-lg text-blue-600">
+                                      {item.name}
+                                    </h3>
+                                    <div className="flex items-center text-sm text-gray-500">
+                                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                                      <span>4.8</span>
+                                    </div>
+                                  </div>
+                                  <p className="text-gray-600 text-sm mb-3">
+                                    {item.description}
+                                  </p>
+                                </div>
+
+                                <div className="mt-auto space-y-3">
+                                  {(() => {
+                                    const sizeOptions = getItemSizeOptions(item);
+                                    const selectedSize = getSelectedSize(item.id);
+                                    const selectedSizeOption = sizeOptions.find(opt => opt.size === selectedSize);
+
+                                    return sizeOptions.length > 1 ? (
+                                      <>
+                                        <Select
+                                          value={selectedSize}
+                                          onValueChange={(value) => handleSizeChange(item.id, value)}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue placeholder="Select size...">
+                                              {selectedSizeOption
+                                                ? `${selectedSizeOption.size} - $${selectedSizeOption.price.toFixed(2)}`
+                                                : "Select size..."
+                                              }
+                                            </SelectValue>
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {sizeOptions.map((sizeOption) => (
+                                              <SelectItem key={sizeOption.size} value={sizeOption.size}>
+                                                {sizeOption.size} - ${sizeOption.price.toFixed(2)}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                        <div className="flex space-x-2">
+                                          <Button
+                                            variant="outline"
+                                            className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
+                                            onClick={() => customizeItem(item)}
+                                            disabled={!selectedSize}
+                                          >
+                                            CUSTOMIZE
+                                          </Button>
+                                          <Button
+                                            className="flex-1 bg-red-600 hover:bg-red-700"
+                                            onClick={() => addToCart(item)}
+                                            disabled={!selectedSize}
+                                          >
+                                            ADD TO ORDER
+                                          </Button>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <div className="flex space-x-2">
+                                        <Button
+                                          variant="outline"
+                                          className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
+                                          onClick={() => customizeItem(item)}
+                                        >
+                                          CUSTOMIZE
+                                        </Button>
+                                        <Button
+                                          className="flex-1 bg-red-600 hover:bg-red-700"
+                                          onClick={() => addToCart(item)}
+                                        >
+                                          ADD TO ORDER
+                                        </Button>
+                                      </div>
+                                    );
+                                  })()}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Show message if no items in category */}
+                  {filteredItems.length === 0 && (
+                    <div className="col-span-full text-center py-12">
+                      <div className="text-gray-400 mb-4">
+                        <Pizza className="h-16 w-16 mx-auto" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No items available
+                      </h3>
+                      <p className="text-gray-500">
+                        We're working on adding items to this category.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            );
+          })}
         </Tabs>
       </main>
 
