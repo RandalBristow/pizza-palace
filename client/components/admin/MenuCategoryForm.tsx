@@ -29,8 +29,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 // Removed hook imports - data will be passed as props
-import SubCategoryForm from "./SubCategoryForm";
-import CategorySizesForm from "./CategorySizesForm";
 
 export interface Category {
   id: string;
