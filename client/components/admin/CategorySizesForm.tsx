@@ -215,7 +215,7 @@ export default function CategorySizesForm({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">Category Sizes</h3>
+        {showTitle && <h3 className="text-lg font-medium">Category Sizes</h3>}
         <Dialog open={isAddingSize} onOpenChange={setIsAddingSize}>
           <DialogTrigger asChild>
             <Button disabled={categories.length === 0}>
