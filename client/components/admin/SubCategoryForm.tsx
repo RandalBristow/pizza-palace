@@ -84,6 +84,7 @@ export default function SubCategoryForm({
   updateSubCategory,
   deleteSubCategory,
   updateSubCategorySizes,
+  showTitle = true,
 }: SubCategoryFormProps) {
   const [isAddingSubCategory, setIsAddingSubCategory] = useState(false);
   const [editingSubCategory, setEditingSubCategory] =
