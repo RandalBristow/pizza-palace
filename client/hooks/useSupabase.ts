@@ -2152,6 +2152,10 @@ export const useToppingSizePrices = () => {
         .eq("topping_id", toppingId);
 
       if (deleteError) {
+        // Check if table doesn't exist
+        if (deleteError.code === '42P01' || deleteError.message?.includes('does not exist')) {
+          throw new Error("The topping_size_prices table does not exist. Please run the database migration script first.");
+        }
         console.error("Delete error:", deleteError);
         throw new Error(`Failed to delete existing prices: ${deleteError.message || deleteError.details || deleteError.hint || 'Unknown error'}`);
       }
