@@ -298,27 +298,29 @@ export default function SubCategoryForm({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         {showTitle && <h3 className="text-lg font-medium">Sub-Categories</h3>}
-        <Dialog
-          open={isAddingSubCategory}
-          onOpenChange={setIsAddingSubCategory}
-        >
-          <DialogTrigger asChild>
-            <Button disabled={categories.length === 0}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Sub-Category
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Add New Sub-Category</DialogTitle>
-              <DialogDescription>
-                Create a new sub-category within a menu category and select
-                available sizes
-              </DialogDescription>
-            </DialogHeader>
-            {renderSubCategoryForm(false)}
-          </DialogContent>
-        </Dialog>
+        {!hideAddButton && (
+          <Dialog
+            open={isAddingSubCategory}
+            onOpenChange={setIsAddingSubCategory}
+          >
+            <DialogTrigger asChild>
+              <Button disabled={categories.length === 0}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Sub-Category
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Add New Sub-Category</DialogTitle>
+                <DialogDescription>
+                  Create a new sub-category within a menu category and select
+                  available sizes
+                </DialogDescription>
+              </DialogHeader>
+              {renderSubCategoryForm(false)}
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {/* Sub-Categories List */}
