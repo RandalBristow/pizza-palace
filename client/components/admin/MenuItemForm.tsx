@@ -200,7 +200,9 @@ export default function MenuItemForm({
         price: sizePrices[sizeId] || 0,
       }));
 
-      await updateMenuItemSizesForItem(editingMenuItem.id, sizes);
+      if (updateMenuItemSizesForItem) {
+        await updateMenuItemSizesForItem(editingMenuItem.id, sizes);
+      }
 
       setEditingMenuItem(null);
       resetForm();
