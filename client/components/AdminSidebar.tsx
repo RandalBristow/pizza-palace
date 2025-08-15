@@ -41,6 +41,8 @@ const sidebarItems: SidebarItem[] = [
     icon: MenuIcon,
     children: [
       { id: "categories", label: "Menu Categories" },
+      { id: "category-sizes", label: "Category Sizes" },
+      { id: "sub-categories", label: "Sub-Categories" },
       { id: "menu-items", label: "Menu Items" },
     ],
   },
