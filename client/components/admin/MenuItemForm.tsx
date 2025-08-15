@@ -211,7 +211,7 @@ export default function MenuItemForm({
     setSizePrices(prices);
 
     // Set default selected size to first available size
-    const availableSizes = getAvailableSizes(menuItem.category);
+    const availableSizes = getAvailableSizes(menuItem.category, menuItem.subCategoryId);
     if (availableSizes.length > 0) {
       setSelectedSize(availableSizes[0].id);
     }
