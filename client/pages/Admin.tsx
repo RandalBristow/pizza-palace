@@ -15,6 +15,8 @@ import {
   useSettings,
   useAboutSections,
   useImages,
+  useCategorySizes,
+  useSubCategorySizes,
 } from "../hooks/useSupabase";
 
 // Import form components
