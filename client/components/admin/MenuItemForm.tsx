@@ -173,7 +173,14 @@ export default function MenuItemForm({
       setIsAddingMenuItem(false);
       resetForm();
     } catch (error) {
-      console.error("Failed to create menu item:", error);
+      const errorMessage = error instanceof Error ? error.message :
+        typeof error === 'string' ? error :
+        error && typeof error === 'object' && 'message' in error ? String(error.message) :
+        error && typeof error === 'object' && 'details' in error ? String(error.details) :
+        error && typeof error === 'object' && 'hint' in error ? String(error.hint) :
+        'An unknown error occurred';
+      console.error("Failed to create menu item:", errorMessage);
+      alert(`Failed to create menu item: ${errorMessage}`);
     }
   };
 
