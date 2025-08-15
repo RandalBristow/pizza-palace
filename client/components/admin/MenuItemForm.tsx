@@ -607,13 +607,12 @@ export default function MenuItemForm({
                                   className="flex items-center justify-between p-2 border rounded text-xs"
                                 >
                                   <div className="flex items-center space-x-2 flex-1 min-w-0">
-                                    <input
-                                      type="checkbox"
+                                    <Checkbox
                                       id={`default-${topping.id}`}
                                       checked={isDefault && isActive}
                                       disabled={!isActive}
-                                      onChange={(e) =>
-                                        handleDefaultToppingToggle(topping.id, e.target.checked)
+                                      onCheckedChange={(checked) =>
+                                        handleDefaultToppingToggle(topping.id, !!checked)
                                       }
                                       className="w-3 h-3"
                                     />
