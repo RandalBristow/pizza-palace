@@ -282,6 +282,7 @@ export default function Admin() {
             toppingCategories={toppingCategories}
             toppings={toppings}
             categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
             menuItemSizes={menuItemSizes}
             menuItemSizeToppings={menuItemSizeToppings}
             toppingSizePrices={toppingSizePrices}
