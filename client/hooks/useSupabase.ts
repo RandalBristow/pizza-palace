@@ -450,24 +450,34 @@ export const useMenuItems = () => {
 
   const updateMenuItem = async (id: string, updates: any) => {
     try {
+      // Build update object, only including price if it's defined
+      const updateData: any = {
+        name: updates.name,
+        description: updates.description,
+        category_id: updates.category,
+        sub_category_id: updates.subCategoryId,
+        image_id: updates.imageId,
+        default_toppings: updates.defaultToppings,
+        is_active: updates.isActive,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Only include price if it's defined (since we're moving to size-based pricing)
+      if (updates.price !== undefined && updates.price !== null) {
+        updateData.price = updates.price;
+      }
+
       const { data, error } = await supabase
         .from(TABLES.MENU_ITEMS)
-        .update({
-          name: updates.name,
-          description: updates.description,
-          price: updates.price,
-          category_id: updates.category,
-          sub_category_id: updates.subCategoryId,
-          image_id: updates.imageId,
-          default_toppings: updates.defaultToppings,
-          is_active: updates.isActive,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(`Database error: ${error.message || error.details || error.hint || 'Unknown database error'}`);
+      }
 
       const updatedMenuItem = transformMenuItem(data);
       setMenuItems((prev) =>
@@ -475,10 +485,14 @@ export const useMenuItems = () => {
       );
       return updatedMenuItem;
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to update menu item",
-      );
-      throw err;
+      const errorMessage = err instanceof Error ? err.message :
+        typeof err === 'string' ? err :
+        err && typeof err === 'object' && 'message' in err ? String(err.message) :
+        err && typeof err === 'object' && 'details' in err ? String(err.details) :
+        err && typeof err === 'object' && 'hint' in err ? String(err.hint) :
+        'Failed to update menu item';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
