@@ -9,6 +9,7 @@ import {
   Image as ImageIcon,
   Settings,
   FileText,
+  Database,
 } from "lucide-react";
 
 interface SidebarItem {
