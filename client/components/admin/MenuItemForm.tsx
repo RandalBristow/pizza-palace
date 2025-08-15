@@ -843,7 +843,12 @@ export default function MenuItemForm({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Menu Items</h2>
+        <div>
+          <h2 className="text-xl font-semibold">Menu Items</h2>
+          <p className="text-gray-600 mt-1">
+            Manage menu items with size-based pricing and toppings
+          </p>
+        </div>
         <div className="flex items-center space-x-4">
           <Select
             value={selectedMenuCategory}
