@@ -129,6 +129,14 @@ export default function Admin() {
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
+  // Track mount status to prevent double loading
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   // Show loading state while data is being fetched
   const isLoading = useMemo(() =>
     categoriesLoading ||
