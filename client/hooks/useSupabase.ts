@@ -175,7 +175,7 @@ export const useCategories = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.CATEGORIES)
@@ -192,7 +192,7 @@ export const useCategories = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const createCategory = async (category: any) => {
     try {
