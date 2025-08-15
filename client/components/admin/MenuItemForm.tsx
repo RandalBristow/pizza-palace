@@ -312,8 +312,8 @@ export default function MenuItemForm({
 
     // Get sizes that are linked to this sub-category
     const subCategorySizeIds = subCategorySizes
-      .filter(scs => scs.sub_category_id === subCategoryId)
-      .map(scs => scs.category_size_id);
+      .filter(scs => scs.subCategoryId === subCategoryId)
+      .map(scs => scs.categorySizeId);
 
     return categorySizes
       .filter((size) =>
