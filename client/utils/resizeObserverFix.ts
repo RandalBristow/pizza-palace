@@ -58,20 +58,37 @@ if (typeof window !== 'undefined' && window.ResizeObserver) {
   window.ResizeObserver = class extends OriginalResizeObserver {
     constructor(callback: ResizeObserverCallback) {
       const wrappedCallback: ResizeObserverCallback = (entries, observer) => {
-        try {
-          callback(entries, observer);
-        } catch (error) {
-          // Silently handle errors in ResizeObserver callbacks
-          if (!isResizeObserverError(String(error))) {
-            // Only log non-ResizeObserver errors
-            console.debug('ResizeObserver callback error:', error);
+        // Use requestAnimationFrame to defer callback execution and prevent loop errors
+        requestAnimationFrame(() => {
+          try {
+            callback(entries, observer);
+          } catch (error) {
+            // Silently handle errors in ResizeObserver callbacks
+            if (!isResizeObserverError(String(error))) {
+              // Only log non-ResizeObserver errors
+              console.debug('ResizeObserver callback error:', error);
+            }
           }
-        }
+        });
       };
 
       super(wrappedCallback);
     }
   };
+}
+
+// Additional safety: Override any existing ResizeObserver error reporting
+if (typeof window !== 'undefined') {
+  // Prevent the error from bubbling up to the console
+  const originalReportError = window.reportError;
+  if (originalReportError) {
+    window.reportError = (error: any) => {
+      if (error && isResizeObserverError(String(error))) {
+        return; // Suppress ResizeObserver errors
+      }
+      return originalReportError.call(window, error);
+    };
+  }
 }
 
 /**
