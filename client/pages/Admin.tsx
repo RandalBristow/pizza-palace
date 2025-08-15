@@ -32,6 +32,7 @@ import CarouselForm from "../components/admin/CarouselForm";
 import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 import AboutPageForm from "../components/admin/AboutPageForm";
 import ImageManagerForm from "../components/admin/ImageManagerForm";
+import DatabaseSetup from "../components/admin/DatabaseSetup";
 
 export default function Admin() {
   // Supabase hooks
