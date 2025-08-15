@@ -567,7 +567,7 @@ export default function MenuItemForm({
                         value={toppingCategory.id}
                         className="mt-0 space-y-2"
                       >
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="space-y-2">
                           {toppings
                             .filter(
                               (t) =>
@@ -576,6 +576,7 @@ export default function MenuItemForm({
                             .map((topping) => {
                               const isActive =
                                 sizeToppings[selectedSize]?.[topping.id] ?? true;
+                              const isDefault = defaultToppings[topping.id] ?? false;
                               const toppingPrice = getToppingPriceForSize
                                 ? getToppingPriceForSize(topping.id, selectedSize)
                                 : topping.price || 0;
@@ -585,13 +586,25 @@ export default function MenuItemForm({
                                   key={topping.id}
                                   className="flex items-center justify-between p-2 border rounded text-xs"
                                 >
-                                  <div className="flex flex-col flex-1 min-w-0">
-                                    <span className="font-medium truncate">
-                                      {topping.name}
-                                    </span>
-                                    <span className="text-gray-500">
-                                      +${toppingPrice.toFixed(2)}
-                                    </span>
+                                  <div className="flex items-center space-x-2 flex-1 min-w-0">
+                                    <input
+                                      type="checkbox"
+                                      id={`default-${topping.id}`}
+                                      checked={isDefault && isActive}
+                                      disabled={!isActive}
+                                      onChange={(e) =>
+                                        handleDefaultToppingToggle(topping.id, e.target.checked)
+                                      }
+                                      className="w-3 h-3"
+                                    />
+                                    <div className="flex flex-col flex-1 min-w-0">
+                                      <span className="font-medium truncate">
+                                        {topping.name}
+                                      </span>
+                                      <span className="text-gray-500">
+                                        +${toppingPrice.toFixed(2)}
+                                      </span>
+                                    </div>
                                   </div>
                                   <TooltipProvider>
                                     <Tooltip>
