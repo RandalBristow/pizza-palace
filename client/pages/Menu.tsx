@@ -67,6 +67,55 @@ export default function Menu() {
     (item) => item.category === selectedCategory && item.isActive,
   );
 
+  // Helper function to get sizes for a category
+  const getCategorySizes = (categoryId: string) => {
+    return categorySizes
+      .filter(size => size.categoryId === categoryId && size.isActive)
+      .sort((a, b) => a.displayOrder - b.displayOrder);
+  };
+
+  // Helper function to get menu item size pricing
+  const getMenuItemSizes = (menuItemId: string) => {
+    return menuItemSizes.filter(size => size.menu_item_id === menuItemId);
+  };
+
+  // Helper function to get price for a menu item size
+  const getSizePrice = (menuItemId: string, categorySizeId: string) => {
+    const itemSize = menuItemSizes.find(
+      size => size.menu_item_id === menuItemId && size.category_size_id === categorySizeId
+    );
+    return itemSize?.price ?? 0;
+  };
+
+  // Helper function to get the display price for an item
+  const getItemDisplayPrice = (item: any) => {
+    const itemSizes = getMenuItemSizes(item.id);
+    if (itemSizes.length > 0) {
+      // Return the lowest price if multiple sizes
+      return Math.min(...itemSizes.map(size => size.price));
+    }
+    return item.price ?? 0;
+  };
+
+  // Helper function to get size options for an item
+  const getItemSizeOptions = (item: any) => {
+    const categorySizesForItem = getCategorySizes(item.category);
+    const itemSizes = getMenuItemSizes(item.id);
+
+    if (categorySizesForItem.length === 0 || itemSizes.length === 0) {
+      return [];
+    }
+
+    return categorySizesForItem.map(categorySize => {
+      const price = getSizePrice(item.id, categorySize.id);
+      return {
+        size: categorySize.sizeName,
+        price: price,
+        categorySizeId: categorySize.id
+      };
+    }).filter(option => option.price > 0); // Only show sizes with prices
+  };
+
   const addToCart = (item: MenuItem, size?: string) => {
     if (!hasDeliveryDetails) {
       setPendingAction({
