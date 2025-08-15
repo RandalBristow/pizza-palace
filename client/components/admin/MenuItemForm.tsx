@@ -83,16 +83,16 @@ interface MenuItemFormProps {
   subCategories?: any[];
   toppingCategories: ToppingCategory[];
   toppings: Topping[];
-  categorySizes: CategorySize[];
-  menuItemSizes: any[];
-  menuItemSizeToppings: any[];
+  categorySizes?: CategorySize[];
+  menuItemSizes?: any[];
+  menuItemSizeToppings?: any[];
   selectedMenuCategory: string;
   onSelectedCategoryChange: (category: string) => void;
   createMenuItem: (menuItem: any) => Promise<any>;
   updateMenuItem: (id: string, updates: any) => Promise<any>;
   deleteMenuItem: (id: string) => Promise<void>;
-  updateMenuItemSizesForItem: (menuItemId: string, sizes: any[]) => Promise<void>;
-  updateMenuItemSizeToppings: (menuItemSizeId: string, toppings: any[]) => Promise<void>;
+  updateMenuItemSizesForItem?: (menuItemId: string, sizes: any[]) => Promise<void>;
+  updateMenuItemSizeToppings?: (menuItemSizeId: string, toppings: any[]) => Promise<void>;
 }
 
 export default function MenuItemForm({
