@@ -18,6 +18,7 @@ export const TABLES = {
   MENU_ITEM_SIZE_TOPPINGS: "menu_item_size_toppings",
   TOPPINGS: "toppings",
   TOPPING_CATEGORIES: "topping_categories",
+  TOPPING_SIZE_PRICES: "topping_size_prices",
   SPECIALS: "specials",
   CAROUSEL_IMAGES: "carousel_images",
   CUSTOMER_FAVORITES: "customer_favorites",
