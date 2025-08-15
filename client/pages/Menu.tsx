@@ -18,6 +18,13 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import { Pizza, Coffee, Star } from "lucide-react";
 import { useCategories, useMenuItems, useImages, useCategorySizes, useMenuItemSizes, useSubCategories } from "../hooks/useSupabase";
 import { type MenuItem } from "../data/mockData";
