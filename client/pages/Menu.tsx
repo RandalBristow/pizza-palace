@@ -255,58 +255,61 @@ export default function Menu() {
                         </div>
 
                         <div className="mt-auto space-y-2">
-                          {item.sizes && item.sizes.length > 1 ? (
-                            <div className="space-y-2">
-                              {item.sizes.map((sizeOption) => (
-                                <div
-                                  key={sizeOption.size}
-                                  className="flex items-center justify-between"
-                                >
-                                  <span className="text-sm font-medium">
-                                    {sizeOption.size} - $
-                                    {(sizeOption.price ?? 0).toFixed(2)}
-                                  </span>
-                                  <div className="flex space-x-2">
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() =>
-                                        customizeItem(item, sizeOption.size)
-                                      }
-                                      className="text-blue-600 border-blue-600 hover:bg-blue-50"
-                                    >
-                                      CUSTOMIZE
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      onClick={() =>
-                                        addToCart(item, sizeOption.size)
-                                      }
-                                      className="bg-red-600 hover:bg-red-700"
-                                    >
-                                      ADD TO ORDER
-                                    </Button>
+                          {(() => {
+                            const sizeOptions = getItemSizeOptions(item);
+                            return sizeOptions.length > 1 ? (
+                              <div className="space-y-2">
+                                {sizeOptions.map((sizeOption) => (
+                                  <div
+                                    key={sizeOption.size}
+                                    className="flex items-center justify-between"
+                                  >
+                                    <span className="text-sm font-medium">
+                                      {sizeOption.size} - $
+                                      {sizeOption.price.toFixed(2)}
+                                    </span>
+                                    <div className="flex space-x-2">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          customizeItem(item, sizeOption.size)
+                                        }
+                                        className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                                      >
+                                        CUSTOMIZE
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        onClick={() =>
+                                          addToCart(item, sizeOption.size)
+                                        }
+                                        className="bg-red-600 hover:bg-red-700"
+                                      >
+                                        ADD TO ORDER
+                                      </Button>
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="flex space-x-2">
-                              <Button
-                                variant="outline"
-                                className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
-                                onClick={() => customizeItem(item)}
-                              >
-                                CUSTOMIZE
-                              </Button>
-                              <Button
-                                className="flex-1 bg-red-600 hover:bg-red-700"
-                                onClick={() => addToCart(item)}
-                              >
-                                ADD TO ORDER
-                              </Button>
-                            </div>
-                          )}
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="flex space-x-2">
+                                <Button
+                                  variant="outline"
+                                  className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
+                                  onClick={() => customizeItem(item)}
+                                >
+                                  CUSTOMIZE
+                                </Button>
+                                <Button
+                                  className="flex-1 bg-red-600 hover:bg-red-700"
+                                  onClick={() => addToCart(item)}
+                                >
+                                  ADD TO ORDER
+                                </Button>
+                              </div>
+                            );
+                          })()}
                         </div>
                       </CardContent>
                     </Card>
