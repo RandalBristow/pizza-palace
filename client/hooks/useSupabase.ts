@@ -1810,16 +1810,23 @@ export const useSubCategorySizes = () => {
           category_size_id: sizeId,
         }));
 
-        const { error: insertError } = await supabase
+        const { data: insertData_result, error: insertError } = await supabase
           .from(TABLES.SUB_CATEGORY_SIZES)
-          .insert(insertData);
+          .insert(insertData)
+          .select();
 
-        if (insertError) throw insertError;
+        if (insertError) {
+          console.error("Insert error:", insertError);
+          throw insertError;
+        }
+
+        console.log("Successfully inserted sub-category sizes:", insertData_result);
       }
 
       // Refresh the data
       await fetchSubCategorySizes();
     } catch (err) {
+      console.error("Error in updateSubCategorySizes:", err);
       setError(
         err instanceof Error
           ? err.message
