@@ -220,9 +220,14 @@ export default function MenuItemForm({
     if (!editingMenuItem) return;
 
     try {
+      const defaultToppingsArray = Object.keys(defaultToppings).filter(
+        (toppingId) => defaultToppings[toppingId]
+      );
+
       await updateMenuItem(editingMenuItem.id, {
         ...newMenuItem,
         imageId: selectedImageId,
+        defaultToppings: defaultToppingsArray,
       });
 
       // Update size-based pricing
