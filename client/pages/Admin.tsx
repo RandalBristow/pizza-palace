@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import AdminSidebar from "../components/AdminSidebar";
@@ -15,6 +15,11 @@ import {
   useSettings,
   useAboutSections,
   useImages,
+  useCategorySizes,
+  useSubCategorySizes,
+  useMenuItemSizes,
+  useMenuItemSizeToppings,
+  useToppingSizePrices,
 } from "../hooks/useSupabase";
 
 // Import form components
@@ -28,8 +33,11 @@ import CarouselForm from "../components/admin/CarouselForm";
 import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 import AboutPageForm from "../components/admin/AboutPageForm";
 import ImageManagerForm from "../components/admin/ImageManagerForm";
+import DatabaseSetup from "../components/admin/DatabaseSetup";
 
 export default function Admin() {
+  const mountedRef = useRef(false);
+
   // Supabase hooks
   const {
     categories,
@@ -102,6 +110,35 @@ export default function Admin() {
     updateImage,
     deleteImage,
   } = useImages();
+  const {
+    categorySizes,
+    loading: categorySizesLoading,
+    createCategorySize,
+    updateCategorySize,
+    deleteCategorySize,
+  } = useCategorySizes();
+  const {
+    subCategorySizes,
+    loading: subCategorySizesLoading,
+    updateSubCategorySizes,
+  } = useSubCategorySizes();
+  const {
+    menuItemSizes,
+    loading: menuItemSizesLoading,
+    updateMenuItemSizesForItem,
+  } = useMenuItemSizes();
+  const {
+    menuItemSizeToppings,
+    loading: menuItemSizeTopLoading,
+    updateMenuItemSizeToppings,
+  } = useMenuItemSizeToppings();
+  const {
+    toppingSizePrices,
+    loading: toppingSizePricesLoading,
+    updateToppingSizePrices,
+    getToppingSizePrices,
+    getToppingPriceForSize,
+  } = useToppingSizePrices();
 
   const [selectedItem, setSelectedItem] = useState("categories");
 
@@ -109,18 +146,50 @@ export default function Admin() {
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
+  // Track mount status to prevent double loading
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   // Show loading state while data is being fetched
-  const isLoading =
-    categoriesLoading ||
-    menuItemsLoading ||
-    toppingsLoading ||
-    toppingCategoriesLoading ||
-    specialsLoading ||
-    carouselLoading ||
-    favoritesLoading ||
-    settingsLoading ||
-    aboutLoading ||
-    imagesLoading;
+  const isLoading = useMemo(
+    () =>
+      categoriesLoading ||
+      menuItemsLoading ||
+      toppingsLoading ||
+      toppingCategoriesLoading ||
+      specialsLoading ||
+      carouselLoading ||
+      favoritesLoading ||
+      settingsLoading ||
+      aboutLoading ||
+      imagesLoading ||
+      categorySizesLoading ||
+      subCategorySizesLoading ||
+      menuItemSizesLoading ||
+      menuItemSizeTopLoading ||
+      toppingSizePricesLoading,
+    [
+      categoriesLoading,
+      menuItemsLoading,
+      toppingsLoading,
+      toppingCategoriesLoading,
+      specialsLoading,
+      carouselLoading,
+      favoritesLoading,
+      settingsLoading,
+      aboutLoading,
+      imagesLoading,
+      categorySizesLoading,
+      subCategorySizesLoading,
+      menuItemSizesLoading,
+      menuItemSizeTopLoading,
+      toppingSizePricesLoading,
+    ],
+  );
 
   if (isLoading) {
     return (
@@ -210,12 +279,18 @@ export default function Admin() {
             subCategories={subCategories}
             menuItems={menuItems}
             toppingCategories={toppingCategories}
+            categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
             createCategory={createCategory}
             updateCategory={updateCategory}
             deleteCategory={deleteCategory}
             createSubCategory={createSubCategory}
             updateSubCategory={updateSubCategory}
             deleteSubCategory={deleteSubCategory}
+            createCategorySize={createCategorySize}
+            updateCategorySize={updateCategorySize}
+            deleteCategorySize={deleteCategorySize}
+            updateSubCategorySizes={updateSubCategorySizes}
           />
         );
       case "menu-items":
@@ -226,11 +301,19 @@ export default function Admin() {
             subCategories={subCategories}
             toppingCategories={toppingCategories}
             toppings={toppings}
+            categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
+            menuItemSizes={menuItemSizes}
+            menuItemSizeToppings={menuItemSizeToppings}
+            toppingSizePrices={toppingSizePrices}
             selectedMenuCategory={selectedMenuCategory}
             onSelectedCategoryChange={setSelectedMenuCategory}
             createMenuItem={createMenuItem}
             updateMenuItem={updateMenuItem}
             deleteMenuItem={deleteMenuItem}
+            updateMenuItemSizesForItem={updateMenuItemSizesForItem}
+            updateMenuItemSizeToppings={updateMenuItemSizeToppings}
+            getToppingPriceForSize={getToppingPriceForSize}
           />
         );
       case "topping-categories":
@@ -252,11 +335,16 @@ export default function Admin() {
             toppings={toppings}
             categories={categories}
             toppingCategories={toppingCategories}
+            categorySizes={categorySizes}
+            toppingSizePrices={toppingSizePrices}
             selectedToppingCategory={selectedToppingCategory}
             onSelectedCategoryChange={setSelectedToppingCategory}
             createTopping={createTopping}
             updateTopping={updateTopping}
             deleteTopping={deleteTopping}
+            updateToppingSizePrices={updateToppingSizePrices}
+            getToppingSizePrices={getToppingSizePrices}
+            getToppingPriceForSize={getToppingPriceForSize}
           />
         );
       case "specials":
@@ -307,6 +395,8 @@ export default function Admin() {
             deleteCustomerFavorite={deleteCustomerFavorite}
           />
         );
+      case "database-setup":
+        return <DatabaseSetup />;
       default:
         return (
           <SettingsForm

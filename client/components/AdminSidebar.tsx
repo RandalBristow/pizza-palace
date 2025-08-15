@@ -9,6 +9,7 @@ import {
   Image as ImageIcon,
   Settings,
   FileText,
+  Database,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -24,6 +25,11 @@ interface AdminSidebarProps {
 }
 
 const sidebarItems: SidebarItem[] = [
+  {
+    id: "database-setup",
+    label: "Database Setup",
+    icon: Database,
+  },
   {
     id: "settings",
     label: "Settings",

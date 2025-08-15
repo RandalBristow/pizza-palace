@@ -20,7 +20,11 @@ import {
   Star,
   ShoppingCart,
 } from "lucide-react";
-import { useCarouselImages, useCustomerFavorites, useSettings } from "../hooks/useSupabase";
+import {
+  useCarouselImages,
+  useCustomerFavorites,
+  useSettings,
+} from "../hooks/useSupabase";
 
 // Get customer favorites from localStorage or use default (fallback)
 const getCustomerFavorites = () => {
@@ -91,13 +95,18 @@ const getRestaurantSettings = () => {
 
 export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const { carouselImages: dbCarouselImages, loading: carouselLoading } = useCarouselImages();
-  const { customerFavorites: dbCustomerFavorites, loading: favoritesLoading } = useCustomerFavorites();
+  const { carouselImages: dbCarouselImages, loading: carouselLoading } =
+    useCarouselImages();
+  const { customerFavorites: dbCustomerFavorites, loading: favoritesLoading } =
+    useCustomerFavorites();
   const { settings: dbSettings, loading: settingsLoading } = useSettings();
 
   // Use database data with fallback
   const carouselImages = dbCarouselImages.length > 0 ? dbCarouselImages : [];
-  const customerFavorites = dbCustomerFavorites.length > 0 ? dbCustomerFavorites : getCustomerFavorites();
+  const customerFavorites =
+    dbCustomerFavorites.length > 0
+      ? dbCustomerFavorites
+      : getCustomerFavorites();
   const settings = dbSettings || getRestaurantSettings();
 
   // Format business hours for display
@@ -400,74 +409,6 @@ export default function Index() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Pizza className="h-6 w-6 text-red-500" />
-                <Coffee className="h-5 w-5 text-amber-500" />
-                <span className="text-lg font-bold">Pronto Pizza Cafe</span>
-              </div>
-              <p className="text-gray-400">
-                Fresh pizza and premium coffee, made to order with love in
-                Mansfield, Ohio.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
-              <div className="space-y-2">
-                <Link
-                  to="/menu"
-                  className="block text-gray-400 hover:text-white"
-                >
-                  Menu
-                </Link>
-                <Link
-                  to="/specials"
-                  className="block text-gray-400 hover:text-white"
-                >
-                  Specials
-                </Link>
-                <Link
-                  to="/order"
-                  className="block text-gray-400 hover:text-white"
-                >
-                  Order Online
-                </Link>
-                <Link
-                  to="/about"
-                  className="block text-gray-400 hover:text-white"
-                >
-                  About Us
-                </Link>
-                <Link
-                  to="/admin"
-                  className="block text-gray-400 hover:text-white text-sm"
-                >
-                  Admin Panel
-                </Link>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
-              <div className="space-y-2 text-gray-400">
-                <p>914 Ashland Rd</p>
-                <p>Mansfield, OH 44905</p>
-                <p>(419) 589-7777</p>
-                <a href="https://getprontos.com" className="hover:text-white">
-                  getprontos.com
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Pronto Pizza Cafe. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -18,6 +18,7 @@ export const TABLES = {
   MENU_ITEM_SIZE_TOPPINGS: "menu_item_size_toppings",
   TOPPINGS: "toppings",
   TOPPING_CATEGORIES: "topping_categories",
+  TOPPING_SIZE_PRICES: "topping_size_prices",
   SPECIALS: "specials",
   CAROUSEL_IMAGES: "carousel_images",
   CUSTOMER_FAVORITES: "customer_favorites",
@@ -40,6 +41,7 @@ export interface DatabaseMenuItem {
   id: string;
   name: string;
   description: string;
+  price: number;
   category_id: string;
   sub_category_id?: string;
   image_id?: string;
@@ -51,10 +53,19 @@ export interface DatabaseMenuItem {
 export interface DatabaseTopping {
   id: string;
   name: string;
-  price: number;
+  price?: number; // Made optional as it's now deprecated
   category_id: string;
   menu_item_category_id: string;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseToppingSizePrice {
+  id: string;
+  topping_id: string;
+  category_size_id: string;
+  price: number;
   created_at: string;
   updated_at: string;
 }
