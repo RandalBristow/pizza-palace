@@ -34,6 +34,8 @@ import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 import AboutPageForm from "../components/admin/AboutPageForm";
 import ImageManagerForm from "../components/admin/ImageManagerForm";
 import DatabaseSetup from "../components/admin/DatabaseSetup";
+import CategorySizesPage from "../components/admin/CategorySizesPage";
+import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 
 export default function Admin() {
   const mountedRef = useRef(false);
