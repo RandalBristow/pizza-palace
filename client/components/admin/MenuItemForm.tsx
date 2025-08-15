@@ -731,8 +731,11 @@ export default function MenuItemForm({
             onClick={isEdit ? handleUpdateMenuItem : handleAddMenuItem}
             disabled={
               !newMenuItem.name ||
+              !newMenuItem.description ||
               !newMenuItem.category ||
-              Object.keys(sizePrices).length === 0
+              !newMenuItem.subCategoryId ||
+              getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).length === 0 ||
+              getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).some(size => !sizePrices[size.id] || sizePrices[size.id] <= 0)
             }
           >
             <Save className="h-4 w-4 mr-2" />
