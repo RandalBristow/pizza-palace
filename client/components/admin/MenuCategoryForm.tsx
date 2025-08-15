@@ -165,18 +165,11 @@ export default function MenuCategoryForm({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">
-          Menu Categories & Sub-Categories
+          Menu Categories
         </h2>
       </div>
 
-      <Tabs defaultValue="categories" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="subcategories">Sub-Categories</TabsTrigger>
-          <TabsTrigger value="sizes">Sizes</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="categories" className="space-y-6">
+      <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-medium">Menu Categories</h3>
             <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
@@ -374,31 +367,7 @@ export default function MenuCategoryForm({
               </div>
             </DialogContent>
           </Dialog>
-        </TabsContent>
-
-        <TabsContent value="subcategories" className="space-y-6">
-          <SubCategoryForm
-            categories={categories}
-            subCategories={subCategories}
-            categorySizes={categorySizes}
-            subCategorySizes={subCategorySizes}
-            createSubCategory={createSubCategory!}
-            updateSubCategory={updateSubCategory!}
-            deleteSubCategory={deleteSubCategory!}
-            updateSubCategorySizes={updateSubCategorySizes}
-          />
-        </TabsContent>
-
-        <TabsContent value="sizes" className="space-y-6">
-          <CategorySizesForm
-            categories={categories}
-            categorySizes={categorySizes}
-            createCategorySize={createCategorySize}
-            updateCategorySize={updateCategorySize}
-            deleteCategorySize={deleteCategorySize}
-          />
-        </TabsContent>
-      </Tabs>
+      </div>
     </div>
   );
 }
