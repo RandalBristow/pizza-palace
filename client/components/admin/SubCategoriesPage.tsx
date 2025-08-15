@@ -201,6 +201,7 @@ export default function SubCategoriesPage({
         deleteSubCategory={deleteSubCategory}
         updateSubCategorySizes={updateSubCategorySizes}
         showTitle={false}
+        hideAddButton={true}
       />
     </div>
   );
