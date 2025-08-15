@@ -39,6 +39,8 @@ export default function Menu() {
     useCategories();
   const { menuItems: dbMenuItems, loading: menuItemsLoading } = useMenuItems();
   const { images, loading: imagesLoading } = useImages();
+  const { categorySizes, loading: categorySizesLoading } = useCategorySizes();
+  const { menuItemSizes, loading: menuItemSizesLoading } = useMenuItemSizes();
 
   // Set initial category when data loads
   useEffect(() => {
