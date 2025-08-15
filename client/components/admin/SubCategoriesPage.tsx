@@ -99,6 +99,95 @@ export default function SubCategoriesPage({
                 ))}
             </SelectContent>
           </Select>
+          <Dialog open={isAddingSubCategory} onOpenChange={setIsAddingSubCategory}>
+            <DialogTrigger asChild>
+              <Button disabled={categories.length === 0}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Sub-Category
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Sub-Category</DialogTitle>
+                <DialogDescription>
+                  Create a new sub-category within a menu category
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="category">Parent Category</Label>
+                  <Select
+                    value={newSubCategory.categoryId}
+                    onValueChange={(value) =>
+                      setNewSubCategory({ ...newSubCategory, categoryId: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories
+                        .filter((c) => c.isActive)
+                        .map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="subCategoryName">Sub-Category Name</Label>
+                  <Input
+                    id="subCategoryName"
+                    placeholder="e.g., Boneless Wings, Traditional Wings"
+                    value={newSubCategory.name}
+                    onChange={(e) =>
+                      setNewSubCategory({ ...newSubCategory, name: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="displayOrder">Display Order</Label>
+                  <Input
+                    id="displayOrder"
+                    type="number"
+                    placeholder="1"
+                    value={newSubCategory.displayOrder}
+                    onChange={(e) =>
+                      setNewSubCategory({
+                        ...newSubCategory,
+                        displayOrder: parseInt(e.target.value) || 1,
+                      })
+                    }
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingSubCategory(false);
+                      setNewSubCategory({
+                        name: "",
+                        categoryId: "",
+                        displayOrder: 1,
+                        isActive: true,
+                      });
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleAddSubCategory}
+                    disabled={!newSubCategory.categoryId || !newSubCategory.name}
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Sub-Category
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
