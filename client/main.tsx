@@ -57,17 +57,13 @@ const App = () => (
   </OrderProvider>
 );
 
-// Safe root creation to prevent double initialization warnings
 const container = document.getElementById("root")!;
+const root = createRoot(container);
+root.render(<App />);
 
-// Check if container already has React root data attribute to prevent double initialization
-if (!container.hasAttribute('data-react-root')) {
-  container.setAttribute('data-react-root', 'true');
-  const root = createRoot(container);
-  root.render(<App />);
-} else {
-  // If root already exists, just log a warning in development
-  if (import.meta.env.DEV) {
-    console.warn('React root already initialized, skipping createRoot call');
-  }
+// Handle hot module replacement in development
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    root.unmount();
+  });
 }
