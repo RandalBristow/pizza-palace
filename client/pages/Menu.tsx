@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import DeliverySelection from "../components/DeliverySelection";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
-import Footer from "../components/Footer";
 import { useOrder } from "../context/OrderContext";
 import {
   Card,
