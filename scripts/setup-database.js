@@ -2,13 +2,13 @@
 
 /**
  * Database Setup Script for Supabase
- * 
+ *
  * This script sets up the complete database schema for the pizza restaurant management system.
  * Run this with: node scripts/setup-database.js
  */
 
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
@@ -17,23 +17,23 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ Missing Supabase credentials in .env file');
-  console.log('Required variables:');
-  console.log('- VITE_SUPABASE_URL');
-  console.log('- VITE_SUPABASE_ANON_KEY');
+  console.error("❌ Missing Supabase credentials in .env file");
+  console.log("Required variables:");
+  console.log("- VITE_SUPABASE_URL");
+  console.log("- VITE_SUPABASE_ANON_KEY");
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-console.log('🚀 Starting database setup...');
+console.log("🚀 Starting database setup...");
 console.log(`📍 Supabase URL: ${supabaseUrl}`);
 
 // SQL commands to execute
 const sqlCommands = [
   // Enable UUID extension
   `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`,
-  
+
   // Create updated_at function
   `CREATE OR REPLACE FUNCTION update_updated_at_column()
    RETURNS TRIGGER AS $$
@@ -42,7 +42,7 @@ const sqlCommands = [
        RETURN NEW;
    END;
    $$ language 'plpgsql';`,
-   
+
   // Categories table
   `CREATE TABLE IF NOT EXISTS categories (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -52,7 +52,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Menu sub-categories table
   `CREATE TABLE IF NOT EXISTS menu_sub_categories (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -63,7 +63,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Category sizes table
   `CREATE TABLE IF NOT EXISTS category_sizes (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -74,7 +74,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Sub-category sizes junction table
   `CREATE TABLE IF NOT EXISTS sub_category_sizes (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -83,7 +83,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      UNIQUE(sub_category_id, category_size_id)
    );`,
-   
+
   // Images table
   `CREATE TABLE IF NOT EXISTS images (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -99,7 +99,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Menu items table
   `CREATE TABLE IF NOT EXISTS menu_items (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -112,7 +112,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Menu item sizes table
   `CREATE TABLE IF NOT EXISTS menu_item_sizes (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -123,7 +123,7 @@ const sqlCommands = [
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      UNIQUE(menu_item_id, category_size_id)
    );`,
-   
+
   // Topping categories table
   `CREATE TABLE IF NOT EXISTS topping_categories (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -134,7 +134,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Toppings table
   `CREATE TABLE IF NOT EXISTS toppings (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -146,7 +146,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Menu item size toppings table
   `CREATE TABLE IF NOT EXISTS menu_item_size_toppings (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -157,7 +157,7 @@ const sqlCommands = [
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      UNIQUE(menu_item_size_id, topping_id)
    );`,
-   
+
   // Specials table
   `CREATE TABLE IF NOT EXISTS specials (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -177,7 +177,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Carousel images table
   `CREATE TABLE IF NOT EXISTS carousel_images (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -190,7 +190,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Customer favorites table
   `CREATE TABLE IF NOT EXISTS customer_favorites (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -202,7 +202,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // About sections table
   `CREATE TABLE IF NOT EXISTS about_sections (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -220,7 +220,7 @@ const sqlCommands = [
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );`,
-   
+
   // Settings table
   `CREATE TABLE IF NOT EXISTS settings (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -237,7 +237,7 @@ const sqlCommands = [
      }',
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-   );`
+   );`,
 ];
 
 // Indexes
@@ -249,7 +249,7 @@ const indexCommands = [
   `CREATE INDEX IF NOT EXISTS idx_menu_items_category ON menu_items(category_id);`,
   `CREATE INDEX IF NOT EXISTS idx_menu_item_sizes_item ON menu_item_sizes(menu_item_id);`,
   `CREATE INDEX IF NOT EXISTS idx_toppings_category ON toppings(category_id);`,
-  `CREATE INDEX IF NOT EXISTS idx_topping_categories_menu_category ON topping_categories(menu_item_category_id);`
+  `CREATE INDEX IF NOT EXISTS idx_topping_categories_menu_category ON topping_categories(menu_item_category_id);`,
 ];
 
 // Triggers
@@ -259,7 +259,7 @@ const triggerCommands = [
   `CREATE TRIGGER IF NOT EXISTS update_menu_items_updated_at 
    BEFORE UPDATE ON menu_items FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();`,
   `CREATE TRIGGER IF NOT EXISTS update_toppings_updated_at 
-   BEFORE UPDATE ON toppings FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();`
+   BEFORE UPDATE ON toppings FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();`,
 ];
 
 // Sample data
@@ -268,7 +268,7 @@ const sampleDataCommands = [
   `INSERT INTO settings (id, tax_rate, delivery_fee) 
    VALUES ('00000000-0000-0000-0000-000000000001', 8.5, 2.99)
    ON CONFLICT (id) DO NOTHING;`,
-   
+
   // Sample categories
   `INSERT INTO categories (id, name, is_active, order_num) VALUES 
    ('11111111-1111-1111-1111-111111111111', 'Pizza', true, 1),
@@ -277,7 +277,7 @@ const sampleDataCommands = [
    ('44444444-4444-4444-4444-444444444444', 'Salads', true, 4),
    ('55555555-5555-5555-5555-555555555555', 'Beverages', true, 5)
    ON CONFLICT (id) DO NOTHING;`,
-   
+
   // Sample sizes for Pizza
   `INSERT INTO category_sizes (id, category_id, size_name, display_order, is_active) VALUES 
    ('a1111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', '7"', 1, true),
@@ -286,37 +286,39 @@ const sampleDataCommands = [
    ('a4444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111', '14"', 4, true),
    ('a5555555-5555-5555-5555-555555555555', '11111111-1111-1111-1111-111111111111', '16"', 5, true)
    ON CONFLICT (id) DO NOTHING;`,
-   
+
   // Sample sizes for Wings
   `INSERT INTO category_sizes (id, category_id, size_name, display_order, is_active) VALUES 
    ('b1111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', '2lbs', 1, true),
    ('b2222222-2222-2222-2222-222222222222', '22222222-2222-2222-2222-222222222222', '5lbs', 2, true),
    ('b3333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', '5-Piece', 3, true),
    ('b4444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222222', '8-Piece', 4, true)
-   ON CONFLICT (id) DO NOTHING;`
+   ON CONFLICT (id) DO NOTHING;`,
 ];
 
 async function executeSQLCommand(command, description) {
   try {
     console.log(`⏳ ${description}...`);
-    const { data, error } = await supabase.rpc('exec_sql', { 
-      sql_query: command 
+    const { data, error } = await supabase.rpc("exec_sql", {
+      sql_query: command,
     });
-    
+
     if (error) {
       // Try alternative method for table creation
       const { error: directError } = await supabase
-        .from('_sql')
-        .select('*')
+        .from("_sql")
+        .select("*")
         .limit(0);
-      
-      if (directError && directError.message.includes('does not exist')) {
+
+      if (directError && directError.message.includes("does not exist")) {
         // This means we need to use a different approach
-        throw new Error(`Cannot execute SQL directly. You may need to run the SQL manually in Supabase dashboard.`);
+        throw new Error(
+          `Cannot execute SQL directly. You may need to run the SQL manually in Supabase dashboard.`,
+        );
       }
       throw error;
     }
-    
+
     console.log(`✅ ${description} completed`);
     return true;
   } catch (error) {
@@ -326,50 +328,55 @@ async function executeSQLCommand(command, description) {
 }
 
 async function setupDatabase() {
-  console.log('\n📋 Creating tables...');
-  
+  console.log("\n📋 Creating tables...");
+
   let successCount = 0;
-  const totalCommands = sqlCommands.length + indexCommands.length + triggerCommands.length + sampleDataCommands.length;
-  
+  const totalCommands =
+    sqlCommands.length +
+    indexCommands.length +
+    triggerCommands.length +
+    sampleDataCommands.length;
+
   // Execute table creation commands
   for (const command of sqlCommands) {
-    const tableName = command.match(/CREATE TABLE.*?(\w+)/)?.[1] || 'SQL command';
+    const tableName =
+      command.match(/CREATE TABLE.*?(\w+)/)?.[1] || "SQL command";
     const success = await executeSQLCommand(command, `Creating ${tableName}`);
     if (success) successCount++;
   }
-  
-  console.log('\n🔗 Creating indexes...');
-  
+
+  console.log("\n🔗 Creating indexes...");
+
   // Execute index commands
   for (const command of indexCommands) {
-    const success = await executeSQLCommand(command, 'Creating index');
+    const success = await executeSQLCommand(command, "Creating index");
     if (success) successCount++;
   }
-  
-  console.log('\n⚡ Creating triggers...');
-  
+
+  console.log("\n⚡ Creating triggers...");
+
   // Execute trigger commands
   for (const command of triggerCommands) {
-    const success = await executeSQLCommand(command, 'Creating trigger');
+    const success = await executeSQLCommand(command, "Creating trigger");
     if (success) successCount++;
   }
-  
-  console.log('\n📊 Inserting sample data...');
-  
+
+  console.log("\n📊 Inserting sample data...");
+
   // Execute sample data commands
   for (const command of sampleDataCommands) {
-    const success = await executeSQLCommand(command, 'Inserting sample data');
+    const success = await executeSQLCommand(command, "Inserting sample data");
     if (success) successCount++;
   }
-  
+
   console.log(`\n🎉 Database setup completed!`);
   console.log(`✅ ${successCount}/${totalCommands} operations successful`);
-  
+
   if (successCount < totalCommands) {
-    console.log('\n⚠️  Some operations failed. You may need to:');
-    console.log('1. Check your Supabase permissions');
-    console.log('2. Run the SQL script manually in Supabase dashboard');
-    console.log('3. Use the service role key instead of anon key');
+    console.log("\n⚠️  Some operations failed. You may need to:");
+    console.log("1. Check your Supabase permissions");
+    console.log("2. Run the SQL script manually in Supabase dashboard");
+    console.log("3. Use the service role key instead of anon key");
   }
 }
 

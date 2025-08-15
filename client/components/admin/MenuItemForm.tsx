@@ -91,8 +91,14 @@ interface MenuItemFormProps {
   createMenuItem: (menuItem: any) => Promise<any>;
   updateMenuItem: (id: string, updates: any) => Promise<any>;
   deleteMenuItem: (id: string) => Promise<void>;
-  updateMenuItemSizesForItem?: (menuItemId: string, sizes: any[]) => Promise<void>;
-  updateMenuItemSizeToppings?: (menuItemSizeId: string, toppings: any[]) => Promise<void>;
+  updateMenuItemSizesForItem?: (
+    menuItemId: string,
+    sizes: any[],
+  ) => Promise<void>;
+  updateMenuItemSizeToppings?: (
+    menuItemSizeId: string,
+    toppings: any[],
+  ) => Promise<void>;
 }
 
 export default function MenuItemForm({
@@ -126,11 +132,13 @@ export default function MenuItemForm({
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>(
     undefined,
   );
-  
+
   // Size-based pricing state
   const [selectedSize, setSelectedSize] = useState<string>("");
-  const [sizePrices, setSizePrices] = useState<{[key: string]: number}>({});
-  const [sizeToppings, setSizeToppings] = useState<{[key: string]: {[key: string]: boolean}}>({});
+  const [sizePrices, setSizePrices] = useState<{ [key: string]: number }>({});
+  const [sizeToppings, setSizeToppings] = useState<{
+    [key: string]: { [key: string]: boolean };
+  }>({});
 
   const handleAddMenuItem = async () => {
     try {
@@ -140,7 +148,7 @@ export default function MenuItemForm({
       });
 
       // Create size-based pricing
-      const sizes = Object.keys(sizePrices).map(sizeId => ({
+      const sizes = Object.keys(sizePrices).map((sizeId) => ({
         categorySizeId: sizeId,
         price: sizePrices[sizeId] || 0,
       }));
@@ -171,9 +179,11 @@ export default function MenuItemForm({
     setSelectedImageId(menuItem.imageId);
 
     // Load existing prices for this menu item
-    const itemSizes = menuItemSizes.filter(ms => ms.menu_item_id === menuItem.id);
-    const prices: {[key: string]: number} = {};
-    itemSizes.forEach(itemSize => {
+    const itemSizes = menuItemSizes.filter(
+      (ms) => ms.menu_item_id === menuItem.id,
+    );
+    const prices: { [key: string]: number } = {};
+    itemSizes.forEach((itemSize) => {
       prices[itemSize.category_size_id] = itemSize.price;
     });
     setSizePrices(prices);
@@ -195,7 +205,7 @@ export default function MenuItemForm({
       });
 
       // Update size-based pricing
-      const sizes = Object.keys(sizePrices).map(sizeId => ({
+      const sizes = Object.keys(sizePrices).map((sizeId) => ({
         categorySizeId: sizeId,
         price: sizePrices[sizeId] || 0,
       }));
@@ -252,32 +262,34 @@ export default function MenuItemForm({
   };
 
   const handleSizePriceChange = (sizeId: string, price: number) => {
-    setSizePrices(prev => ({
+    setSizePrices((prev) => ({
       ...prev,
-      [sizeId]: price
+      [sizeId]: price,
     }));
   };
 
   const handleToppingToggle = (toppingId: string, isActive: boolean) => {
     if (!selectedSize) return;
-    
-    setSizeToppings(prev => ({
+
+    setSizeToppings((prev) => ({
       ...prev,
       [selectedSize]: {
         ...prev[selectedSize],
-        [toppingId]: isActive
-      }
+        [toppingId]: isActive,
+      },
     }));
   };
 
   const getMenuItemPrice = (menuItem: MenuItem) => {
-    const itemSizes = menuItemSizes.filter(ms => ms.menu_item_id === menuItem.id);
+    const itemSizes = menuItemSizes.filter(
+      (ms) => ms.menu_item_id === menuItem.id,
+    );
     if (itemSizes.length === 0) return "No pricing";
-    
-    const prices = itemSizes.map(itemSize => itemSize.price);
+
+    const prices = itemSizes.map((itemSize) => itemSize.price);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
-    
+
     if (minPrice === maxPrice) {
       return `$${minPrice.toFixed(2)}`;
     }
@@ -389,7 +401,7 @@ export default function MenuItemForm({
             required
           />
         </div>
-        
+
         <div>
           <Label htmlFor="description" className="text-red-600">
             * Description
@@ -444,7 +456,10 @@ export default function MenuItemForm({
                       placeholder="0.00"
                       value={sizePrices[size.id] || ""}
                       onChange={(e) =>
-                        handleSizePriceChange(size.id, parseFloat(e.target.value) || 0)
+                        handleSizePriceChange(
+                          size.id,
+                          parseFloat(e.target.value) || 0,
+                        )
                       }
                       className="w-32"
                     />
@@ -463,31 +478,31 @@ export default function MenuItemForm({
             Size-Specific Topping Management
           </h2>
           <p className="text-sm text-gray-500">
-            Select a size and configure which toppings are available for that size
+            Select a size and configure which toppings are available for that
+            size
           </p>
         </div>
 
         {/* Size Dropdown */}
-        {newMenuItem.category && getAvailableSizes(newMenuItem.category).length > 0 && (
-          <div className="mb-4">
-            <Label htmlFor="sizeSelect">Select Size</Label>
-            <Select
-              value={selectedSize}
-              onValueChange={setSelectedSize}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a size to manage toppings..." />
-              </SelectTrigger>
-              <SelectContent>
-                {getAvailableSizes(newMenuItem.category).map((size) => (
-                  <SelectItem key={size.id} value={size.id}>
-                    {size.sizeName} - ${sizePrices[size.id]?.toFixed(2) || "0.00"}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+        {newMenuItem.category &&
+          getAvailableSizes(newMenuItem.category).length > 0 && (
+            <div className="mb-4">
+              <Label htmlFor="sizeSelect">Select Size</Label>
+              <Select value={selectedSize} onValueChange={setSelectedSize}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a size to manage toppings..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAvailableSizes(newMenuItem.category).map((size) => (
+                    <SelectItem key={size.id} value={size.id}>
+                      {size.sizeName} - $
+                      {sizePrices[size.id]?.toFixed(2) || "0.00"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
         {/* Toppings content that grows to fill space */}
         <div className="flex-1 overflow-hidden">
@@ -527,14 +542,17 @@ export default function MenuItemForm({
                               t.category === toppingCategory.id && t.isActive,
                           )
                           .map((topping) => {
-                            const isActive = sizeToppings[selectedSize]?.[topping.id] ?? true;
+                            const isActive =
+                              sizeToppings[selectedSize]?.[topping.id] ?? true;
                             return (
                               <div
                                 key={topping.id}
                                 className="flex items-center justify-between p-2 border rounded"
                               >
                                 <div className="flex items-center space-x-2">
-                                  <span className="text-sm">{topping.name}</span>
+                                  <span className="text-sm">
+                                    {topping.name}
+                                  </span>
                                   <span className="text-xs text-gray-500">
                                     +${topping.price.toFixed(2)}
                                   </span>
@@ -542,7 +560,9 @@ export default function MenuItemForm({
                                 <Button
                                   variant={isActive ? "default" : "destructive"}
                                   size="sm"
-                                  onClick={() => handleToppingToggle(topping.id, !isActive)}
+                                  onClick={() =>
+                                    handleToppingToggle(topping.id, !isActive)
+                                  }
                                 >
                                   {isActive ? (
                                     <Power className="h-4 w-4" />
@@ -581,9 +601,13 @@ export default function MenuItemForm({
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={isEdit ? handleUpdateMenuItem : handleAddMenuItem}
-            disabled={!newMenuItem.name || !newMenuItem.category || Object.keys(sizePrices).length === 0}
+            disabled={
+              !newMenuItem.name ||
+              !newMenuItem.category ||
+              Object.keys(sizePrices).length === 0
+            }
           >
             <Save className="h-4 w-4 mr-2" />
             {isEdit ? "Update Item" : "Save Item"}

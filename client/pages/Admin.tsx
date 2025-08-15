@@ -113,18 +113,10 @@ export default function Admin() {
     updateCategorySize,
     deleteCategorySize,
   } = useCategorySizes();
-  const {
-    subCategorySizes,
-    updateSubCategorySizes,
-  } = useSubCategorySizes();
-  const {
-    menuItemSizes,
-    updateMenuItemSizesForItem,
-  } = useMenuItemSizes();
-  const {
-    menuItemSizeToppings,
-    updateMenuItemSizeToppings,
-  } = useMenuItemSizeToppings();
+  const { subCategorySizes, updateSubCategorySizes } = useSubCategorySizes();
+  const { menuItemSizes, updateMenuItemSizesForItem } = useMenuItemSizes();
+  const { menuItemSizeToppings, updateMenuItemSizeToppings } =
+    useMenuItemSizeToppings();
 
   const [selectedItem, setSelectedItem] = useState("categories");
 

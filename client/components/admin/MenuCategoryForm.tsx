@@ -29,7 +29,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { useCategories, useCategorySizes, useSubCategorySizes } from "../../hooks/useSupabase";
+import {
+  useCategories,
+  useCategorySizes,
+  useSubCategorySizes,
+} from "../../hooks/useSupabase";
 import SubCategoryForm from "./SubCategoryForm";
 import CategorySizesForm from "./CategorySizesForm";
 
@@ -73,7 +77,12 @@ export default function MenuCategoryForm({
   updateSubCategory,
   deleteSubCategory,
 }: MenuCategoryFormProps) {
-  const { categorySizes, createCategorySize, updateCategorySize, deleteCategorySize } = useCategorySizes();
+  const {
+    categorySizes,
+    createCategorySize,
+    updateCategorySize,
+    deleteCategorySize,
+  } = useCategorySizes();
   const { subCategorySizes, updateSubCategorySizes } = useSubCategorySizes();
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -82,7 +91,6 @@ export default function MenuCategoryForm({
     isActive: true,
     order: 1,
   });
-
 
   const handleAddCategory = async () => {
     try {
@@ -148,7 +156,6 @@ export default function MenuCategoryForm({
       console.error("Failed to toggle category status:", error);
     }
   };
-
 
   return (
     <div className="space-y-6">
