@@ -6,16 +6,34 @@
 // Suppress ResizeObserver errors globally
 const originalError = window.console.error;
 window.console.error = (...args: any[]) => {
+  const message = args[0];
   if (
     args.length > 0 &&
-    typeof args[0] === 'string' &&
-    args[0].includes('ResizeObserver loop completed with undelivered notifications')
+    typeof message === 'string' &&
+    (message.includes('ResizeObserver loop completed with undelivered notifications') ||
+     message.includes('ResizeObserver loop limit exceeded'))
   ) {
     // Suppress this specific error as it's usually harmless
     return;
   }
   originalError.apply(console, args);
 };
+
+// Also handle error events on window
+const handleResizeObserverError = (e: ErrorEvent) => {
+  if (
+    e.message &&
+    (e.message.includes('ResizeObserver loop completed with undelivered notifications') ||
+     e.message.includes('ResizeObserver loop limit exceeded'))
+  ) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    return false;
+  }
+  return true;
+};
+
+window.addEventListener('error', handleResizeObserverError);
 
 /**
  * Debounced ResizeObserver wrapper to prevent rapid firing
