@@ -490,6 +490,10 @@ export const useMenuItems = () => {
 
       if (error) {
         console.error("Supabase error:", error);
+        // Check if it's a column doesn't exist error
+        if (error.code === '42703' || error.message?.includes('column') || error.message?.includes('does not exist')) {
+          throw new Error(`Database schema error: ${error.message}. You may need to add the default_toppings column to your menu_items table.`);
+        }
         throw new Error(`Database error: ${error.message || error.details || error.hint || 'Unknown database error'}`);
       }
 
