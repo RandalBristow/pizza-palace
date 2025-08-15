@@ -5,6 +5,7 @@ import type {
   DatabaseMenuItem,
   DatabaseTopping,
   DatabaseToppingCategory,
+  DatabaseToppingSizePrice,
   DatabaseSpecial,
   DatabaseCarouselImage,
   DatabaseCustomerFavorite,
