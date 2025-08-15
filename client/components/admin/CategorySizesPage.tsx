@@ -93,6 +93,95 @@ export default function CategorySizesPage({
                 ))}
             </SelectContent>
           </Select>
+          <Dialog open={isAddingSize} onOpenChange={setIsAddingSize}>
+            <DialogTrigger asChild>
+              <Button disabled={categories.length === 0}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Size
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Size</DialogTitle>
+                <DialogDescription>
+                  Create a new size for a category (e.g., pizza sizes, wing quantities)
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Select
+                    value={newSize.categoryId}
+                    onValueChange={(value) =>
+                      setNewSize({ ...newSize, categoryId: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories
+                        .filter((c) => c.isActive)
+                        .map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="sizeName">Size Name</Label>
+                  <Input
+                    id="sizeName"
+                    placeholder="e.g., Large, 10-Piece"
+                    value={newSize.sizeName}
+                    onChange={(e) =>
+                      setNewSize({ ...newSize, sizeName: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="displayOrder">Display Order</Label>
+                  <Input
+                    id="displayOrder"
+                    type="number"
+                    placeholder="1"
+                    value={newSize.displayOrder}
+                    onChange={(e) =>
+                      setNewSize({
+                        ...newSize,
+                        displayOrder: parseInt(e.target.value) || 1,
+                      })
+                    }
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsAddingSize(false);
+                      setNewSize({
+                        categoryId: "",
+                        sizeName: "",
+                        displayOrder: 1,
+                        isActive: true,
+                      });
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleAddSize}
+                    disabled={!newSize.categoryId || !newSize.sizeName}
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Size
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
