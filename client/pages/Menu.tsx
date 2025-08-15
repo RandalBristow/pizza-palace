@@ -428,8 +428,6 @@ export default function Menu() {
         </Tabs>
       </main>
 
-      <Footer />
-
       <DeliverySelection
         isOpen={showDeliverySelection}
         onClose={() => {
