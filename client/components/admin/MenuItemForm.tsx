@@ -449,7 +449,7 @@ export default function MenuItemForm({
         {newMenuItem.category && (
           <div>
             <Label className="text-red-600">* Size-based Pricing</Label>
-            <div className="mt-2 border rounded-lg p-4">
+            <div className="mt-1 border rounded-lg py-1 px-4">
               {getAvailableSizes(newMenuItem.category).length === 0 ? (
                 <p className="text-sm text-gray-500">
                   No sizes defined for this category. Please add sizes first.
@@ -472,7 +472,7 @@ export default function MenuItemForm({
                             parseFloat(e.target.value) || 0,
                           )
                         }
-                        className="w-32"
+                        className="w-32 h-9 py-0"
                       />
                     </div>
                   ))}
