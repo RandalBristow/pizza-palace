@@ -1786,7 +1786,7 @@ export const useSubCategorySizes = () => {
 
       if (error) throw error;
 
-      setSubCategorySizes(data || []);
+      setSubCategorySizes(data ? data.map(transformSubCategorySize) : []);
     } catch (err) {
       setError(
         err instanceof Error
