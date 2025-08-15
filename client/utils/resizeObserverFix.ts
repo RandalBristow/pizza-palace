@@ -51,6 +51,29 @@ window.addEventListener('unhandledrejection', (e: PromiseRejectionEvent) => {
   }
 });
 
+// Patch ResizeObserver constructor to add built-in error handling
+if (typeof window !== 'undefined' && window.ResizeObserver) {
+  const OriginalResizeObserver = window.ResizeObserver;
+
+  window.ResizeObserver = class extends OriginalResizeObserver {
+    constructor(callback: ResizeObserverCallback) {
+      const wrappedCallback: ResizeObserverCallback = (entries, observer) => {
+        try {
+          callback(entries, observer);
+        } catch (error) {
+          // Silently handle errors in ResizeObserver callbacks
+          if (!isResizeObserverError(String(error))) {
+            // Only log non-ResizeObserver errors
+            console.debug('ResizeObserver callback error:', error);
+          }
+        }
+      };
+
+      super(wrappedCallback);
+    }
+  };
+}
+
 /**
  * Debounced ResizeObserver wrapper to prevent rapid firing
  */
