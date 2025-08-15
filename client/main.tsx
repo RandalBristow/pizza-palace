@@ -59,18 +59,15 @@ const App = () => (
 
 // Safe root creation to prevent double initialization warnings
 const container = document.getElementById("root")!;
-let root: any;
 
-// Check if we're in development and handle hot reloading
-if (import.meta.hot) {
-  // In development with HMR, store the root instance
-  if (!window.__REACT_ROOT__) {
-    window.__REACT_ROOT__ = createRoot(container);
-  }
-  root = window.__REACT_ROOT__;
+// Check if container already has React root data attribute to prevent double initialization
+if (!container.hasAttribute('data-react-root')) {
+  container.setAttribute('data-react-root', 'true');
+  const root = createRoot(container);
+  root.render(<App />);
 } else {
-  // In production, create root normally
-  root = createRoot(container);
+  // If root already exists, just log a warning in development
+  if (import.meta.env.DEV) {
+    console.warn('React root already initialized, skipping createRoot call');
+  }
 }
-
-root.render(<App />);
