@@ -112,6 +112,7 @@ export default function MenuItemForm({
   categorySizes = [],
   menuItemSizes = [],
   menuItemSizeToppings = [],
+  toppingSizePrices = [],
   selectedMenuCategory,
   onSelectedCategoryChange,
   createMenuItem,
@@ -119,6 +120,7 @@ export default function MenuItemForm({
   deleteMenuItem,
   updateMenuItemSizesForItem,
   updateMenuItemSizeToppings,
+  getToppingPriceForSize,
 }: MenuItemFormProps) {
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
