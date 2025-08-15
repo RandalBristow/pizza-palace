@@ -41,7 +41,6 @@ export default function Menu() {
   const { deliveryDetails, setDeliveryDetails, hasDeliveryDetails } =
     useOrder();
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Load data from database
   const { categories: dbCategories, loading: categoriesLoading } =
