@@ -160,6 +160,15 @@ export const transformSubCategorySize = (
   categorySizeId: dbSubCategorySize.category_size_id,
 });
 
+export const transformToppingSizePrice = (
+  dbToppingSizePrice: DatabaseToppingSizePrice,
+) => ({
+  id: dbToppingSizePrice.id,
+  toppingId: dbToppingSizePrice.topping_id,
+  categorySizeId: dbToppingSizePrice.category_size_id,
+  price: dbToppingSizePrice.price,
+});
+
 // Custom hooks for each data type
 export const useCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
