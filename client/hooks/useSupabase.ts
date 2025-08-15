@@ -2092,3 +2092,90 @@ export const useMenuItemSizeToppings = () => {
     refetch: fetchMenuItemSizeToppings,
   };
 };
+
+export const useToppingSizePrices = () => {
+  const [toppingSizePrices, setToppingSizePrices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchToppingSizePrices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.TOPPING_SIZE_PRICES)
+        .select("*");
+
+      if (error) throw error;
+
+      setToppingSizePrices(data ? data.map(transformToppingSizePrice) : []);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch topping size prices",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateToppingSizePrices = async (
+    toppingId: string,
+    sizePrices: { categorySizeId: string; price: number }[],
+  ) => {
+    try {
+      // First, delete existing prices for this topping
+      const { error: deleteError } = await supabase
+        .from(TABLES.TOPPING_SIZE_PRICES)
+        .delete()
+        .eq("topping_id", toppingId);
+
+      if (deleteError) throw deleteError;
+
+      // Then, insert new prices
+      if (sizePrices.length > 0) {
+        const insertData = sizePrices.map((sizePrice) => ({
+          topping_id: toppingId,
+          category_size_id: sizePrice.categorySizeId,
+          price: sizePrice.price,
+        }));
+
+        const { error: insertError } = await supabase
+          .from(TABLES.TOPPING_SIZE_PRICES)
+          .insert(insertData);
+
+        if (insertError) throw insertError;
+      }
+
+      // Refresh the data
+      await fetchToppingSizePrices();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update topping size prices",
+      );
+      throw err;
+    }
+  };
+
+  const getToppingSizePrices = (toppingId: string) => {
+    return toppingSizePrices.filter((tsp) => tsp.toppingId === toppingId);
+  };
+
+  const getToppingPriceForSize = (toppingId: string, categorySizeId: string) => {
+    const sizePrice = toppingSizePrices.find(
+      (tsp) => tsp.toppingId === toppingId && tsp.categorySizeId === categorySizeId
+    );
+    return sizePrice?.price ?? 0;
+  };
+
+  useEffect(() => {
+    fetchToppingSizePrices();
+  }, []);
+
+  return {
+    toppingSizePrices,
+    loading,
+    error,
+    updateToppingSizePrices,
+    getToppingSizePrices,
+    getToppingPriceForSize,
+    refetch: fetchToppingSizePrices,
+  };
+};
