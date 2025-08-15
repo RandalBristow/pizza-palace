@@ -526,11 +526,10 @@ export default function MenuItemForm({
       <div className="p-6 flex flex-col h-full">
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-900">
-            Size-Specific Topping Management
+            Topping Management
           </h2>
           <p className="text-sm text-gray-500">
-            Select a size and configure which toppings are available for that
-            size
+            Select a size to enable/disable toppings. Check boxes to set default toppings for this menu item.
           </p>
         </div>
 
