@@ -430,22 +430,25 @@ export default function MenuItemForm({
           </div>
 
           <div>
-            <Label htmlFor="subCategory">Sub-Category</Label>
+            <Label htmlFor="subCategory" className="text-red-600">* Sub-Category</Label>
             <Select
-              value={newMenuItem.subCategoryId || "none"}
+              value={newMenuItem.subCategoryId || ""}
               onValueChange={(value) => {
                 setNewMenuItem({
                   ...newMenuItem,
-                  subCategoryId: value === "none" ? undefined : value,
+                  subCategoryId: value || undefined,
                 });
+                // Clear size prices when sub-category changes
+                setSizePrices({});
+                setSelectedSize("");
               }}
               disabled={!newMenuItem.category}
+              required
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select sub-category (optional)" />
+                <SelectValue placeholder="Select sub-category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">No sub-category</SelectItem>
                 {subCategories
                   .filter(
                     (sub) =>
