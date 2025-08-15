@@ -156,17 +156,24 @@ export default function ToppingItemForm({
 
     try {
       await updateTopping(editingTopping.id, newTopping);
-      
+
       // Update size prices
       const sizePriceEntries = Object.entries(sizePrices)
         .map(([categorySizeId, price]) => ({ categorySizeId, price: price || 0 }));
-      
+
       await updateToppingSizePrices(editingTopping.id, sizePriceEntries);
-      
+
       setEditingTopping(null);
       resetForm();
     } catch (error) {
-      console.error("Failed to update topping:", error);
+      const errorMessage = error instanceof Error ? error.message :
+        typeof error === 'string' ? error :
+        error && typeof error === 'object' && 'message' in error ? String(error.message) :
+        error && typeof error === 'object' && 'details' in error ? String(error.details) :
+        error && typeof error === 'object' && 'hint' in error ? String(error.hint) :
+        'An unknown error occurred';
+      console.error("Failed to update topping:", errorMessage);
+      alert(`Failed to update topping: ${errorMessage}`);
     }
   };
 
