@@ -582,8 +582,8 @@ export default function MenuItemForm({
         </div>
 
         {/* Size Dropdown */}
-        {newMenuItem.category &&
-          getAvailableSizes(newMenuItem.category).length > 0 && (
+        {newMenuItem.category && newMenuItem.subCategoryId &&
+          getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).length > 0 && (
             <div className="mb-4">
               <Label htmlFor="sizeSelect">Select Size</Label>
               <Select value={selectedSize} onValueChange={setSelectedSize}>
@@ -591,7 +591,7 @@ export default function MenuItemForm({
                   <SelectValue placeholder="Select a size to manage toppings..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {getAvailableSizes(newMenuItem.category).map((size) => (
+                  {getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).map((size) => (
                     <SelectItem key={size.id} value={size.id}>
                       {size.sizeName} - $
                       {sizePrices[size.id]?.toFixed(2) || "0.00"}
