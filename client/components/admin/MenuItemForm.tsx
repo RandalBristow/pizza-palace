@@ -726,7 +726,7 @@ export default function MenuItemForm({
                 Add Menu Item
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-6xl h-[calc(68vh+50px)] flex flex-col p-0">
+            <DialogContent className="max-w-6xl h-[calc(68vh+100px)] flex flex-col p-0">
               <DialogHeader className="sr-only">
                 <DialogTitle>Add New Menu Item</DialogTitle>
               </DialogHeader>
