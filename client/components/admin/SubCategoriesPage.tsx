@@ -43,11 +43,33 @@ export default function SubCategoriesPage({
   updateSubCategorySizes,
 }: SubCategoriesPageProps) {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
+  const [isAddingSubCategory, setIsAddingSubCategory] = useState(false);
+  const [newSubCategory, setNewSubCategory] = useState({
+    name: "",
+    categoryId: "",
+    displayOrder: 1,
+    isActive: true,
+  });
 
   // Filter sub-categories by category
-  const filteredSubCategories = selectedCategoryFilter === "all" 
-    ? subCategories 
+  const filteredSubCategories = selectedCategoryFilter === "all"
+    ? subCategories
     : subCategories.filter(subCat => subCat.categoryId === selectedCategoryFilter);
+
+  const handleAddSubCategory = async () => {
+    try {
+      await createSubCategory(newSubCategory);
+      setIsAddingSubCategory(false);
+      setNewSubCategory({
+        name: "",
+        categoryId: "",
+        displayOrder: 1,
+        isActive: true,
+      });
+    } catch (error) {
+      console.error("Failed to create sub-category:", error);
+    }
+  };
 
   return (
     <div className="space-y-6">
