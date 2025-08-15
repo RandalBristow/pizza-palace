@@ -249,7 +249,7 @@ export default function Menu() {
                           </p>
                           <div className="flex items-center space-x-2 mb-3">
                             <Badge variant="outline">
-                              ${(item.price ?? 0).toFixed(2)}
+                              ${getItemDisplayPrice(item).toFixed(2)}
                             </Badge>
                           </div>
                         </div>
