@@ -182,7 +182,11 @@ export default function ToppingItemForm({
     try {
       await deleteTopping(id);
     } catch (error) {
-      console.error("Failed to delete topping:", error);
+      const errorMessage = error instanceof Error ? error.message :
+        typeof error === 'string' ? error :
+        'An unknown error occurred';
+      console.error("Failed to delete topping:", errorMessage);
+      alert(`Failed to delete topping: ${errorMessage}`);
     }
   };
 
@@ -194,7 +198,11 @@ export default function ToppingItemForm({
     try {
       await updateTopping(id, { ...topping, isActive: !topping.isActive });
     } catch (error) {
-      console.error("Failed to toggle topping status:", error);
+      const errorMessage = error instanceof Error ? error.message :
+        typeof error === 'string' ? error :
+        'An unknown error occurred';
+      console.error("Failed to toggle topping status:", errorMessage);
+      alert(`Failed to toggle topping status: ${errorMessage}`);
     }
   };
 
