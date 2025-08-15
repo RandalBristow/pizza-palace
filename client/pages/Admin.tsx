@@ -295,6 +295,29 @@ export default function Admin() {
             updateSubCategorySizes={updateSubCategorySizes}
           />
         );
+      case "category-sizes":
+        return (
+          <CategorySizesPage
+            categories={categories}
+            categorySizes={categorySizes}
+            createCategorySize={createCategorySize}
+            updateCategorySize={updateCategorySize}
+            deleteCategorySize={deleteCategorySize}
+          />
+        );
+      case "sub-categories":
+        return (
+          <SubCategoriesPage
+            categories={categories}
+            subCategories={subCategories}
+            categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
+            createSubCategory={createSubCategory}
+            updateSubCategory={updateSubCategory}
+            deleteSubCategory={deleteSubCategory}
+            updateSubCategorySizes={updateSubCategorySizes}
+          />
+        );
       case "menu-items":
         return (
           <MenuItemForm
