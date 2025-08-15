@@ -240,13 +240,33 @@ export default function Admin() {
             ${menuItems
               .filter((item) => item.category === category.id && item.isActive)
               .map(
-                (item) => `
+                (item) => {
+                  // Get pricing based on size-based pricing structure
+                  const itemSizes = menuItemSizes.filter(
+                    (ms) => ms.menu_item_id === item.id,
+                  );
+                  let priceDisplay = "Price Available";
+
+                  if (itemSizes.length > 0) {
+                    const prices = itemSizes.map((itemSize) => itemSize.price);
+                    const minPrice = Math.min(...prices);
+                    const maxPrice = Math.max(...prices);
+
+                    if (minPrice === maxPrice) {
+                      priceDisplay = `$${minPrice.toFixed(2)}`;
+                    } else {
+                      priceDisplay = `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
+                    }
+                  }
+
+                  return `
               <div class="menu-item">
                 <div class="item-name">${item.name}</div>
                 <div class="item-description">${item.description}</div>
-                <div class="item-price">$${item.price.toFixed(2)}</div>
+                <div class="item-price">${priceDisplay}</div>
               </div>
-            `,
+            `;
+                }
               )
               .join("")}
           </div>
