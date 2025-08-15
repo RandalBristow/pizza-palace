@@ -53,10 +53,19 @@ export interface DatabaseMenuItem {
 export interface DatabaseTopping {
   id: string;
   name: string;
-  price: number;
+  price?: number; // Made optional as it's now deprecated
   category_id: string;
   menu_item_category_id: string;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseToppingSizePrice {
+  id: string;
+  topping_id: string;
+  category_size_id: string;
+  price: number;
   created_at: string;
   updated_at: string;
 }
