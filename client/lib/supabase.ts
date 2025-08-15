@@ -40,6 +40,7 @@ export interface DatabaseMenuItem {
   id: string;
   name: string;
   description: string;
+  price: number;
   category_id: string;
   sub_category_id?: string;
   image_id?: string;
