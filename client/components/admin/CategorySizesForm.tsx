@@ -57,6 +57,7 @@ interface CategorySizesFormProps {
   updateCategorySize: (id: string, updates: any) => Promise<any>;
   deleteCategorySize: (id: string) => Promise<void>;
   showTitle?: boolean;
+  hideAddButton?: boolean;
 }
 
 export default function CategorySizesForm({
