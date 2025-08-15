@@ -142,7 +142,8 @@ export default function Admin() {
     categorySizesLoading ||
     subCategorySizesLoading ||
     menuItemSizesLoading ||
-    menuItemSizeTopLoading;
+    menuItemSizeTopLoading ||
+    toppingSizePricesLoading;
 
   if (isLoading) {
     return (
