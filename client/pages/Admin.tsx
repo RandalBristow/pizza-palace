@@ -248,11 +248,16 @@ export default function Admin() {
             subCategories={subCategories}
             toppingCategories={toppingCategories}
             toppings={toppings}
+            categorySizes={categorySizes}
+            menuItemSizes={menuItemSizes}
+            menuItemSizeToppings={menuItemSizeToppings}
             selectedMenuCategory={selectedMenuCategory}
             onSelectedCategoryChange={setSelectedMenuCategory}
             createMenuItem={createMenuItem}
             updateMenuItem={updateMenuItem}
             deleteMenuItem={deleteMenuItem}
+            updateMenuItemSizesForItem={updateMenuItemSizesForItem}
+            updateMenuItemSizeToppings={updateMenuItemSizeToppings}
           />
         );
       case "topping-categories":
