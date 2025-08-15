@@ -540,9 +540,18 @@ export default function MenuItemForm({
             <Label className="text-red-600">* Size-based Pricing</Label>
             <div className="mt-1 border rounded-lg py-1 px-4">
               {getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).length === 0 ? (
-                <p className="text-sm text-gray-500">
-                  No sizes defined for this sub-category. Please configure sizes for the sub-category first.
-                </p>
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-500">
+                    No sizes defined for this sub-category. Please configure sizes for the sub-category first.
+                  </p>
+                  <div className="text-xs text-gray-400 bg-gray-50 p-2 rounded">
+                    Debug Info:<br />
+                    Category: {newMenuItem.category}<br />
+                    SubCategory: {newMenuItem.subCategoryId}<br />
+                    SubCategorySizes loaded: {subCategorySizes.length}<br />
+                    CategorySizes loaded: {categorySizes.length}
+                  </div>
+                </div>
               ) : (
                 <div className="space-y-1 max-h-40 overflow-y-auto pr-2">
                   {getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).map((size) => (
