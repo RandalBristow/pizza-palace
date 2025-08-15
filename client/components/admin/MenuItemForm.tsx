@@ -145,7 +145,7 @@ export default function MenuItemForm({
         price: sizePrices[sizeId] || 0,
       }));
 
-      if (sizes.length > 0) {
+      if (sizes.length > 0 && updateMenuItemSizesForItem) {
         await updateMenuItemSizesForItem(createdMenuItem.id, sizes);
       }
 
