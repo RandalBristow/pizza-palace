@@ -161,14 +161,13 @@ export default function MenuCategoryForm({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">
-          Menu Categories
-        </h2>
-      </div>
-
-      <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium">Menu Categories</h3>
+        <div>
+          <h2 className="text-xl font-semibold">Menu Categories</h2>
+          <p className="text-gray-600 mt-1">
+            Manage main menu categories and their organization
+          </p>
+        </div>
+        <div className="flex items-center space-x-4">
             <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
               <DialogTrigger asChild>
                 <Button>
