@@ -1834,3 +1834,216 @@ export const useSubCategorySizes = () => {
     refetch: fetchSubCategorySizes,
   };
 };
+
+export const useMenuItemSizes = () => {
+  const [menuItemSizes, setMenuItemSizes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMenuItemSizes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .select("*");
+
+      if (error) throw error;
+
+      setMenuItemSizes(data || []);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch menu item sizes",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createMenuItemSize = async (menuItemSize: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .insert({
+          menu_item_id: menuItemSize.menuItemId,
+          category_size_id: menuItemSize.categorySizeId,
+          price: menuItemSize.price,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setMenuItemSizes((prev) => [...prev, data]);
+      return data;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to create menu item size",
+      );
+      throw err;
+    }
+  };
+
+  const updateMenuItemSize = async (id: string, updates: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .update({
+          price: updates.price,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setMenuItemSizes((prev) =>
+        prev.map((size) => (size.id === id ? data : size)),
+      );
+      return data;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update menu item size",
+      );
+      throw err;
+    }
+  };
+
+  const deleteMenuItemSize = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setMenuItemSizes((prev) => prev.filter((size) => size.id !== id));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to delete menu item size",
+      );
+      throw err;
+    }
+  };
+
+  const updateMenuItemSizesForItem = async (menuItemId: string, sizes: any[]) => {
+    try {
+      // First, delete existing sizes for this menu item
+      const { error: deleteError } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .delete()
+        .eq("menu_item_id", menuItemId);
+
+      if (deleteError) throw deleteError;
+
+      // Then, insert new sizes
+      if (sizes.length > 0) {
+        const insertData = sizes.map(size => ({
+          menu_item_id: menuItemId,
+          category_size_id: size.categorySizeId,
+          price: size.price,
+        }));
+
+        const { error: insertError } = await supabase
+          .from(TABLES.MENU_ITEM_SIZES)
+          .insert(insertData);
+
+        if (insertError) throw insertError;
+      }
+
+      // Refresh the data
+      await fetchMenuItemSizes();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update menu item sizes",
+      );
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchMenuItemSizes();
+  }, []);
+
+  return {
+    menuItemSizes,
+    loading,
+    error,
+    createMenuItemSize,
+    updateMenuItemSize,
+    deleteMenuItemSize,
+    updateMenuItemSizesForItem,
+    refetch: fetchMenuItemSizes,
+  };
+};
+
+export const useMenuItemSizeToppings = () => {
+  const [menuItemSizeToppings, setMenuItemSizeToppings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMenuItemSizeToppings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZE_TOPPINGS)
+        .select("*");
+
+      if (error) throw error;
+
+      setMenuItemSizeToppings(data || []);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch menu item size toppings",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateMenuItemSizeToppings = async (menuItemSizeId: string, toppings: any[]) => {
+    try {
+      // First, delete existing toppings for this menu item size
+      const { error: deleteError } = await supabase
+        .from(TABLES.MENU_ITEM_SIZE_TOPPINGS)
+        .delete()
+        .eq("menu_item_size_id", menuItemSizeId);
+
+      if (deleteError) throw deleteError;
+
+      // Then, insert new toppings
+      if (toppings.length > 0) {
+        const insertData = toppings.map(topping => ({
+          menu_item_size_id: menuItemSizeId,
+          topping_id: topping.toppingId,
+          is_active: topping.isActive,
+        }));
+
+        const { error: insertError } = await supabase
+          .from(TABLES.MENU_ITEM_SIZE_TOPPINGS)
+          .insert(insertData);
+
+        if (insertError) throw insertError;
+      }
+
+      // Refresh the data
+      await fetchMenuItemSizeToppings();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update menu item size toppings",
+      );
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchMenuItemSizeToppings();
+  }, []);
+
+  return {
+    menuItemSizeToppings,
+    loading,
+    error,
+    updateMenuItemSizeToppings,
+    refetch: fetchMenuItemSizeToppings,
+  };
+};
