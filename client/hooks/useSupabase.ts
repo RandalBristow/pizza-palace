@@ -420,31 +420,45 @@ export const useMenuItems = () => {
 
   const createMenuItem = async (menuItem: any) => {
     try {
+      // Build insert object, only including price if it's defined
+      const insertData: any = {
+        name: menuItem.name,
+        description: menuItem.description,
+        category_id: menuItem.category,
+        sub_category_id: menuItem.subCategoryId,
+        image_id: menuItem.imageId,
+        default_toppings: menuItem.defaultToppings,
+        is_active: menuItem.isActive,
+      };
+
+      // Only include price if it's defined (since we're moving to size-based pricing)
+      if (menuItem.price !== undefined && menuItem.price !== null) {
+        insertData.price = menuItem.price;
+      }
+
       const { data, error } = await supabase
         .from(TABLES.MENU_ITEMS)
-        .insert({
-          name: menuItem.name,
-          description: menuItem.description,
-          price: menuItem.price,
-          category_id: menuItem.category,
-          sub_category_id: menuItem.subCategoryId,
-          image_id: menuItem.imageId,
-          default_toppings: menuItem.defaultToppings,
-          is_active: menuItem.isActive,
-        })
+        .insert(insertData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(`Database error: ${error.message || error.details || error.hint || 'Unknown database error'}`);
+      }
 
       const newMenuItem = transformMenuItem(data);
       setMenuItems((prev) => [...prev, newMenuItem]);
       return newMenuItem;
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to create menu item",
-      );
-      throw err;
+      const errorMessage = err instanceof Error ? err.message :
+        typeof err === 'string' ? err :
+        err && typeof err === 'object' && 'message' in err ? String(err.message) :
+        err && typeof err === 'object' && 'details' in err ? String(err.details) :
+        err && typeof err === 'object' && 'hint' in err ? String(err.hint) :
+        'Failed to create menu item';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
