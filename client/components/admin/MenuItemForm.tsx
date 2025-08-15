@@ -474,10 +474,10 @@ export default function MenuItemForm({
                   No sizes defined for this category. Please add sizes first.
                 </p>
               ) : (
-                <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                <div className="space-y-1 max-h-40 overflow-y-auto pr-2">
                   {getAvailableSizes(newMenuItem.category).map((size) => (
                     <div key={size.id} className="flex items-center space-x-2">
-                      <Label className="text-sm min-w-[80px]">
+                      <Label className="text-xs min-w-[60px] font-medium">
                         {size.sizeName}:
                       </Label>
                       <Input
@@ -491,7 +491,7 @@ export default function MenuItemForm({
                             parseFloat(e.target.value) || 0,
                           )
                         }
-                        className="w-32 h-9 py-0"
+                        className="w-24 h-7 py-0 text-xs"
                       />
                     </div>
                   ))}
