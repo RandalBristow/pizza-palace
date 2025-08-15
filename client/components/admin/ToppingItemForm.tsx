@@ -206,10 +206,10 @@ export default function ToppingItemForm({
     }
   };
 
-  // Filter toppings by selected category
+  // Filter toppings by selected menu category
   const filteredToppings = toppings.filter(
     (topping) =>
-      selectedToppingCategory === "all" || topping.category === selectedToppingCategory
+      selectedToppingCategory === "all" || topping.menuItemCategory === selectedToppingCategory
   );
 
   // Handle size price change
