@@ -11,6 +11,9 @@ import type {
   DatabaseSettings,
   DatabaseAboutSection,
   DatabaseImage,
+  DatabaseMenuSubCategory,
+  DatabaseCategorySize,
+  DatabaseSubCategorySize,
 } from "../lib/supabase";
 
 // Transform database objects to frontend format
