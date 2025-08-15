@@ -119,6 +119,7 @@ export default function Admin() {
   const { menuItemSizes, loading: menuItemSizesLoading, updateMenuItemSizesForItem } = useMenuItemSizes();
   const { menuItemSizeToppings, loading: menuItemSizeTopLoading, updateMenuItemSizeToppings } =
     useMenuItemSizeToppings();
+  const { toppingSizePrices, loading: toppingSizePricesLoading, updateToppingSizePrices, getToppingSizePrices, getToppingPriceForSize } = useToppingSizePrices();
 
   const [selectedItem, setSelectedItem] = useState("categories");
 
