@@ -150,6 +150,16 @@ export default function MenuItemForm({
   // Default toppings state (per menu item, not per size)
   const [defaultToppings, setDefaultToppings] = useState<{ [key: string]: boolean }>({});
 
+  // Debug effect to monitor data changes
+  useEffect(() => {
+    console.log("MenuItemForm data update:", {
+      subCategorySizes: subCategorySizes.length,
+      categorySizes: categorySizes.length,
+      selectedCategory: newMenuItem.category,
+      selectedSubCategory: newMenuItem.subCategoryId
+    });
+  }, [subCategorySizes, categorySizes, newMenuItem.category, newMenuItem.subCategoryId]);
+
   const handleAddMenuItem = async () => {
     try {
       const defaultToppingsArray = Object.keys(defaultToppings).filter(
