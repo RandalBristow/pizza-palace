@@ -2135,13 +2135,18 @@ export const useToppingSizePrices = () => {
     sizePrices: { categorySizeId: string; price: number }[],
   ) => {
     try {
+      console.log("Updating topping size prices for topping:", toppingId, "with prices:", sizePrices);
+
       // First, delete existing prices for this topping
       const { error: deleteError } = await supabase
         .from(TABLES.TOPPING_SIZE_PRICES)
         .delete()
         .eq("topping_id", toppingId);
 
-      if (deleteError) throw deleteError;
+      if (deleteError) {
+        console.error("Delete error:", deleteError);
+        throw new Error(`Failed to delete existing prices: ${deleteError.message || deleteError.details || deleteError.hint || 'Unknown error'}`);
+      }
 
       // Then, insert new prices
       if (sizePrices.length > 0) {
@@ -2151,20 +2156,27 @@ export const useToppingSizePrices = () => {
           price: sizePrice.price,
         }));
 
+        console.log("Inserting topping size prices:", insertData);
+
         const { error: insertError } = await supabase
           .from(TABLES.TOPPING_SIZE_PRICES)
           .insert(insertData);
 
-        if (insertError) throw insertError;
+        if (insertError) {
+          console.error("Insert error:", insertError);
+          throw new Error(`Failed to insert new prices: ${insertError.message || insertError.details || insertError.hint || 'Unknown error'}`);
+        }
       }
 
       // Refresh the data
       await fetchToppingSizePrices();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to update topping size prices",
-      );
-      throw err;
+      const errorMessage = err instanceof Error ? err.message :
+        typeof err === 'string' ? err :
+        err && typeof err === 'object' && 'message' in err ? String(err.message) :
+        'Failed to update topping size prices';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
