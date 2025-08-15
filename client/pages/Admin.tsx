@@ -116,6 +116,14 @@ export default function Admin() {
     subCategorySizes,
     updateSubCategorySizes,
   } = useSubCategorySizes();
+  const {
+    menuItemSizes,
+    updateMenuItemSizesForItem,
+  } = useMenuItemSizes();
+  const {
+    menuItemSizeToppings,
+    updateMenuItemSizeToppings,
+  } = useMenuItemSizeToppings();
 
   const [selectedItem, setSelectedItem] = useState("categories");
 
