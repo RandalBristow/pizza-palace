@@ -109,20 +109,25 @@ export default function ToppingItemForm({
   const handleAddTopping = async () => {
     try {
       const createdTopping = await createTopping(newTopping);
-      
+
       // Add size prices if any were set
       const sizePriceEntries = Object.entries(sizePrices)
         .filter(([_, price]) => price > 0)
         .map(([categorySizeId, price]) => ({ categorySizeId, price }));
-      
+
       if (sizePriceEntries.length > 0) {
         await updateToppingSizePrices(createdTopping.id, sizePriceEntries);
       }
-      
+
       setIsAddingTopping(false);
       resetForm();
     } catch (error) {
-      console.error("Failed to create topping:", error);
+      const errorMessage = error instanceof Error ? error.message :
+        typeof error === 'string' ? error :
+        error && typeof error === 'object' && 'message' in error ? String(error.message) :
+        'An unknown error occurred';
+      console.error("Failed to create topping:", errorMessage);
+      alert(`Failed to create topping: ${errorMessage}`);
     }
   };
 
