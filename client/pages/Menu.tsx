@@ -46,6 +46,7 @@ export default function Menu() {
   const { categories: dbCategories, loading: categoriesLoading } =
     useCategories();
   const { menuItems: dbMenuItems, loading: menuItemsLoading } = useMenuItems();
+  const { subCategories: dbSubCategories, loading: subCategoriesLoading } = useSubCategories();
   const { images, loading: imagesLoading } = useImages();
   const { categorySizes, loading: categorySizesLoading } = useCategorySizes();
   const { menuItemSizes, loading: menuItemSizesLoading } = useMenuItemSizes();
