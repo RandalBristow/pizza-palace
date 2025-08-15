@@ -73,6 +73,7 @@ interface SubCategoryFormProps {
     sizeIds: string[],
   ) => Promise<void>;
   showTitle?: boolean;
+  hideAddButton?: boolean;
 }
 
 export default function SubCategoryForm({
