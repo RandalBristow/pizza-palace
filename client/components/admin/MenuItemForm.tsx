@@ -149,9 +149,14 @@ export default function MenuItemForm({
 
   const handleAddMenuItem = async () => {
     try {
+      const defaultToppingsArray = Object.keys(defaultToppings).filter(
+        (toppingId) => defaultToppings[toppingId]
+      );
+
       const createdMenuItem = await createMenuItem({
         ...newMenuItem,
         imageId: selectedImageId,
+        defaultToppings: defaultToppingsArray,
       });
 
       // Create size-based pricing
