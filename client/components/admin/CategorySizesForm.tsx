@@ -218,24 +218,26 @@ export default function CategorySizesForm({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         {showTitle && <h3 className="text-lg font-medium">Category Sizes</h3>}
-        <Dialog open={isAddingSize} onOpenChange={setIsAddingSize}>
-          <DialogTrigger asChild>
-            <Button disabled={categories.length === 0}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Size
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Size</DialogTitle>
-              <DialogDescription>
-                Create a new size for a category (e.g., pizza sizes, wing
-                portions)
-              </DialogDescription>
-            </DialogHeader>
-            {renderSizeForm(false)}
-          </DialogContent>
-        </Dialog>
+        {!hideAddButton && (
+          <Dialog open={isAddingSize} onOpenChange={setIsAddingSize}>
+            <DialogTrigger asChild>
+              <Button disabled={categories.length === 0}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Size
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Size</DialogTitle>
+                <DialogDescription>
+                  Create a new size for a category (e.g., pizza sizes, wing
+                  portions)
+                </DialogDescription>
+              </DialogHeader>
+              {renderSizeForm(false)}
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {/* Sizes List */}
