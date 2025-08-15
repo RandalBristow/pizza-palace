@@ -523,17 +523,17 @@ export default function MenuItemForm({
         </div>
 
         {/* Size-based Pricing - Scrollable */}
-        {newMenuItem.category && (
+        {newMenuItem.category && newMenuItem.subCategoryId && (
           <div>
             <Label className="text-red-600">* Size-based Pricing</Label>
             <div className="mt-1 border rounded-lg py-1 px-4">
-              {getAvailableSizes(newMenuItem.category).length === 0 ? (
+              {getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).length === 0 ? (
                 <p className="text-sm text-gray-500">
-                  No sizes defined for this category. Please add sizes first.
+                  No sizes defined for this sub-category. Please configure sizes for the sub-category first.
                 </p>
               ) : (
                 <div className="space-y-1 max-h-40 overflow-y-auto pr-2">
-                  {getAvailableSizes(newMenuItem.category).map((size) => (
+                  {getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId).map((size) => (
                     <div key={size.id} className="flex items-center space-x-2">
                       <Label className="text-xs min-w-[60px] font-medium">
                         {size.sizeName}:
@@ -550,12 +550,22 @@ export default function MenuItemForm({
                           )
                         }
                         className="w-24 h-7 py-0 text-xs"
+                        required
                       />
                     </div>
                   ))}
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Show message if category selected but no sub-category */}
+        {newMenuItem.category && !newMenuItem.subCategoryId && (
+          <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-3">
+            <p className="text-sm text-yellow-800">
+              Please select a sub-category to configure size-based pricing.
+            </p>
           </div>
         )}
       </div>
