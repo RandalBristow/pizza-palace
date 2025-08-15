@@ -527,7 +527,7 @@ export default function MenuItemForm({
               return (
                 <Tabs
                   defaultValue={availableCategories[0]?.id}
-                  className="w-full h-full"
+                  className="w-full h-full rounded-md overflow-hidden border-2 border-red-600"
                   key={`${newMenuItem.category}-${selectedSize}`}
                 >
                   <TabsList className="w-full justify-start">
