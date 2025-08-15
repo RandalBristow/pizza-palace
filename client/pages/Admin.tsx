@@ -36,6 +36,8 @@ import ImageManagerForm from "../components/admin/ImageManagerForm";
 import DatabaseSetup from "../components/admin/DatabaseSetup";
 
 export default function Admin() {
+  const mountedRef = useRef(false);
+
   // Supabase hooks
   const {
     categories,
