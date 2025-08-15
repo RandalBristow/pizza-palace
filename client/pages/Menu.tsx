@@ -198,7 +198,7 @@ export default function Menu() {
                           </p>
                           <div className="flex items-center space-x-2 mb-3">
                             <Badge variant="outline">
-                              ${item.price.toFixed(2)}
+                              ${(item.price ?? 0).toFixed(2)}
                             </Badge>
                           </div>
                         </div>
@@ -213,7 +213,7 @@ export default function Menu() {
                                 >
                                   <span className="text-sm font-medium">
                                     {sizeOption.size} - $
-                                    {sizeOption.price.toFixed(2)}
+                                    {(sizeOption.price ?? 0).toFixed(2)}
                                   </span>
                                   <div className="flex space-x-2">
                                     <Button
