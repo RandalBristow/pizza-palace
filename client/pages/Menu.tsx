@@ -61,6 +61,28 @@ export default function Menu() {
     }
   }, [dbCategories, categoriesLoading, selectedCategory]);
 
+  // Set default size selections for items with multiple sizes
+  useEffect(() => {
+    if (!menuItemsLoading && !categorySizesLoading && !menuItemSizesLoading && selectedCategory) {
+      const newSelectedSizes: { [key: string]: string } = {};
+
+      dbMenuItems.forEach(item => {
+        if (item.isActive && item.category === selectedCategory) {
+          const sizeOptions = getItemSizeOptions(item);
+          if (sizeOptions.length > 1 && !selectedSizes[item.id]) {
+            // Set default to the last item in the list
+            const lastSize = sizeOptions[sizeOptions.length - 1];
+            newSelectedSizes[item.id] = lastSize.size;
+          }
+        }
+      });
+
+      if (Object.keys(newSelectedSizes).length > 0) {
+        setSelectedSizes(prev => ({ ...prev, ...newSelectedSizes }));
+      }
+    }
+  }, [selectedCategory, dbMenuItems, menuItemsLoading, categorySizesLoading, menuItemSizesLoading]);
+
   // Use database categories and filter active ones
   const categories = dbCategories
     .filter((cat) => cat.isActive)
