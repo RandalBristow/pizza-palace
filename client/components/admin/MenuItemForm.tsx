@@ -421,6 +421,7 @@ export default function MenuItemForm({
           </div>
         </div>
 
+        {/* Description */}
         <div>
           <Label htmlFor="description" className="text-red-600">
             * Description
@@ -440,50 +441,38 @@ export default function MenuItemForm({
           />
         </div>
 
-        {/* Image Selector */}
-        <ImageSelector
-          images={images}
-          selectedImageId={selectedImageId}
-          onImageSelect={(imageId, imageUrl) => {
-            setSelectedImageId(imageId);
-            setNewMenuItem({ ...newMenuItem, image: imageUrl || "" });
-          }}
-          label="Menu Item Image"
-          placeholder="Select an image (optional)..."
-          required={false}
-          showPreview={false}
-        />
-
-        {/* Size-based Pricing */}
+        {/* Size-based Pricing - Scrollable */}
         {newMenuItem.category && (
           <div>
             <Label className="text-red-600">* Size-based Pricing</Label>
-            <div className="mt-2 space-y-2 border rounded-lg p-4">
+            <div className="mt-2 border rounded-lg p-4">
               {getAvailableSizes(newMenuItem.category).length === 0 ? (
                 <p className="text-sm text-gray-500">
                   No sizes defined for this category. Please add sizes first.
                 </p>
               ) : (
-                getAvailableSizes(newMenuItem.category).map((size) => (
-                  <div key={size.id} className="flex items-center space-x-2">
-                    <Label className="text-sm min-w-[80px]">
-                      {size.sizeName}:
-                    </Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      value={sizePrices[size.id] || ""}
-                      onChange={(e) =>
-                        handleSizePriceChange(
-                          size.id,
-                          parseFloat(e.target.value) || 0,
-                        )
-                      }
-                      className="w-32"
-                    />
-                  </div>
-                ))
+                <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                  {getAvailableSizes(newMenuItem.category).map((size) => (
+                    <div key={size.id} className="flex items-center space-x-2">
+                      <Label className="text-sm min-w-[80px]">
+                        {size.sizeName}:
+                      </Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={sizePrices[size.id] || ""}
+                        onChange={(e) =>
+                          handleSizePriceChange(
+                            size.id,
+                            parseFloat(e.target.value) || 0,
+                          )
+                        }
+                        className="w-32"
+                      />
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
