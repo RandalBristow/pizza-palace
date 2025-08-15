@@ -366,43 +366,44 @@ export default function ToppingItemForm({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Toppings</h2>
-        <Dialog open={isAddingTopping} onOpenChange={setIsAddingTopping}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Topping
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>Add New Topping</DialogTitle>
-              <DialogDescription>
-                Create a new topping with size-specific pricing
-              </DialogDescription>
-            </DialogHeader>
-            {renderToppingForm(false)}
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Category Filter */}
-      <div className="flex items-center space-x-4">
-        <Label htmlFor="categoryFilter">Filter by Category:</Label>
-        <Select value={selectedToppingCategory} onValueChange={onSelectedCategoryChange}>
-          <SelectTrigger className="w-48">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {toppingCategories
-              .filter((tc) => tc.isActive)
-              .map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center space-x-4">
+          {/* Menu Category Filter */}
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="menuCategoryFilter">Filter by Menu Category:</Label>
+            <Select value={selectedToppingCategory} onValueChange={onSelectedCategoryChange}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Menu Categories</SelectItem>
+                {categories
+                  .filter((c) => c.isActive)
+                  .map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Dialog open={isAddingTopping} onOpenChange={setIsAddingTopping}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Topping
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl">
+              <DialogHeader>
+                <DialogTitle>Add New Topping</DialogTitle>
+                <DialogDescription>
+                  Create a new topping with size-specific pricing
+                </DialogDescription>
+              </DialogHeader>
+              {renderToppingForm(false)}
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Toppings List */}
