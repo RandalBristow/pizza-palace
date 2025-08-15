@@ -86,6 +86,7 @@ interface MenuItemFormProps {
   categorySizes?: CategorySize[];
   menuItemSizes?: any[];
   menuItemSizeToppings?: any[];
+  toppingSizePrices?: any[];
   selectedMenuCategory: string;
   onSelectedCategoryChange: (category: string) => void;
   createMenuItem: (menuItem: any) => Promise<any>;
@@ -99,6 +100,7 @@ interface MenuItemFormProps {
     menuItemSizeId: string,
     toppings: any[],
   ) => Promise<void>;
+  getToppingPriceForSize?: (toppingId: string, categorySizeId: string) => number;
 }
 
 export default function MenuItemForm({
