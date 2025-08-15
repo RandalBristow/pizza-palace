@@ -307,6 +307,7 @@ export default function MenuItemForm({
 
   const getAvailableSizes = (categoryId: string, subCategoryId?: string) => {
     if (!subCategoryId) {
+      console.log("getAvailableSizes: No subCategoryId provided");
       return [];
     }
 
@@ -315,13 +316,24 @@ export default function MenuItemForm({
       .filter(scs => scs.subCategoryId === subCategoryId)
       .map(scs => scs.categorySizeId);
 
-    return categorySizes
+    console.log("getAvailableSizes debug:", {
+      categoryId,
+      subCategoryId,
+      subCategorySizes,
+      subCategorySizeIds,
+      categorySizes: categorySizes.filter(s => s.categoryId === categoryId)
+    });
+
+    const availableSizes = categorySizes
       .filter((size) =>
         size.categoryId === categoryId &&
         size.isActive &&
         subCategorySizeIds.includes(size.id)
       )
       .sort((a, b) => a.displayOrder - b.displayOrder);
+
+    console.log("getAvailableSizes result:", availableSizes);
+    return availableSizes;
   };
 
   const handleSizePriceChange = (sizeId: string, price: number) => {
