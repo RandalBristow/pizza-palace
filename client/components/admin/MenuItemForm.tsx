@@ -285,6 +285,21 @@ export default function MenuItemForm({
         [toppingId]: isActive,
       },
     }));
+
+    // If deactivating, also uncheck from default toppings
+    if (!isActive && defaultToppings[toppingId]) {
+      setDefaultToppings((prev) => ({
+        ...prev,
+        [toppingId]: false,
+      }));
+    }
+  };
+
+  const handleDefaultToppingToggle = (toppingId: string, isDefault: boolean) => {
+    setDefaultToppings((prev) => ({
+      ...prev,
+      [toppingId]: isDefault,
+    }));
   };
 
   const getMenuItemPrice = (menuItem: MenuItem) => {
