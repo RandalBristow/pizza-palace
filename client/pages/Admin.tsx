@@ -128,7 +128,7 @@ export default function Admin() {
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
   // Show loading state while data is being fetched
-  const isLoading =
+  const isLoading = useMemo(() =>
     categoriesLoading ||
     menuItemsLoading ||
     toppingsLoading ||
@@ -143,7 +143,23 @@ export default function Admin() {
     subCategorySizesLoading ||
     menuItemSizesLoading ||
     menuItemSizeTopLoading ||
-    toppingSizePricesLoading;
+    toppingSizePricesLoading, [
+    categoriesLoading,
+    menuItemsLoading,
+    toppingsLoading,
+    toppingCategoriesLoading,
+    specialsLoading,
+    carouselLoading,
+    favoritesLoading,
+    settingsLoading,
+    aboutLoading,
+    imagesLoading,
+    categorySizesLoading,
+    subCategorySizesLoading,
+    menuItemSizesLoading,
+    menuItemSizeTopLoading,
+    toppingSizePricesLoading
+  ]);
 
   if (isLoading) {
     return (
