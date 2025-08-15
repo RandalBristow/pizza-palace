@@ -29,11 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import {
-  useCategories,
-  useCategorySizes,
-  useSubCategorySizes,
-} from "../../hooks/useSupabase";
+// Removed hook imports - data will be passed as props
 import SubCategoryForm from "./SubCategoryForm";
 import CategorySizesForm from "./CategorySizesForm";
 
