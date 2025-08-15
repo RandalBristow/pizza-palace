@@ -67,6 +67,7 @@ export default function CategorySizesForm({
   updateCategorySize,
   deleteCategorySize,
   showTitle = true,
+  hideAddButton = false,
 }: CategorySizesFormProps) {
   const [isAddingSize, setIsAddingSize] = useState(false);
   const [editingSize, setEditingSize] = useState<CategorySize | null>(null);
