@@ -125,14 +125,27 @@ export default function Menu() {
     }).filter(option => option.price > 0); // Only show sizes with prices
   };
 
+  const handleSizeChange = (itemId: string, size: string) => {
+    setSelectedSizes(prev => ({
+      ...prev,
+      [itemId]: size
+    }));
+  };
+
+  const getSelectedSize = (itemId: string) => {
+    return selectedSizes[itemId] || '';
+  };
+
   const addToCart = (item: MenuItem, size?: string) => {
+    const selectedSize = size || getSelectedSize(item.id);
+
     if (!hasDeliveryDetails) {
       setPendingAction({
         action: () => {
           const cartItem = {
             ...item,
-            selectedSize: size,
-            cartId: `${item.id}-${size || "default"}-${Date.now()}`,
+            selectedSize: selectedSize,
+            cartId: `${item.id}-${selectedSize || "default"}-${Date.now()}`,
           };
           setCart((prev) => [...prev, cartItem]);
         },
@@ -144,17 +157,18 @@ export default function Menu() {
 
     const cartItem = {
       ...item,
-      selectedSize: size,
-      cartId: `${item.id}-${size || "default"}-${Date.now()}`,
+      selectedSize: selectedSize,
+      cartId: `${item.id}-${selectedSize || "default"}-${Date.now()}`,
     };
     setCart((prev) => [...prev, cartItem]);
   };
 
   const customizeItem = (item: MenuItem, size?: string) => {
+    const selectedSize = size || getSelectedSize(item.id);
     const customizationPath =
       item.category === "wings"
-        ? `/wings?item=${item.id}&size=${size || ""}`
-        : `/order?item=${item.id}&size=${size || ""}`;
+        ? `/wings?item=${item.id}&size=${selectedSize || ""}`
+        : `/order?item=${item.id}&size=${selectedSize || ""}`;
 
     if (!hasDeliveryDetails) {
       setPendingAction({
