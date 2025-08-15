@@ -305,9 +305,22 @@ export default function MenuItemForm({
     setSelectedSize("");
   };
 
-  const getAvailableSizes = (categoryId: string) => {
+  const getAvailableSizes = (categoryId: string, subCategoryId?: string) => {
+    if (!subCategoryId) {
+      return [];
+    }
+
+    // Get sizes that are linked to this sub-category
+    const subCategorySizeIds = subCategorySizes
+      .filter(scs => scs.sub_category_id === subCategoryId)
+      .map(scs => scs.category_size_id);
+
     return categorySizes
-      .filter((size) => size.categoryId === categoryId && size.isActive)
+      .filter((size) =>
+        size.categoryId === categoryId &&
+        size.isActive &&
+        subCategorySizeIds.includes(size.id)
+      )
       .sort((a, b) => a.displayOrder - b.displayOrder);
   };
 
