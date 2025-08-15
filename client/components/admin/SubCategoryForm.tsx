@@ -295,7 +295,7 @@ export default function SubCategoryForm({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">Sub-Categories</h3>
+        {showTitle && <h3 className="text-lg font-medium">Sub-Categories</h3>}
         <Dialog
           open={isAddingSubCategory}
           onOpenChange={setIsAddingSubCategory}
