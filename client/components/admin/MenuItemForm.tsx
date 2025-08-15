@@ -316,90 +316,109 @@ export default function MenuItemForm({
           </p>
         </div>
 
-        {/* Category */}
-        <div>
-          <Label htmlFor="category" className="text-red-600">
-            * Category
-          </Label>
-          <Select
-            value={newMenuItem.category}
-            onValueChange={(value) => {
-              setNewMenuItem({
-                ...newMenuItem,
-                category: value,
-                subCategoryId: undefined,
-              });
-              setSizePrices({});
-              setSizeToppings({});
-              setSelectedSize("");
-            }}
-            required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories
-                .filter((c) => c.isActive)
-                .map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+        {/* Category and Sub-Category Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="category" className="text-red-600">
+              * Category
+            </Label>
+            <Select
+              value={newMenuItem.category}
+              onValueChange={(value) => {
+                setNewMenuItem({
+                  ...newMenuItem,
+                  category: value,
+                  subCategoryId: undefined,
+                });
+                setSizePrices({});
+                setSizeToppings({});
+                setSelectedSize("");
+              }}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories
+                  .filter((c) => c.isActive)
+                  .map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="subCategory">Sub-Category</Label>
+            <Select
+              value={newMenuItem.subCategoryId || "none"}
+              onValueChange={(value) => {
+                setNewMenuItem({
+                  ...newMenuItem,
+                  subCategoryId: value === "none" ? undefined : value,
+                });
+              }}
+              disabled={!newMenuItem.category}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select sub-category (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No sub-category</SelectItem>
+                {subCategories
+                  .filter(
+                    (sub) =>
+                      sub.categoryId === newMenuItem.category && sub.isActive,
+                  )
+                  .sort((a, b) => a.displayOrder - b.displayOrder)
+                  .map((subCategory) => (
+                    <SelectItem key={subCategory.id} value={subCategory.id}>
+                      {subCategory.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* Sub-Category */}
-        <div>
-          <Label htmlFor="subCategory">Sub-Category</Label>
-          <Select
-            value={newMenuItem.subCategoryId || "none"}
-            onValueChange={(value) => {
-              setNewMenuItem({
-                ...newMenuItem,
-                subCategoryId: value === "none" ? undefined : value,
-              });
-            }}
-            disabled={!newMenuItem.category}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select sub-category (optional)" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">No sub-category</SelectItem>
-              {subCategories
-                .filter(
-                  (sub) =>
-                    sub.categoryId === newMenuItem.category && sub.isActive,
-                )
-                .sort((a, b) => a.displayOrder - b.displayOrder)
-                .map((subCategory) => (
-                  <SelectItem key={subCategory.id} value={subCategory.id}>
-                    {subCategory.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Name and Image Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name" className="text-red-600">
+              * Name
+            </Label>
+            <Input
+              id="name"
+              value={newMenuItem.name}
+              onChange={(e) =>
+                setNewMenuItem({
+                  ...newMenuItem,
+                  name: e.target.value,
+                })
+              }
+              placeholder="Item name"
+              required
+            />
+          </div>
 
-        {/* Name and Description */}
-        <div>
-          <Label htmlFor="name" className="text-red-600">
-            * Name
-          </Label>
-          <Input
-            id="name"
-            value={newMenuItem.name}
-            onChange={(e) =>
-              setNewMenuItem({
-                ...newMenuItem,
-                name: e.target.value,
-              })
-            }
-            placeholder="Item name"
-            required
-          />
+          <div>
+            {/* Image Selector */}
+            <ImageSelector
+              images={images}
+              selectedImageId={selectedImageId}
+              onImageSelect={(imageId, imageUrl) => {
+                setSelectedImageId(imageId);
+                setNewMenuItem({ ...newMenuItem, image: imageUrl || "" });
+              }}
+              label="Menu Item Image"
+              placeholder="Select an image (optional)..."
+              required={false}
+              showPreview={false}
+            />
+          </div>
         </div>
 
         <div>
