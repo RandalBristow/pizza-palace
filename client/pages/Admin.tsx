@@ -233,12 +233,18 @@ export default function Admin() {
             subCategories={subCategories}
             menuItems={menuItems}
             toppingCategories={toppingCategories}
+            categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
             createCategory={createCategory}
             updateCategory={updateCategory}
             deleteCategory={deleteCategory}
             createSubCategory={createSubCategory}
             updateSubCategory={updateSubCategory}
             deleteSubCategory={deleteSubCategory}
+            createCategorySize={createCategorySize}
+            updateCategorySize={updateCategorySize}
+            deleteCategorySize={deleteCategorySize}
+            updateSubCategorySizes={updateSubCategorySizes}
           />
         );
       case "menu-items":
