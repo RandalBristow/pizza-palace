@@ -168,13 +168,13 @@ export default function MenuCategoryForm({
           </p>
         </div>
         <div className="flex items-center space-x-4">
-            <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Category
-                </Button>
-              </DialogTrigger>
+          <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Category
+              </Button>
+            </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Add New Category</DialogTitle>
