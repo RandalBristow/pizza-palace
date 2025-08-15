@@ -109,13 +109,14 @@ export default function Admin() {
   } = useImages();
   const {
     categorySizes,
+    loading: categorySizesLoading,
     createCategorySize,
     updateCategorySize,
     deleteCategorySize,
   } = useCategorySizes();
-  const { subCategorySizes, updateSubCategorySizes } = useSubCategorySizes();
-  const { menuItemSizes, updateMenuItemSizesForItem } = useMenuItemSizes();
-  const { menuItemSizeToppings, updateMenuItemSizeToppings } =
+  const { subCategorySizes, loading: subCategorySizesLoading, updateSubCategorySizes } = useSubCategorySizes();
+  const { menuItemSizes, loading: menuItemSizesLoading, updateMenuItemSizesForItem } = useMenuItemSizes();
+  const { menuItemSizeToppings, loading: menuItemSizeTopLoading, updateMenuItemSizeToppings } =
     useMenuItemSizeToppings();
 
   const [selectedItem, setSelectedItem] = useState("categories");
@@ -135,7 +136,11 @@ export default function Admin() {
     favoritesLoading ||
     settingsLoading ||
     aboutLoading ||
-    imagesLoading;
+    imagesLoading ||
+    categorySizesLoading ||
+    subCategorySizesLoading ||
+    menuItemSizesLoading ||
+    menuItemSizeTopLoading;
 
   if (isLoading) {
     return (
