@@ -33,6 +33,7 @@ export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [cart, setCart] = useState<any[]>([]);
   const [showDeliverySelection, setShowDeliverySelection] = useState(false);
+  const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({});
   const [pendingAction, setPendingAction] = useState<{
     action: () => void;
     type: string;
