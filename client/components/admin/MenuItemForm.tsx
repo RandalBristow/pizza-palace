@@ -839,7 +839,7 @@ export default function MenuItemForm({
         open={editingMenuItem !== null}
         onOpenChange={(open) => !open && setEditingMenuItem(null)}
       >
-        <DialogContent className="max-w-6xl h-[calc(68vh+50px)] flex flex-col p-0">
+        <DialogContent className="max-w-6xl h-[calc(68vh+100px)] flex flex-col p-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Edit Menu Item</DialogTitle>
             <DialogDescription>Update the menu item details</DialogDescription>
