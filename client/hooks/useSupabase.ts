@@ -2118,13 +2118,21 @@ export const useToppingSizePrices = () => {
         .from(TABLES.TOPPING_SIZE_PRICES)
         .select("*");
 
-      if (error) throw error;
+      if (error) {
+        // Check if table doesn't exist
+        if (error.code === '42P01' || error.message?.includes('does not exist')) {
+          console.warn("topping_size_prices table does not exist yet. This is expected if you haven't run the database migration script.");
+          setToppingSizePrices([]);
+          return;
+        }
+        throw error;
+      }
 
       setToppingSizePrices(data ? data.map(transformToppingSizePrice) : []);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch topping size prices",
-      );
+      const errorMessage = err instanceof Error ? err.message : "Failed to fetch topping size prices";
+      console.error("Error fetching topping size prices:", errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
