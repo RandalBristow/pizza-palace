@@ -148,6 +148,14 @@ export const transformAboutSection = (
   isActive: dbAboutSection.is_active,
 });
 
+export const transformSubCategorySize = (
+  dbSubCategorySize: DatabaseSubCategorySize,
+) => ({
+  id: dbSubCategorySize.id,
+  subCategoryId: dbSubCategorySize.sub_category_id,
+  categorySizeId: dbSubCategorySize.category_size_id,
+});
+
 // Custom hooks for each data type
 export const useCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
