@@ -280,11 +280,16 @@ export default function Admin() {
             toppings={toppings}
             categories={categories}
             toppingCategories={toppingCategories}
+            categorySizes={categorySizes}
+            toppingSizePrices={toppingSizePrices}
             selectedToppingCategory={selectedToppingCategory}
             onSelectedCategoryChange={setSelectedToppingCategory}
             createTopping={createTopping}
             updateTopping={updateTopping}
             deleteTopping={deleteTopping}
+            updateToppingSizePrices={updateToppingSizePrices}
+            getToppingSizePrices={getToppingSizePrices}
+            getToppingPriceForSize={getToppingPriceForSize}
           />
         );
       case "specials":
