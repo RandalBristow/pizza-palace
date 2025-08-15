@@ -144,6 +144,9 @@ export default function MenuItemForm({
     [key: string]: { [key: string]: boolean };
   }>({});
 
+  // Default toppings state (per menu item, not per size)
+  const [defaultToppings, setDefaultToppings] = useState<{ [key: string]: boolean }>({});
+
   const handleAddMenuItem = async () => {
     try {
       const createdMenuItem = await createMenuItem({
