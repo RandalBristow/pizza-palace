@@ -2175,6 +2175,10 @@ export const useToppingSizePrices = () => {
           .insert(insertData);
 
         if (insertError) {
+          // Check if table doesn't exist
+          if (insertError.code === '42P01' || insertError.message?.includes('does not exist')) {
+            throw new Error("The topping_size_prices table does not exist. Please run the database migration script first.");
+          }
           console.error("Insert error:", insertError);
           throw new Error(`Failed to insert new prices: ${insertError.message || insertError.details || insertError.hint || 'Unknown error'}`);
         }
