@@ -85,6 +85,7 @@ interface MenuItemFormProps {
   toppingCategories: ToppingCategory[];
   toppings: Topping[];
   categorySizes?: CategorySize[];
+  subCategorySizes?: any[];
   menuItemSizes?: any[];
   menuItemSizeToppings?: any[];
   toppingSizePrices?: any[];
