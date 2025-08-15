@@ -564,21 +564,31 @@ export const useToppings = () => {
 
   const updateTopping = async (id: string, updates: any) => {
     try {
+      // Build update object, only including price if it's defined
+      const updateData: any = {
+        name: updates.name,
+        category_id: updates.category,
+        menu_item_category_id: updates.menuItemCategory,
+        is_active: updates.isActive,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Only include price if it's defined (since it's now optional)
+      if (updates.price !== undefined && updates.price !== null) {
+        updateData.price = updates.price;
+      }
+
       const { data, error } = await supabase
         .from(TABLES.TOPPINGS)
-        .update({
-          name: updates.name,
-          price: updates.price,
-          category_id: updates.category,
-          menu_item_category_id: updates.menuItemCategory,
-          is_active: updates.isActive,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(`Database error: ${error.message || error.details || error.hint || 'Unknown database error'}`);
+      }
 
       const updatedTopping = transformTopping(data);
       setToppings((prev) =>
@@ -586,8 +596,12 @@ export const useToppings = () => {
       );
       return updatedTopping;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update topping");
-      throw err;
+      const errorMessage = err instanceof Error ? err.message :
+        typeof err === 'string' ? err :
+        err && typeof err === 'object' && 'message' in err ? String(err.message) :
+        'Failed to update topping';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
