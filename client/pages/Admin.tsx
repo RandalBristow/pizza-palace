@@ -252,6 +252,7 @@ export default function Admin() {
             categorySizes={categorySizes}
             menuItemSizes={menuItemSizes}
             menuItemSizeToppings={menuItemSizeToppings}
+            toppingSizePrices={toppingSizePrices}
             selectedMenuCategory={selectedMenuCategory}
             onSelectedCategoryChange={setSelectedMenuCategory}
             createMenuItem={createMenuItem}
@@ -259,6 +260,7 @@ export default function Admin() {
             deleteMenuItem={deleteMenuItem}
             updateMenuItemSizesForItem={updateMenuItemSizesForItem}
             updateMenuItemSizeToppings={updateMenuItemSizeToppings}
+            getToppingPriceForSize={getToppingPriceForSize}
           />
         );
       case "topping-categories":
