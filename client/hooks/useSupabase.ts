@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase, TABLES } from "../lib/supabase";
 import type {
   DatabaseCategory,
