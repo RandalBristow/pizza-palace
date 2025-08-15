@@ -259,6 +259,7 @@ export default function MenuItemForm({
     setSelectedImageId(undefined);
     setSizePrices({});
     setSizeToppings({});
+    setDefaultToppings({});
     setSelectedSize("");
   };
 
