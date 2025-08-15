@@ -200,6 +200,15 @@ export default function MenuItemForm({
     if (availableSizes.length > 0) {
       setSelectedSize(availableSizes[0].id);
     }
+
+    // Load default toppings
+    if (menuItem.defaultToppings && Array.isArray(menuItem.defaultToppings)) {
+      const defaultToppingsMap: { [key: string]: boolean } = {};
+      menuItem.defaultToppings.forEach((toppingId: string) => {
+        defaultToppingsMap[toppingId] = true;
+      });
+      setDefaultToppings(defaultToppingsMap);
+    }
   };
 
   const handleUpdateMenuItem = async () => {
