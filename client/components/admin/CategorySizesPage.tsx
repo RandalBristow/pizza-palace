@@ -37,11 +37,33 @@ export default function CategorySizesPage({
   deleteCategorySize,
 }: CategorySizesPageProps) {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
+  const [isAddingSize, setIsAddingSize] = useState(false);
+  const [newSize, setNewSize] = useState({
+    categoryId: "",
+    sizeName: "",
+    displayOrder: 1,
+    isActive: true,
+  });
 
   // Filter sizes by category
-  const filteredCategorySizes = selectedCategoryFilter === "all" 
-    ? categorySizes 
+  const filteredCategorySizes = selectedCategoryFilter === "all"
+    ? categorySizes
     : categorySizes.filter(size => size.categoryId === selectedCategoryFilter);
+
+  const handleAddSize = async () => {
+    try {
+      await createCategorySize(newSize);
+      setIsAddingSize(false);
+      setNewSize({
+        categoryId: "",
+        sizeName: "",
+        displayOrder: 1,
+        isActive: true,
+      });
+    } catch (error) {
+      console.error("Failed to create category size:", error);
+    }
+  };
 
   return (
     <div className="space-y-6">
