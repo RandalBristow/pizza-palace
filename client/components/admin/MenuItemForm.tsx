@@ -232,6 +232,12 @@ export default function MenuItemForm({
         (toppingId) => defaultToppings[toppingId]
       );
 
+      console.log("Updating menu item with data:", {
+        ...newMenuItem,
+        imageId: selectedImageId,
+        defaultToppings: defaultToppingsArray,
+      });
+
       await updateMenuItem(editingMenuItem.id, {
         ...newMenuItem,
         imageId: selectedImageId,
