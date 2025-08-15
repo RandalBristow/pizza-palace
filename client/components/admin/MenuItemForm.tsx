@@ -112,6 +112,7 @@ export default function MenuItemForm({
   toppingCategories,
   toppings,
   categorySizes = [],
+  subCategorySizes = [],
   menuItemSizes = [],
   menuItemSizeToppings = [],
   toppingSizePrices = [],
