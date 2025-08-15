@@ -366,235 +366,26 @@ export default function MenuCategoryForm({
         </TabsContent>
 
         <TabsContent value="subcategories" className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium">Sub-Categories</h3>
-            <Dialog
-              open={isAddingSubCategory}
-              onOpenChange={setIsAddingSubCategory}
-            >
-              <DialogTrigger asChild>
-                <Button disabled={categories.length === 0}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Sub-Category
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Sub-Category</DialogTitle>
-                  <DialogDescription>
-                    Create a new sub-category within a menu category
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="parentCategory">Parent Category</Label>
-                    <select
-                      id="parentCategory"
-                      className="w-full border rounded px-3 py-2"
-                      value={newSubCategory.categoryId}
-                      onChange={(e) =>
-                        setNewSubCategory({
-                          ...newSubCategory,
-                          categoryId: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Select a category...</option>
-                      {categories
-                        .filter((c) => c.isActive)
-                        .map((category) => (
-                          <option key={category.id} value={category.id}>
-                            {category.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                  <div>
-                    <Label htmlFor="subCategoryName">Sub-Category Name</Label>
-                    <Input
-                      id="subCategoryName"
-                      placeholder="e.g., Build Your Own"
-                      value={newSubCategory.name}
-                      onChange={(e) =>
-                        setNewSubCategory({
-                          ...newSubCategory,
-                          name: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="subDisplayOrder">Display Order</Label>
-                    <Input
-                      id="subDisplayOrder"
-                      type="number"
-                      placeholder="1"
-                      value={newSubCategory.displayOrder}
-                      onChange={(e) =>
-                        setNewSubCategory({
-                          ...newSubCategory,
-                          displayOrder: parseInt(e.target.value) || 1,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setIsAddingSubCategory(false);
-                        setNewSubCategory({
-                          name: "",
-                          categoryId: "",
-                          displayOrder: 1,
-                          isActive: true,
-                        });
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleAddSubCategory}
-                      disabled={
-                        !newSubCategory.name || !newSubCategory.categoryId
-                      }
-                    >
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Sub-Category
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <SubCategoryForm
+            categories={categories}
+            subCategories={subCategories}
+            categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
+            createSubCategory={createSubCategory!}
+            updateSubCategory={updateSubCategory!}
+            deleteSubCategory={deleteSubCategory!}
+            updateSubCategorySizes={updateSubCategorySizes}
+          />
+        </TabsContent>
 
-          {/* Sub-Categories List */}
-          <div className="bg-white rounded-lg border p-6">
-            {subCategories.length === 0 ? (
-              <div className="text-center py-8">
-                <Folder className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No sub-categories yet.</p>
-                <p className="text-sm text-gray-400">
-                  Create sub-categories to organize your menu items.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {categories.map((category) => {
-                  const categorySubCategories = subCategories.filter(
-                    (sub) => sub.categoryId === category.id,
-                  );
-                  if (categorySubCategories.length === 0) return null;
-
-                  return (
-                    <div key={category.id} className="border rounded-lg p-4">
-                      <h4 className="font-semibold text-lg mb-3 flex items-center">
-                        <FolderOpen className="h-5 w-5 mr-2 text-blue-600" />
-                        {category.name}
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {categorySubCategories
-                          .sort((a, b) => a.displayOrder - b.displayOrder)
-                          .map((subCategory) => (
-                            <Card key={subCategory.id}>
-                              <CardContent className="p-4">
-                                <div className="flex justify-between items-start mb-2">
-                                  <h5 className="font-medium">
-                                    {subCategory.name}
-                                  </h5>
-                                  <Badge
-                                    className={
-                                      subCategory.isActive
-                                        ? "bg-green-100 text-green-800"
-                                        : "bg-red-100 text-red-800"
-                                    }
-                                  >
-                                    {subCategory.isActive
-                                      ? "Active"
-                                      : "Inactive"}
-                                  </Badge>
-                                </div>
-                                <p className="text-sm text-gray-500 mb-3">
-                                  Order: {subCategory.displayOrder}
-                                </p>
-                                <div className="flex justify-between items-center">
-                                  <div className="flex space-x-1">
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() =>
-                                              toggleSubCategoryStatus(
-                                                subCategory.id,
-                                              )
-                                            }
-                                          >
-                                            {subCategory.isActive ? (
-                                              <ThumbsUp className="h-4 w-4" />
-                                            ) : (
-                                              <ThumbsDown className="h-4 w-4" />
-                                            )}
-                                          </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          {subCategory.isActive
-                                            ? "Deactivate"
-                                            : "Activate"}
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() =>
-                                              handleEditSubCategory(subCategory)
-                                            }
-                                          >
-                                            <Edit className="h-4 w-4" />
-                                          </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          Edit Sub-Category
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  </div>
-                                  <TooltipProvider>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() =>
-                                            handleDeleteSubCategory(
-                                              subCategory.id,
-                                            )
-                                          }
-                                        >
-                                          <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        Delete Sub-Category
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+        <TabsContent value="sizes" className="space-y-6">
+          <CategorySizesForm
+            categories={categories}
+            categorySizes={categorySizes}
+            createCategorySize={createCategorySize}
+            updateCategorySize={updateCategorySize}
+            deleteCategorySize={deleteCategorySize}
+          />
         </TabsContent>
       </Tabs>
     </div>
