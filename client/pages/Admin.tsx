@@ -335,6 +335,8 @@ export default function Admin() {
             deleteCustomerFavorite={deleteCustomerFavorite}
           />
         );
+      case "database-setup":
+        return <DatabaseSetup />;
       default:
         return (
           <SettingsForm
