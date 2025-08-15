@@ -104,6 +104,16 @@ export default function Admin() {
     updateImage,
     deleteImage,
   } = useImages();
+  const {
+    categorySizes,
+    createCategorySize,
+    updateCategorySize,
+    deleteCategorySize,
+  } = useCategorySizes();
+  const {
+    subCategorySizes,
+    updateSubCategorySizes,
+  } = useSubCategorySizes();
 
   const [selectedItem, setSelectedItem] = useState("categories");
 
