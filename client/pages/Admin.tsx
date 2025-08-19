@@ -251,9 +251,9 @@ export default function Admin() {
         return (
           <SettingsForm
             settings={
-              settingsHook?.settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
+              settingsHook.settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
             }
-            onSettingsChange={settingsHook?.updateSettings || (() => Promise.resolve())}
+            onSettingsChange={settingsHook.updateSettings}
           />
         );
       case "categories":
