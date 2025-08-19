@@ -40,39 +40,12 @@ import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 export default function Admin() {
   const [selectedItem, setSelectedItem] = useState("categories");
 
-  // Debug re-renders
-  const renderCount = React.useRef(0);
-  renderCount.current += 1;
-
-  console.log(`🔄 Admin render #${renderCount.current} at ${new Date().toLocaleTimeString()}`);
-
-  // Track what might be causing re-renders
-  React.useEffect(() => {
-    console.log(`⚡ Admin selectedItem changed to: ${selectedItem}`);
-  }, [selectedItem]);
-
-  // Check for any timers/intervals that might be causing re-renders
-  React.useEffect(() => {
-    const checkTimers = () => {
-      const highestTimeoutId = setTimeout(() => {}, 0);
-      clearTimeout(highestTimeoutId);
-      if (highestTimeoutId > 50) {
-        console.warn(`⏰ Many active timers detected: ${highestTimeoutId}`);
-      }
-    };
-
-    checkTimers();
-    const interval = setInterval(checkTimers, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
 
   // Filter states
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
-  // Core hooks that are always needed
+  // All hooks - restore normal usage
   const {
     categories,
     loading: categoriesLoading,
@@ -81,121 +54,136 @@ export default function Admin() {
     deleteCategory,
   } = useCategories();
 
-  // Use essential hooks for current functionality - timer leak fixed!
-  console.log(`🪝 Calling ESSENTIAL hooks at ${new Date().toLocaleTimeString()}`);
+  const {
+    subCategories,
+    loading: subCategoriesLoading,
+    createSubCategory,
+    updateSubCategory,
+    deleteSubCategory,
+  } = useSubCategories();
 
-  // Add back hooks gradually - these are needed for Menu Categories
-  const subCategoriesHook = useSubCategories();
-  const categorySizesHook = useCategorySizes();
-  const subCategorySizesHook = useSubCategorySizes();
+  const {
+    menuItems,
+    loading: menuItemsLoading,
+    createMenuItem,
+    updateMenuItem,
+    deleteMenuItem,
+  } = useMenuItems();
 
-  // Add back conditionally based on active tab to prevent excessive load
-  const menuItemsHook = ["menu-items", "specials"].includes(selectedItem) ? useMenuItems() : { menuItems: [], loading: false, createMenuItem: () => Promise.resolve(), updateMenuItem: () => Promise.resolve(), deleteMenuItem: () => Promise.resolve() };
-  const toppingsHook = ["topping-items", "menu-items"].includes(selectedItem) ? useToppings() : { toppings: [], loading: false, createTopping: () => Promise.resolve(), updateTopping: () => Promise.resolve(), deleteTopping: () => Promise.resolve() };
-  const toppingCategoriesHook = ["topping-categories", "topping-items", "menu-items"].includes(selectedItem) ? useToppingCategories() : { toppingCategories: [], loading: false, createToppingCategory: () => Promise.resolve(), updateToppingCategory: () => Promise.resolve(), deleteToppingCategory: () => Promise.resolve() };
-  const imagesHook = ["image-manager", "about-page", "carousel-images", "menu-items"].includes(selectedItem) ? useImages() : { images: [], loading: false, uploadImageFile: () => Promise.resolve(), createImageFromUrl: () => Promise.resolve(), updateImage: () => Promise.resolve(), deleteImage: () => Promise.resolve() };
+  const {
+    toppings,
+    loading: toppingsLoading,
+    createTopping,
+    updateTopping,
+    deleteTopping,
+  } = useToppings();
 
-  // These can be empty for now since they were causing the timer leak
-  const menuItemSizesHook = { menuItemSizes: [], loading: false, updateMenuItemSizesForItem: () => Promise.resolve() };
-  const menuItemSizeToppingsHook = { menuItemSizeToppings: [], loading: false, updateMenuItemSizeToppings: () => Promise.resolve() };
-  const toppingSizePricesHook = { toppingSizePrices: [], loading: false, updateToppingSizePrices: () => Promise.resolve(), getToppingSizePrices: () => [], getToppingPriceForSize: () => 0 };
+  const {
+    toppingCategories,
+    loading: toppingCategoriesLoading,
+    createToppingCategory,
+    updateToppingCategory,
+    deleteToppingCategory,
+  } = useToppingCategories();
 
-  console.log(`🪝 Essential hooks called, data lengths:`, {
-    categories: categories.length,
-    subCategories: subCategoriesHook.subCategories.length,
-    categorySizes: categorySizesHook.categorySizes.length,
-    menuItems: menuItemsHook.menuItems.length
-  });
+  const {
+    specials,
+    loading: specialsLoading,
+    createSpecial,
+    updateSpecial,
+    deleteSpecial,
+  } = useSpecials();
 
-  // Conditionally use data based on active tab for performance
-  const needsSubCategories = ["categories", "sub-categories", "menu-items"].includes(selectedItem);
-  const needsMenuItems = ["menu-items", "specials"].includes(selectedItem);
-  const needsToppings = ["topping-items", "menu-items"].includes(selectedItem);
-  const needsToppingCategories = ["topping-categories", "topping-items", "menu-items"].includes(selectedItem);
-  const needsImages = ["image-manager", "about-page", "carousel-images", "menu-items"].includes(selectedItem);
-  const needsSizeData = ["categories", "category-sizes", "sub-categories", "menu-items", "topping-items"].includes(selectedItem);
+  const {
+    carouselImages,
+    loading: carouselLoading,
+    createCarouselImage,
+    updateCarouselImage,
+    deleteCarouselImage,
+  } = useCarouselImages();
 
-  // Extract data with conditional usage
-  const subCategories = needsSubCategories ? subCategoriesHook.subCategories : [];
-  const createSubCategory = needsSubCategories ? subCategoriesHook.createSubCategory : (() => Promise.resolve());
-  const updateSubCategory = needsSubCategories ? subCategoriesHook.updateSubCategory : (() => Promise.resolve());
-  const deleteSubCategory = needsSubCategories ? subCategoriesHook.deleteSubCategory : (() => Promise.resolve());
+  const {
+    customerFavorites,
+    loading: favoritesLoading,
+    createCustomerFavorite,
+    updateCustomerFavorite,
+    deleteCustomerFavorite,
+  } = useCustomerFavorites();
 
-  const menuItems = needsMenuItems ? menuItemsHook.menuItems : [];
-  const menuItemsLoading = needsMenuItems ? menuItemsHook.loading : false;
-  const createMenuItem = needsMenuItems ? menuItemsHook.createMenuItem : (() => Promise.resolve());
-  const updateMenuItem = needsMenuItems ? menuItemsHook.updateMenuItem : (() => Promise.resolve());
-  const deleteMenuItem = needsMenuItems ? menuItemsHook.deleteMenuItem : (() => Promise.resolve());
+  const {
+    settings,
+    loading: settingsLoading,
+    updateSettings,
+  } = useSettings();
 
-  const toppings = needsToppings ? toppingsHook.toppings : [];
-  const toppingsLoading = needsToppings ? toppingsHook.loading : false;
-  const createTopping = needsToppings ? toppingsHook.createTopping : (() => Promise.resolve());
-  const updateTopping = needsToppings ? toppingsHook.updateTopping : (() => Promise.resolve());
-  const deleteTopping = needsToppings ? toppingsHook.deleteTopping : (() => Promise.resolve());
+  const {
+    aboutSections,
+    loading: aboutLoading,
+    createAboutSection,
+    updateAboutSection,
+    deleteAboutSection,
+  } = useAboutSections();
 
-  const toppingCategories = needsToppingCategories ? toppingCategoriesHook.toppingCategories : [];
-  const toppingCategoriesLoading = needsToppingCategories ? toppingCategoriesHook.loading : false;
-  const createToppingCategory = needsToppingCategories ? toppingCategoriesHook.createToppingCategory : (() => Promise.resolve());
-  const updateToppingCategory = needsToppingCategories ? toppingCategoriesHook.updateToppingCategory : (() => Promise.resolve());
-  const deleteToppingCategory = needsToppingCategories ? toppingCategoriesHook.deleteToppingCategory : (() => Promise.resolve());
+  const {
+    images,
+    loading: imagesLoading,
+    uploadImageFile,
+    createImageFromUrl,
+    updateImage,
+    deleteImage,
+  } = useImages();
 
-  const images = needsImages ? imagesHook.images : [];
-  const imagesLoading = needsImages ? imagesHook.loading : false;
-  const uploadImageFile = needsImages ? imagesHook.uploadImageFile : (() => Promise.resolve());
-  const createImageFromUrl = needsImages ? imagesHook.createImageFromUrl : (() => Promise.resolve());
-  const updateImage = needsImages ? imagesHook.updateImage : (() => Promise.resolve());
-  const deleteImage = needsImages ? imagesHook.deleteImage : (() => Promise.resolve());
+  const {
+    categorySizes,
+    loading: categorySizesLoading,
+    createCategorySize,
+    updateCategorySize,
+    deleteCategorySize,
+  } = useCategorySizes();
 
-  const categorySizes = needsSizeData ? categorySizesHook.categorySizes : [];
-  const categorySizesLoading = needsSizeData ? categorySizesHook.loading : false;
-  const createCategorySize = needsSizeData ? categorySizesHook.createCategorySize : (() => Promise.resolve());
-  const updateCategorySize = needsSizeData ? categorySizesHook.updateCategorySize : (() => Promise.resolve());
-  const deleteCategorySize = needsSizeData ? categorySizesHook.deleteCategorySize : (() => Promise.resolve());
+  const {
+    subCategorySizes,
+    loading: subCategorySizesLoading,
+    updateSubCategorySizes,
+  } = useSubCategorySizes();
 
-  const subCategorySizes = needsSizeData ? subCategorySizesHook.subCategorySizes : [];
-  const subCategorySizesLoading = needsSizeData ? subCategorySizesHook.loading : false;
-  const updateSubCategorySizes = needsSizeData ? subCategorySizesHook.updateSubCategorySizes : (() => Promise.resolve());
+  const {
+    menuItemSizes,
+    loading: menuItemSizesLoading,
+    updateMenuItemSizesForItem,
+  } = useMenuItemSizes();
 
-  const menuItemSizes = needsMenuItems ? menuItemSizesHook.menuItemSizes : [];
-  const menuItemSizesLoading = needsMenuItems ? menuItemSizesHook.loading : false;
-  const updateMenuItemSizesForItem = needsMenuItems ? menuItemSizesHook.updateMenuItemSizesForItem : (() => Promise.resolve());
+  const {
+    menuItemSizeToppings,
+    loading: menuItemSizeToppingsLoading,
+    updateMenuItemSizeToppings,
+  } = useMenuItemSizeToppings();
 
-  const menuItemSizeToppings = needsMenuItems ? menuItemSizeToppingsHook.menuItemSizeToppings : [];
-  const menuItemSizeTopLoading = needsMenuItems ? menuItemSizeToppingsHook.loading : false;
-  const updateMenuItemSizeToppings = needsMenuItems ? menuItemSizeToppingsHook.updateMenuItemSizeToppings : (() => Promise.resolve());
+  const {
+    toppingSizePrices,
+    loading: toppingSizePricesLoading,
+    updateToppingSizePrices,
+    getToppingSizePrices,
+    getToppingPriceForSize,
+  } = useToppingSizePrices();
 
-  const toppingSizePrices = needsToppings ? toppingSizePricesHook.toppingSizePrices : [];
-  const toppingSizePricesLoading = needsToppings ? toppingSizePricesHook.loading : false;
-  const updateToppingSizePrices = needsToppings ? toppingSizePricesHook.updateToppingSizePrices : (() => Promise.resolve());
-  const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : (() => []);
-  const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : (() => 0);
-
-  // Temporarily disable secondary hooks to test timer leak
-  console.log(`🪝 Using empty implementations for secondary hooks`);
-  const settingsHook = { settings: null, loading: false, updateSettings: () => Promise.resolve() };
-  const specialsHook = { specials: [], loading: false, createSpecial: () => Promise.resolve(), updateSpecial: () => Promise.resolve(), deleteSpecial: () => Promise.resolve() };
-  const carouselHook = { carouselImages: [], loading: false, createCarouselImage: () => Promise.resolve(), updateCarouselImage: () => Promise.resolve(), deleteCarouselImage: () => Promise.resolve() };
-  const favoritesHook = { customerFavorites: [], loading: false, createCustomerFavorite: () => Promise.resolve(), updateCustomerFavorite: () => Promise.resolve(), deleteCustomerFavorite: () => Promise.resolve() };
-  const aboutHook = { aboutSections: [], loading: false, createAboutSection: () => Promise.resolve(), updateAboutSection: () => Promise.resolve(), deleteAboutSection: () => Promise.resolve() };
-  console.log(`🪝 All secondary hooks using empty implementations`);
-
-  // Show loading state only for active data
   const isLoading =
     categoriesLoading ||
+    subCategoriesLoading ||
     menuItemsLoading ||
     toppingsLoading ||
     toppingCategoriesLoading ||
+    specialsLoading ||
+    carouselLoading ||
+    favoritesLoading ||
+    settingsLoading ||
+    aboutLoading ||
     imagesLoading ||
     categorySizesLoading ||
     subCategorySizesLoading ||
     menuItemSizesLoading ||
-    menuItemSizeTopLoading ||
-    toppingSizePricesLoading ||
-    (selectedItem === "settings" && settingsHook.loading) ||
-    (selectedItem === "specials" && specialsHook.loading) ||
-    (selectedItem === "carousel-images" && carouselHook.loading) ||
-    (selectedItem === "customer-favorites" && favoritesHook.loading) ||
-    (selectedItem === "about-page" && aboutHook.loading);
+    menuItemSizeToppingsLoading ||
+    toppingSizePricesLoading;
 
 
   if (isLoading) {
@@ -294,9 +282,9 @@ export default function Admin() {
         return (
           <SettingsForm
             settings={
-              settingsHook.settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
+              settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
             }
-            onSettingsChange={settingsHook.updateSettings}
+            onSettingsChange={updateSettings}
           />
         );
       case "categories":
@@ -401,22 +389,22 @@ export default function Admin() {
       case "specials":
         return (
           <SpecialForm
-            specials={specialsHook.specials}
+            specials={specials}
             categories={categories}
             menuItems={menuItems}
-            createSpecial={specialsHook.createSpecial}
-            updateSpecial={specialsHook.updateSpecial}
-            deleteSpecial={specialsHook.deleteSpecial}
+            createSpecial={createSpecial}
+            updateSpecial={updateSpecial}
+            deleteSpecial={deleteSpecial}
           />
         );
       case "about-page":
         return (
           <AboutPageForm
-            aboutSections={aboutHook.aboutSections}
+            aboutSections={aboutSections}
             images={images}
-            createAboutSection={aboutHook.createAboutSection}
-            updateAboutSection={aboutHook.updateAboutSection}
-            deleteAboutSection={aboutHook.deleteAboutSection}
+            createAboutSection={createAboutSection}
+            updateAboutSection={updateAboutSection}
+            deleteAboutSection={deleteAboutSection}
           />
         );
       case "image-manager":
@@ -432,20 +420,20 @@ export default function Admin() {
       case "carousel-images":
         return (
           <CarouselForm
-            carouselImages={carouselHook.carouselImages}
+            carouselImages={carouselImages}
             images={images}
-            createCarouselImage={carouselHook.createCarouselImage}
-            updateCarouselImage={carouselHook.updateCarouselImage}
-            deleteCarouselImage={carouselHook.deleteCarouselImage}
+            createCarouselImage={createCarouselImage}
+            updateCarouselImage={updateCarouselImage}
+            deleteCarouselImage={deleteCarouselImage}
           />
         );
       case "customer-favorites":
         return (
           <CustomerFavoriteForm
-            customerFavorites={favoritesHook.customerFavorites}
-            createCustomerFavorite={favoritesHook.createCustomerFavorite}
-            updateCustomerFavorite={favoritesHook.updateCustomerFavorite}
-            deleteCustomerFavorite={favoritesHook.deleteCustomerFavorite}
+            customerFavorites={customerFavorites}
+            createCustomerFavorite={createCustomerFavorite}
+            updateCustomerFavorite={updateCustomerFavorite}
+            deleteCustomerFavorite={deleteCustomerFavorite}
           />
         );
       case "database-setup":
@@ -454,9 +442,9 @@ export default function Admin() {
         return (
           <SettingsForm
             settings={
-              settingsHook.settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
+              settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
             }
-            onSettingsChange={settingsHook.updateSettings}
+            onSettingsChange={updateSettings}
           />
         );
     }

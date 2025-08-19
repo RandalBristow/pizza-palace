@@ -71,28 +71,21 @@ if (!root) {
   (container as any)._reactRoot = root;
 }
 
-// Render function
-const renderApp = () => {
-  root.render(
-    <StrictMode>
-      <App />
-    </StrictMode>
-  );
-};
-
 // Initial render
-renderApp();
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
 
 // Handle hot module replacement properly
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
-    // Just re-render with the existing root
-    renderApp();
-  });
-
-  // Clean up on module dispose
-  import.meta.hot.dispose(() => {
-    // Don't unmount the root, just let it be reused
-    console.log("HMR: Module disposed, keeping root for reuse");
+    // Re-render with the new App component
+    root.render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
   });
 }
