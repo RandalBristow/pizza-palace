@@ -17,6 +17,7 @@ import {
   useImages,
   useCategorySizes,
   useSubCategorySizes,
+  useCategorySizeSubCategories,
   useMenuItemSizes,
   useMenuItemSizeToppings,
   useToppingSizePrices,
