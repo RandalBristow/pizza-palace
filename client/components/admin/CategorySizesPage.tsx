@@ -93,7 +93,7 @@ export default function CategorySizesPage({
                 ))}
             </SelectContent>
           </Select>
-          <Dialog open={isAddingSize} onOpenChange={setIsAddingSize}>
+          <Dialog debugName="AddCategorySize" open={isAddingSize} onOpenChange={setIsAddingSize}>
             <DialogTrigger asChild>
               <Button disabled={categories.length === 0}>
                 <Plus className="h-4 w-4 mr-2" />
