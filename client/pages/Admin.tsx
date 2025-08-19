@@ -73,14 +73,15 @@ export default function Admin() {
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
-  // Core hooks that are always needed
-  const {
-    categories,
-    loading: categoriesLoading,
-    createCategory,
-    updateCategory,
-    deleteCategory,
-  } = useCategories();
+  // ULTIMATE TEST - Disable ALL hooks including useCategories
+  console.log(`🪝 ULTIMATE TEST - ALL HOOKS DISABLED at ${new Date().toLocaleTimeString()}`);
+
+  // Use empty implementation even for useCategories
+  const categories = [];
+  const categoriesLoading = false;
+  const createCategory = () => Promise.resolve();
+  const updateCategory = () => Promise.resolve();
+  const deleteCategory = () => Promise.resolve();
 
   // FINAL TEST - Only useCategories (the absolute minimum)
   console.log(`🪝 FINAL TEST - Only useCategories active at ${new Date().toLocaleTimeString()}`);
