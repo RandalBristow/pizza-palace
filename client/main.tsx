@@ -35,29 +35,36 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 };
 
 // App component (not exported to avoid HMR issues)
-const App = () => (
-  <OrderProvider>
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/order" element={<Order />} />
-          <Route path="/wings" element={<Wings />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/specials" element={<Specials />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
-  </OrderProvider>
-);
+const App = () => {
+  const renderCount = React.useRef(0);
+  renderCount.current += 1;
+
+  console.log(`🚀 App component render #${renderCount.current} at ${new Date().toLocaleTimeString()}`);
+
+  return (
+    <OrderProvider>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/order" element={<Order />} />
+            <Route path="/wings" element={<Wings />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/specials" element={<Specials />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </OrderProvider>
+  );
+};
 
 // Create root only once and store in a module variable
 const container = document.getElementById("root")!;
