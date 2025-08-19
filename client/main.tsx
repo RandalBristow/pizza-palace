@@ -61,9 +61,9 @@ const container = document.getElementById("root")!;
 const root = createRoot(container);
 root.render(<App />);
 
-// Handle hot module replacement in development
-if (import.meta.hot) {
-  import.meta.hot.dispose(() => {
-    root.unmount();
-  });
-}
+// Handle hot module replacement in development - temporarily disabled for debugging
+// if (import.meta.hot) {
+//   import.meta.hot.dispose(() => {
+//     root.unmount();
+//   });
+// }
