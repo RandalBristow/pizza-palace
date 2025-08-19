@@ -318,14 +318,7 @@ export default function SubCategoryForm({
                     {categorySubCategories
                       .sort((a, b) => a.displayOrder - b.displayOrder)
                       .map((subCategory) => {
-                        const subCategorySizeIds = subCategorySizes
-                          .filter((scs) => scs.subCategoryId === subCategory.id)
-                          .map((scs) => scs.categorySizeId);
-                        const subCategorySizeNames = categorySizes
-                          .filter((size) =>
-                            subCategorySizeIds.includes(size.id),
-                          )
-                          .map((size) => size.sizeName);
+                        // Sizes are now managed separately in Category Sizes section
 
                         return (
                           <Card key={subCategory.id}>
@@ -344,27 +337,12 @@ export default function SubCategoryForm({
                                   {subCategory.isActive ? "Active" : "Inactive"}
                                 </Badge>
                               </div>
-                              <p className="text-sm text-gray-500 mb-2">
+                              <p className="text-sm text-gray-500 mb-3">
                                 Order: {subCategory.displayOrder}
                               </p>
-                              {subCategorySizeNames.length > 0 && (
-                                <div className="mb-3">
-                                  <p className="text-xs text-gray-600 mb-1">
-                                    Sizes:
-                                  </p>
-                                  <div className="flex flex-wrap gap-1">
-                                    {subCategorySizeNames.map((sizeName) => (
-                                      <Badge
-                                        key={sizeName}
-                                        variant="outline"
-                                        className="text-xs"
-                                      >
-                                        {sizeName}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
+                              <p className="text-xs text-blue-600 mb-3">
+                                Sizes managed in Category Sizes section
+                              </p>
                               <div className="flex justify-between items-center">
                                 <div className="flex space-x-1">
                                   <TooltipProvider>
