@@ -93,9 +93,6 @@ export default function MenuCategoryForm({
   deleteCategorySize,
   updateSubCategorySizes,
 }: MenuCategoryFormProps) {
-  // Debugging
-  const renderCount = useRenderTracker("MenuCategoryForm");
-
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newCategory, setNewCategory] = useState({
