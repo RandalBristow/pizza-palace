@@ -233,10 +233,12 @@ export default function CategorySizesPage({
 
       <CategorySizesForm
         categories={categories}
+        subCategories={subCategories}
         categorySizes={filteredCategorySizes}
         createCategorySize={createCategorySize}
         updateCategorySize={updateCategorySize}
         deleteCategorySize={deleteCategorySize}
+        updateCategorySizeSubCategories={updateCategorySizeSubCategories}
         showTitle={false}
         hideAddButton={true}
       />
