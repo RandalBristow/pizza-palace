@@ -38,9 +38,13 @@ import CategorySizesPage from "../components/admin/CategorySizesPage";
 import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 
 export default function Admin() {
-  const mountedRef = useRef(false);
+  const [selectedItem, setSelectedItem] = useState("categories");
 
-  // Supabase hooks
+  // Filter states
+  const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
+  const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
+
+  // Core hooks that are always needed
   const {
     categories,
     loading: categoriesLoading,
@@ -48,150 +52,111 @@ export default function Admin() {
     updateCategory,
     deleteCategory,
   } = useCategories();
-  const {
-    subCategories,
-    createSubCategory,
-    updateSubCategory,
-    deleteSubCategory,
-  } = useSubCategories();
-  const {
-    menuItems,
-    loading: menuItemsLoading,
-    createMenuItem,
-    updateMenuItem,
-    deleteMenuItem,
-  } = useMenuItems();
-  const {
-    toppings,
-    loading: toppingsLoading,
-    createTopping,
-    updateTopping,
-    deleteTopping,
-  } = useToppings();
-  const {
-    toppingCategories,
-    loading: toppingCategoriesLoading,
-    createToppingCategory,
-    updateToppingCategory,
-    deleteToppingCategory,
-  } = useToppingCategories();
-  const {
-    specials,
-    loading: specialsLoading,
-    createSpecial,
-    updateSpecial,
-    deleteSpecial,
-  } = useSpecials();
-  const {
-    carouselImages,
-    loading: carouselLoading,
-    createCarouselImage,
-    updateCarouselImage,
-    deleteCarouselImage,
-  } = useCarouselImages();
-  const {
-    customerFavorites,
-    loading: favoritesLoading,
-    createCustomerFavorite,
-    updateCustomerFavorite,
-    deleteCustomerFavorite,
-  } = useCustomerFavorites();
-  const { settings, loading: settingsLoading, updateSettings } = useSettings();
-  const {
-    aboutSections,
-    loading: aboutLoading,
-    createAboutSection,
-    updateAboutSection,
-    deleteAboutSection,
-  } = useAboutSections();
-  const {
-    images,
-    loading: imagesLoading,
-    uploadImageFile,
-    createImageFromUrl,
-    updateImage,
-    deleteImage,
-  } = useImages();
-  const {
-    categorySizes,
-    loading: categorySizesLoading,
-    createCategorySize,
-    updateCategorySize,
-    deleteCategorySize,
-  } = useCategorySizes();
-  const {
-    subCategorySizes,
-    loading: subCategorySizesLoading,
-    updateSubCategorySizes,
-  } = useSubCategorySizes();
-  const {
-    menuItemSizes,
-    loading: menuItemSizesLoading,
-    updateMenuItemSizesForItem,
-  } = useMenuItemSizes();
-  const {
-    menuItemSizeToppings,
-    loading: menuItemSizeTopLoading,
-    updateMenuItemSizeToppings,
-  } = useMenuItemSizeToppings();
-  const {
-    toppingSizePrices,
-    loading: toppingSizePricesLoading,
-    updateToppingSizePrices,
-    getToppingSizePrices,
-    getToppingPriceForSize,
-  } = useToppingSizePrices();
 
-  const [selectedItem, setSelectedItem] = useState("categories");
+  // Load data conditionally based on selected tab to improve performance
+  const needsSubCategories = ["categories", "sub-categories", "menu-items"].includes(selectedItem);
+  const needsMenuItems = ["menu-items", "specials"].includes(selectedItem);
+  const needsToppings = ["topping-items", "menu-items"].includes(selectedItem);
+  const needsToppingCategories = ["topping-categories", "topping-items", "menu-items"].includes(selectedItem);
+  const needsImages = ["image-manager", "about-page", "carousel-images", "menu-items"].includes(selectedItem);
+  const needsSizeData = ["categories", "category-sizes", "sub-categories", "menu-items", "topping-items"].includes(selectedItem);
 
-  // Filter states
-  const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
-  const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
+  // Conditional hooks for better performance
+  const subCategoriesHook = useSubCategories();
+  const subCategories = needsSubCategories ? subCategoriesHook.subCategories : [];
+  const createSubCategory = needsSubCategories ? subCategoriesHook.createSubCategory : () => Promise.resolve();
+  const updateSubCategory = needsSubCategories ? subCategoriesHook.updateSubCategory : () => Promise.resolve();
+  const deleteSubCategory = needsSubCategories ? subCategoriesHook.deleteSubCategory : () => Promise.resolve();
 
-  // Track mount status to prevent double loading
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
+  const menuItemsHook = useMenuItems();
+  const menuItems = needsMenuItems ? menuItemsHook.menuItems : [];
+  const menuItemsLoading = needsMenuItems ? menuItemsHook.loading : false;
+  const createMenuItem = needsMenuItems ? menuItemsHook.createMenuItem : () => Promise.resolve();
+  const updateMenuItem = needsMenuItems ? menuItemsHook.updateMenuItem : () => Promise.resolve();
+  const deleteMenuItem = needsMenuItems ? menuItemsHook.deleteMenuItem : () => Promise.resolve();
 
-  // Show loading state while data is being fetched
-  const isLoading = useMemo(
-    () =>
-      categoriesLoading ||
-      menuItemsLoading ||
-      toppingsLoading ||
-      toppingCategoriesLoading ||
-      specialsLoading ||
-      carouselLoading ||
-      favoritesLoading ||
-      settingsLoading ||
-      aboutLoading ||
-      imagesLoading ||
-      categorySizesLoading ||
-      subCategorySizesLoading ||
-      menuItemSizesLoading ||
-      menuItemSizeTopLoading ||
-      toppingSizePricesLoading,
-    [
-      categoriesLoading,
-      menuItemsLoading,
-      toppingsLoading,
-      toppingCategoriesLoading,
-      specialsLoading,
-      carouselLoading,
-      favoritesLoading,
-      settingsLoading,
-      aboutLoading,
-      imagesLoading,
-      categorySizesLoading,
-      subCategorySizesLoading,
-      menuItemSizesLoading,
-      menuItemSizeTopLoading,
-      toppingSizePricesLoading,
-    ],
-  );
+  const toppingsHook = useToppings();
+  const toppings = needsToppings ? toppingsHook.toppings : [];
+  const toppingsLoading = needsToppings ? toppingsHook.loading : false;
+  const createTopping = needsToppings ? toppingsHook.createTopping : () => Promise.resolve();
+  const updateTopping = needsToppings ? toppingsHook.updateTopping : () => Promise.resolve();
+  const deleteTopping = needsToppings ? toppingsHook.deleteTopping : () => Promise.resolve();
+
+  const toppingCategoriesHook = useToppingCategories();
+  const toppingCategories = needsToppingCategories ? toppingCategoriesHook.toppingCategories : [];
+  const toppingCategoriesLoading = needsToppingCategories ? toppingCategoriesHook.loading : false;
+  const createToppingCategory = needsToppingCategories ? toppingCategoriesHook.createToppingCategory : () => Promise.resolve();
+  const updateToppingCategory = needsToppingCategories ? toppingCategoriesHook.updateToppingCategory : () => Promise.resolve();
+  const deleteToppingCategory = needsToppingCategories ? toppingCategoriesHook.deleteToppingCategory : () => Promise.resolve();
+
+  const imagesHook = useImages();
+  const images = needsImages ? imagesHook.images : [];
+  const imagesLoading = needsImages ? imagesHook.loading : false;
+  const uploadImageFile = needsImages ? imagesHook.uploadImageFile : () => Promise.resolve();
+  const createImageFromUrl = needsImages ? imagesHook.createImageFromUrl : () => Promise.resolve();
+  const updateImage = needsImages ? imagesHook.updateImage : () => Promise.resolve();
+  const deleteImage = needsImages ? imagesHook.deleteImage : () => Promise.resolve();
+
+  // Size-related hooks
+  const categorySizesHook = useCategorySizes();
+  const categorySizes = needsSizeData ? categorySizesHook.categorySizes : [];
+  const categorySizesLoading = needsSizeData ? categorySizesHook.loading : false;
+  const createCategorySize = needsSizeData ? categorySizesHook.createCategorySize : () => Promise.resolve();
+  const updateCategorySize = needsSizeData ? categorySizesHook.updateCategorySize : () => Promise.resolve();
+  const deleteCategorySize = needsSizeData ? categorySizesHook.deleteCategorySize : () => Promise.resolve();
+
+  const subCategorySizesHook = useSubCategorySizes();
+  const subCategorySizes = needsSizeData ? subCategorySizesHook.subCategorySizes : [];
+  const subCategorySizesLoading = needsSizeData ? subCategorySizesHook.loading : false;
+  const updateSubCategorySizes = needsSizeData ? subCategorySizesHook.updateSubCategorySizes : () => Promise.resolve();
+
+  const menuItemSizesHook = useMenuItemSizes();
+  const menuItemSizes = needsMenuItems ? menuItemSizesHook.menuItemSizes : [];
+  const menuItemSizesLoading = needsMenuItems ? menuItemSizesHook.loading : false;
+  const updateMenuItemSizesForItem = needsMenuItems ? menuItemSizesHook.updateMenuItemSizesForItem : () => Promise.resolve();
+
+  const menuItemSizeToppingsHook = useMenuItemSizeToppings();
+  const menuItemSizeToppings = needsMenuItems ? menuItemSizeToppingsHook.menuItemSizeToppings : [];
+  const menuItemSizeTopLoading = needsMenuItems ? menuItemSizeToppingsHook.loading : false;
+  const updateMenuItemSizeToppings = needsMenuItems ? menuItemSizeToppingsHook.updateMenuItemSizeToppings : () => Promise.resolve();
+
+  const toppingSizePricesHook = useToppingSizePrices();
+  const toppingSizePrices = needsToppings ? toppingSizePricesHook.toppingSizePrices : [];
+  const toppingSizePricesLoading = needsToppings ? toppingSizePricesHook.loading : false;
+  const updateToppingSizePrices = needsToppings ? toppingSizePricesHook.updateToppingSizePrices : () => Promise.resolve();
+  const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : () => [];
+  const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : () => 0;
+
+  // Load other hooks only when needed
+  const settingsHook = selectedItem === "settings" ? useSettings() : { settings: null, loading: false, updateSettings: () => Promise.resolve() };
+  const specialsHook = selectedItem === "specials" ? useSpecials() : { specials: [], loading: false, createSpecial: () => Promise.resolve(), updateSpecial: () => Promise.resolve(), deleteSpecial: () => Promise.resolve() };
+  const carouselHook = selectedItem === "carousel-images" ? useCarouselImages() : { carouselImages: [], loading: false, createCarouselImage: () => Promise.resolve(), updateCarouselImage: () => Promise.resolve(), deleteCarouselImage: () => Promise.resolve() };
+  const favoritesHook = selectedItem === "customer-favorites" ? useCustomerFavorites() : { customerFavorites: [], loading: false, createCustomerFavorite: () => Promise.resolve(), updateCustomerFavorite: () => Promise.resolve(), deleteCustomerFavorite: () => Promise.resolve() };
+  const aboutHook = selectedItem === "about-page" ? useAboutSections() : { aboutSections: [], loading: false, createAboutSection: () => Promise.resolve(), updateAboutSection: () => Promise.resolve(), deleteAboutSection: () => Promise.resolve() };
+
+  // Show loading state only for active data
+  const isLoading = useMemo(() => {
+    return categoriesLoading ||
+           (needsMenuItems && menuItemsLoading) ||
+           (needsToppings && toppingsLoading) ||
+           (needsToppingCategories && toppingCategoriesLoading) ||
+           (needsImages && imagesLoading) ||
+           (needsSizeData && (categorySizesLoading || subCategorySizesLoading)) ||
+           (needsMenuItems && (menuItemSizesLoading || menuItemSizeTopLoading)) ||
+           (needsToppings && toppingSizePricesLoading) ||
+           (selectedItem === "settings" && settingsHook.loading) ||
+           (selectedItem === "specials" && specialsHook.loading) ||
+           (selectedItem === "carousel-images" && carouselHook.loading) ||
+           (selectedItem === "customer-favorites" && favoritesHook.loading) ||
+           (selectedItem === "about-page" && aboutHook.loading);
+  }, [
+    categoriesLoading, needsMenuItems, menuItemsLoading, needsToppings, toppingsLoading,
+    needsToppingCategories, toppingCategoriesLoading, needsImages, imagesLoading,
+    needsSizeData, categorySizesLoading, subCategorySizesLoading, menuItemSizesLoading,
+    menuItemSizeTopLoading, toppingSizePricesLoading, selectedItem,
+    settingsHook.loading, specialsHook.loading, carouselHook.loading,
+    favoritesHook.loading, aboutHook.loading
+  ]);
 
   if (isLoading) {
     return (
