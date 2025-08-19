@@ -165,14 +165,14 @@ export default function Admin() {
   const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : (() => []);
   const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : (() => 0);
 
-  // Temporarily disable secondary hooks to test timer leak
-  console.log(`🪝 Using empty implementations for secondary hooks`);
+  // COMPLETE HOOK DISABLE TEST - All secondary hooks disabled
+  console.log(`🪝 ALL SECONDARY HOOKS DISABLED - Testing for timer leak source`);
   const settingsHook = { settings: null, loading: false, updateSettings: () => Promise.resolve() };
   const specialsHook = { specials: [], loading: false, createSpecial: () => Promise.resolve(), updateSpecial: () => Promise.resolve(), deleteSpecial: () => Promise.resolve() };
   const carouselHook = { carouselImages: [], loading: false, createCarouselImage: () => Promise.resolve(), updateCarouselImage: () => Promise.resolve(), deleteCarouselImage: () => Promise.resolve() };
   const favoritesHook = { customerFavorites: [], loading: false, createCustomerFavorite: () => Promise.resolve(), updateCustomerFavorite: () => Promise.resolve(), deleteCustomerFavorite: () => Promise.resolve() };
   const aboutHook = { aboutSections: [], loading: false, createAboutSection: () => Promise.resolve(), updateAboutSection: () => Promise.resolve(), deleteAboutSection: () => Promise.resolve() };
-  console.log(`🪝 All secondary hooks using empty implementations`);
+  console.log(`🪝 Only useCategories + useCategorySizes active - testing timer leak`);
 
   // Show loading state only for active data
   const isLoading =
