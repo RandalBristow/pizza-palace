@@ -1776,7 +1776,7 @@ export const useCategorySizes = () => {
       const { data, error } = await supabase
         .from(TABLES.CATEGORY_SIZES)
         .insert({
-          category_id: categorySize.categoryId,
+          sub_category_id: categorySize.subCategoryId, // Changed: now uses sub_category_id
           size_name: categorySize.sizeName,
           display_order: categorySize.displayOrder,
           is_active: categorySize.isActive,
@@ -1802,7 +1802,7 @@ export const useCategorySizes = () => {
       const { data, error } = await supabase
         .from(TABLES.CATEGORY_SIZES)
         .update({
-          category_id: updates.categoryId,
+          sub_category_id: updates.subCategoryId, // Changed: now uses sub_category_id
           size_name: updates.sizeName,
           display_order: updates.displayOrder,
           is_active: updates.isActive,
