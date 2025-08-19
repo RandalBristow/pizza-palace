@@ -166,12 +166,18 @@ export default function Admin() {
   const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : (() => []);
   const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : (() => 0);
 
-  // Always call remaining hooks in same order
+  // Always call remaining hooks in same order - check for timer leaks
+  console.log(`🪝 About to call settings hook`);
   const settingsHook = useSettings();
+  console.log(`🪝 About to call specials hook`);
   const specialsHook = useSpecials();
+  console.log(`🪝 About to call carousel hook`);
   const carouselHook = useCarouselImages();
+  console.log(`🪝 About to call favorites hook`);
   const favoritesHook = useCustomerFavorites();
+  console.log(`🪝 About to call about hook`);
   const aboutHook = useAboutSections();
+  console.log(`🪝 All secondary hooks completed`);
 
   // Show loading state only for active data
   const isLoading =
