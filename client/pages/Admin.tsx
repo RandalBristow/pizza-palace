@@ -170,22 +170,23 @@ export default function Admin() {
   // Show loading state only for active data
   const isLoading = useMemo(() => {
     return categoriesLoading ||
-           (needsMenuItems && menuItemsLoading) ||
-           (needsToppings && toppingsLoading) ||
-           (needsToppingCategories && toppingCategoriesLoading) ||
-           (needsImages && imagesLoading) ||
-           (needsSizeData && (categorySizesLoading || subCategorySizesLoading)) ||
-           (needsMenuItems && (menuItemSizesLoading || menuItemSizeTopLoading)) ||
-           (needsToppings && toppingSizePricesLoading) ||
-           (selectedItem === "settings" && settingsHook.loading) ||
-           (selectedItem === "specials" && specialsHook.loading) ||
-           (selectedItem === "carousel-images" && carouselHook.loading) ||
-           (selectedItem === "customer-favorites" && favoritesHook.loading) ||
-           (selectedItem === "about-page" && aboutHook.loading);
+           menuItemsLoading ||
+           toppingsLoading ||
+           toppingCategoriesLoading ||
+           imagesLoading ||
+           categorySizesLoading ||
+           subCategorySizesLoading ||
+           menuItemSizesLoading ||
+           menuItemSizeTopLoading ||
+           toppingSizePricesLoading ||
+           settingsHook.loading ||
+           specialsHook.loading ||
+           carouselHook.loading ||
+           favoritesHook.loading ||
+           aboutHook.loading;
   }, [
-    categoriesLoading, needsMenuItems, menuItemsLoading, needsToppings, toppingsLoading,
-    needsToppingCategories, toppingCategoriesLoading, needsImages, imagesLoading,
-    needsSizeData, categorySizesLoading, subCategorySizesLoading, menuItemSizesLoading,
+    categoriesLoading, menuItemsLoading, toppingsLoading, toppingCategoriesLoading,
+    imagesLoading, categorySizesLoading, subCategorySizesLoading, menuItemSizesLoading,
     menuItemSizeTopLoading, toppingSizePricesLoading, selectedItem,
     settingsHook.loading, specialsHook.loading, carouselHook.loading,
     favoritesHook.loading, aboutHook.loading
