@@ -1860,53 +1860,53 @@ export const useCategorySizes = () => {
   };
 };
 
-export const useSubCategorySizes = () => {
-  const [subCategorySizes, setSubCategorySizes] = useState<any[]>([]);
+export const useCategorySizeSubCategories = () => {
+  const [categorySizeSubCategories, setCategorySizeSubCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSubCategorySizes = async () => {
+  const fetchCategorySizeSubCategories = async () => {
     try {
       const { data, error } = await supabase
-        .from(TABLES.SUB_CATEGORY_SIZES)
+        .from(TABLES.CATEGORY_SIZE_SUB_CATEGORIES)
         .select("*");
 
       if (error) throw error;
 
-      setSubCategorySizes(data ? data.map(transformSubCategorySize) : []);
+      setCategorySizeSubCategories(data ? data.map(transformCategorySizeSubCategory) : []);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to fetch sub-category sizes",
+          : "Failed to fetch category size sub-categories",
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const updateSubCategorySizes = async (
-    subCategoryId: string,
-    sizeIds: string[],
+  const updateCategorySizeSubCategories = async (
+    categorySizeId: string,
+    subCategoryIds: string[],
   ) => {
     try {
-      // First, delete existing associations
+      // First, delete existing associations for this category size
       const { error: deleteError } = await supabase
-        .from(TABLES.SUB_CATEGORY_SIZES)
+        .from(TABLES.CATEGORY_SIZE_SUB_CATEGORIES)
         .delete()
-        .eq("sub_category_id", subCategoryId);
+        .eq("category_size_id", categorySizeId);
 
       if (deleteError) throw deleteError;
 
       // Then, insert new associations
-      if (sizeIds.length > 0) {
-        const insertData = sizeIds.map((sizeId) => ({
+      if (subCategoryIds.length > 0) {
+        const insertData = subCategoryIds.map((subCategoryId) => ({
+          category_size_id: categorySizeId,
           sub_category_id: subCategoryId,
-          category_size_id: sizeId,
         }));
 
         const { data: insertData_result, error: insertError } = await supabase
-          .from(TABLES.SUB_CATEGORY_SIZES)
+          .from(TABLES.CATEGORY_SIZE_SUB_CATEGORIES)
           .insert(insertData)
           .select();
 
@@ -1916,34 +1916,64 @@ export const useSubCategorySizes = () => {
         }
 
         console.log(
-          "Successfully inserted sub-category sizes:",
+          "Successfully inserted category size sub-categories:",
           insertData_result,
         );
       }
 
       // Refresh the data
-      await fetchSubCategorySizes();
+      await fetchCategorySizeSubCategories();
     } catch (err) {
-      console.error("Error in updateSubCategorySizes:", err);
+      console.error("Error in updateCategorySizeSubCategories:", err);
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to update sub-category sizes",
+          : "Failed to update category size sub-categories",
       );
       throw err;
     }
   };
 
   useEffect(() => {
-    fetchSubCategorySizes();
+    fetchCategorySizeSubCategories();
   }, []);
+
+  return {
+    categorySizeSubCategories,
+    loading,
+    error,
+    updateCategorySizeSubCategories,
+    refetch: fetchCategorySizeSubCategories,
+  };
+};
+
+// Backward compatibility: Create a hook that provides the old interface
+export const useSubCategorySizes = () => {
+  const {
+    categorySizeSubCategories,
+    loading,
+    error,
+    updateCategorySizeSubCategories,
+    refetch,
+  } = useCategorySizeSubCategories();
+
+  // Transform the data to match the old interface for existing components
+  const subCategorySizes = categorySizeSubCategories;
+
+  // Create a wrapper function that matches the old signature
+  const updateSubCategorySizes = async (subCategoryId: string, sizeIds: string[]) => {
+    // For backward compatibility, we could implement this if needed
+    // But in the new model, this operation doesn't make as much sense
+    console.warn("updateSubCategorySizes is deprecated. Use updateCategorySizeSubCategories instead.");
+    throw new Error("updateSubCategorySizes is deprecated in the new data model");
+  };
 
   return {
     subCategorySizes,
     loading,
     error,
     updateSubCategorySizes,
-    refetch: fetchSubCategorySizes,
+    refetch,
   };
 };
 
