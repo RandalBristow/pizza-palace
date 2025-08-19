@@ -232,8 +232,9 @@ export default function SubCategoryForm({
 
       <div className="bg-blue-50 p-4 rounded-lg">
         <p className="text-sm text-blue-800">
-          <strong>Note:</strong> Sizes for this sub-category will be managed in the Category Sizes section.
-          Create the sub-category first, then go to Category Sizes to define which sizes apply to this sub-category.
+          <strong>Note:</strong> Sizes for this sub-category will be managed in
+          the Category Sizes section. Create the sub-category first, then go to
+          Category Sizes to define which sizes apply to this sub-category.
         </p>
       </div>
 
@@ -281,7 +282,8 @@ export default function SubCategoryForm({
               <DialogHeader>
                 <DialogTitle>Add New Sub-Category</DialogTitle>
                 <DialogDescription>
-                  Create a new sub-category within a menu category. Sizes will be managed separately in the Category Sizes section.
+                  Create a new sub-category within a menu category. Sizes will
+                  be managed separately in the Category Sizes section.
                 </DialogDescription>
               </DialogHeader>
               {renderSubCategoryForm(false)}
@@ -432,7 +434,8 @@ export default function SubCategoryForm({
           <DialogHeader>
             <DialogTitle>Edit Sub-Category</DialogTitle>
             <DialogDescription>
-              Update the sub-category details. Sizes are managed separately in the Category Sizes section.
+              Update the sub-category details. Sizes are managed separately in
+              the Category Sizes section.
             </DialogDescription>
           </DialogHeader>
           {renderSubCategoryForm(true)}

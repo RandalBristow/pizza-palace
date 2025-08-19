@@ -1861,7 +1861,9 @@ export const useCategorySizes = () => {
 };
 
 export const useCategorySizeSubCategories = () => {
-  const [categorySizeSubCategories, setCategorySizeSubCategories] = useState<any[]>([]);
+  const [categorySizeSubCategories, setCategorySizeSubCategories] = useState<
+    any[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -1873,7 +1875,9 @@ export const useCategorySizeSubCategories = () => {
 
       if (error) throw error;
 
-      setCategorySizeSubCategories(data ? data.map(transformCategorySizeSubCategory) : []);
+      setCategorySizeSubCategories(
+        data ? data.map(transformCategorySizeSubCategory) : [],
+      );
     } catch (err) {
       setError(
         err instanceof Error
@@ -1961,11 +1965,18 @@ export const useSubCategorySizes = () => {
   const subCategorySizes = categorySizeSubCategories;
 
   // Create a wrapper function that matches the old signature
-  const updateSubCategorySizes = async (subCategoryId: string, sizeIds: string[]) => {
+  const updateSubCategorySizes = async (
+    subCategoryId: string,
+    sizeIds: string[],
+  ) => {
     // For backward compatibility, we could implement this if needed
     // But in the new model, this operation doesn't make as much sense
-    console.warn("updateSubCategorySizes is deprecated. Use updateCategorySizeSubCategories instead.");
-    throw new Error("updateSubCategorySizes is deprecated in the new data model");
+    console.warn(
+      "updateSubCategorySizes is deprecated. Use updateCategorySizeSubCategories instead.",
+    );
+    throw new Error(
+      "updateSubCategorySizes is deprecated in the new data model",
+    );
   };
 
   return {

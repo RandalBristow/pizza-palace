@@ -29,7 +29,10 @@ interface CategorySizesPageProps {
   updateCategorySize: (id: string, updates: any) => Promise<any>;
   deleteCategorySize: (id: string) => Promise<void>;
   // New function to manage size-to-subcategory relationships
-  updateCategorySizeSubCategories?: (sizeId: string, subCategoryIds: string[]) => Promise<void>;
+  updateCategorySizeSubCategories?: (
+    sizeId: string,
+    subCategoryIds: string[],
+  ) => Promise<void>;
 }
 
 export default function CategorySizesPage({
@@ -42,7 +45,8 @@ export default function CategorySizesPage({
   updateCategorySizeSubCategories,
 }: CategorySizesPageProps) {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
-  const [selectedSubCategoryFilter, setSelectedSubCategoryFilter] = useState("all");
+  const [selectedSubCategoryFilter, setSelectedSubCategoryFilter] =
+    useState("all");
   const [isAddingSize, setIsAddingSize] = useState(false);
   const [newSize, setNewSize] = useState({
     subCategoryId: "",
@@ -60,9 +64,12 @@ export default function CategorySizesPage({
         );
 
   // Get sub-categories for selected category
-  const filteredSubCategories = selectedCategoryFilter === "all"
-    ? subCategories
-    : subCategories.filter(sub => sub.categoryId === selectedCategoryFilter);
+  const filteredSubCategories =
+    selectedCategoryFilter === "all"
+      ? subCategories
+      : subCategories.filter(
+          (sub) => sub.categoryId === selectedCategoryFilter,
+        );
 
   const handleAddSize = async () => {
     try {
@@ -85,7 +92,8 @@ export default function CategorySizesPage({
         <div>
           <h2 className="text-xl font-semibold">Category Sizes</h2>
           <p className="text-gray-600 mt-1">
-            Manage sizes for sub-categories. Sizes now belong to sub-categories and can be assigned to multiple sub-categories.
+            Manage sizes for sub-categories. Sizes now belong to sub-categories
+            and can be assigned to multiple sub-categories.
           </p>
         </div>
         <div className="flex items-center space-x-4">
@@ -142,7 +150,8 @@ export default function CategorySizesPage({
               <DialogHeader>
                 <DialogTitle>Add New Size</DialogTitle>
                 <DialogDescription>
-                  Create a new size for a sub-category. The size will belong to the selected sub-category.
+                  Create a new size for a sub-category. The size will belong to
+                  the selected sub-category.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
@@ -161,9 +170,14 @@ export default function CategorySizesPage({
                       {subCategories
                         .filter((sub) => sub.isActive)
                         .map((subCategory) => {
-                          const parentCategory = categories.find(c => c.id === subCategory.categoryId);
+                          const parentCategory = categories.find(
+                            (c) => c.id === subCategory.categoryId,
+                          );
                           return (
-                            <SelectItem key={subCategory.id} value={subCategory.id}>
+                            <SelectItem
+                              key={subCategory.id}
+                              value={subCategory.id}
+                            >
                               {parentCategory?.name} → {subCategory.name}
                             </SelectItem>
                           );
@@ -199,7 +213,9 @@ export default function CategorySizesPage({
                 </div>
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    <strong>Note:</strong> After creating the size, you can assign it to multiple sub-categories using the Category Sizes management section below.
+                    <strong>Note:</strong> After creating the size, you can
+                    assign it to multiple sub-categories using the Category
+                    Sizes management section below.
                   </p>
                 </div>
                 <div className="flex justify-end space-x-2">

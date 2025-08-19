@@ -67,7 +67,10 @@ interface CategorySizesFormProps {
   createCategorySize: (categorySize: any) => Promise<any>;
   updateCategorySize: (id: string, updates: any) => Promise<any>;
   deleteCategorySize: (id: string) => Promise<void>;
-  updateCategorySizeSubCategories?: (sizeId: string, subCategoryIds: string[]) => Promise<void>;
+  updateCategorySizeSubCategories?: (
+    sizeId: string,
+    subCategoryIds: string[],
+  ) => Promise<void>;
   showTitle?: boolean;
   hideAddButton?: boolean;
 }
@@ -88,7 +91,9 @@ export default function CategorySizesForm({
   const [managingSize, setManagingSize] = useState<CategorySize | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([]);
+  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>(
+    [],
+  );
   const [newSize, setNewSize] = useState({
     subCategoryId: "",
     sizeName: "",
@@ -149,7 +154,9 @@ export default function CategorySizesForm({
 
   const handleManageSubCategories = (size: CategorySize) => {
     setManagingSize(size);
-    const parentSubCategory = subCategories.find(sub => sub.id === size.subCategoryId);
+    const parentSubCategory = subCategories.find(
+      (sub) => sub.id === size.subCategoryId,
+    );
     if (parentSubCategory) {
       setSelectedCategory(parentSubCategory.categoryId);
       setSelectedSubCategory(size.subCategoryId);
@@ -162,7 +169,10 @@ export default function CategorySizesForm({
     if (!managingSize || !updateCategorySizeSubCategories) return;
 
     try {
-      await updateCategorySizeSubCategories(managingSize.id, selectedSubCategories);
+      await updateCategorySizeSubCategories(
+        managingSize.id,
+        selectedSubCategories,
+      );
       setManagingSize(null);
       resetManageForm();
     } catch (error) {
@@ -187,15 +197,19 @@ export default function CategorySizesForm({
 
   const handleSubCategoryToggle = (subCategoryId: string, checked: boolean) => {
     if (checked) {
-      setSelectedSubCategories(prev => [...prev, subCategoryId]);
+      setSelectedSubCategories((prev) => [...prev, subCategoryId]);
     } else {
-      setSelectedSubCategories(prev => prev.filter(id => id !== subCategoryId));
+      setSelectedSubCategories((prev) =>
+        prev.filter((id) => id !== subCategoryId),
+      );
     }
   };
 
   // Get sub-categories for selected category
   const availableSubCategories = selectedCategory
-    ? subCategories.filter(sub => sub.categoryId === selectedCategory && sub.isActive)
+    ? subCategories.filter(
+        (sub) => sub.categoryId === selectedCategory && sub.isActive,
+      )
     : [];
 
   const renderSizeForm = (isEdit: boolean = false) => (
@@ -215,7 +229,9 @@ export default function CategorySizesForm({
             {subCategories
               .filter((sub) => sub.isActive)
               .map((subCategory) => {
-                const parentCategory = categories.find(c => c.id === subCategory.categoryId);
+                const parentCategory = categories.find(
+                  (c) => c.id === subCategory.categoryId,
+                );
                 return (
                   <SelectItem key={subCategory.id} value={subCategory.id}>
                     {parentCategory?.name} → {subCategory.name}
@@ -232,9 +248,7 @@ export default function CategorySizesForm({
           id="sizeName"
           placeholder="e.g., Large, 10-Piece, 12 inch"
           value={newSize.sizeName}
-          onChange={(e) =>
-            setNewSize({ ...newSize, sizeName: e.target.value })
-          }
+          onChange={(e) => setNewSize({ ...newSize, sizeName: e.target.value })}
         />
       </div>
 
@@ -319,12 +333,14 @@ export default function CategorySizesForm({
             {categories.map((category) => {
               // Get sub-categories for this category
               const categorySubCategories = subCategories.filter(
-                sub => sub.categoryId === category.id
+                (sub) => sub.categoryId === category.id,
               );
-              
+
               // Get sizes for all sub-categories in this category
-              const categorySizesForCategory = categorySizes.filter(size =>
-                categorySubCategories.some(sub => sub.id === size.subCategoryId)
+              const categorySizesForCategory = categorySizes.filter((size) =>
+                categorySubCategories.some(
+                  (sub) => sub.id === size.subCategoryId,
+                ),
               );
 
               if (categorySizesForCategory.length === 0) return null;
@@ -335,12 +351,12 @@ export default function CategorySizesForm({
                     <Ruler className="h-5 w-5 mr-2 text-blue-600" />
                     {category.name}
                   </h4>
-                  
-                  {categorySubCategories.map(subCategory => {
+
+                  {categorySubCategories.map((subCategory) => {
                     const sizesForSubCategory = categorySizes.filter(
-                      size => size.subCategoryId === subCategory.id
+                      (size) => size.subCategoryId === subCategory.id,
                     );
-                    
+
                     if (sizesForSubCategory.length === 0) return null;
 
                     return (
@@ -355,7 +371,9 @@ export default function CategorySizesForm({
                               <Card key={size.id}>
                                 <CardContent className="p-4">
                                   <div className="flex justify-between items-start mb-2">
-                                    <h6 className="font-medium">{size.sizeName}</h6>
+                                    <h6 className="font-medium">
+                                      {size.sizeName}
+                                    </h6>
                                     <Badge
                                       className={
                                         size.isActive
@@ -377,7 +395,9 @@ export default function CategorySizesForm({
                                             <Button
                                               variant="outline"
                                               size="sm"
-                                              onClick={() => toggleSizeStatus(size.id)}
+                                              onClick={() =>
+                                                toggleSizeStatus(size.id)
+                                              }
                                             >
                                               {size.isActive ? (
                                                 <ThumbsUp className="h-4 w-4" />
@@ -387,7 +407,9 @@ export default function CategorySizesForm({
                                             </Button>
                                           </TooltipTrigger>
                                           <TooltipContent>
-                                            {size.isActive ? "Deactivate" : "Activate"}
+                                            {size.isActive
+                                              ? "Deactivate"
+                                              : "Activate"}
                                           </TooltipContent>
                                         </Tooltip>
                                       </TooltipProvider>
@@ -397,12 +419,16 @@ export default function CategorySizesForm({
                                             <Button
                                               variant="outline"
                                               size="sm"
-                                              onClick={() => handleEditSize(size)}
+                                              onClick={() =>
+                                                handleEditSize(size)
+                                              }
                                             >
                                               <Edit className="h-4 w-4" />
                                             </Button>
                                           </TooltipTrigger>
-                                          <TooltipContent>Edit Size</TooltipContent>
+                                          <TooltipContent>
+                                            Edit Size
+                                          </TooltipContent>
                                         </Tooltip>
                                       </TooltipProvider>
                                       {updateCategorySizeSubCategories && (
@@ -412,7 +438,11 @@ export default function CategorySizesForm({
                                               <Button
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={() => handleManageSubCategories(size)}
+                                                onClick={() =>
+                                                  handleManageSubCategories(
+                                                    size,
+                                                  )
+                                                }
                                               >
                                                 <Settings className="h-4 w-4" />
                                               </Button>
@@ -430,12 +460,16 @@ export default function CategorySizesForm({
                                           <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => handleDeleteSize(size.id)}
+                                            onClick={() =>
+                                              handleDeleteSize(size.id)
+                                            }
                                           >
                                             <Trash2 className="h-4 w-4" />
                                           </Button>
                                         </TooltipTrigger>
-                                        <TooltipContent>Delete Size</TooltipContent>
+                                        <TooltipContent>
+                                          Delete Size
+                                        </TooltipContent>
                                       </Tooltip>
                                     </TooltipProvider>
                                   </div>
@@ -461,9 +495,7 @@ export default function CategorySizesForm({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Size</DialogTitle>
-            <DialogDescription>
-              Update the size details
-            </DialogDescription>
+            <DialogDescription>Update the size details</DialogDescription>
           </DialogHeader>
           {renderSizeForm(true)}
         </DialogContent>
@@ -476,7 +508,9 @@ export default function CategorySizesForm({
       >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Manage Sub-Categories for "{managingSize?.sizeName}"</DialogTitle>
+            <DialogTitle>
+              Manage Sub-Categories for "{managingSize?.sizeName}"
+            </DialogTitle>
             <DialogDescription>
               Select which sub-categories this size should be available for
             </DialogDescription>
@@ -512,12 +546,18 @@ export default function CategorySizesForm({
                 <Label>Available Sub-Categories</Label>
                 <div className="mt-2 space-y-2 border rounded-lg p-4 max-h-64 overflow-y-auto">
                   {availableSubCategories.map((subCategory) => (
-                    <div key={subCategory.id} className="flex items-center space-x-2">
+                    <div
+                      key={subCategory.id}
+                      className="flex items-center space-x-2"
+                    >
                       <Checkbox
                         id={`subcategory-${subCategory.id}`}
                         checked={selectedSubCategories.includes(subCategory.id)}
                         onCheckedChange={(checked) =>
-                          handleSubCategoryToggle(subCategory.id, checked as boolean)
+                          handleSubCategoryToggle(
+                            subCategory.id,
+                            checked as boolean,
+                          )
                         }
                       />
                       <Label
