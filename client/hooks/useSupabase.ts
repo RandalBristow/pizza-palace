@@ -129,7 +129,7 @@ export const transformCategorySize = (
   dbCategorySize: DatabaseCategorySize,
 ) => ({
   id: dbCategorySize.id,
-  categoryId: dbCategorySize.category_id,
+  subCategoryId: dbCategorySize.sub_category_id, // Changed: now uses sub_category_id
   sizeName: dbCategorySize.size_name,
   displayOrder: dbCategorySize.display_order,
   isActive: dbCategorySize.is_active,
@@ -152,12 +152,12 @@ export const transformAboutSection = (
   isActive: dbAboutSection.is_active,
 });
 
-export const transformSubCategorySize = (
-  dbSubCategorySize: DatabaseSubCategorySize,
+export const transformCategorySizeSubCategory = (
+  dbCategorySizeSubCategory: DatabaseCategorySizeSubCategory,
 ) => ({
-  id: dbSubCategorySize.id,
-  subCategoryId: dbSubCategorySize.sub_category_id,
-  categorySizeId: dbSubCategorySize.category_size_id,
+  id: dbCategorySizeSubCategory.id,
+  categorySizeId: dbCategorySizeSubCategory.category_size_id,
+  subCategoryId: dbCategorySizeSubCategory.sub_category_id,
 });
 
 export const transformToppingSizePrice = (
