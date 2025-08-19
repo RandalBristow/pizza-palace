@@ -182,7 +182,7 @@ export default function MenuCategoryForm({
         <div className="flex items-center space-x-4">
           <Dialog debugName="AddCategory" open={isAddingCategory} onOpenChange={setIsAddingCategory}>
             <DialogTrigger asChild>
-              <Button>
+              <Button onClick={() => setEditingCategory(null)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add Category
               </Button>
