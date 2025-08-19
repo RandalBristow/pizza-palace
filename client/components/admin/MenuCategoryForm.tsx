@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { SimpleModal } from "../ui/simple-modal";
 import {
   Plus,
   Edit,

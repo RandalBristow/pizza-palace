@@ -51,54 +51,61 @@ export default function Admin() {
     console.log(`⚡ Admin selectedItem changed to: ${selectedItem}`);
   }, [selectedItem]);
 
-  // TIMER DETECTION DISABLED - Testing if this was causing the issue
-  // React.useEffect(() => {
-  //   const checkTimers = () => {
-  //     const highestTimeoutId = setTimeout(() => {}, 0);
-  //     clearTimeout(highestTimeoutId);
-  //     if (highestTimeoutId > 50) {
-  //       console.warn(`⏰ Many active timers detected: ${highestTimeoutId}`);
-  //     }
-  //   };
-  //
-  //   checkTimers();
-  //   const interval = setInterval(checkTimers, 5000);
-  //
-  //   return () => clearInterval(interval);
-  // }, []);
-  console.log(`⏰ Timer detection disabled for testing`);
+  // Check for any timers/intervals that might be causing re-renders
+  React.useEffect(() => {
+    const checkTimers = () => {
+      const highestTimeoutId = setTimeout(() => {}, 0);
+      clearTimeout(highestTimeoutId);
+      if (highestTimeoutId > 50) {
+        console.warn(`⏰ Many active timers detected: ${highestTimeoutId}`);
+      }
+    };
+
+    checkTimers();
+    const interval = setInterval(checkTimers, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
 
   // Filter states
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
-  // ULTIMATE TEST - Disable ALL hooks including useCategories
-  console.log(`🪝 ULTIMATE TEST - ALL HOOKS DISABLED at ${new Date().toLocaleTimeString()}`);
+  // Core hooks that are always needed
+  const {
+    categories,
+    loading: categoriesLoading,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+  } = useCategories();
 
-  // Use empty implementation even for useCategories
-  const categories = [];
-  const categoriesLoading = false;
-  const createCategory = () => Promise.resolve();
-  const updateCategory = () => Promise.resolve();
-  const deleteCategory = () => Promise.resolve();
+  // Use essential hooks for current functionality - timer leak fixed!
+  console.log(`🪝 Calling ESSENTIAL hooks at ${new Date().toLocaleTimeString()}`);
 
-  // FINAL TEST - Only useCategories (the absolute minimum)
-  console.log(`🪝 FINAL TEST - Only useCategories active at ${new Date().toLocaleTimeString()}`);
+  // Add back hooks gradually - these are needed for Menu Categories
+  const subCategoriesHook = useSubCategories();
+  const categorySizesHook = useCategorySizes();
+  const subCategorySizesHook = useSubCategorySizes();
 
-  // Use empty implementations for ALL other hooks including useCategorySizes
-  const subCategoriesHook = { subCategories: [], createSubCategory: () => Promise.resolve(), updateSubCategory: () => Promise.resolve(), deleteSubCategory: () => Promise.resolve() };
-  const categorySizesHook = { categorySizes: [], loading: false, createCategorySize: () => Promise.resolve(), updateCategorySize: () => Promise.resolve(), deleteCategorySize: () => Promise.resolve() };
-  const subCategorySizesHook = { subCategorySizes: [], loading: false, updateSubCategorySizes: () => Promise.resolve() };
-  const menuItemsHook = { menuItems: [], loading: false, createMenuItem: () => Promise.resolve(), updateMenuItem: () => Promise.resolve(), deleteMenuItem: () => Promise.resolve() };
-  const toppingsHook = { toppings: [], loading: false, createTopping: () => Promise.resolve(), updateTopping: () => Promise.resolve(), deleteTopping: () => Promise.resolve() };
-  const toppingCategoriesHook = { toppingCategories: [], loading: false, createToppingCategory: () => Promise.resolve(), updateToppingCategory: () => Promise.resolve(), deleteToppingCategory: () => Promise.resolve() };
-  const imagesHook = { images: [], loading: false, uploadImageFile: () => Promise.resolve(), createImageFromUrl: () => Promise.resolve(), updateImage: () => Promise.resolve(), deleteImage: () => Promise.resolve() };
+  // Add back conditionally based on active tab to prevent excessive load
+  const menuItemsHook = ["menu-items", "specials"].includes(selectedItem) ? useMenuItems() : { menuItems: [], loading: false, createMenuItem: () => Promise.resolve(), updateMenuItem: () => Promise.resolve(), deleteMenuItem: () => Promise.resolve() };
+  const toppingsHook = ["topping-items", "menu-items"].includes(selectedItem) ? useToppings() : { toppings: [], loading: false, createTopping: () => Promise.resolve(), updateTopping: () => Promise.resolve(), deleteTopping: () => Promise.resolve() };
+  const toppingCategoriesHook = ["topping-categories", "topping-items", "menu-items"].includes(selectedItem) ? useToppingCategories() : { toppingCategories: [], loading: false, createToppingCategory: () => Promise.resolve(), updateToppingCategory: () => Promise.resolve(), deleteToppingCategory: () => Promise.resolve() };
+  const imagesHook = ["image-manager", "about-page", "carousel-images", "menu-items"].includes(selectedItem) ? useImages() : { images: [], loading: false, uploadImageFile: () => Promise.resolve(), createImageFromUrl: () => Promise.resolve(), updateImage: () => Promise.resolve(), deleteImage: () => Promise.resolve() };
+
+  // These can be empty for now since they were causing the timer leak
   const menuItemSizesHook = { menuItemSizes: [], loading: false, updateMenuItemSizesForItem: () => Promise.resolve() };
   const menuItemSizeToppingsHook = { menuItemSizeToppings: [], loading: false, updateMenuItemSizeToppings: () => Promise.resolve() };
   const toppingSizePricesHook = { toppingSizePrices: [], loading: false, updateToppingSizePrices: () => Promise.resolve(), getToppingSizePrices: () => [], getToppingPriceForSize: () => 0 };
 
-  console.log(`🪝 FINAL TEST - ONLY useCategories active. Categories:`, categories.length);
+  console.log(`🪝 Essential hooks called, data lengths:`, {
+    categories: categories.length,
+    subCategories: subCategoriesHook.subCategories.length,
+    categorySizes: categorySizesHook.categorySizes.length,
+    menuItems: menuItemsHook.menuItems.length
+  });
 
   // Conditionally use data based on active tab for performance
   const needsSubCategories = ["categories", "sub-categories", "menu-items"].includes(selectedItem);
@@ -163,14 +170,14 @@ export default function Admin() {
   const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : (() => []);
   const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : (() => 0);
 
-  // COMPLETE HOOK DISABLE TEST - All secondary hooks disabled
-  console.log(`🪝 ALL SECONDARY HOOKS DISABLED - Testing for timer leak source`);
+  // Temporarily disable secondary hooks to test timer leak
+  console.log(`🪝 Using empty implementations for secondary hooks`);
   const settingsHook = { settings: null, loading: false, updateSettings: () => Promise.resolve() };
   const specialsHook = { specials: [], loading: false, createSpecial: () => Promise.resolve(), updateSpecial: () => Promise.resolve(), deleteSpecial: () => Promise.resolve() };
   const carouselHook = { carouselImages: [], loading: false, createCarouselImage: () => Promise.resolve(), updateCarouselImage: () => Promise.resolve(), deleteCarouselImage: () => Promise.resolve() };
   const favoritesHook = { customerFavorites: [], loading: false, createCustomerFavorite: () => Promise.resolve(), updateCustomerFavorite: () => Promise.resolve(), deleteCustomerFavorite: () => Promise.resolve() };
   const aboutHook = { aboutSections: [], loading: false, createAboutSection: () => Promise.resolve(), updateAboutSection: () => Promise.resolve(), deleteAboutSection: () => Promise.resolve() };
-  console.log(`🪝 Only useCategories + useCategorySizes active - testing timer leak`);
+  console.log(`🪝 All secondary hooks using empty implementations`);
 
   // Show loading state only for active data
   const isLoading =

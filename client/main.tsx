@@ -1,5 +1,4 @@
 import "./global.css";
-import React from "react";
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
 
@@ -36,49 +35,49 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 };
 
 // App component (not exported to avoid HMR issues)
-const App = () => {
-  const renderCount = React.useRef(0);
-  renderCount.current += 1;
-
-  console.log(`🚀 App component render #${renderCount.current} at ${new Date().toLocaleTimeString()}`);
-
-  return (
-    <OrderProvider>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/order" element={<Order />} />
-            <Route path="/wings" element={<Wings />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/specials" element={<Specials />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </OrderProvider>
-  );
-};
+const App = () => (
+  <OrderProvider>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/order" element={<Order />} />
+          <Route path="/wings" element={<Wings />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/specials" element={<Specials />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  </OrderProvider>
+);
 
 // Create root only once and store in a module variable
 const container = document.getElementById("root")!;
 let root = createRoot(container);
 
-// Initial render - StrictMode temporarily disabled for testing
-root.render(<App />);
+// Initial render
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
 
-// HMR COMPLETELY DISABLED for testing dialog flash issue
-// if (import.meta.hot) {
-//   import.meta.hot.accept(() => {
-//     // Re-render with the new App component
-//     root.render(<App />);
-//   });
-// }
-console.log("🔥 HMR completely disabled for testing");
+// Handle hot module replacement properly
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    // Re-render with the new App component
+    root.render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
+  });
+}
