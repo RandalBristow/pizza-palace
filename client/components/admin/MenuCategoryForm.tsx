@@ -95,6 +95,9 @@ export default function MenuCategoryForm({
 }: MenuCategoryFormProps) {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+
+  // Ensure only one dialog can be open at a time
+  const isAnyDialogOpen = isAddingCategory || editingCategory !== null;
   const [newCategory, setNewCategory] = useState({
     name: "",
     isActive: true,
