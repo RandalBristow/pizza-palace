@@ -82,16 +82,12 @@ export default function Admin() {
     deleteCategory,
   } = useCategories();
 
-  // TIMER LEAK HUNT - Test with absolute minimum hooks
-  console.log(`🪝 TIMER LEAK TEST - Using absolute minimum hooks at ${new Date().toLocaleTimeString()}`);
+  // FINAL TEST - Only useCategories (the absolute minimum)
+  console.log(`🪝 FINAL TEST - Only useCategories active at ${new Date().toLocaleTimeString()}`);
 
-  // Test with ONLY the core categories hook to see if timer leak persists
-  console.log(`🪝 About to call useCategorySizes hook...`);
-  const categorySizesHook = useCategorySizes();
-  console.log(`🪝 useCategorySizes completed`);
-
-  // Use empty implementations for everything else
+  // Use empty implementations for ALL other hooks including useCategorySizes
   const subCategoriesHook = { subCategories: [], createSubCategory: () => Promise.resolve(), updateSubCategory: () => Promise.resolve(), deleteSubCategory: () => Promise.resolve() };
+  const categorySizesHook = { categorySizes: [], loading: false, createCategorySize: () => Promise.resolve(), updateCategorySize: () => Promise.resolve(), deleteCategorySize: () => Promise.resolve() };
   const subCategorySizesHook = { subCategorySizes: [], loading: false, updateSubCategorySizes: () => Promise.resolve() };
   const menuItemsHook = { menuItems: [], loading: false, createMenuItem: () => Promise.resolve(), updateMenuItem: () => Promise.resolve(), deleteMenuItem: () => Promise.resolve() };
   const toppingsHook = { toppings: [], loading: false, createTopping: () => Promise.resolve(), updateTopping: () => Promise.resolve(), deleteTopping: () => Promise.resolve() };
@@ -101,7 +97,7 @@ export default function Admin() {
   const menuItemSizeToppingsHook = { menuItemSizeToppings: [], loading: false, updateMenuItemSizeToppings: () => Promise.resolve() };
   const toppingSizePricesHook = { toppingSizePrices: [], loading: false, updateToppingSizePrices: () => Promise.resolve(), getToppingSizePrices: () => [], getToppingPriceForSize: () => 0 };
 
-  console.log(`🪝 TIMER LEAK TEST - Only useCategorySizes active, data length:`, categorySizesHook.categorySizes.length);
+  console.log(`🪝 FINAL TEST - ONLY useCategories active. Categories:`, categories.length);
 
   // Conditionally use data based on active tab for performance
   const needsSubCategories = ["categories", "sub-categories", "menu-items"].includes(selectedItem);
