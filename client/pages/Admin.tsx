@@ -129,12 +129,12 @@ export default function Admin() {
   const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : (() => []);
   const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : (() => 0);
 
-  // Load other hooks only when needed
-  const settingsHook = selectedItemKey === "settings" ? useSettings() : null;
-  const specialsHook = selectedItemKey === "specials" ? useSpecials() : null;
-  const carouselHook = selectedItemKey === "carousel-images" ? useCarouselImages() : null;
-  const favoritesHook = selectedItemKey === "customer-favorites" ? useCustomerFavorites() : null;
-  const aboutHook = selectedItemKey === "about-page" ? useAboutSections() : null;
+  // Always call remaining hooks in same order
+  const settingsHook = useSettings();
+  const specialsHook = useSpecials();
+  const carouselHook = useCarouselImages();
+  const favoritesHook = useCustomerFavorites();
+  const aboutHook = useAboutSections();
 
   // Show loading state only for active data
   const isLoading =
