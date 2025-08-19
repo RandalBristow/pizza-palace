@@ -40,6 +40,33 @@ import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 export default function Admin() {
   const [selectedItem, setSelectedItem] = useState("categories");
 
+  // Debug re-renders
+  const renderCount = React.useRef(0);
+  renderCount.current += 1;
+
+  console.log(`🔄 Admin render #${renderCount.current} at ${new Date().toLocaleTimeString()}`);
+
+  // Track what might be causing re-renders
+  React.useEffect(() => {
+    console.log(`⚡ Admin selectedItem changed to: ${selectedItem}`);
+  }, [selectedItem]);
+
+  // Check for any timers/intervals that might be causing re-renders
+  React.useEffect(() => {
+    const checkTimers = () => {
+      const highestTimeoutId = setTimeout(() => {}, 0);
+      clearTimeout(highestTimeoutId);
+      if (highestTimeoutId > 50) {
+        console.warn(`⏰ Many active timers detected: ${highestTimeoutId}`);
+      }
+    };
+
+    checkTimers();
+    const interval = setInterval(checkTimers, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
 
   // Filter states
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
