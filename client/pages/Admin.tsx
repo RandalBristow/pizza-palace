@@ -66,60 +66,68 @@ export default function Admin() {
   const menuItemSizeToppingsHook = useMenuItemSizeToppings();
   const toppingSizePricesHook = useToppingSizePrices();
 
-  // Extract data with fallbacks
-  const subCategories = subCategoriesHook?.subCategories || [];
-  const createSubCategory = subCategoriesHook?.createSubCategory || (() => Promise.resolve());
-  const updateSubCategory = subCategoriesHook?.updateSubCategory || (() => Promise.resolve());
-  const deleteSubCategory = subCategoriesHook?.deleteSubCategory || (() => Promise.resolve());
+  // Conditionally use data based on active tab for performance
+  const needsSubCategories = ["categories", "sub-categories", "menu-items"].includes(selectedItem);
+  const needsMenuItems = ["menu-items", "specials"].includes(selectedItem);
+  const needsToppings = ["topping-items", "menu-items"].includes(selectedItem);
+  const needsToppingCategories = ["topping-categories", "topping-items", "menu-items"].includes(selectedItem);
+  const needsImages = ["image-manager", "about-page", "carousel-images", "menu-items"].includes(selectedItem);
+  const needsSizeData = ["categories", "category-sizes", "sub-categories", "menu-items", "topping-items"].includes(selectedItem);
 
-  const menuItems = menuItemsHook?.menuItems || [];
-  const menuItemsLoading = menuItemsHook?.loading || false;
-  const createMenuItem = menuItemsHook?.createMenuItem || (() => Promise.resolve());
-  const updateMenuItem = menuItemsHook?.updateMenuItem || (() => Promise.resolve());
-  const deleteMenuItem = menuItemsHook?.deleteMenuItem || (() => Promise.resolve());
+  // Extract data with conditional usage
+  const subCategories = needsSubCategories ? subCategoriesHook.subCategories : [];
+  const createSubCategory = needsSubCategories ? subCategoriesHook.createSubCategory : (() => Promise.resolve());
+  const updateSubCategory = needsSubCategories ? subCategoriesHook.updateSubCategory : (() => Promise.resolve());
+  const deleteSubCategory = needsSubCategories ? subCategoriesHook.deleteSubCategory : (() => Promise.resolve());
 
-  const toppings = toppingsHook?.toppings || [];
-  const toppingsLoading = toppingsHook?.loading || false;
-  const createTopping = toppingsHook?.createTopping || (() => Promise.resolve());
-  const updateTopping = toppingsHook?.updateTopping || (() => Promise.resolve());
-  const deleteTopping = toppingsHook?.deleteTopping || (() => Promise.resolve());
+  const menuItems = needsMenuItems ? menuItemsHook.menuItems : [];
+  const menuItemsLoading = needsMenuItems ? menuItemsHook.loading : false;
+  const createMenuItem = needsMenuItems ? menuItemsHook.createMenuItem : (() => Promise.resolve());
+  const updateMenuItem = needsMenuItems ? menuItemsHook.updateMenuItem : (() => Promise.resolve());
+  const deleteMenuItem = needsMenuItems ? menuItemsHook.deleteMenuItem : (() => Promise.resolve());
 
-  const toppingCategories = toppingCategoriesHook?.toppingCategories || [];
-  const toppingCategoriesLoading = toppingCategoriesHook?.loading || false;
-  const createToppingCategory = toppingCategoriesHook?.createToppingCategory || (() => Promise.resolve());
-  const updateToppingCategory = toppingCategoriesHook?.updateToppingCategory || (() => Promise.resolve());
-  const deleteToppingCategory = toppingCategoriesHook?.deleteToppingCategory || (() => Promise.resolve());
+  const toppings = needsToppings ? toppingsHook.toppings : [];
+  const toppingsLoading = needsToppings ? toppingsHook.loading : false;
+  const createTopping = needsToppings ? toppingsHook.createTopping : (() => Promise.resolve());
+  const updateTopping = needsToppings ? toppingsHook.updateTopping : (() => Promise.resolve());
+  const deleteTopping = needsToppings ? toppingsHook.deleteTopping : (() => Promise.resolve());
 
-  const images = imagesHook?.images || [];
-  const imagesLoading = imagesHook?.loading || false;
-  const uploadImageFile = imagesHook?.uploadImageFile || (() => Promise.resolve());
-  const createImageFromUrl = imagesHook?.createImageFromUrl || (() => Promise.resolve());
-  const updateImage = imagesHook?.updateImage || (() => Promise.resolve());
-  const deleteImage = imagesHook?.deleteImage || (() => Promise.resolve());
+  const toppingCategories = needsToppingCategories ? toppingCategoriesHook.toppingCategories : [];
+  const toppingCategoriesLoading = needsToppingCategories ? toppingCategoriesHook.loading : false;
+  const createToppingCategory = needsToppingCategories ? toppingCategoriesHook.createToppingCategory : (() => Promise.resolve());
+  const updateToppingCategory = needsToppingCategories ? toppingCategoriesHook.updateToppingCategory : (() => Promise.resolve());
+  const deleteToppingCategory = needsToppingCategories ? toppingCategoriesHook.deleteToppingCategory : (() => Promise.resolve());
 
-  const categorySizes = categorySizesHook?.categorySizes || [];
-  const categorySizesLoading = categorySizesHook?.loading || false;
-  const createCategorySize = categorySizesHook?.createCategorySize || (() => Promise.resolve());
-  const updateCategorySize = categorySizesHook?.updateCategorySize || (() => Promise.resolve());
-  const deleteCategorySize = categorySizesHook?.deleteCategorySize || (() => Promise.resolve());
+  const images = needsImages ? imagesHook.images : [];
+  const imagesLoading = needsImages ? imagesHook.loading : false;
+  const uploadImageFile = needsImages ? imagesHook.uploadImageFile : (() => Promise.resolve());
+  const createImageFromUrl = needsImages ? imagesHook.createImageFromUrl : (() => Promise.resolve());
+  const updateImage = needsImages ? imagesHook.updateImage : (() => Promise.resolve());
+  const deleteImage = needsImages ? imagesHook.deleteImage : (() => Promise.resolve());
 
-  const subCategorySizes = subCategorySizesHook?.subCategorySizes || [];
-  const subCategorySizesLoading = subCategorySizesHook?.loading || false;
-  const updateSubCategorySizes = subCategorySizesHook?.updateSubCategorySizes || (() => Promise.resolve());
+  const categorySizes = needsSizeData ? categorySizesHook.categorySizes : [];
+  const categorySizesLoading = needsSizeData ? categorySizesHook.loading : false;
+  const createCategorySize = needsSizeData ? categorySizesHook.createCategorySize : (() => Promise.resolve());
+  const updateCategorySize = needsSizeData ? categorySizesHook.updateCategorySize : (() => Promise.resolve());
+  const deleteCategorySize = needsSizeData ? categorySizesHook.deleteCategorySize : (() => Promise.resolve());
 
-  const menuItemSizes = menuItemSizesHook?.menuItemSizes || [];
-  const menuItemSizesLoading = menuItemSizesHook?.loading || false;
-  const updateMenuItemSizesForItem = menuItemSizesHook?.updateMenuItemSizesForItem || (() => Promise.resolve());
+  const subCategorySizes = needsSizeData ? subCategorySizesHook.subCategorySizes : [];
+  const subCategorySizesLoading = needsSizeData ? subCategorySizesHook.loading : false;
+  const updateSubCategorySizes = needsSizeData ? subCategorySizesHook.updateSubCategorySizes : (() => Promise.resolve());
 
-  const menuItemSizeToppings = menuItemSizeToppingsHook?.menuItemSizeToppings || [];
-  const menuItemSizeTopLoading = menuItemSizeToppingsHook?.loading || false;
-  const updateMenuItemSizeToppings = menuItemSizeToppingsHook?.updateMenuItemSizeToppings || (() => Promise.resolve());
+  const menuItemSizes = needsMenuItems ? menuItemSizesHook.menuItemSizes : [];
+  const menuItemSizesLoading = needsMenuItems ? menuItemSizesHook.loading : false;
+  const updateMenuItemSizesForItem = needsMenuItems ? menuItemSizesHook.updateMenuItemSizesForItem : (() => Promise.resolve());
 
-  const toppingSizePrices = toppingSizePricesHook?.toppingSizePrices || [];
-  const toppingSizePricesLoading = toppingSizePricesHook?.loading || false;
-  const updateToppingSizePrices = toppingSizePricesHook?.updateToppingSizePrices || (() => Promise.resolve());
-  const getToppingSizePrices = toppingSizePricesHook?.getToppingSizePrices || (() => []);
-  const getToppingPriceForSize = toppingSizePricesHook?.getToppingPriceForSize || (() => 0);
+  const menuItemSizeToppings = needsMenuItems ? menuItemSizeToppingsHook.menuItemSizeToppings : [];
+  const menuItemSizeTopLoading = needsMenuItems ? menuItemSizeToppingsHook.loading : false;
+  const updateMenuItemSizeToppings = needsMenuItems ? menuItemSizeToppingsHook.updateMenuItemSizeToppings : (() => Promise.resolve());
+
+  const toppingSizePrices = needsToppings ? toppingSizePricesHook.toppingSizePrices : [];
+  const toppingSizePricesLoading = needsToppings ? toppingSizePricesHook.loading : false;
+  const updateToppingSizePrices = needsToppings ? toppingSizePricesHook.updateToppingSizePrices : (() => Promise.resolve());
+  const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : (() => []);
+  const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : (() => 0);
 
   // Load other hooks only when needed
   const settingsHook = selectedItemKey === "settings" ? useSettings() : null;
