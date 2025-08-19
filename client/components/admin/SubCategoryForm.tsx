@@ -195,7 +195,6 @@ export default function SubCategoryForm({
           value={newSubCategory.categoryId}
           onValueChange={(value) => {
             setNewSubCategory({ ...newSubCategory, categoryId: value });
-            setSelectedSizes([]); // Reset sizes when category changes
           }}
         >
           <SelectTrigger>
@@ -217,7 +216,7 @@ export default function SubCategoryForm({
         <Label htmlFor="subCategoryName">Sub-Category Name</Label>
         <Input
           id="subCategoryName"
-          placeholder="e.g., Build Your Own"
+          placeholder="e.g., Build Your Own, Boneless Wings, Traditional Wings"
           value={newSubCategory.name}
           onChange={(e) =>
             setNewSubCategory({ ...newSubCategory, name: e.target.value })
@@ -241,33 +240,12 @@ export default function SubCategoryForm({
         />
       </div>
 
-      {newSubCategory.categoryId && (
-        <div>
-          <Label>Available Sizes</Label>
-          <div className="mt-2 space-y-2 border rounded-lg p-4">
-            {getAvailableSizes(newSubCategory.categoryId).length === 0 ? (
-              <p className="text-sm text-gray-500">
-                No sizes defined for this category
-              </p>
-            ) : (
-              getAvailableSizes(newSubCategory.categoryId).map((size) => (
-                <div key={size.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`size-${size.id}`}
-                    checked={selectedSizes.includes(size.id)}
-                    onCheckedChange={(checked) =>
-                      handleSizeToggle(size.id, checked as boolean)
-                    }
-                  />
-                  <Label htmlFor={`size-${size.id}`} className="text-sm">
-                    {size.sizeName}
-                  </Label>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
+      <div className="bg-blue-50 p-4 rounded-lg">
+        <p className="text-sm text-blue-800">
+          <strong>Note:</strong> Sizes for this sub-category will be managed in the Category Sizes section.
+          Create the sub-category first, then go to Category Sizes to define which sizes apply to this sub-category.
+        </p>
+      </div>
 
       <div className="flex justify-end space-x-2">
         <Button
