@@ -53,23 +53,6 @@ export default function Admin() {
     deleteCategory,
   } = useCategories();
 
-  // Load data conditionally based on selected tab to improve performance
-  const needsSubCategories = ["categories", "sub-categories", "menu-items"].includes(selectedItem);
-  const needsMenuItems = ["menu-items", "specials"].includes(selectedItem);
-  const needsToppings = ["topping-items", "menu-items"].includes(selectedItem);
-  const needsToppingCategories = ["topping-categories", "topping-items", "menu-items"].includes(selectedItem);
-  const needsImages = ["image-manager", "about-page", "carousel-images", "menu-items"].includes(selectedItem);
-  const needsSizeData = ["categories", "category-sizes", "sub-categories", "menu-items", "topping-items"].includes(selectedItem);
-
-  // Core hooks - always needed
-  const {
-    categories,
-    loading: categoriesLoading,
-    createCategory,
-    updateCategory,
-    deleteCategory,
-  } = useCategories();
-
   // Tab-specific data loading - only for active sections to prevent performance issues
   const selectedItemKey = selectedItem;
 
