@@ -11,7 +11,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const TABLES = {
   CATEGORIES: "categories",
   MENU_SUB_CATEGORIES: "menu_sub_categories",
-  SUB_CATEGORY_SIZES: "sub_category_sizes",
+  CATEGORY_SIZE_SUB_CATEGORIES: "category_size_sub_categories", // New junction table
   CATEGORY_SIZES: "category_sizes",
   MENU_ITEMS: "menu_items",
   MENU_ITEM_SIZES: "menu_item_sizes",
@@ -161,7 +161,7 @@ export interface DatabaseMenuSubCategory {
 
 export interface DatabaseCategorySize {
   id: string;
-  category_id: string;
+  sub_category_id: string; // Changed: now belongs to sub-category
   size_name: string;
   display_order: number;
   is_active: boolean;
@@ -187,10 +187,10 @@ export interface DatabaseMenuItemSizeTopping {
   updated_at: string;
 }
 
-export interface DatabaseSubCategorySize {
+export interface DatabaseCategorySizeSubCategory {
   id: string;
-  sub_category_id: string;
   category_size_id: string;
+  sub_category_id: string;
   created_at: string;
 }
 
