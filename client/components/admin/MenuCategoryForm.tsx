@@ -325,9 +325,9 @@ export default function MenuCategoryForm({
       {/* Edit Category Dialog - Only render when needed */}
       {editingCategory && !isAddingCategory && (
         <Dialog
-          debugName="EditCategory"
           open={true}
           onOpenChange={(open) => !open && setEditingCategory(null)}
+          modal={false}
         >
         <DialogContent>
           <DialogHeader>
