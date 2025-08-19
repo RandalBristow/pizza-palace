@@ -344,6 +344,7 @@ export default function MenuCategoryForm({
 
       {/* Edit Category Dialog */}
       <Dialog
+        debugName="EditCategoryDialog"
         open={editingCategory !== null}
         onOpenChange={(open) => !open && setEditingCategory(null)}
       >
