@@ -1,5 +1,6 @@
 import "./global.css";
 import { createRoot } from "react-dom/client";
+import { StrictMode } from "react";
 
 // Import comprehensive ResizeObserver error fix
 import "./utils/resizeObserverFix";
@@ -33,7 +34,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const App = () => (
+// Export App component for HMR compatibility
+export const App = () => (
   <OrderProvider>
     <BrowserRouter>
       <Layout>
@@ -57,13 +59,25 @@ const App = () => (
   </OrderProvider>
 );
 
+// Create root only once and store in a module variable
 const container = document.getElementById("root")!;
-const root = createRoot(container);
-root.render(<App />);
+let root = createRoot(container);
 
-// Handle hot module replacement in development - temporarily disabled for debugging
-// if (import.meta.hot) {
-//   import.meta.hot.dispose(() => {
-//     root.unmount();
-//   });
-// }
+// Initial render
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+
+// Handle hot module replacement properly
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    // Re-render with the new App component
+    root.render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
+  });
+}
