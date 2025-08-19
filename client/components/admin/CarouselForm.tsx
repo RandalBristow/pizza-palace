@@ -27,7 +27,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import ImageSelector from "../ui/image-selector";
-import { useImages } from "../../hooks/useSupabase";
 
 export interface CarouselImage {
   id: string;
@@ -41,6 +40,7 @@ export interface CarouselImage {
 
 interface CarouselFormProps {
   carouselImages: CarouselImage[];
+  images?: any[];
   createCarouselImage: (carouselImage: any) => Promise<any>;
   updateCarouselImage: (id: string, updates: any) => Promise<any>;
   deleteCarouselImage: (id: string) => Promise<void>;
@@ -48,6 +48,7 @@ interface CarouselFormProps {
 
 export default function CarouselForm({
   carouselImages,
+  images = [],
   createCarouselImage,
   updateCarouselImage,
   deleteCarouselImage,
@@ -55,7 +56,6 @@ export default function CarouselForm({
   const [isAddingCarouselImage, setIsAddingCarouselImage] = useState(false);
   const [editingCarouselImage, setEditingCarouselImage] =
     useState<CarouselImage | null>(null);
-  const { images } = useImages();
   const [newCarouselImage, setNewCarouselImage] = useState({
     url: "",
     title: "",
