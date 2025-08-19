@@ -88,6 +88,7 @@ interface MenuItemFormProps {
   menuItemSizes?: any[];
   menuItemSizeToppings?: any[];
   toppingSizePrices?: any[];
+  images?: any[];
   selectedMenuCategory: string;
   onSelectedCategoryChange: (category: string) => void;
   createMenuItem: (menuItem: any) => Promise<any>;
