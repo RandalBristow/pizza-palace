@@ -4,27 +4,8 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-// Debug wrapper to track dialog re-renders
-const DebugDialog = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root> & { debugName?: string }
->(({ debugName, children, ...props }, ref) => {
-  const renderCount = React.useRef(0);
-  renderCount.current += 1;
-
-  React.useEffect(() => {
-    console.log(`🚪 Dialog "${debugName || 'unknown'}" render #${renderCount.current} at ${new Date().toLocaleTimeString()}`);
-  });
-
-  return (
-    <DialogPrimitive.Root ref={ref} {...props}>
-      {children}
-    </DialogPrimitive.Root>
-  );
-});
-DebugDialog.displayName = "DebugDialog";
-
-const Dialog = DebugDialog;
+// Use direct Radix Dialog without debug wrapper
+const Dialog = DialogPrimitive.Root;
 
 const DialogTrigger = DialogPrimitive.Trigger;
 
