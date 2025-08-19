@@ -36,7 +36,6 @@ import ImageManagerForm from "../components/admin/ImageManagerForm";
 import DatabaseSetup from "../components/admin/DatabaseSetup";
 import CategorySizesPage from "../components/admin/CategorySizesPage";
 import SubCategoriesPage from "../components/admin/SubCategoriesPage";
-import { debugDialog, useRenderTracker, checkForTimers } from "../utils/debugDialog";
 
 export default function Admin() {
   // Debugging
