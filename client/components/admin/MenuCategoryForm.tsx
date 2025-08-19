@@ -116,6 +116,9 @@ export default function MenuCategoryForm({
   };
 
   const handleEditCategory = (category: Category) => {
+    // Close add dialog if open
+    setIsAddingCategory(false);
+
     setEditingCategory(category);
     setNewCategory({
       name: category.name,
