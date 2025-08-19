@@ -23,42 +23,53 @@ import { Category } from "./MenuCategoryForm";
 
 interface CategorySizesPageProps {
   categories: Category[];
+  subCategories: any[];
   categorySizes: any[];
   createCategorySize: (categorySize: any) => Promise<any>;
   updateCategorySize: (id: string, updates: any) => Promise<any>;
   deleteCategorySize: (id: string) => Promise<void>;
+  // New function to manage size-to-subcategory relationships
+  updateCategorySizeSubCategories?: (sizeId: string, subCategoryIds: string[]) => Promise<void>;
 }
 
 export default function CategorySizesPage({
   categories,
+  subCategories,
   categorySizes,
   createCategorySize,
   updateCategorySize,
   deleteCategorySize,
+  updateCategorySizeSubCategories,
 }: CategorySizesPageProps) {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
+  const [selectedSubCategoryFilter, setSelectedSubCategoryFilter] = useState("all");
   const [isAddingSize, setIsAddingSize] = useState(false);
   const [newSize, setNewSize] = useState({
-    categoryId: "",
+    subCategoryId: "",
     sizeName: "",
     displayOrder: 1,
     isActive: true,
   });
 
-  // Filter sizes by category
+  // Filter sizes by sub-category (new model: sizes belong to sub-categories)
   const filteredCategorySizes =
-    selectedCategoryFilter === "all"
+    selectedSubCategoryFilter === "all"
       ? categorySizes
       : categorySizes.filter(
-          (size) => size.categoryId === selectedCategoryFilter,
+          (size) => size.subCategoryId === selectedSubCategoryFilter,
         );
+
+  // Get sub-categories for selected category
+  const filteredSubCategories = selectedCategoryFilter === "all"
+    ? subCategories
+    : subCategories.filter(sub => sub.categoryId === selectedCategoryFilter);
 
   const handleAddSize = async () => {
     try {
       await createCategorySize(newSize);
       setIsAddingSize(false);
       setNewSize({
-        categoryId: "",
+        subCategoryId: "",
         sizeName: "",
         displayOrder: 1,
         isActive: true,
@@ -74,13 +85,16 @@ export default function CategorySizesPage({
         <div>
           <h2 className="text-xl font-semibold">Category Sizes</h2>
           <p className="text-gray-600 mt-1">
-            Manage sizes for each menu category (e.g., Small, Medium, Large)
+            Manage sizes for sub-categories. Sizes now belong to sub-categories and can be assigned to multiple sub-categories.
           </p>
         </div>
         <div className="flex items-center space-x-4">
           <Select
             value={selectedCategoryFilter}
-            onValueChange={setSelectedCategoryFilter}
+            onValueChange={(value) => {
+              setSelectedCategoryFilter(value);
+              setSelectedSubCategoryFilter("all"); // Reset sub-category when category changes
+            }}
           >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Filter by category" />
@@ -94,6 +108,23 @@ export default function CategorySizesPage({
                     {category.name}
                   </SelectItem>
                 ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={selectedSubCategoryFilter}
+            onValueChange={setSelectedSubCategoryFilter}
+            disabled={selectedCategoryFilter === "all"}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by sub-category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Sub-Categories</SelectItem>
+              {filteredSubCategories.map((subCategory) => (
+                <SelectItem key={subCategory.id} value={subCategory.id}>
+                  {subCategory.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Dialog
