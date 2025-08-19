@@ -54,20 +54,17 @@ export default function Admin() {
     deleteCategory,
   } = useCategories();
 
-  // Tab-specific data loading - only for active sections to prevent performance issues
-  const selectedItemKey = selectedItem;
-
-  // Load data based on active tab
-  const subCategoriesHook = selectedItemKey === "categories" || selectedItemKey === "sub-categories" || selectedItemKey === "menu-items" ? useSubCategories() : null;
-  const menuItemsHook = selectedItemKey === "menu-items" || selectedItemKey === "specials" ? useMenuItems() : null;
-  const toppingsHook = selectedItemKey === "topping-items" || selectedItemKey === "menu-items" ? useToppings() : null;
-  const toppingCategoriesHook = selectedItemKey === "topping-categories" || selectedItemKey === "topping-items" || selectedItemKey === "menu-items" ? useToppingCategories() : null;
-  const imagesHook = selectedItemKey === "image-manager" || selectedItemKey === "about-page" || selectedItemKey === "carousel-images" || selectedItemKey === "menu-items" ? useImages() : null;
-  const categorySizesHook = selectedItemKey === "categories" || selectedItemKey === "category-sizes" || selectedItemKey === "sub-categories" || selectedItemKey === "menu-items" || selectedItemKey === "topping-items" ? useCategorySizes() : null;
-  const subCategorySizesHook = selectedItemKey === "categories" || selectedItemKey === "category-sizes" || selectedItemKey === "sub-categories" || selectedItemKey === "menu-items" || selectedItemKey === "topping-items" ? useSubCategorySizes() : null;
-  const menuItemSizesHook = selectedItemKey === "menu-items" || selectedItemKey === "specials" ? useMenuItemSizes() : null;
-  const menuItemSizeToppingsHook = selectedItemKey === "menu-items" ? useMenuItemSizeToppings() : null;
-  const toppingSizePricesHook = selectedItemKey === "topping-items" || selectedItemKey === "menu-items" ? useToppingSizePrices() : null;
+  // Always call all hooks in same order - conditionally use data for performance optimization
+  const subCategoriesHook = useSubCategories();
+  const menuItemsHook = useMenuItems();
+  const toppingsHook = useToppings();
+  const toppingCategoriesHook = useToppingCategories();
+  const imagesHook = useImages();
+  const categorySizesHook = useCategorySizes();
+  const subCategorySizesHook = useSubCategorySizes();
+  const menuItemSizesHook = useMenuItemSizes();
+  const menuItemSizeToppingsHook = useMenuItemSizeToppings();
+  const toppingSizePricesHook = useToppingSizePrices();
 
   // Extract data with fallbacks
   const subCategories = subCategoriesHook?.subCategories || [];
