@@ -328,7 +328,6 @@ export default function MenuItemForm({
 
   const getAvailableSizes = (categoryId: string, subCategoryId?: string) => {
     if (!subCategoryId) {
-      console.log("getAvailableSizes: No subCategoryId provided");
       return [];
     }
 
@@ -336,14 +335,6 @@ export default function MenuItemForm({
     const subCategorySizeIds = subCategorySizes
       .filter((scs) => scs.subCategoryId === subCategoryId)
       .map((scs) => scs.categorySizeId);
-
-    console.log("getAvailableSizes debug:", {
-      categoryId,
-      subCategoryId,
-      subCategorySizes,
-      subCategorySizeIds,
-      categorySizes: categorySizes.filter((s) => s.categoryId === categoryId),
-    });
 
     const availableSizes = categorySizes
       .filter(
@@ -354,7 +345,6 @@ export default function MenuItemForm({
       )
       .sort((a, b) => a.displayOrder - b.displayOrder);
 
-    console.log("getAvailableSizes result:", availableSizes);
     return availableSizes;
   };
 
