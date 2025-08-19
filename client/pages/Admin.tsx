@@ -39,6 +39,9 @@ import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 import { debugDialog, useRenderTracker, checkForTimers } from "../utils/debugDialog";
 
 export default function Admin() {
+  // Debugging
+  const renderCount = useRenderTracker("Admin");
+
   const [selectedItem, setSelectedItem] = useState("categories");
 
   // Filter states
