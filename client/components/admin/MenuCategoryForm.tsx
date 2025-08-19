@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -28,6 +28,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { debugDialog, useRenderTracker, checkForTimers } from "../../utils/debugDialog";
 // Removed hook imports - data will be passed as props
 
 export interface Category {
