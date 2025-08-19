@@ -119,6 +119,7 @@ export default function MenuItemForm({
   menuItemSizes = [],
   menuItemSizeToppings = [],
   toppingSizePrices = [],
+  images = [],
   selectedMenuCategory,
   onSelectedCategoryChange,
   createMenuItem,
@@ -130,7 +131,6 @@ export default function MenuItemForm({
 }: MenuItemFormProps) {
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
-  const { images } = useImages();
   const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({
     name: "",
     description: "",
