@@ -167,18 +167,14 @@ export default function Admin() {
   const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : (() => []);
   const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : (() => 0);
 
-  // Always call remaining hooks in same order - check for timer leaks
-  console.log(`🪝 About to call settings hook`);
-  const settingsHook = useSettings();
-  console.log(`🪝 About to call specials hook`);
-  const specialsHook = useSpecials();
-  console.log(`🪝 About to call carousel hook`);
-  const carouselHook = useCarouselImages();
-  console.log(`🪝 About to call favorites hook`);
-  const favoritesHook = useCustomerFavorites();
-  console.log(`🪝 About to call about hook`);
-  const aboutHook = useAboutSections();
-  console.log(`🪝 All secondary hooks completed`);
+  // Temporarily disable secondary hooks to test timer leak
+  console.log(`🪝 Using empty implementations for secondary hooks`);
+  const settingsHook = { settings: null, loading: false, updateSettings: () => Promise.resolve() };
+  const specialsHook = { specials: [], loading: false, createSpecial: () => Promise.resolve(), updateSpecial: () => Promise.resolve(), deleteSpecial: () => Promise.resolve() };
+  const carouselHook = { carouselImages: [], loading: false, createCarouselImage: () => Promise.resolve(), updateCarouselImage: () => Promise.resolve(), deleteCarouselImage: () => Promise.resolve() };
+  const favoritesHook = { customerFavorites: [], loading: false, createCustomerFavorite: () => Promise.resolve(), updateCustomerFavorite: () => Promise.resolve(), deleteCustomerFavorite: () => Promise.resolve() };
+  const aboutHook = { aboutSections: [], loading: false, createAboutSection: () => Promise.resolve(), updateAboutSection: () => Promise.resolve(), deleteAboutSection: () => Promise.resolve() };
+  console.log(`🪝 All secondary hooks using empty implementations`);
 
   // Show loading state only for active data
   const isLoading =
