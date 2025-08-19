@@ -351,6 +351,7 @@ export default function Admin() {
             menuItemSizes={menuItemSizes}
             menuItemSizeToppings={menuItemSizeToppings}
             toppingSizePrices={toppingSizePrices}
+            images={images}
             selectedMenuCategory={selectedMenuCategory}
             onSelectedCategoryChange={setSelectedMenuCategory}
             createMenuItem={createMenuItem}
