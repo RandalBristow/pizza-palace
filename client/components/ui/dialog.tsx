@@ -4,29 +4,7 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-// Wrapper for Dialog with stabilized onOpenChange
-const StabilizedDialog = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>
->(({ open, onOpenChange, children, ...props }, ref) => {
-  const handleOpenChange = React.useCallback((newOpen: boolean) => {
-    onOpenChange?.(newOpen);
-  }, [onOpenChange]);
-
-  return (
-    <DialogPrimitive.Root
-      ref={ref}
-      open={open}
-      onOpenChange={handleOpenChange}
-      {...props}
-    >
-      {children}
-    </DialogPrimitive.Root>
-  );
-});
-StabilizedDialog.displayName = "StabilizedDialog";
-
-const Dialog = StabilizedDialog;
+const Dialog = DialogPrimitive.Root;
 
 const DialogTrigger = DialogPrimitive.Trigger;
 
