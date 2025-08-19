@@ -59,25 +59,40 @@ const App = () => (
   </OrderProvider>
 );
 
-// Create root only once and store in a module variable
+// Proper root management to prevent duplicate createRoot calls
 const container = document.getElementById("root")!;
-let root = createRoot(container);
+
+// Check if root already exists on the container to prevent duplicate createRoot calls
+let root = (container as any)._reactRoot;
+
+if (!root) {
+  root = createRoot(container);
+  // Store root reference on container to persist across HMR
+  (container as any)._reactRoot = root;
+}
+
+// Render function
+const renderApp = () => {
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
+};
 
 // Initial render
-root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+renderApp();
 
 // Handle hot module replacement properly
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
-    // Re-render with the new App component
-    root.render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    );
+    // Just re-render with the existing root
+    renderApp();
+  });
+
+  // Clean up on module dispose
+  import.meta.hot.dispose(() => {
+    // Don't unmount the root, just let it be reused
+    console.log("HMR: Module disposed, keeping root for reuse");
   });
 }
