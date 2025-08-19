@@ -142,11 +142,11 @@ export default function Admin() {
     menuItemSizesLoading ||
     menuItemSizeTopLoading ||
     toppingSizePricesLoading ||
-    settingsHook.loading ||
-    specialsHook.loading ||
-    carouselHook.loading ||
-    favoritesHook.loading ||
-    aboutHook.loading;
+    (settingsHook?.loading || false) ||
+    (specialsHook?.loading || false) ||
+    (carouselHook?.loading || false) ||
+    (favoritesHook?.loading || false) ||
+    (aboutHook?.loading || false);
 
 
   if (isLoading) {
