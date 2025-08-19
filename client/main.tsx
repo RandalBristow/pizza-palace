@@ -34,8 +34,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Export App component for HMR compatibility
-export const App = () => (
+// App component (not exported to avoid HMR issues)
+const App = () => (
   <OrderProvider>
     <BrowserRouter>
       <Layout>
