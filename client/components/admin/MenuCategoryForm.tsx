@@ -105,6 +105,31 @@ export default function MenuCategoryForm({
     order: 1,
   });
 
+  // Debug dialog state changes
+  useEffect(() => {
+    debugDialog.logStateChange("MenuCategoryForm", "isAddingCategory", !isAddingCategory, isAddingCategory);
+    if (isAddingCategory) {
+      debugDialog.logDialogOpen("Add Category Dialog");
+      checkForTimers();
+    } else {
+      debugDialog.logDialogClose("Add Category Dialog");
+    }
+  }, [isAddingCategory]);
+
+  useEffect(() => {
+    debugDialog.logStateChange("MenuCategoryForm", "editingCategory", null, editingCategory);
+    if (editingCategory) {
+      debugDialog.logDialogOpen("Edit Category Dialog");
+    } else {
+      debugDialog.logDialogClose("Edit Category Dialog");
+    }
+  }, [editingCategory]);
+
+  // Track component re-renders
+  useEffect(() => {
+    debugDialog.logEffect("MenuCategoryForm", "props change", [categories.length, renderCount]);
+  }, [categories, renderCount]);
+
   const handleAddCategory = async () => {
     try {
       await createCategory(newCategory);
