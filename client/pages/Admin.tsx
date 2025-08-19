@@ -82,6 +82,7 @@ export default function Admin() {
   } = useCategories();
 
   // Always call all hooks in same order - conditionally use data for performance optimization
+  console.log(`🪝 Calling hooks at ${new Date().toLocaleTimeString()}`);
   const subCategoriesHook = useSubCategories();
   const menuItemsHook = useMenuItems();
   const toppingsHook = useToppings();
@@ -92,6 +93,15 @@ export default function Admin() {
   const menuItemSizesHook = useMenuItemSizes();
   const menuItemSizeToppingsHook = useMenuItemSizeToppings();
   const toppingSizePricesHook = useToppingSizePrices();
+  console.log(`🪝 All hooks called, data lengths:`, {
+    categories: categories.length,
+    subCategories: subCategoriesHook.subCategories.length,
+    menuItems: menuItemsHook.menuItems.length,
+    toppings: toppingsHook.toppings.length,
+    toppingCategories: toppingCategoriesHook.toppingCategories.length,
+    images: imagesHook.images.length,
+    categorySizes: categorySizesHook.categorySizes.length
+  });
 
   // Conditionally use data based on active tab for performance
   const needsSubCategories = ["categories", "sub-categories", "menu-items"].includes(selectedItem);
