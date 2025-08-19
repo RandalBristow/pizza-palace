@@ -135,29 +135,22 @@ export default function Admin() {
   const aboutHook = selectedItem === "about-page" ? useAboutSections() : { aboutSections: [], loading: false, createAboutSection: () => Promise.resolve(), updateAboutSection: () => Promise.resolve(), deleteAboutSection: () => Promise.resolve() };
 
   // Show loading state only for active data
-  const isLoading = useMemo(() => {
-    return categoriesLoading ||
-           menuItemsLoading ||
-           toppingsLoading ||
-           toppingCategoriesLoading ||
-           imagesLoading ||
-           categorySizesLoading ||
-           subCategorySizesLoading ||
-           menuItemSizesLoading ||
-           menuItemSizeTopLoading ||
-           toppingSizePricesLoading ||
-           settingsHook.loading ||
-           specialsHook.loading ||
-           carouselHook.loading ||
-           favoritesHook.loading ||
-           aboutHook.loading;
-  }, [
-    categoriesLoading, menuItemsLoading, toppingsLoading, toppingCategoriesLoading,
-    imagesLoading, categorySizesLoading, subCategorySizesLoading, menuItemSizesLoading,
-    menuItemSizeTopLoading, toppingSizePricesLoading, selectedItem,
-    settingsHook.loading, specialsHook.loading, carouselHook.loading,
-    favoritesHook.loading, aboutHook.loading
-  ]);
+  const isLoading =
+    categoriesLoading ||
+    menuItemsLoading ||
+    toppingsLoading ||
+    toppingCategoriesLoading ||
+    imagesLoading ||
+    categorySizesLoading ||
+    subCategorySizesLoading ||
+    menuItemSizesLoading ||
+    menuItemSizeTopLoading ||
+    toppingSizePricesLoading ||
+    settingsHook.loading ||
+    specialsHook.loading ||
+    carouselHook.loading ||
+    favoritesHook.loading ||
+    aboutHook.loading;
 
 
   if (isLoading) {
