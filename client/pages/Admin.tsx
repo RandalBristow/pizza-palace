@@ -427,6 +427,7 @@ export default function Admin() {
         return (
           <CarouselForm
             carouselImages={carouselImages}
+            images={images}
             createCarouselImage={createCarouselImage}
             updateCarouselImage={updateCarouselImage}
             deleteCarouselImage={deleteCarouselImage}
