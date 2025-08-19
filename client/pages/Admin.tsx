@@ -408,6 +408,7 @@ export default function Admin() {
         return (
           <AboutPageForm
             aboutSections={aboutSections}
+            images={images}
             createAboutSection={createAboutSection}
             updateAboutSection={updateAboutSection}
             deleteAboutSection={deleteAboutSection}
