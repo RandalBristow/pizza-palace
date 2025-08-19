@@ -51,6 +51,22 @@ export default function Admin() {
     console.log(`⚡ Admin selectedItem changed to: ${selectedItem}`);
   }, [selectedItem]);
 
+  // Check for any timers/intervals that might be causing re-renders
+  React.useEffect(() => {
+    const checkTimers = () => {
+      const highestTimeoutId = setTimeout(() => {}, 0);
+      clearTimeout(highestTimeoutId);
+      if (highestTimeoutId > 50) {
+        console.warn(`⏰ Many active timers detected: ${highestTimeoutId}`);
+      }
+    };
+
+    checkTimers();
+    const interval = setInterval(checkTimers, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Filter states
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
