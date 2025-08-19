@@ -104,7 +104,6 @@ export default function MenuCategoryForm({
     order: 1,
   });
 
-
   const handleAddCategory = async () => {
     try {
       await createCategory(newCategory);
@@ -166,8 +165,12 @@ export default function MenuCategoryForm({
     const hasToppingCategories = toppingCategories.some(
       (tc) => tc.menuItemCategory === categoryId,
     );
-    const hasSizes = categorySizes.some((size) => size.categoryId === categoryId);
-    return !hasMenuItems && !hasSubCategories && !hasToppingCategories && !hasSizes;
+    const hasSizes = categorySizes.some(
+      (size) => size.categoryId === categoryId,
+    );
+    return (
+      !hasMenuItems && !hasSubCategories && !hasToppingCategories && !hasSizes
+    );
   };
 
   return (
@@ -182,63 +185,63 @@ export default function MenuCategoryForm({
         <div className="flex items-center space-x-4">
           {!editingCategory && (
             <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setEditingCategory(null)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Category
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Category</DialogTitle>
-                <DialogDescription>
-                  Create a new menu category
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="categoryName">Category Name</Label>
-                  <Input
-                    id="categoryName"
-                    placeholder="e.g., Appetizers"
-                    value={newCategory.name}
-                    onChange={(e) =>
-                      setNewCategory({ ...newCategory, name: e.target.value })
-                    }
-                  />
+              <DialogTrigger asChild>
+                <Button onClick={() => setEditingCategory(null)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Category
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Category</DialogTitle>
+                  <DialogDescription>
+                    Create a new menu category
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="categoryName">Category Name</Label>
+                    <Input
+                      id="categoryName"
+                      placeholder="e.g., Appetizers"
+                      value={newCategory.name}
+                      onChange={(e) =>
+                        setNewCategory({ ...newCategory, name: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="categoryOrder">Display Order</Label>
+                    <Input
+                      id="categoryOrder"
+                      type="number"
+                      placeholder="1"
+                      value={newCategory.order}
+                      onChange={(e) =>
+                        setNewCategory({
+                          ...newCategory,
+                          order: parseInt(e.target.value) || 1,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsAddingCategory(false);
+                        setNewCategory({ name: "", isActive: true, order: 1 });
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddCategory}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Category
+                    </Button>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="categoryOrder">Display Order</Label>
-                  <Input
-                    id="categoryOrder"
-                    type="number"
-                    placeholder="1"
-                    value={newCategory.order}
-                    onChange={(e) =>
-                      setNewCategory({
-                        ...newCategory,
-                        order: parseInt(e.target.value) || 1,
-                      })
-                    }
-                  />
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setIsAddingCategory(false);
-                      setNewCategory({ name: "", isActive: true, order: 1 });
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddCategory}>
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Category
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
+              </DialogContent>
             </Dialog>
           )}
         </div>
@@ -328,57 +331,55 @@ export default function MenuCategoryForm({
           open={true}
           onOpenChange={(open) => !open && setEditingCategory(null)}
         >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Category</DialogTitle>
-            <DialogDescription>
-              Update the category details
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="editCategoryName">Category Name</Label>
-              <Input
-                id="editCategoryName"
-                placeholder="e.g., Appetizers"
-                value={newCategory.name}
-                onChange={(e) =>
-                  setNewCategory({ ...newCategory, name: e.target.value })
-                }
-              />
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Category</DialogTitle>
+              <DialogDescription>Update the category details</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="editCategoryName">Category Name</Label>
+                <Input
+                  id="editCategoryName"
+                  placeholder="e.g., Appetizers"
+                  value={newCategory.name}
+                  onChange={(e) =>
+                    setNewCategory({ ...newCategory, name: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="editCategoryOrder">Display Order</Label>
+                <Input
+                  id="editCategoryOrder"
+                  type="number"
+                  placeholder="1"
+                  value={newCategory.order}
+                  onChange={(e) =>
+                    setNewCategory({
+                      ...newCategory,
+                      order: parseInt(e.target.value) || 1,
+                    })
+                  }
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setEditingCategory(null);
+                    setNewCategory({ name: "", isActive: true, order: 1 });
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdateCategory}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Update Category
+                </Button>
+              </div>
             </div>
-            <div>
-              <Label htmlFor="editCategoryOrder">Display Order</Label>
-              <Input
-                id="editCategoryOrder"
-                type="number"
-                placeholder="1"
-                value={newCategory.order}
-                onChange={(e) =>
-                  setNewCategory({
-                    ...newCategory,
-                    order: parseInt(e.target.value) || 1,
-                  })
-                }
-              />
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setEditingCategory(null);
-                  setNewCategory({ name: "", isActive: true, order: 1 });
-                }}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleUpdateCategory}>
-                <Save className="h-4 w-4 mr-2" />
-                Update Category
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
+          </DialogContent>
         </Dialog>
       )}
     </div>

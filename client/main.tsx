@@ -75,7 +75,7 @@ if (!root) {
 root.render(
   <StrictMode>
     <App />
-  </StrictMode>
+  </StrictMode>,
 );
 
 // Handle hot module replacement properly
@@ -85,7 +85,7 @@ if (import.meta.hot) {
     root.render(
       <StrictMode>
         <App />
-      </StrictMode>
+      </StrictMode>,
     );
   });
 }

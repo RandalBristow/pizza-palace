@@ -46,9 +46,12 @@ export default function CategorySizesPage({
   });
 
   // Filter sizes by category
-  const filteredCategorySizes = selectedCategoryFilter === "all"
-    ? categorySizes
-    : categorySizes.filter(size => size.categoryId === selectedCategoryFilter);
+  const filteredCategorySizes =
+    selectedCategoryFilter === "all"
+      ? categorySizes
+      : categorySizes.filter(
+          (size) => size.categoryId === selectedCategoryFilter,
+        );
 
   const handleAddSize = async () => {
     try {
@@ -93,7 +96,11 @@ export default function CategorySizesPage({
                 ))}
             </SelectContent>
           </Select>
-          <Dialog debugName="AddCategorySize" open={isAddingSize} onOpenChange={setIsAddingSize}>
+          <Dialog
+            debugName="AddCategorySize"
+            open={isAddingSize}
+            onOpenChange={setIsAddingSize}
+          >
             <DialogTrigger asChild>
               <Button disabled={categories.length === 0}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -104,7 +111,8 @@ export default function CategorySizesPage({
               <DialogHeader>
                 <DialogTitle>Add New Size</DialogTitle>
                 <DialogDescription>
-                  Create a new size for a category (e.g., pizza sizes, wing quantities)
+                  Create a new size for a category (e.g., pizza sizes, wing
+                  quantities)
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">

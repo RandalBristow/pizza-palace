@@ -40,7 +40,6 @@ import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 export default function Admin() {
   const [selectedItem, setSelectedItem] = useState("categories");
 
-
   // Filter states
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
@@ -110,11 +109,7 @@ export default function Admin() {
     deleteCustomerFavorite,
   } = useCustomerFavorites();
 
-  const {
-    settings,
-    loading: settingsLoading,
-    updateSettings,
-  } = useSettings();
+  const { settings, loading: settingsLoading, updateSettings } = useSettings();
 
   const {
     aboutSections,
@@ -185,7 +180,6 @@ export default function Admin() {
     menuItemSizeToppingsLoading ||
     toppingSizePricesLoading;
 
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -232,35 +226,33 @@ export default function Admin() {
             <h2 class="category-title">${category.name}</h2>
             ${menuItems
               .filter((item) => item.category === category.id && item.isActive)
-              .map(
-                (item) => {
-                  // Get pricing based on size-based pricing structure
-                  const itemSizes = menuItemSizes.filter(
-                    (ms) => ms.menu_item_id === item.id,
-                  );
-                  let priceDisplay = "Price Available";
+              .map((item) => {
+                // Get pricing based on size-based pricing structure
+                const itemSizes = menuItemSizes.filter(
+                  (ms) => ms.menu_item_id === item.id,
+                );
+                let priceDisplay = "Price Available";
 
-                  if (itemSizes.length > 0) {
-                    const prices = itemSizes.map((itemSize) => itemSize.price);
-                    const minPrice = Math.min(...prices);
-                    const maxPrice = Math.max(...prices);
+                if (itemSizes.length > 0) {
+                  const prices = itemSizes.map((itemSize) => itemSize.price);
+                  const minPrice = Math.min(...prices);
+                  const maxPrice = Math.max(...prices);
 
-                    if (minPrice === maxPrice) {
-                      priceDisplay = `$${minPrice.toFixed(2)}`;
-                    } else {
-                      priceDisplay = `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
-                    }
+                  if (minPrice === maxPrice) {
+                    priceDisplay = `$${minPrice.toFixed(2)}`;
+                  } else {
+                    priceDisplay = `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
                   }
+                }
 
-                  return `
+                return `
               <div class="menu-item">
                 <div class="item-name">${item.name}</div>
                 <div class="item-description">${item.description}</div>
                 <div class="item-price">${priceDisplay}</div>
               </div>
             `;
-                }
-              )
+              })
               .join("")}
           </div>
         `,
