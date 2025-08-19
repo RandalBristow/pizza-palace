@@ -155,7 +155,14 @@ export default function MenuItemForm({
     [key: string]: boolean;
   }>({});
 
-  // Debug effect to monitor data changes
+  // Debug effect to monitor mounting and data changes
+  useEffect(() => {
+    console.log("MenuItemForm MOUNTED");
+    return () => {
+      console.log("MenuItemForm UNMOUNTED");
+    };
+  }, []);
+
   useEffect(() => {
     console.log("MenuItemForm data update:", {
       subCategorySizes: subCategorySizes.length,
