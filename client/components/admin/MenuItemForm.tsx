@@ -40,7 +40,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import ImageSelector from "../ui/image-selector";
-import { useImages } from "../../hooks/useSupabase";
 import { Category } from "./MenuCategoryForm";
 
 export interface MenuItem {
