@@ -352,22 +352,22 @@ export default function Admin() {
       case "specials":
         return (
           <SpecialForm
-            specials={specialsHook.specials}
+            specials={specialsHook?.specials || []}
             categories={categories}
             menuItems={menuItems}
-            createSpecial={specialsHook.createSpecial}
-            updateSpecial={specialsHook.updateSpecial}
-            deleteSpecial={specialsHook.deleteSpecial}
+            createSpecial={specialsHook?.createSpecial || (() => Promise.resolve())}
+            updateSpecial={specialsHook?.updateSpecial || (() => Promise.resolve())}
+            deleteSpecial={specialsHook?.deleteSpecial || (() => Promise.resolve())}
           />
         );
       case "about-page":
         return (
           <AboutPageForm
-            aboutSections={aboutHook.aboutSections}
+            aboutSections={aboutHook?.aboutSections || []}
             images={images}
-            createAboutSection={aboutHook.createAboutSection}
-            updateAboutSection={aboutHook.updateAboutSection}
-            deleteAboutSection={aboutHook.deleteAboutSection}
+            createAboutSection={aboutHook?.createAboutSection || (() => Promise.resolve())}
+            updateAboutSection={aboutHook?.updateAboutSection || (() => Promise.resolve())}
+            deleteAboutSection={aboutHook?.deleteAboutSection || (() => Promise.resolve())}
           />
         );
       case "image-manager":
@@ -383,20 +383,20 @@ export default function Admin() {
       case "carousel-images":
         return (
           <CarouselForm
-            carouselImages={carouselHook.carouselImages}
+            carouselImages={carouselHook?.carouselImages || []}
             images={images}
-            createCarouselImage={carouselHook.createCarouselImage}
-            updateCarouselImage={carouselHook.updateCarouselImage}
-            deleteCarouselImage={carouselHook.deleteCarouselImage}
+            createCarouselImage={carouselHook?.createCarouselImage || (() => Promise.resolve())}
+            updateCarouselImage={carouselHook?.updateCarouselImage || (() => Promise.resolve())}
+            deleteCarouselImage={carouselHook?.deleteCarouselImage || (() => Promise.resolve())}
           />
         );
       case "customer-favorites":
         return (
           <CustomerFavoriteForm
-            customerFavorites={favoritesHook.customerFavorites}
-            createCustomerFavorite={favoritesHook.createCustomerFavorite}
-            updateCustomerFavorite={favoritesHook.updateCustomerFavorite}
-            deleteCustomerFavorite={favoritesHook.deleteCustomerFavorite}
+            customerFavorites={favoritesHook?.customerFavorites || []}
+            createCustomerFavorite={favoritesHook?.createCustomerFavorite || (() => Promise.resolve())}
+            updateCustomerFavorite={favoritesHook?.updateCustomerFavorite || (() => Promise.resolve())}
+            deleteCustomerFavorite={favoritesHook?.deleteCustomerFavorite || (() => Promise.resolve())}
           />
         );
       case "database-setup":
