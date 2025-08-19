@@ -142,30 +142,32 @@ export default function CategorySizesPage({
               <DialogHeader>
                 <DialogTitle>Add New Size</DialogTitle>
                 <DialogDescription>
-                  Create a new size for a category (e.g., pizza sizes, wing
-                  quantities)
+                  Create a new size for a sub-category. The size will belong to the selected sub-category.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="subCategory">Sub-Category</Label>
                   <Select
-                    value={newSize.categoryId}
+                    value={newSize.subCategoryId}
                     onValueChange={(value) =>
-                      setNewSize({ ...newSize, categoryId: value })
+                      setNewSize({ ...newSize, subCategoryId: value })
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder="Select sub-category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories
-                        .filter((c) => c.isActive)
-                        .map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
+                      {subCategories
+                        .filter((sub) => sub.isActive)
+                        .map((subCategory) => {
+                          const parentCategory = categories.find(c => c.id === subCategory.categoryId);
+                          return (
+                            <SelectItem key={subCategory.id} value={subCategory.id}>
+                              {parentCategory?.name} → {subCategory.name}
+                            </SelectItem>
+                          );
+                        })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -173,7 +175,7 @@ export default function CategorySizesPage({
                   <Label htmlFor="sizeName">Size Name</Label>
                   <Input
                     id="sizeName"
-                    placeholder="e.g., Large, 10-Piece"
+                    placeholder="e.g., Large, 10-Piece, 12 inch"
                     value={newSize.sizeName}
                     onChange={(e) =>
                       setNewSize({ ...newSize, sizeName: e.target.value })
@@ -195,13 +197,18 @@ export default function CategorySizesPage({
                     }
                   />
                 </div>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <strong>Note:</strong> After creating the size, you can assign it to multiple sub-categories using the Category Sizes management section below.
+                  </p>
+                </div>
                 <div className="flex justify-end space-x-2">
                   <Button
                     variant="outline"
                     onClick={() => {
                       setIsAddingSize(false);
                       setNewSize({
-                        categoryId: "",
+                        subCategoryId: "",
                         sizeName: "",
                         displayOrder: 1,
                         isActive: true,
@@ -212,7 +219,7 @@ export default function CategorySizesPage({
                   </Button>
                   <Button
                     onClick={handleAddSize}
-                    disabled={!newSize.categoryId || !newSize.sizeName}
+                    disabled={!newSize.subCategoryId || !newSize.sizeName}
                   >
                     <Save className="h-4 w-4 mr-2" />
                     Save Size
