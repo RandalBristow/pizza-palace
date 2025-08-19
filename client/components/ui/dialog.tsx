@@ -4,7 +4,41 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-const Dialog = DialogPrimitive.Root;
+// Debug wrapper for Dialog
+const DebugDialog = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root> & { debugName?: string }
+>(({ debugName = "Unknown", open, onOpenChange, children, ...props }, ref) => {
+  const prevOpen = React.useRef(open);
+
+  React.useEffect(() => {
+    if (prevOpen.current !== open) {
+      const timestamp = new Date().toLocaleTimeString();
+      console.log(`🚪 [${timestamp}] Dialog "${debugName}" state changed:`, { from: prevOpen.current, to: open });
+      prevOpen.current = open;
+    }
+  }, [open, debugName]);
+
+  const handleOpenChange = React.useCallback((newOpen: boolean) => {
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`🚪 [${timestamp}] Dialog "${debugName}" onOpenChange called:`, { newOpen });
+    onOpenChange?.(newOpen);
+  }, [debugName, onOpenChange]);
+
+  return (
+    <DialogPrimitive.Root
+      ref={ref}
+      open={open}
+      onOpenChange={handleOpenChange}
+      {...props}
+    >
+      {children}
+    </DialogPrimitive.Root>
+  );
+});
+DebugDialog.displayName = "DebugDialog";
+
+const Dialog = DebugDialog;
 
 const DialogTrigger = DialogPrimitive.Trigger;
 
