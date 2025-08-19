@@ -74,10 +74,11 @@ let root = createRoot(container);
 // Initial render - StrictMode temporarily disabled for testing
 root.render(<App />);
 
-// Handle hot module replacement properly - also disable StrictMode here
-if (import.meta.hot) {
-  import.meta.hot.accept(() => {
-    // Re-render with the new App component
-    root.render(<App />);
-  });
-}
+// HMR COMPLETELY DISABLED for testing dialog flash issue
+// if (import.meta.hot) {
+//   import.meta.hot.accept(() => {
+//     // Re-render with the new App component
+//     root.render(<App />);
+//   });
+// }
+console.log("🔥 HMR completely disabled for testing");
