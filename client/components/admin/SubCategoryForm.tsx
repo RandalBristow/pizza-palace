@@ -101,10 +101,7 @@ export default function SubCategoryForm({
 
   const handleAddSubCategory = async () => {
     try {
-      const created = await createSubCategory(newSubCategory);
-      if (selectedSizes.length > 0) {
-        await updateSubCategorySizes(created.id, selectedSizes);
-      }
+      await createSubCategory(newSubCategory);
       setIsAddingSubCategory(false);
       resetForm();
     } catch (error) {
@@ -120,12 +117,6 @@ export default function SubCategoryForm({
       displayOrder: subCategory.displayOrder || 1,
       isActive: subCategory.isActive ?? true,
     });
-
-    // Load existing sizes for this sub-category
-    const existingSizes = subCategorySizes
-      .filter((scs) => scs.subCategoryId === subCategory.id)
-      .map((scs) => scs.categorySizeId);
-    setSelectedSizes(existingSizes);
   };
 
   const handleUpdateSubCategory = async () => {
@@ -133,7 +124,6 @@ export default function SubCategoryForm({
 
     try {
       await updateSubCategory(editingSubCategory.id, newSubCategory);
-      await updateSubCategorySizes(editingSubCategory.id, selectedSizes);
       setEditingSubCategory(null);
       resetForm();
     } catch (error) {
@@ -291,8 +281,7 @@ export default function SubCategoryForm({
               <DialogHeader>
                 <DialogTitle>Add New Sub-Category</DialogTitle>
                 <DialogDescription>
-                  Create a new sub-category within a menu category and select
-                  available sizes
+                  Create a new sub-category within a menu category. Sizes will be managed separately in the Category Sizes section.
                 </DialogDescription>
               </DialogHeader>
               {renderSubCategoryForm(false)}
@@ -465,7 +454,7 @@ export default function SubCategoryForm({
           <DialogHeader>
             <DialogTitle>Edit Sub-Category</DialogTitle>
             <DialogDescription>
-              Update the sub-category details and available sizes
+              Update the sub-category details. Sizes are managed separately in the Category Sizes section.
             </DialogDescription>
           </DialogHeader>
           {renderSubCategoryForm(true)}
