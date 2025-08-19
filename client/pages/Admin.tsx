@@ -38,9 +38,6 @@ import CategorySizesPage from "../components/admin/CategorySizesPage";
 import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 
 export default function Admin() {
-  // Debugging
-  const renderCount = useRenderTracker("Admin");
-
   const [selectedItem, setSelectedItem] = useState("categories");
 
   // Filter states
