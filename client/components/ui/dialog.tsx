@@ -4,26 +4,14 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-// Debug wrapper for Dialog
-const DebugDialog = React.forwardRef<
+// Wrapper for Dialog with stabilized onOpenChange
+const StabilizedDialog = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root> & { debugName?: string }
->(({ debugName = "Unknown", open, onOpenChange, children, ...props }, ref) => {
-  const prevOpen = React.useRef(open);
-
-  React.useEffect(() => {
-    if (prevOpen.current !== open) {
-      const timestamp = new Date().toLocaleTimeString();
-      console.log(`🚪 [${timestamp}] Dialog "${debugName}" state changed:`, { from: prevOpen.current, to: open });
-      prevOpen.current = open;
-    }
-  }, [open, debugName]);
-
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>
+>(({ open, onOpenChange, children, ...props }, ref) => {
   const handleOpenChange = React.useCallback((newOpen: boolean) => {
-    const timestamp = new Date().toLocaleTimeString();
-    console.log(`🚪 [${timestamp}] Dialog "${debugName}" onOpenChange called:`, { newOpen });
     onOpenChange?.(newOpen);
-  }, [debugName, onOpenChange]);
+  }, [onOpenChange]);
 
   return (
     <DialogPrimitive.Root
@@ -36,9 +24,9 @@ const DebugDialog = React.forwardRef<
     </DialogPrimitive.Root>
   );
 });
-DebugDialog.displayName = "DebugDialog";
+StabilizedDialog.displayName = "StabilizedDialog";
 
-const Dialog = DebugDialog;
+const Dialog = StabilizedDialog;
 
 const DialogTrigger = DialogPrimitive.Trigger;
 
