@@ -124,11 +124,11 @@ export default function Admin() {
   const getToppingPriceForSize = toppingSizePricesHook?.getToppingPriceForSize || (() => 0);
 
   // Load other hooks only when needed
-  const settingsHook = selectedItem === "settings" ? useSettings() : { settings: null, loading: false, updateSettings: () => Promise.resolve() };
-  const specialsHook = selectedItem === "specials" ? useSpecials() : { specials: [], loading: false, createSpecial: () => Promise.resolve(), updateSpecial: () => Promise.resolve(), deleteSpecial: () => Promise.resolve() };
-  const carouselHook = selectedItem === "carousel-images" ? useCarouselImages() : { carouselImages: [], loading: false, createCarouselImage: () => Promise.resolve(), updateCarouselImage: () => Promise.resolve(), deleteCarouselImage: () => Promise.resolve() };
-  const favoritesHook = selectedItem === "customer-favorites" ? useCustomerFavorites() : { customerFavorites: [], loading: false, createCustomerFavorite: () => Promise.resolve(), updateCustomerFavorite: () => Promise.resolve(), deleteCustomerFavorite: () => Promise.resolve() };
-  const aboutHook = selectedItem === "about-page" ? useAboutSections() : { aboutSections: [], loading: false, createAboutSection: () => Promise.resolve(), updateAboutSection: () => Promise.resolve(), deleteAboutSection: () => Promise.resolve() };
+  const settingsHook = selectedItemKey === "settings" ? useSettings() : null;
+  const specialsHook = selectedItemKey === "specials" ? useSpecials() : null;
+  const carouselHook = selectedItemKey === "carousel-images" ? useCarouselImages() : null;
+  const favoritesHook = selectedItemKey === "customer-favorites" ? useCustomerFavorites() : null;
+  const aboutHook = selectedItemKey === "about-page" ? useAboutSections() : null;
 
   // Show loading state only for active data
   const isLoading =
