@@ -1,3 +1,5 @@
+import React from 'react';
+
 // Debugging utility for dialog issues
 export const debugDialog = {
   logRender: (componentName: string, reason?: string) => {
