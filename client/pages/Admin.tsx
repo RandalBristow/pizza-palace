@@ -120,12 +120,20 @@ export default function Admin() {
   const menuItemSizeTopLoading = needsMenuItems ? menuItemSizeToppingsHook.loading : false;
   const updateMenuItemSizeToppings = needsMenuItems ? menuItemSizeToppingsHook.updateMenuItemSizeToppings : () => Promise.resolve();
 
-  const toppingSizePricesHook = useToppingSizePrices();
-  const toppingSizePrices = needsToppings ? toppingSizePricesHook.toppingSizePrices : [];
-  const toppingSizePricesLoading = needsToppings ? toppingSizePricesHook.loading : false;
-  const updateToppingSizePrices = needsToppings ? toppingSizePricesHook.updateToppingSizePrices : () => Promise.resolve();
-  const getToppingSizePrices = needsToppings ? toppingSizePricesHook.getToppingSizePrices : () => [];
-  const getToppingPriceForSize = needsToppings ? toppingSizePricesHook.getToppingPriceForSize : () => 0;
+  const toppingSizePricesHook = needsToppings ? useToppingSizePrices() : {
+    toppingSizePrices: [],
+    loading: false,
+    error: null,
+    updateToppingSizePrices: () => Promise.resolve(),
+    getToppingSizePrices: () => [],
+    getToppingPriceForSize: () => 0,
+    refetch: () => Promise.resolve()
+  };
+  const toppingSizePrices = toppingSizePricesHook.toppingSizePrices;
+  const toppingSizePricesLoading = toppingSizePricesHook.loading;
+  const updateToppingSizePrices = toppingSizePricesHook.updateToppingSizePrices;
+  const getToppingSizePrices = toppingSizePricesHook.getToppingSizePrices;
+  const getToppingPriceForSize = toppingSizePricesHook.getToppingPriceForSize;
 
   // Load other hooks only when needed
   const settingsHook = selectedItem === "settings" ? useSettings() : { settings: null, loading: false, updateSettings: () => Promise.resolve() };
