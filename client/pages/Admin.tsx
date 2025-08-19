@@ -144,6 +144,12 @@ export default function Admin() {
   } = useSubCategorySizes();
 
   const {
+    categorySizeSubCategories,
+    loading: categorySizeSubCategoriesLoading,
+    updateCategorySizeSubCategories,
+  } = useCategorySizeSubCategories();
+
+  const {
     menuItemSizes,
     loading: menuItemSizesLoading,
     updateMenuItemSizesForItem,
@@ -177,6 +183,7 @@ export default function Admin() {
     imagesLoading ||
     categorySizesLoading ||
     subCategorySizesLoading ||
+    categorySizeSubCategoriesLoading ||
     menuItemSizesLoading ||
     menuItemSizeToppingsLoading ||
     toppingSizePricesLoading;
@@ -310,7 +317,7 @@ export default function Admin() {
             createCategorySize={createCategorySize}
             updateCategorySize={updateCategorySize}
             deleteCategorySize={deleteCategorySize}
-            updateCategorySizeSubCategories={updateSubCategorySizes}
+            updateCategorySizeSubCategories={updateCategorySizeSubCategories}
           />
         );
       case "sub-categories":
