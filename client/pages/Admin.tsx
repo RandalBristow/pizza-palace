@@ -148,11 +148,11 @@ export default function Admin() {
     menuItemSizesLoading ||
     menuItemSizeTopLoading ||
     toppingSizePricesLoading ||
-    (settingsHook?.loading || false) ||
-    (specialsHook?.loading || false) ||
-    (carouselHook?.loading || false) ||
-    (favoritesHook?.loading || false) ||
-    (aboutHook?.loading || false);
+    (selectedItem === "settings" && settingsHook.loading) ||
+    (selectedItem === "specials" && specialsHook.loading) ||
+    (selectedItem === "carousel-images" && carouselHook.loading) ||
+    (selectedItem === "customer-favorites" && favoritesHook.loading) ||
+    (selectedItem === "about-page" && aboutHook.loading);
 
 
   if (isLoading) {
