@@ -254,9 +254,9 @@ export default function Admin() {
         return (
           <SettingsForm
             settings={
-              settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
+              settingsHook.settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
             }
-            onSettingsChange={updateSettings}
+            onSettingsChange={settingsHook.updateSettings}
           />
         );
       case "categories":
@@ -361,22 +361,22 @@ export default function Admin() {
       case "specials":
         return (
           <SpecialForm
-            specials={specials}
+            specials={specialsHook.specials}
             categories={categories}
             menuItems={menuItems}
-            createSpecial={createSpecial}
-            updateSpecial={updateSpecial}
-            deleteSpecial={deleteSpecial}
+            createSpecial={specialsHook.createSpecial}
+            updateSpecial={specialsHook.updateSpecial}
+            deleteSpecial={specialsHook.deleteSpecial}
           />
         );
       case "about-page":
         return (
           <AboutPageForm
-            aboutSections={aboutSections}
+            aboutSections={aboutHook.aboutSections}
             images={images}
-            createAboutSection={createAboutSection}
-            updateAboutSection={updateAboutSection}
-            deleteAboutSection={deleteAboutSection}
+            createAboutSection={aboutHook.createAboutSection}
+            updateAboutSection={aboutHook.updateAboutSection}
+            deleteAboutSection={aboutHook.deleteAboutSection}
           />
         );
       case "image-manager":
@@ -392,20 +392,20 @@ export default function Admin() {
       case "carousel-images":
         return (
           <CarouselForm
-            carouselImages={carouselImages}
+            carouselImages={carouselHook.carouselImages}
             images={images}
-            createCarouselImage={createCarouselImage}
-            updateCarouselImage={updateCarouselImage}
-            deleteCarouselImage={deleteCarouselImage}
+            createCarouselImage={carouselHook.createCarouselImage}
+            updateCarouselImage={carouselHook.updateCarouselImage}
+            deleteCarouselImage={carouselHook.deleteCarouselImage}
           />
         );
       case "customer-favorites":
         return (
           <CustomerFavoriteForm
-            customerFavorites={customerFavorites}
-            createCustomerFavorite={createCustomerFavorite}
-            updateCustomerFavorite={updateCustomerFavorite}
-            deleteCustomerFavorite={deleteCustomerFavorite}
+            customerFavorites={favoritesHook.customerFavorites}
+            createCustomerFavorite={favoritesHook.createCustomerFavorite}
+            updateCustomerFavorite={favoritesHook.updateCustomerFavorite}
+            deleteCustomerFavorite={favoritesHook.deleteCustomerFavorite}
           />
         );
       case "database-setup":
@@ -414,9 +414,9 @@ export default function Admin() {
         return (
           <SettingsForm
             settings={
-              settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
+              settingsHook.settings || { taxRate: 8.5, deliveryFee: 2.99, businessHours: {} }
             }
-            onSettingsChange={updateSettings}
+            onSettingsChange={settingsHook.updateSettings}
           />
         );
     }
