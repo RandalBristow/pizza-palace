@@ -63,21 +63,13 @@ const App = () => (
 const container = document.getElementById("root")!;
 let root = createRoot(container);
 
-// Initial render
-root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+// Initial render - StrictMode temporarily disabled for testing
+root.render(<App />);
 
-// Handle hot module replacement properly
+// Handle hot module replacement properly - also disable StrictMode here
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
     // Re-render with the new App component
-    root.render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    );
+    root.render(<App />);
   });
 }
