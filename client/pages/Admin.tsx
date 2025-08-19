@@ -304,10 +304,12 @@ export default function Admin() {
         return (
           <CategorySizesPage
             categories={categories}
+            subCategories={subCategories}
             categorySizes={categorySizes}
             createCategorySize={createCategorySize}
             updateCategorySize={updateCategorySize}
             deleteCategorySize={deleteCategorySize}
+            updateCategorySizeSubCategories={updateSubCategorySizes}
           />
         );
       case "sub-categories":
