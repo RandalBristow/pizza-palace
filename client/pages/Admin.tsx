@@ -162,6 +162,17 @@ export default function Admin() {
     favoritesHook.loading, aboutHook.loading
   ]);
 
+  // Debug: Check for timers periodically
+  React.useEffect(() => {
+    debugDialog.logRender("Admin", `Render #${renderCount} - selectedItem: ${selectedItem}`);
+
+    const timerCheckInterval = setInterval(() => {
+      checkForTimers();
+    }, 10000); // Check every 10 seconds
+
+    return () => clearInterval(timerCheckInterval);
+  }, [renderCount, selectedItem]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
