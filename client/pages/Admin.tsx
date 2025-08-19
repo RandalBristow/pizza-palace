@@ -81,25 +81,26 @@ export default function Admin() {
     deleteCategory,
   } = useCategories();
 
-  // Always call all hooks in same order - conditionally use data for performance optimization
-  console.log(`🪝 Calling hooks at ${new Date().toLocaleTimeString()}`);
+  // Temporarily use minimal hooks to identify timer leak source
+  console.log(`🪝 Calling MINIMAL hooks at ${new Date().toLocaleTimeString()}`);
+
+  // Only call essential hooks for now
   const subCategoriesHook = useSubCategories();
-  const menuItemsHook = useMenuItems();
-  const toppingsHook = useToppings();
-  const toppingCategoriesHook = useToppingCategories();
-  const imagesHook = useImages();
   const categorySizesHook = useCategorySizes();
-  const subCategorySizesHook = useSubCategorySizes();
-  const menuItemSizesHook = useMenuItemSizes();
-  const menuItemSizeToppingsHook = useMenuItemSizeToppings();
-  const toppingSizePricesHook = useToppingSizePrices();
-  console.log(`🪝 All hooks called, data lengths:`, {
+
+  // Create empty implementations for other hooks to avoid breaks
+  const menuItemsHook = { menuItems: [], loading: false, createMenuItem: () => Promise.resolve(), updateMenuItem: () => Promise.resolve(), deleteMenuItem: () => Promise.resolve() };
+  const toppingsHook = { toppings: [], loading: false, createTopping: () => Promise.resolve(), updateTopping: () => Promise.resolve(), deleteTopping: () => Promise.resolve() };
+  const toppingCategoriesHook = { toppingCategories: [], loading: false, createToppingCategory: () => Promise.resolve(), updateToppingCategory: () => Promise.resolve(), deleteToppingCategory: () => Promise.resolve() };
+  const imagesHook = { images: [], loading: false, uploadImageFile: () => Promise.resolve(), createImageFromUrl: () => Promise.resolve(), updateImage: () => Promise.resolve(), deleteImage: () => Promise.resolve() };
+  const subCategorySizesHook = { subCategorySizes: [], loading: false, updateSubCategorySizes: () => Promise.resolve() };
+  const menuItemSizesHook = { menuItemSizes: [], loading: false, updateMenuItemSizesForItem: () => Promise.resolve() };
+  const menuItemSizeToppingsHook = { menuItemSizeToppings: [], loading: false, updateMenuItemSizeToppings: () => Promise.resolve() };
+  const toppingSizePricesHook = { toppingSizePrices: [], loading: false, updateToppingSizePrices: () => Promise.resolve(), getToppingSizePrices: () => [], getToppingPriceForSize: () => 0 };
+
+  console.log(`🪝 Minimal hooks called, data lengths:`, {
     categories: categories.length,
     subCategories: subCategoriesHook.subCategories.length,
-    menuItems: menuItemsHook.menuItems.length,
-    toppings: toppingsHook.toppings.length,
-    toppingCategories: toppingCategoriesHook.toppingCategories.length,
-    images: imagesHook.images.length,
     categorySizes: categorySizesHook.categorySizes.length
   });
 
