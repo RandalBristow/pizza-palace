@@ -322,12 +322,13 @@ export default function MenuCategoryForm({
         ))}
       </div>
 
-      {/* Edit Category Dialog */}
-      <Dialog
-        debugName="EditCategory"
-        open={editingCategory !== null}
-        onOpenChange={(open) => !open && setEditingCategory(null)}
-      >
+      {/* Edit Category Dialog - Only render when needed */}
+      {editingCategory && !isAddingCategory && (
+        <Dialog
+          debugName="EditCategory"
+          open={true}
+          onOpenChange={(open) => !open && setEditingCategory(null)}
+        >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Category</DialogTitle>
@@ -379,7 +380,8 @@ export default function MenuCategoryForm({
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+        </Dialog>
+      )}
     </div>
   );
 }
