@@ -161,7 +161,8 @@ export interface DatabaseMenuSubCategory {
 
 export interface DatabaseCategorySize {
   id: string;
-  sub_category_id: string; // Changed: now belongs to sub-category
+  category_id: string; // New: unified approach uses category_id
+  sub_category_id: string; // Keep for backward compatibility
   size_name: string;
   display_order: number;
   is_active: boolean;

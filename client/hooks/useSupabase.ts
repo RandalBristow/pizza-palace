@@ -129,7 +129,8 @@ export const transformCategorySize = (
   dbCategorySize: DatabaseCategorySize,
 ) => ({
   id: dbCategorySize.id,
-  subCategoryId: dbCategorySize.sub_category_id, // Changed: now uses sub_category_id
+  categoryId: dbCategorySize.category_id, // New: unified approach uses category_id
+  subCategoryId: dbCategorySize.sub_category_id, // Keep for backward compatibility
   sizeName: dbCategorySize.size_name,
   displayOrder: dbCategorySize.display_order,
   isActive: dbCategorySize.is_active,
@@ -1776,7 +1777,7 @@ export const useCategorySizes = () => {
       const { data, error } = await supabase
         .from(TABLES.CATEGORY_SIZES)
         .insert({
-          sub_category_id: categorySize.subCategoryId, // Changed: now uses sub_category_id
+          category_id: categorySize.categoryId, // New: uses category_id for unified approach
           size_name: categorySize.sizeName,
           display_order: categorySize.displayOrder,
           is_active: categorySize.isActive,
@@ -1802,7 +1803,7 @@ export const useCategorySizes = () => {
       const { data, error } = await supabase
         .from(TABLES.CATEGORY_SIZES)
         .update({
-          sub_category_id: updates.subCategoryId, // Changed: now uses sub_category_id
+          category_id: updates.categoryId, // New: uses category_id for unified approach
           size_name: updates.sizeName,
           display_order: updates.displayOrder,
           is_active: updates.isActive,

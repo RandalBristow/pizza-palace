@@ -314,6 +314,7 @@ export default function Admin() {
             categories={categories}
             subCategories={subCategories}
             categorySizes={categorySizes}
+            categorySizeSubCategories={categorySizeSubCategories}
             createCategorySize={createCategorySize}
             updateCategorySize={updateCategorySize}
             deleteCategorySize={deleteCategorySize}
