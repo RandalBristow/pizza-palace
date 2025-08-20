@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase, TABLES } from "../lib/supabase";
 import type {
   DatabaseCategory,
   DatabaseMenuItem,
   DatabaseTopping,
   DatabaseToppingCategory,
+  DatabaseToppingSizePrice,
   DatabaseSpecial,
   DatabaseCarouselImage,
   DatabaseCustomerFavorite,
   DatabaseSettings,
   DatabaseAboutSection,
   DatabaseImage,
+  DatabaseMenuSubCategory,
+  DatabaseCategorySize,
+  DatabaseSubCategorySize,
 } from "../lib/supabase";
 
 // Transform database objects to frontend format
@@ -121,6 +125,16 @@ export const transformSubCategory = (
   isActive: dbSubCategory.is_active,
 });
 
+export const transformCategorySize = (
+  dbCategorySize: DatabaseCategorySize,
+) => ({
+  id: dbCategorySize.id,
+  subCategoryId: dbCategorySize.sub_category_id, // Changed: now uses sub_category_id
+  sizeName: dbCategorySize.size_name,
+  displayOrder: dbCategorySize.display_order,
+  isActive: dbCategorySize.is_active,
+});
+
 export const transformAboutSection = (
   dbAboutSection: DatabaseAboutSection,
 ) => ({
@@ -138,13 +152,30 @@ export const transformAboutSection = (
   isActive: dbAboutSection.is_active,
 });
 
+export const transformCategorySizeSubCategory = (
+  dbCategorySizeSubCategory: DatabaseCategorySizeSubCategory,
+) => ({
+  id: dbCategorySizeSubCategory.id,
+  categorySizeId: dbCategorySizeSubCategory.category_size_id,
+  subCategoryId: dbCategorySizeSubCategory.sub_category_id,
+});
+
+export const transformToppingSizePrice = (
+  dbToppingSizePrice: DatabaseToppingSizePrice,
+) => ({
+  id: dbToppingSizePrice.id,
+  toppingId: dbToppingSizePrice.topping_id,
+  categorySizeId: dbToppingSizePrice.category_size_id,
+  price: dbToppingSizePrice.price,
+});
+
 // Custom hooks for each data type
 export const useCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from(TABLES.CATEGORIES)
@@ -161,7 +192,7 @@ export const useCategories = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const createCategory = async (category: any) => {
     try {
@@ -389,54 +420,98 @@ export const useMenuItems = () => {
 
   const createMenuItem = async (menuItem: any) => {
     try {
+      // Build insert object, only including price if it's defined
+      const insertData: any = {
+        name: menuItem.name,
+        description: menuItem.description,
+        category_id: menuItem.category,
+        sub_category_id: menuItem.subCategoryId,
+        image_id: menuItem.imageId,
+        default_toppings: menuItem.defaultToppings,
+        is_active: menuItem.isActive,
+      };
+
+      // Only include price if it's defined (since we're moving to size-based pricing)
+      if (menuItem.price !== undefined && menuItem.price !== null) {
+        insertData.price = menuItem.price;
+      }
+
       const { data, error } = await supabase
         .from(TABLES.MENU_ITEMS)
-        .insert({
-          name: menuItem.name,
-          description: menuItem.description,
-          price: menuItem.price,
-          category_id: menuItem.category,
-          sub_category_id: menuItem.subCategoryId,
-          image_id: menuItem.imageId,
-          default_toppings: menuItem.defaultToppings,
-          is_active: menuItem.isActive,
-        })
+        .insert(insertData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(
+          `Database error: ${error.message || error.details || error.hint || "Unknown database error"}`,
+        );
+      }
 
       const newMenuItem = transformMenuItem(data);
       setMenuItems((prev) => [...prev, newMenuItem]);
       return newMenuItem;
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to create menu item",
-      );
-      throw err;
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+            ? err
+            : err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : err && typeof err === "object" && "details" in err
+                ? String(err.details)
+                : err && typeof err === "object" && "hint" in err
+                  ? String(err.hint)
+                  : "Failed to create menu item";
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
   const updateMenuItem = async (id: string, updates: any) => {
     try {
+      // Build update object, only including price if it's defined
+      const updateData: any = {
+        name: updates.name,
+        description: updates.description,
+        category_id: updates.category,
+        sub_category_id: updates.subCategoryId,
+        image_id: updates.imageId,
+        default_toppings: updates.defaultToppings,
+        is_active: updates.isActive,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Only include price if it's defined (since we're moving to size-based pricing)
+      if (updates.price !== undefined && updates.price !== null) {
+        updateData.price = updates.price;
+      }
+
       const { data, error } = await supabase
         .from(TABLES.MENU_ITEMS)
-        .update({
-          name: updates.name,
-          description: updates.description,
-          price: updates.price,
-          category_id: updates.category,
-          sub_category_id: updates.subCategoryId,
-          image_id: updates.imageId,
-          default_toppings: updates.defaultToppings,
-          is_active: updates.isActive,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        // Check if it's a column doesn't exist error
+        if (
+          error.code === "42703" ||
+          error.message?.includes("column") ||
+          error.message?.includes("does not exist")
+        ) {
+          throw new Error(
+            `Database schema error: ${error.message}. You may need to add the default_toppings column to your menu_items table.`,
+          );
+        }
+        throw new Error(
+          `Database error: ${error.message || error.details || error.hint || "Unknown database error"}`,
+        );
+      }
 
       const updatedMenuItem = transformMenuItem(data);
       setMenuItems((prev) =>
@@ -444,10 +519,20 @@ export const useMenuItems = () => {
       );
       return updatedMenuItem;
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to update menu item",
-      );
-      throw err;
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+            ? err
+            : err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : err && typeof err === "object" && "details" in err
+                ? String(err.details)
+                : err && typeof err === "object" && "hint" in err
+                  ? String(err.hint)
+                  : "Failed to update menu item";
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
@@ -533,21 +618,33 @@ export const useToppings = () => {
 
   const updateTopping = async (id: string, updates: any) => {
     try {
+      // Build update object, only including price if it's defined
+      const updateData: any = {
+        name: updates.name,
+        category_id: updates.category,
+        menu_item_category_id: updates.menuItemCategory,
+        is_active: updates.isActive,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Only include price if it's defined (since it's now optional)
+      if (updates.price !== undefined && updates.price !== null) {
+        updateData.price = updates.price;
+      }
+
       const { data, error } = await supabase
         .from(TABLES.TOPPINGS)
-        .update({
-          name: updates.name,
-          price: updates.price,
-          category_id: updates.category,
-          menu_item_category_id: updates.menuItemCategory,
-          is_active: updates.isActive,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(
+          `Database error: ${error.message || error.details || error.hint || "Unknown database error"}`,
+        );
+      }
 
       const updatedTopping = transformTopping(data);
       setToppings((prev) =>
@@ -555,8 +652,16 @@ export const useToppings = () => {
       );
       return updatedTopping;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update topping");
-      throw err;
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+            ? err
+            : err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : "Failed to update topping";
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
@@ -1639,5 +1744,619 @@ export const useImages = () => {
     updateImage,
     deleteImage,
     refetch: fetchImages,
+  };
+};
+
+export const useCategorySizes = () => {
+  const [categorySizes, setCategorySizes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCategorySizes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORY_SIZES)
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+
+      setCategorySizes(data ? data.map(transformCategorySize) : []);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch category sizes",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createCategorySize = async (categorySize: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORY_SIZES)
+        .insert({
+          sub_category_id: categorySize.subCategoryId, // Changed: now uses sub_category_id
+          size_name: categorySize.sizeName,
+          display_order: categorySize.displayOrder,
+          is_active: categorySize.isActive,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newCategorySize = transformCategorySize(data);
+      setCategorySizes((prev) => [...prev, newCategorySize]);
+      return newCategorySize;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to create category size",
+      );
+      throw err;
+    }
+  };
+
+  const updateCategorySize = async (id: string, updates: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORY_SIZES)
+        .update({
+          sub_category_id: updates.subCategoryId, // Changed: now uses sub_category_id
+          size_name: updates.sizeName,
+          display_order: updates.displayOrder,
+          is_active: updates.isActive,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const updatedCategorySize = transformCategorySize(data);
+      setCategorySizes((prev) =>
+        prev.map((size) => (size.id === id ? updatedCategorySize : size)),
+      );
+      return updatedCategorySize;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update category size",
+      );
+      throw err;
+    }
+  };
+
+  const deleteCategorySize = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CATEGORY_SIZES)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setCategorySizes((prev) => prev.filter((size) => size.id !== id));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to delete category size",
+      );
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCategorySizes();
+  }, []);
+
+  return {
+    categorySizes,
+    loading,
+    error,
+    createCategorySize,
+    updateCategorySize,
+    deleteCategorySize,
+    refetch: fetchCategorySizes,
+  };
+};
+
+export const useCategorySizeSubCategories = () => {
+  const [categorySizeSubCategories, setCategorySizeSubCategories] = useState<
+    any[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCategorySizeSubCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CATEGORY_SIZE_SUB_CATEGORIES)
+        .select("*");
+
+      if (error) throw error;
+
+      setCategorySizeSubCategories(
+        data ? data.map(transformCategorySizeSubCategory) : [],
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to fetch category size sub-categories",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateCategorySizeSubCategories = async (
+    categorySizeId: string,
+    subCategoryIds: string[],
+  ) => {
+    try {
+      // First, delete existing associations for this category size
+      const { error: deleteError } = await supabase
+        .from(TABLES.CATEGORY_SIZE_SUB_CATEGORIES)
+        .delete()
+        .eq("category_size_id", categorySizeId);
+
+      if (deleteError) throw deleteError;
+
+      // Then, insert new associations
+      if (subCategoryIds.length > 0) {
+        const insertData = subCategoryIds.map((subCategoryId) => ({
+          category_size_id: categorySizeId,
+          sub_category_id: subCategoryId,
+        }));
+
+        const { data: insertData_result, error: insertError } = await supabase
+          .from(TABLES.CATEGORY_SIZE_SUB_CATEGORIES)
+          .insert(insertData)
+          .select();
+
+        if (insertError) {
+          console.error("Insert error:", insertError);
+          throw insertError;
+        }
+
+        console.log(
+          "Successfully inserted category size sub-categories:",
+          insertData_result,
+        );
+      }
+
+      // Refresh the data
+      await fetchCategorySizeSubCategories();
+    } catch (err) {
+      console.error("Error in updateCategorySizeSubCategories:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to update category size sub-categories",
+      );
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCategorySizeSubCategories();
+  }, []);
+
+  return {
+    categorySizeSubCategories,
+    loading,
+    error,
+    updateCategorySizeSubCategories,
+    refetch: fetchCategorySizeSubCategories,
+  };
+};
+
+// Backward compatibility: Create a hook that provides the old interface
+export const useSubCategorySizes = () => {
+  const {
+    categorySizeSubCategories,
+    loading,
+    error,
+    updateCategorySizeSubCategories,
+    refetch,
+  } = useCategorySizeSubCategories();
+
+  // Transform the data to match the old interface for existing components
+  const subCategorySizes = categorySizeSubCategories;
+
+  // Create a wrapper function that matches the old signature
+  const updateSubCategorySizes = async (
+    subCategoryId: string,
+    sizeIds: string[],
+  ) => {
+    // For backward compatibility, we could implement this if needed
+    // But in the new model, this operation doesn't make as much sense
+    console.warn(
+      "updateSubCategorySizes is deprecated. Use updateCategorySizeSubCategories instead.",
+    );
+    throw new Error(
+      "updateSubCategorySizes is deprecated in the new data model",
+    );
+  };
+
+  return {
+    subCategorySizes,
+    loading,
+    error,
+    updateSubCategorySizes,
+    refetch,
+  };
+};
+
+export const useMenuItemSizes = () => {
+  const [menuItemSizes, setMenuItemSizes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMenuItemSizes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .select("*");
+
+      if (error) throw error;
+
+      setMenuItemSizes(data || []);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch menu item sizes",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createMenuItemSize = async (menuItemSize: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .insert({
+          menu_item_id: menuItemSize.menuItemId,
+          category_size_id: menuItemSize.categorySizeId,
+          price: menuItemSize.price,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setMenuItemSizes((prev) => [...prev, data]);
+      return data;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to create menu item size",
+      );
+      throw err;
+    }
+  };
+
+  const updateMenuItemSize = async (id: string, updates: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .update({
+          price: updates.price,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setMenuItemSizes((prev) =>
+        prev.map((size) => (size.id === id ? data : size)),
+      );
+      return data;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update menu item size",
+      );
+      throw err;
+    }
+  };
+
+  const deleteMenuItemSize = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setMenuItemSizes((prev) => prev.filter((size) => size.id !== id));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to delete menu item size",
+      );
+      throw err;
+    }
+  };
+
+  const updateMenuItemSizesForItem = async (
+    menuItemId: string,
+    sizes: any[],
+  ) => {
+    try {
+      // First, delete existing sizes for this menu item
+      const { error: deleteError } = await supabase
+        .from(TABLES.MENU_ITEM_SIZES)
+        .delete()
+        .eq("menu_item_id", menuItemId);
+
+      if (deleteError) throw deleteError;
+
+      // Then, insert new sizes
+      if (sizes.length > 0) {
+        const insertData = sizes.map((size) => ({
+          menu_item_id: menuItemId,
+          category_size_id: size.categorySizeId,
+          price: size.price,
+        }));
+
+        const { error: insertError } = await supabase
+          .from(TABLES.MENU_ITEM_SIZES)
+          .insert(insertData);
+
+        if (insertError) throw insertError;
+      }
+
+      // Refresh the data
+      await fetchMenuItemSizes();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update menu item sizes",
+      );
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchMenuItemSizes();
+  }, []);
+
+  return {
+    menuItemSizes,
+    loading,
+    error,
+    createMenuItemSize,
+    updateMenuItemSize,
+    deleteMenuItemSize,
+    updateMenuItemSizesForItem,
+    refetch: fetchMenuItemSizes,
+  };
+};
+
+export const useMenuItemSizeToppings = () => {
+  const [menuItemSizeToppings, setMenuItemSizeToppings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMenuItemSizeToppings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.MENU_ITEM_SIZE_TOPPINGS)
+        .select("*");
+
+      if (error) throw error;
+
+      setMenuItemSizeToppings(data || []);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to fetch menu item size toppings",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateMenuItemSizeToppings = async (
+    menuItemSizeId: string,
+    toppings: any[],
+  ) => {
+    try {
+      // First, delete existing toppings for this menu item size
+      const { error: deleteError } = await supabase
+        .from(TABLES.MENU_ITEM_SIZE_TOPPINGS)
+        .delete()
+        .eq("menu_item_size_id", menuItemSizeId);
+
+      if (deleteError) throw deleteError;
+
+      // Then, insert new toppings
+      if (toppings.length > 0) {
+        const insertData = toppings.map((topping) => ({
+          menu_item_size_id: menuItemSizeId,
+          topping_id: topping.toppingId,
+          is_active: topping.isActive,
+        }));
+
+        const { error: insertError } = await supabase
+          .from(TABLES.MENU_ITEM_SIZE_TOPPINGS)
+          .insert(insertData);
+
+        if (insertError) throw insertError;
+      }
+
+      // Refresh the data
+      await fetchMenuItemSizeToppings();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to update menu item size toppings",
+      );
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchMenuItemSizeToppings();
+  }, []);
+
+  return {
+    menuItemSizeToppings,
+    loading,
+    error,
+    updateMenuItemSizeToppings,
+    refetch: fetchMenuItemSizeToppings,
+  };
+};
+
+export const useToppingSizePrices = () => {
+  const [toppingSizePrices, setToppingSizePrices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchToppingSizePrices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.TOPPING_SIZE_PRICES)
+        .select("*");
+
+      if (error) {
+        // Check if table doesn't exist
+        if (
+          error.code === "42P01" ||
+          error.message?.includes("does not exist")
+        ) {
+          console.warn(
+            "topping_size_prices table does not exist yet. This is expected if you haven't run the database migration script.",
+          );
+          setToppingSizePrices([]);
+          return;
+        }
+        throw error;
+      }
+
+      setToppingSizePrices(data ? data.map(transformToppingSizePrice) : []);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to fetch topping size prices";
+      console.error("Error fetching topping size prices:", errorMessage);
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateToppingSizePrices = async (
+    toppingId: string,
+    sizePrices: { categorySizeId: string; price: number }[],
+  ) => {
+    try {
+      console.log(
+        "Updating topping size prices for topping:",
+        toppingId,
+        "with prices:",
+        sizePrices,
+      );
+
+      // First, delete existing prices for this topping
+      const { error: deleteError } = await supabase
+        .from(TABLES.TOPPING_SIZE_PRICES)
+        .delete()
+        .eq("topping_id", toppingId);
+
+      if (deleteError) {
+        // Check if table doesn't exist
+        if (
+          deleteError.code === "42P01" ||
+          deleteError.message?.includes("does not exist")
+        ) {
+          throw new Error(
+            "The topping_size_prices table does not exist. Please run the database migration script first.",
+          );
+        }
+        console.error("Delete error:", deleteError);
+        throw new Error(
+          `Failed to delete existing prices: ${deleteError.message || deleteError.details || deleteError.hint || "Unknown error"}`,
+        );
+      }
+
+      // Then, insert new prices
+      if (sizePrices.length > 0) {
+        const insertData = sizePrices.map((sizePrice) => ({
+          topping_id: toppingId,
+          category_size_id: sizePrice.categorySizeId,
+          price: sizePrice.price,
+        }));
+
+        console.log("Inserting topping size prices:", insertData);
+
+        const { error: insertError } = await supabase
+          .from(TABLES.TOPPING_SIZE_PRICES)
+          .insert(insertData);
+
+        if (insertError) {
+          // Check if table doesn't exist
+          if (
+            insertError.code === "42P01" ||
+            insertError.message?.includes("does not exist")
+          ) {
+            throw new Error(
+              "The topping_size_prices table does not exist. Please run the database migration script first.",
+            );
+          }
+          console.error("Insert error:", insertError);
+          throw new Error(
+            `Failed to insert new prices: ${insertError.message || insertError.details || insertError.hint || "Unknown error"}`,
+          );
+        }
+      }
+
+      // Refresh the data
+      await fetchToppingSizePrices();
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+            ? err
+            : err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : "Failed to update topping size prices";
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
+  const getToppingSizePrices = (toppingId: string) => {
+    return toppingSizePrices.filter((tsp) => tsp.toppingId === toppingId);
+  };
+
+  const getToppingPriceForSize = (
+    toppingId: string,
+    categorySizeId: string,
+  ) => {
+    const sizePrice = toppingSizePrices.find(
+      (tsp) =>
+        tsp.toppingId === toppingId && tsp.categorySizeId === categorySizeId,
+    );
+    return sizePrice?.price ?? 0;
+  };
+
+  useEffect(() => {
+    fetchToppingSizePrices();
+  }, []);
+
+  return {
+    toppingSizePrices,
+    loading,
+    error,
+    updateToppingSizePrices,
+    getToppingSizePrices,
+    getToppingPriceForSize,
+    refetch: fetchToppingSizePrices,
   };
 };

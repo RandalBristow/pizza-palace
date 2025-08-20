@@ -11,13 +11,14 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const TABLES = {
   CATEGORIES: "categories",
   MENU_SUB_CATEGORIES: "menu_sub_categories",
-  SUB_CATEGORY_SIZES: "sub_category_sizes",
+  CATEGORY_SIZE_SUB_CATEGORIES: "category_size_sub_categories", // New junction table
   CATEGORY_SIZES: "category_sizes",
   MENU_ITEMS: "menu_items",
   MENU_ITEM_SIZES: "menu_item_sizes",
   MENU_ITEM_SIZE_TOPPINGS: "menu_item_size_toppings",
   TOPPINGS: "toppings",
   TOPPING_CATEGORIES: "topping_categories",
+  TOPPING_SIZE_PRICES: "topping_size_prices",
   SPECIALS: "specials",
   CAROUSEL_IMAGES: "carousel_images",
   CUSTOMER_FAVORITES: "customer_favorites",
@@ -40,6 +41,7 @@ export interface DatabaseMenuItem {
   id: string;
   name: string;
   description: string;
+  price: number;
   category_id: string;
   sub_category_id?: string;
   image_id?: string;
@@ -51,10 +53,19 @@ export interface DatabaseMenuItem {
 export interface DatabaseTopping {
   id: string;
   name: string;
-  price: number;
+  price?: number; // Made optional as it's now deprecated
   category_id: string;
   menu_item_category_id: string;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseToppingSizePrice {
+  id: string;
+  topping_id: string;
+  category_size_id: string;
+  price: number;
   created_at: string;
   updated_at: string;
 }
@@ -150,7 +161,7 @@ export interface DatabaseMenuSubCategory {
 
 export interface DatabaseCategorySize {
   id: string;
-  category_id: string;
+  sub_category_id: string; // Changed: now belongs to sub-category
   size_name: string;
   display_order: number;
   is_active: boolean;
@@ -176,10 +187,10 @@ export interface DatabaseMenuItemSizeTopping {
   updated_at: string;
 }
 
-export interface DatabaseSubCategorySize {
+export interface DatabaseCategorySizeSubCategory {
   id: string;
-  sub_category_id: string;
   category_size_id: string;
+  sub_category_id: string;
   created_at: string;
 }
 

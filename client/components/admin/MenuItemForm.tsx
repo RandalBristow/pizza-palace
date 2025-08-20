@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -27,10 +27,11 @@ import {
   Edit,
   Trash2,
   Save,
-  Upload,
   ThumbsUp,
   ThumbsDown,
   Pizza,
+  Power,
+  PowerOff,
 } from "lucide-react";
 import {
   Tooltip,
@@ -39,18 +40,15 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import ImageSelector from "../ui/image-selector";
-import { useImages } from "../../hooks/useSupabase";
 import { Category } from "./MenuCategoryForm";
 
 export interface MenuItem {
   id: string;
   name: string;
   description: string;
-  price: number;
   category: string;
   subCategoryId?: string;
   imageId?: string;
-  defaultToppings: string[];
   isActive: boolean;
 }
 
@@ -71,17 +69,43 @@ export interface Topping {
   isActive: boolean;
 }
 
+export interface CategorySize {
+  id: string;
+  categoryId: string;
+  sizeName: string;
+  displayOrder: number;
+  isActive: boolean;
+}
+
 interface MenuItemFormProps {
   menuItems: MenuItem[];
   categories: Category[];
   subCategories?: any[];
   toppingCategories: ToppingCategory[];
   toppings: Topping[];
+  categorySizes?: CategorySize[];
+  subCategorySizes?: any[];
+  menuItemSizes?: any[];
+  menuItemSizeToppings?: any[];
+  toppingSizePrices?: any[];
+  images?: any[];
   selectedMenuCategory: string;
   onSelectedCategoryChange: (category: string) => void;
   createMenuItem: (menuItem: any) => Promise<any>;
   updateMenuItem: (id: string, updates: any) => Promise<any>;
   deleteMenuItem: (id: string) => Promise<void>;
+  updateMenuItemSizesForItem?: (
+    menuItemId: string,
+    sizes: any[],
+  ) => Promise<void>;
+  updateMenuItemSizeToppings?: (
+    menuItemSizeId: string,
+    toppings: any[],
+  ) => Promise<void>;
+  getToppingPriceForSize?: (
+    toppingId: string,
+    categorySizeId: string,
+  ) => number;
 }
 
 export default function MenuItemForm({
@@ -90,49 +114,87 @@ export default function MenuItemForm({
   subCategories = [],
   toppingCategories,
   toppings,
+  categorySizes = [],
+  subCategorySizes = [],
+  menuItemSizes = [],
+  menuItemSizeToppings = [],
+  toppingSizePrices = [],
+  images = [],
   selectedMenuCategory,
   onSelectedCategoryChange,
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,
+  updateMenuItemSizesForItem,
+  updateMenuItemSizeToppings,
+  getToppingPriceForSize,
 }: MenuItemFormProps) {
   const [isAddingMenuItem, setIsAddingMenuItem] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
-  const { images } = useImages();
   const [newMenuItem, setNewMenuItem] = useState<Partial<MenuItem>>({
     name: "",
     description: "",
-    price: 0,
     category: "",
     subCategoryId: undefined,
     imageId: undefined,
-    defaultToppings: [],
     isActive: true,
   });
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>(
     undefined,
   );
 
+  // Size-based pricing state
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [sizePrices, setSizePrices] = useState<{ [key: string]: number }>({});
+  const [sizeToppings, setSizeToppings] = useState<{
+    [key: string]: { [key: string]: boolean };
+  }>({});
+
+  // Default toppings state (per menu item, not per size)
+  const [defaultToppings, setDefaultToppings] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+
   const handleAddMenuItem = async () => {
     try {
-      await createMenuItem({
+      const defaultToppingsArray = Object.keys(defaultToppings).filter(
+        (toppingId) => defaultToppings[toppingId],
+      );
+
+      const createdMenuItem = await createMenuItem({
         ...newMenuItem,
         imageId: selectedImageId,
+        defaultToppings: defaultToppingsArray,
       });
+
+      // Create size-based pricing
+      const sizes = Object.keys(sizePrices).map((sizeId) => ({
+        categorySizeId: sizeId,
+        price: sizePrices[sizeId] || 0,
+      }));
+
+      if (sizes.length > 0 && updateMenuItemSizesForItem) {
+        await updateMenuItemSizesForItem(createdMenuItem.id, sizes);
+      }
+
       setIsAddingMenuItem(false);
-      setNewMenuItem({
-        name: "",
-        description: "",
-        price: 0,
-        category: "",
-        subCategoryId: undefined,
-        imageId: undefined,
-        defaultToppings: [],
-        isActive: true,
-      });
-      setSelectedImageId(undefined);
+      resetForm();
     } catch (error) {
-      console.error("Failed to create menu item:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : error && typeof error === "object" && "message" in error
+              ? String(error.message)
+              : error && typeof error === "object" && "details" in error
+                ? String(error.details)
+                : error && typeof error === "object" && "hint" in error
+                  ? String(error.hint)
+                  : "An unknown error occurred";
+      console.error("Failed to create menu item:", errorMessage);
+      alert(`Failed to create menu item: ${errorMessage}`);
     }
   };
 
@@ -142,39 +204,85 @@ export default function MenuItemForm({
       ...menuItem,
       name: menuItem.name || "",
       description: menuItem.description || "",
-      price: menuItem.price || 0,
       category: menuItem.category || "",
       subCategoryId: menuItem.subCategoryId,
       imageId: menuItem.imageId,
-      defaultToppings: menuItem.defaultToppings || [],
       isActive: menuItem.isActive ?? true,
     });
 
     setSelectedImageId(menuItem.imageId);
+
+    // Load existing prices for this menu item
+    const itemSizes = menuItemSizes.filter(
+      (ms) => ms.menu_item_id === menuItem.id,
+    );
+    const prices: { [key: string]: number } = {};
+    itemSizes.forEach((itemSize) => {
+      prices[itemSize.category_size_id] = itemSize.price;
+    });
+    setSizePrices(prices);
+
+    // Set default selected size to first available size
+    const availableSizes = getAvailableSizes(
+      menuItem.category,
+      menuItem.subCategoryId,
+    );
+    if (availableSizes.length > 0) {
+      setSelectedSize(availableSizes[0].id);
+    }
+
+    // Load default toppings
+    if (menuItem.defaultToppings && Array.isArray(menuItem.defaultToppings)) {
+      const defaultToppingsMap: { [key: string]: boolean } = {};
+      menuItem.defaultToppings.forEach((toppingId: string) => {
+        defaultToppingsMap[toppingId] = true;
+      });
+      setDefaultToppings(defaultToppingsMap);
+    }
   };
 
   const handleUpdateMenuItem = async () => {
     if (!editingMenuItem) return;
 
     try {
+      const defaultToppingsArray = Object.keys(defaultToppings).filter(
+        (toppingId) => defaultToppings[toppingId],
+      );
+
+
       await updateMenuItem(editingMenuItem.id, {
         ...newMenuItem,
         imageId: selectedImageId,
+        defaultToppings: defaultToppingsArray,
       });
+
+      // Update size-based pricing
+      const sizes = Object.keys(sizePrices).map((sizeId) => ({
+        categorySizeId: sizeId,
+        price: sizePrices[sizeId] || 0,
+      }));
+
+      if (updateMenuItemSizesForItem) {
+        await updateMenuItemSizesForItem(editingMenuItem.id, sizes);
+      }
+
       setEditingMenuItem(null);
-      setNewMenuItem({
-        name: "",
-        description: "",
-        price: 0,
-        category: "",
-        subCategoryId: undefined,
-        imageId: undefined,
-        defaultToppings: [],
-        isActive: true,
-      });
-      setSelectedImageId(undefined);
+      resetForm();
     } catch (error) {
-      console.error("Failed to update menu item:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : error && typeof error === "object" && "message" in error
+              ? String(error.message)
+              : error && typeof error === "object" && "details" in error
+                ? String(error.details)
+                : error && typeof error === "object" && "hint" in error
+                  ? String(error.hint)
+                  : "An unknown error occurred";
+      console.error("Failed to update menu item:", errorMessage);
+      alert(`Failed to update menu item: ${errorMessage}`);
     }
   };
 
@@ -197,6 +305,97 @@ export default function MenuItemForm({
     }
   };
 
+  const resetForm = () => {
+    setNewMenuItem({
+      name: "",
+      description: "",
+      category: "",
+      subCategoryId: undefined,
+      imageId: undefined,
+      isActive: true,
+    });
+    setSelectedImageId(undefined);
+    setSizePrices({});
+    setSizeToppings({});
+    setDefaultToppings({});
+    setSelectedSize("");
+  };
+
+  const getAvailableSizes = (categoryId: string, subCategoryId?: string) => {
+    if (!subCategoryId) {
+      return [];
+    }
+
+    // Get sizes that are linked to this sub-category
+    const subCategorySizeIds = subCategorySizes
+      .filter((scs) => scs.subCategoryId === subCategoryId)
+      .map((scs) => scs.categorySizeId);
+
+    const availableSizes = categorySizes
+      .filter(
+        (size) =>
+          size.categoryId === categoryId &&
+          size.isActive &&
+          subCategorySizeIds.includes(size.id),
+      )
+      .sort((a, b) => a.displayOrder - b.displayOrder);
+
+    return availableSizes;
+  };
+
+  const handleSizePriceChange = (sizeId: string, price: number) => {
+    setSizePrices((prev) => ({
+      ...prev,
+      [sizeId]: price,
+    }));
+  };
+
+  const handleToppingToggle = (toppingId: string, isActive: boolean) => {
+    if (!selectedSize) return;
+
+    setSizeToppings((prev) => ({
+      ...prev,
+      [selectedSize]: {
+        ...prev[selectedSize],
+        [toppingId]: isActive,
+      },
+    }));
+
+    // If deactivating, also uncheck from default toppings
+    if (!isActive && defaultToppings[toppingId]) {
+      setDefaultToppings((prev) => ({
+        ...prev,
+        [toppingId]: false,
+      }));
+    }
+  };
+
+  const handleDefaultToppingToggle = (
+    toppingId: string,
+    isDefault: boolean,
+  ) => {
+    setDefaultToppings((prev) => ({
+      ...prev,
+      [toppingId]: isDefault,
+    }));
+  };
+
+  const getMenuItemPrice = (menuItem: MenuItem) => {
+    const itemSizes = menuItemSizes.filter(
+      (ms) => ms.menu_item_id === menuItem.id,
+    );
+    if (itemSizes.length === 0) return "No pricing";
+
+    const prices = itemSizes.map((itemSize) => itemSize.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+
+    if (minPrice === maxPrice) {
+      return `$${minPrice.toFixed(2)}`;
+    }
+    return `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
+  };
+
   const filteredMenuItems =
     selectedMenuCategory === "all"
       ? menuItems
@@ -212,76 +411,86 @@ export default function MenuItemForm({
           </h2>
           <p className="text-sm text-gray-500">
             {isEdit
-              ? "Update menu item details"
-              : "Create a new menu item for your restaurant"}
+              ? "Update menu item details and size-based pricing"
+              : "Create a new menu item with size-based pricing"}
           </p>
         </div>
 
-        {/* Category moved to top */}
-        <div>
-          <Label htmlFor="category" className="text-red-600">
-            * Category
-          </Label>
-          <Select
-            value={newMenuItem.category}
-            onValueChange={(value) => {
-              setNewMenuItem({
-                ...newMenuItem,
-                category: value,
-                subCategoryId: undefined, // Reset sub-category when category changes
-                defaultToppings: [], // Reset toppings when category changes
-              });
-            }}
-            required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories
-                .filter((c) => c.isActive)
-                .map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+        {/* Category and Sub-Category Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="category" className="text-red-600">
+              * Category
+            </Label>
+            <Select
+              value={newMenuItem.category}
+              onValueChange={(value) => {
+                setNewMenuItem({
+                  ...newMenuItem,
+                  category: value,
+                  subCategoryId: undefined,
+                });
+                setSizePrices({});
+                setSizeToppings({});
+                setSelectedSize("");
+              }}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories
+                  .filter((c) => c.isActive)
+                  .map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="subCategory" className="text-red-600">
+              * Sub-Category
+            </Label>
+            <Select
+              value={newMenuItem.subCategoryId || ""}
+              onValueChange={(value) => {
+                setNewMenuItem({
+                  ...newMenuItem,
+                  subCategoryId: value || undefined,
+                });
+                // Clear size prices when sub-category changes
+                setSizePrices({});
+                setSelectedSize("");
+              }}
+              disabled={!newMenuItem.category}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select sub-category" />
+              </SelectTrigger>
+              <SelectContent>
+                {subCategories
+                  .filter(
+                    (sub) =>
+                      sub.categoryId === newMenuItem.category && sub.isActive,
+                  )
+                  .sort((a, b) => a.displayOrder - b.displayOrder)
+                  .map((subCategory) => (
+                    <SelectItem key={subCategory.id} value={subCategory.id}>
+                      {subCategory.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        <div>
-          <Label htmlFor="subCategory">Sub-Category</Label>
-          <Select
-            value={newMenuItem.subCategoryId || "none"}
-            onValueChange={(value) => {
-              setNewMenuItem({
-                ...newMenuItem,
-                subCategoryId: value === "none" ? undefined : value,
-              });
-            }}
-            disabled={!newMenuItem.category}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select sub-category (optional)" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">No sub-category</SelectItem>
-              {subCategories
-                .filter(
-                  (sub) =>
-                    sub.categoryId === newMenuItem.category && sub.isActive,
-                )
-                .sort((a, b) => a.displayOrder - b.displayOrder)
-                .map((subCategory) => (
-                  <SelectItem key={subCategory.id} value={subCategory.id}>
-                    {subCategory.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
+        {/* Name and Image Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="name" className="text-red-600">
               * Name
@@ -299,26 +508,25 @@ export default function MenuItemForm({
               required
             />
           </div>
+
           <div>
-            <Label htmlFor="price" className="text-red-600">
-              * Price
-            </Label>
-            <Input
-              id="price"
-              type="number"
-              step="0.01"
-              value={newMenuItem.price}
-              onChange={(e) =>
-                setNewMenuItem({
-                  ...newMenuItem,
-                  price: parseFloat(e.target.value) || 0,
-                })
-              }
-              placeholder="0.00"
-              required
+            {/* Image Selector */}
+            <ImageSelector
+              images={images}
+              selectedImageId={selectedImageId}
+              onImageSelect={(imageId, imageUrl) => {
+                setSelectedImageId(imageId);
+                setNewMenuItem({ ...newMenuItem, image: imageUrl || "" });
+              }}
+              label="Menu Item Image"
+              placeholder="Select an image (optional)..."
+              required={false}
+              showPreview={false}
             />
           </div>
         </div>
+
+        {/* Description */}
         <div>
           <Label htmlFor="description" className="text-red-600">
             * Description
@@ -337,34 +545,116 @@ export default function MenuItemForm({
             required
           />
         </div>
-        <ImageSelector
-          images={images}
-          selectedImageId={selectedImageId}
-          onImageSelect={(imageId, imageUrl) => {
-            setSelectedImageId(imageId);
-            setNewMenuItem({ ...newMenuItem, image: imageUrl || "" });
-          }}
-          label="Menu Item Image"
-          placeholder="Select an image (optional)..."
-          required={false}
-          showPreview={false}
-        />
+
+        {/* Size-based Pricing - Scrollable */}
+        {newMenuItem.category && newMenuItem.subCategoryId && (
+          <div>
+            <Label className="text-red-600">* Size-based Pricing</Label>
+            <div className="mt-1 border rounded-lg py-1 px-4">
+              {getAvailableSizes(
+                newMenuItem.category,
+                newMenuItem.subCategoryId,
+              ).length === 0 ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-500">
+                    No sizes defined for this sub-category. Please configure
+                    sizes for the sub-category first.
+                  </p>
+                  <div className="text-xs text-gray-400 bg-gray-50 p-2 rounded">
+                    Debug Info:
+                    <br />
+                    Category: {newMenuItem.category}
+                    <br />
+                    SubCategory: {newMenuItem.subCategoryId}
+                    <br />
+                    SubCategorySizes loaded: {subCategorySizes.length}
+                    <br />
+                    CategorySizes loaded: {categorySizes.length}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-1 max-h-40 overflow-y-auto pr-2">
+                  {getAvailableSizes(
+                    newMenuItem.category,
+                    newMenuItem.subCategoryId,
+                  ).map((size) => (
+                    <div key={size.id} className="flex items-center space-x-2">
+                      <Label className="text-xs min-w-[60px] font-medium">
+                        {size.sizeName}:
+                      </Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={sizePrices[size.id] || ""}
+                        onChange={(e) =>
+                          handleSizePriceChange(
+                            size.id,
+                            parseFloat(e.target.value) || 0,
+                          )
+                        }
+                        className="w-24 h-7 py-0 text-xs"
+                        required
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Show message if category selected but no sub-category */}
+        {newMenuItem.category && !newMenuItem.subCategoryId && (
+          <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-3">
+            <p className="text-sm text-yellow-800">
+              Please select a sub-category to configure size-based pricing.
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Right Column - Default Toppings */}
+      {/* Right Column - Size Selection and Toppings */}
       <div className="p-6 flex flex-col h-full">
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-900">
-            Default Toppings
+            Topping Management
           </h2>
           <p className="text-sm text-gray-500">
-            Select which toppings should come with this item by default
+            Select a size to enable/disable toppings. Check boxes to set default
+            toppings for this menu item.
           </p>
         </div>
 
+        {/* Size Dropdown */}
+        {newMenuItem.category &&
+          newMenuItem.subCategoryId &&
+          getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId)
+            .length > 0 && (
+            <div className="mb-4">
+              <Label htmlFor="sizeSelect">Select Size</Label>
+              <Select value={selectedSize} onValueChange={setSelectedSize}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a size to manage toppings..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAvailableSizes(
+                    newMenuItem.category,
+                    newMenuItem.subCategoryId,
+                  ).map((size) => (
+                    <SelectItem key={size.id} value={size.id}>
+                      {size.sizeName} - $
+                      {sizePrices[size.id]?.toFixed(2) || "0.00"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
         {/* Toppings content that grows to fill space */}
         <div className="flex-1 overflow-hidden">
-          {newMenuItem.category ? (
+          {newMenuItem.category && selectedSize ? (
             (() => {
               const availableCategories = toppingCategories.filter(
                 (tc) =>
@@ -373,8 +663,8 @@ export default function MenuItemForm({
               return (
                 <Tabs
                   defaultValue={availableCategories[0]?.id}
-                  className="w-full h-full"
-                  key={newMenuItem.category}
+                  className="w-full h-full rounded-md overflow-hidden border-2 border-red-600"
+                  key={`${newMenuItem.category}-${selectedSize}`}
                 >
                   <TabsList className="w-full justify-start">
                     {availableCategories.map((toppingCategory) => (
@@ -394,51 +684,82 @@ export default function MenuItemForm({
                         value={toppingCategory.id}
                         className="mt-0 space-y-2"
                       >
-                        {toppings
-                          .filter(
-                            (t) =>
-                              t.category === toppingCategory.id && t.isActive,
-                          )
-                          .map((topping) => (
-                            <div
-                              key={topping.id}
-                              className="flex items-center justify-between p-2 border rounded"
-                            >
-                              <div className="flex items-center space-x-2">
-                                <Checkbox
-                                  checked={
-                                    newMenuItem.defaultToppings?.includes(
-                                      topping.id,
-                                    ) || false
-                                  }
-                                  onCheckedChange={(checked) => {
-                                    const currentToppings =
-                                      newMenuItem.defaultToppings || [];
-                                    if (checked) {
-                                      setNewMenuItem({
-                                        ...newMenuItem,
-                                        defaultToppings: [
-                                          ...currentToppings,
+                        <div className="space-y-2">
+                          {toppings
+                            .filter(
+                              (t) =>
+                                t.category === toppingCategory.id && t.isActive,
+                            )
+                            .map((topping) => {
+                              const isActive =
+                                sizeToppings[selectedSize]?.[topping.id] ??
+                                true;
+                              const isDefault =
+                                defaultToppings[topping.id] ?? false;
+                              const toppingPrice = getToppingPriceForSize
+                                ? getToppingPriceForSize(
+                                    topping.id,
+                                    selectedSize,
+                                  )
+                                : topping.price || 0;
+
+                              return (
+                                <div
+                                  key={topping.id}
+                                  className="flex items-center justify-between p-2 border rounded text-xs"
+                                >
+                                  <div className="flex items-center space-x-2 flex-1 min-w-0">
+                                    <Checkbox
+                                      id={`default-${topping.id}`}
+                                      checked={isDefault && isActive}
+                                      disabled={!isActive}
+                                      onCheckedChange={(checked) =>
+                                        handleDefaultToppingToggle(
                                           topping.id,
-                                        ],
-                                      });
-                                    } else {
-                                      setNewMenuItem({
-                                        ...newMenuItem,
-                                        defaultToppings: currentToppings.filter(
-                                          (id) => id !== topping.id,
-                                        ),
-                                      });
-                                    }
-                                  }}
-                                />
-                                <span className="text-sm">{topping.name}</span>
-                              </div>
-                              <span className="text-sm text-gray-500">
-                                +${topping.price.toFixed(2)}
-                              </span>
-                            </div>
-                          ))}
+                                          !!checked,
+                                        )
+                                      }
+                                      className="w-3 h-3"
+                                    />
+                                    <div className="flex flex-col flex-1 min-w-0">
+                                      <span className="font-medium truncate">
+                                        {topping.name}
+                                      </span>
+                                      <span className="text-gray-500">
+                                        +${toppingPrice.toFixed(2)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="ml-2 h-6 w-6 p-0"
+                                          onClick={() =>
+                                            handleToppingToggle(
+                                              topping.id,
+                                              !isActive,
+                                            )
+                                          }
+                                        >
+                                          {isActive ? (
+                                            <ThumbsUp className="h-3 w-3" />
+                                          ) : (
+                                            <ThumbsDown className="h-3 w-3" />
+                                          )}
+                                        </Button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        {isActive ? "Deactivate" : "Activate"}
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                </div>
+                              );
+                            })}
+                        </div>
                       </TabsContent>
                     ))}
                   </div>
@@ -447,7 +768,7 @@ export default function MenuItemForm({
             })()
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500">
-              <p>Select a category to see available toppings</p>
+              <p>Select a category and size to manage toppings</p>
             </div>
           )}
         </div>
@@ -462,19 +783,26 @@ export default function MenuItemForm({
               } else {
                 setIsAddingMenuItem(false);
               }
-              setNewMenuItem({
-                name: "",
-                description: "",
-                price: 0,
-                category: "",
-                defaultToppings: [],
-                isActive: true,
-              });
+              resetForm();
             }}
           >
             Cancel
           </Button>
-          <Button onClick={isEdit ? handleUpdateMenuItem : handleAddMenuItem}>
+          <Button
+            onClick={isEdit ? handleUpdateMenuItem : handleAddMenuItem}
+            disabled={
+              !newMenuItem.name ||
+              !newMenuItem.description ||
+              !newMenuItem.category ||
+              !newMenuItem.subCategoryId ||
+              getAvailableSizes(newMenuItem.category, newMenuItem.subCategoryId)
+                .length === 0 ||
+              getAvailableSizes(
+                newMenuItem.category,
+                newMenuItem.subCategoryId,
+              ).some((size) => !sizePrices[size.id] || sizePrices[size.id] <= 0)
+            }
+          >
             <Save className="h-4 w-4 mr-2" />
             {isEdit ? "Update Item" : "Save Item"}
           </Button>
@@ -486,7 +814,12 @@ export default function MenuItemForm({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Menu Items</h2>
+        <div>
+          <h2 className="text-xl font-semibold">Menu Items</h2>
+          <p className="text-gray-600 mt-1">
+            Manage menu items with size-based pricing and toppings
+          </p>
+        </div>
         <div className="flex items-center space-x-4">
           <Select
             value={selectedMenuCategory}
@@ -513,7 +846,7 @@ export default function MenuItemForm({
                 Add Menu Item
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-6xl h-[68vh] flex flex-col p-0">
+            <DialogContent className="max-w-6xl h-[calc(68vh+100px)] flex flex-col p-0">
               <DialogHeader className="sr-only">
                 <DialogTitle>Add New Menu Item</DialogTitle>
               </DialogHeader>
@@ -550,7 +883,7 @@ export default function MenuItemForm({
                       {menuItem.description}
                     </p>
                     <p className="text-lg font-bold text-green-600">
-                      ${menuItem.price.toFixed(2)}
+                      {getMenuItemPrice(menuItem)}
                     </p>
                   </div>
                   <Badge
@@ -626,7 +959,7 @@ export default function MenuItemForm({
         open={editingMenuItem !== null}
         onOpenChange={(open) => !open && setEditingMenuItem(null)}
       >
-        <DialogContent className="max-w-6xl h-[68vh] flex flex-col p-0">
+        <DialogContent className="max-w-6xl h-[calc(68vh+100px)] flex flex-col p-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Edit Menu Item</DialogTitle>
             <DialogDescription>Update the menu item details</DialogDescription>

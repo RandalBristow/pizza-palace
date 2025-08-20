@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import AdminSidebar from "../components/AdminSidebar";
@@ -15,6 +15,12 @@ import {
   useSettings,
   useAboutSections,
   useImages,
+  useCategorySizes,
+  useSubCategorySizes,
+  useCategorySizeSubCategories,
+  useMenuItemSizes,
+  useMenuItemSizeToppings,
+  useToppingSizePrices,
 } from "../hooks/useSupabase";
 
 // Import form components
@@ -28,9 +34,18 @@ import CarouselForm from "../components/admin/CarouselForm";
 import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 import AboutPageForm from "../components/admin/AboutPageForm";
 import ImageManagerForm from "../components/admin/ImageManagerForm";
+import DatabaseSetup from "../components/admin/DatabaseSetup";
+import CategorySizesPage from "../components/admin/CategorySizesPage";
+import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 
 export default function Admin() {
-  // Supabase hooks
+  const [selectedItem, setSelectedItem] = useState("categories");
+
+  // Filter states
+  const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
+  const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
+
+  // All hooks - restore normal usage
   const {
     categories,
     loading: categoriesLoading,
@@ -38,12 +53,15 @@ export default function Admin() {
     updateCategory,
     deleteCategory,
   } = useCategories();
+
   const {
     subCategories,
+    loading: subCategoriesLoading,
     createSubCategory,
     updateSubCategory,
     deleteSubCategory,
   } = useSubCategories();
+
   const {
     menuItems,
     loading: menuItemsLoading,
@@ -51,6 +69,7 @@ export default function Admin() {
     updateMenuItem,
     deleteMenuItem,
   } = useMenuItems();
+
   const {
     toppings,
     loading: toppingsLoading,
@@ -58,6 +77,7 @@ export default function Admin() {
     updateTopping,
     deleteTopping,
   } = useToppings();
+
   const {
     toppingCategories,
     loading: toppingCategoriesLoading,
@@ -65,6 +85,7 @@ export default function Admin() {
     updateToppingCategory,
     deleteToppingCategory,
   } = useToppingCategories();
+
   const {
     specials,
     loading: specialsLoading,
@@ -72,6 +93,7 @@ export default function Admin() {
     updateSpecial,
     deleteSpecial,
   } = useSpecials();
+
   const {
     carouselImages,
     loading: carouselLoading,
@@ -79,6 +101,7 @@ export default function Admin() {
     updateCarouselImage,
     deleteCarouselImage,
   } = useCarouselImages();
+
   const {
     customerFavorites,
     loading: favoritesLoading,
@@ -86,7 +109,9 @@ export default function Admin() {
     updateCustomerFavorite,
     deleteCustomerFavorite,
   } = useCustomerFavorites();
+
   const { settings, loading: settingsLoading, updateSettings } = useSettings();
+
   const {
     aboutSections,
     loading: aboutLoading,
@@ -94,6 +119,7 @@ export default function Admin() {
     updateAboutSection,
     deleteAboutSection,
   } = useAboutSections();
+
   const {
     images,
     loading: imagesLoading,
@@ -103,15 +129,49 @@ export default function Admin() {
     deleteImage,
   } = useImages();
 
-  const [selectedItem, setSelectedItem] = useState("categories");
+  const {
+    categorySizes,
+    loading: categorySizesLoading,
+    createCategorySize,
+    updateCategorySize,
+    deleteCategorySize,
+  } = useCategorySizes();
 
-  // Filter states
-  const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
-  const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
+  const {
+    subCategorySizes,
+    loading: subCategorySizesLoading,
+    updateSubCategorySizes,
+  } = useSubCategorySizes();
 
-  // Show loading state while data is being fetched
+  const {
+    categorySizeSubCategories,
+    loading: categorySizeSubCategoriesLoading,
+    updateCategorySizeSubCategories,
+  } = useCategorySizeSubCategories();
+
+  const {
+    menuItemSizes,
+    loading: menuItemSizesLoading,
+    updateMenuItemSizesForItem,
+  } = useMenuItemSizes();
+
+  const {
+    menuItemSizeToppings,
+    loading: menuItemSizeToppingsLoading,
+    updateMenuItemSizeToppings,
+  } = useMenuItemSizeToppings();
+
+  const {
+    toppingSizePrices,
+    loading: toppingSizePricesLoading,
+    updateToppingSizePrices,
+    getToppingSizePrices,
+    getToppingPriceForSize,
+  } = useToppingSizePrices();
+
   const isLoading =
     categoriesLoading ||
+    subCategoriesLoading ||
     menuItemsLoading ||
     toppingsLoading ||
     toppingCategoriesLoading ||
@@ -120,7 +180,13 @@ export default function Admin() {
     favoritesLoading ||
     settingsLoading ||
     aboutLoading ||
-    imagesLoading;
+    imagesLoading ||
+    categorySizesLoading ||
+    subCategorySizesLoading ||
+    categorySizeSubCategoriesLoading ||
+    menuItemSizesLoading ||
+    menuItemSizeToppingsLoading ||
+    toppingSizePricesLoading;
 
   if (isLoading) {
     return (
@@ -168,15 +234,33 @@ export default function Admin() {
             <h2 class="category-title">${category.name}</h2>
             ${menuItems
               .filter((item) => item.category === category.id && item.isActive)
-              .map(
-                (item) => `
+              .map((item) => {
+                // Get pricing based on size-based pricing structure
+                const itemSizes = menuItemSizes.filter(
+                  (ms) => ms.menu_item_id === item.id,
+                );
+                let priceDisplay = "Price Available";
+
+                if (itemSizes.length > 0) {
+                  const prices = itemSizes.map((itemSize) => itemSize.price);
+                  const minPrice = Math.min(...prices);
+                  const maxPrice = Math.max(...prices);
+
+                  if (minPrice === maxPrice) {
+                    priceDisplay = `$${minPrice.toFixed(2)}`;
+                  } else {
+                    priceDisplay = `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
+                  }
+                }
+
+                return `
               <div class="menu-item">
                 <div class="item-name">${item.name}</div>
                 <div class="item-description">${item.description}</div>
-                <div class="item-price">$${item.price.toFixed(2)}</div>
+                <div class="item-price">${priceDisplay}</div>
               </div>
-            `,
-              )
+            `;
+              })
               .join("")}
           </div>
         `,
@@ -210,12 +294,43 @@ export default function Admin() {
             subCategories={subCategories}
             menuItems={menuItems}
             toppingCategories={toppingCategories}
+            categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
             createCategory={createCategory}
             updateCategory={updateCategory}
             deleteCategory={deleteCategory}
             createSubCategory={createSubCategory}
             updateSubCategory={updateSubCategory}
             deleteSubCategory={deleteSubCategory}
+            createCategorySize={createCategorySize}
+            updateCategorySize={updateCategorySize}
+            deleteCategorySize={deleteCategorySize}
+            updateSubCategorySizes={updateSubCategorySizes}
+          />
+        );
+      case "category-sizes":
+        return (
+          <CategorySizesPage
+            categories={categories}
+            subCategories={subCategories}
+            categorySizes={categorySizes}
+            createCategorySize={createCategorySize}
+            updateCategorySize={updateCategorySize}
+            deleteCategorySize={deleteCategorySize}
+            updateCategorySizeSubCategories={updateCategorySizeSubCategories}
+          />
+        );
+      case "sub-categories":
+        return (
+          <SubCategoriesPage
+            categories={categories}
+            subCategories={subCategories}
+            categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
+            createSubCategory={createSubCategory}
+            updateSubCategory={updateSubCategory}
+            deleteSubCategory={deleteSubCategory}
+            updateSubCategorySizes={updateSubCategorySizes}
           />
         );
       case "menu-items":
@@ -226,11 +341,20 @@ export default function Admin() {
             subCategories={subCategories}
             toppingCategories={toppingCategories}
             toppings={toppings}
+            categorySizes={categorySizes}
+            subCategorySizes={subCategorySizes}
+            menuItemSizes={menuItemSizes}
+            menuItemSizeToppings={menuItemSizeToppings}
+            toppingSizePrices={toppingSizePrices}
+            images={images}
             selectedMenuCategory={selectedMenuCategory}
             onSelectedCategoryChange={setSelectedMenuCategory}
             createMenuItem={createMenuItem}
             updateMenuItem={updateMenuItem}
             deleteMenuItem={deleteMenuItem}
+            updateMenuItemSizesForItem={updateMenuItemSizesForItem}
+            updateMenuItemSizeToppings={updateMenuItemSizeToppings}
+            getToppingPriceForSize={getToppingPriceForSize}
           />
         );
       case "topping-categories":
@@ -252,11 +376,16 @@ export default function Admin() {
             toppings={toppings}
             categories={categories}
             toppingCategories={toppingCategories}
+            categorySizes={categorySizes}
+            toppingSizePrices={toppingSizePrices}
             selectedToppingCategory={selectedToppingCategory}
             onSelectedCategoryChange={setSelectedToppingCategory}
             createTopping={createTopping}
             updateTopping={updateTopping}
             deleteTopping={deleteTopping}
+            updateToppingSizePrices={updateToppingSizePrices}
+            getToppingSizePrices={getToppingSizePrices}
+            getToppingPriceForSize={getToppingPriceForSize}
           />
         );
       case "specials":
@@ -274,6 +403,7 @@ export default function Admin() {
         return (
           <AboutPageForm
             aboutSections={aboutSections}
+            images={images}
             createAboutSection={createAboutSection}
             updateAboutSection={updateAboutSection}
             deleteAboutSection={deleteAboutSection}
@@ -293,6 +423,7 @@ export default function Admin() {
         return (
           <CarouselForm
             carouselImages={carouselImages}
+            images={images}
             createCarouselImage={createCarouselImage}
             updateCarouselImage={updateCarouselImage}
             deleteCarouselImage={deleteCarouselImage}
@@ -307,6 +438,8 @@ export default function Admin() {
             deleteCustomerFavorite={deleteCustomerFavorite}
           />
         );
+      case "database-setup":
+        return <DatabaseSetup />;
       default:
         return (
           <SettingsForm

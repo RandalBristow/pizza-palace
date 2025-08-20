@@ -1,21 +1,13 @@
 import "./global.css";
 import { createRoot } from "react-dom/client";
+import { StrictMode } from "react";
 
-// Suppress ResizeObserver loop warning from Radix UI components
-const resizeObserverError = (e: ErrorEvent) => {
-  if (
-    e.message ===
-    "ResizeObserver loop completed with undelivered notifications."
-  ) {
-    e.stopImmediatePropagation();
-    return false;
-  }
-  return true;
-};
+// Import comprehensive ResizeObserver error fix
+import "./utils/resizeObserverFix";
 
-window.addEventListener("error", resizeObserverError);
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { OrderProvider } from "./context/OrderContext";
+import Footer from "./components/Footer";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
 import Order from "./pages/Order";
@@ -29,26 +21,71 @@ import About from "./pages/About";
 import Specials from "./pages/Specials";
 import NotFound from "./pages/NotFound";
 
+// Layout component that conditionally renders footer
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+  const isAdminPage = location.pathname === "/admin";
+
+  return (
+    <>
+      {children}
+      {!isAdminPage && <Footer />}
+    </>
+  );
+};
+
+// App component (not exported to avoid HMR issues)
 const App = () => (
   <OrderProvider>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/order" element={<Order />} />
-        <Route path="/wings" element={<Wings />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/specials" element={<Specials />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/order" element={<Order />} />
+          <Route path="/wings" element={<Wings />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/specials" element={<Specials />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Layout>
     </BrowserRouter>
   </OrderProvider>
 );
 
-createRoot(document.getElementById("root")!).render(<App />);
+// Proper root management to prevent duplicate createRoot calls
+const container = document.getElementById("root")!;
+
+// Check if root already exists on the container to prevent duplicate createRoot calls
+let root = (container as any)._reactRoot;
+
+if (!root) {
+  root = createRoot(container);
+  // Store root reference on container to persist across HMR
+  (container as any)._reactRoot = root;
+}
+
+// Initial render
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
+
+// Handle hot module replacement properly
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    // Re-render with the new App component
+    root.render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    );
+  });
+}

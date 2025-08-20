@@ -72,6 +72,8 @@ interface SubCategoryFormProps {
     subCategoryId: string,
     sizeIds: string[],
   ) => Promise<void>;
+  showTitle?: boolean;
+  hideAddButton?: boolean;
 }
 
 export default function SubCategoryForm({
@@ -83,6 +85,8 @@ export default function SubCategoryForm({
   updateSubCategory,
   deleteSubCategory,
   updateSubCategorySizes,
+  showTitle = true,
+  hideAddButton = false,
 }: SubCategoryFormProps) {
   const [isAddingSubCategory, setIsAddingSubCategory] = useState(false);
   const [editingSubCategory, setEditingSubCategory] =
@@ -97,10 +101,7 @@ export default function SubCategoryForm({
 
   const handleAddSubCategory = async () => {
     try {
-      const created = await createSubCategory(newSubCategory);
-      if (selectedSizes.length > 0) {
-        await updateSubCategorySizes(created.id, selectedSizes);
-      }
+      await createSubCategory(newSubCategory);
       setIsAddingSubCategory(false);
       resetForm();
     } catch (error) {
@@ -116,12 +117,6 @@ export default function SubCategoryForm({
       displayOrder: subCategory.displayOrder || 1,
       isActive: subCategory.isActive ?? true,
     });
-
-    // Load existing sizes for this sub-category
-    const existingSizes = subCategorySizes
-      .filter((scs) => scs.subCategoryId === subCategory.id)
-      .map((scs) => scs.categorySizeId);
-    setSelectedSizes(existingSizes);
   };
 
   const handleUpdateSubCategory = async () => {
@@ -129,7 +124,6 @@ export default function SubCategoryForm({
 
     try {
       await updateSubCategory(editingSubCategory.id, newSubCategory);
-      await updateSubCategorySizes(editingSubCategory.id, selectedSizes);
       setEditingSubCategory(null);
       resetForm();
     } catch (error) {
@@ -191,7 +185,6 @@ export default function SubCategoryForm({
           value={newSubCategory.categoryId}
           onValueChange={(value) => {
             setNewSubCategory({ ...newSubCategory, categoryId: value });
-            setSelectedSizes([]); // Reset sizes when category changes
           }}
         >
           <SelectTrigger>
@@ -213,7 +206,7 @@ export default function SubCategoryForm({
         <Label htmlFor="subCategoryName">Sub-Category Name</Label>
         <Input
           id="subCategoryName"
-          placeholder="e.g., Build Your Own"
+          placeholder="e.g., Build Your Own, Boneless Wings, Traditional Wings"
           value={newSubCategory.name}
           onChange={(e) =>
             setNewSubCategory({ ...newSubCategory, name: e.target.value })
@@ -237,33 +230,13 @@ export default function SubCategoryForm({
         />
       </div>
 
-      {newSubCategory.categoryId && (
-        <div>
-          <Label>Available Sizes</Label>
-          <div className="mt-2 space-y-2 border rounded-lg p-4">
-            {getAvailableSizes(newSubCategory.categoryId).length === 0 ? (
-              <p className="text-sm text-gray-500">
-                No sizes defined for this category
-              </p>
-            ) : (
-              getAvailableSizes(newSubCategory.categoryId).map((size) => (
-                <div key={size.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`size-${size.id}`}
-                    checked={selectedSizes.includes(size.id)}
-                    onCheckedChange={(checked) =>
-                      handleSizeToggle(size.id, checked as boolean)
-                    }
-                  />
-                  <Label htmlFor={`size-${size.id}`} className="text-sm">
-                    {size.sizeName}
-                  </Label>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
+      <div className="bg-blue-50 p-4 rounded-lg">
+        <p className="text-sm text-blue-800">
+          <strong>Note:</strong> Sizes for this sub-category will be managed in
+          the Category Sizes section. Create the sub-category first, then go to
+          Category Sizes to define which sizes apply to this sub-category.
+        </p>
+      </div>
 
       <div className="flex justify-end space-x-2">
         <Button
@@ -293,28 +266,30 @@ export default function SubCategoryForm({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">Sub-Categories</h3>
-        <Dialog
-          open={isAddingSubCategory}
-          onOpenChange={setIsAddingSubCategory}
-        >
-          <DialogTrigger asChild>
-            <Button disabled={categories.length === 0}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Sub-Category
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Add New Sub-Category</DialogTitle>
-              <DialogDescription>
-                Create a new sub-category within a menu category and select
-                available sizes
-              </DialogDescription>
-            </DialogHeader>
-            {renderSubCategoryForm(false)}
-          </DialogContent>
-        </Dialog>
+        {showTitle && <h3 className="text-lg font-medium">Sub-Categories</h3>}
+        {!hideAddButton && (
+          <Dialog
+            open={isAddingSubCategory}
+            onOpenChange={setIsAddingSubCategory}
+          >
+            <DialogTrigger asChild>
+              <Button disabled={categories.length === 0}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Sub-Category
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Add New Sub-Category</DialogTitle>
+                <DialogDescription>
+                  Create a new sub-category within a menu category. Sizes will
+                  be managed separately in the Category Sizes section.
+                </DialogDescription>
+              </DialogHeader>
+              {renderSubCategoryForm(false)}
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {/* Sub-Categories List */}
@@ -345,14 +320,7 @@ export default function SubCategoryForm({
                     {categorySubCategories
                       .sort((a, b) => a.displayOrder - b.displayOrder)
                       .map((subCategory) => {
-                        const subCategorySizeIds = subCategorySizes
-                          .filter((scs) => scs.subCategoryId === subCategory.id)
-                          .map((scs) => scs.categorySizeId);
-                        const subCategorySizeNames = categorySizes
-                          .filter((size) =>
-                            subCategorySizeIds.includes(size.id),
-                          )
-                          .map((size) => size.sizeName);
+                        // Sizes are now managed separately in Category Sizes section
 
                         return (
                           <Card key={subCategory.id}>
@@ -371,27 +339,12 @@ export default function SubCategoryForm({
                                   {subCategory.isActive ? "Active" : "Inactive"}
                                 </Badge>
                               </div>
-                              <p className="text-sm text-gray-500 mb-2">
+                              <p className="text-sm text-gray-500 mb-3">
                                 Order: {subCategory.displayOrder}
                               </p>
-                              {subCategorySizeNames.length > 0 && (
-                                <div className="mb-3">
-                                  <p className="text-xs text-gray-600 mb-1">
-                                    Sizes:
-                                  </p>
-                                  <div className="flex flex-wrap gap-1">
-                                    {subCategorySizeNames.map((sizeName) => (
-                                      <Badge
-                                        key={sizeName}
-                                        variant="outline"
-                                        className="text-xs"
-                                      >
-                                        {sizeName}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
+                              <p className="text-xs text-blue-600 mb-3">
+                                Sizes managed in Category Sizes section
+                              </p>
                               <div className="flex justify-between items-center">
                                 <div className="flex space-x-1">
                                   <TooltipProvider>
@@ -481,7 +434,8 @@ export default function SubCategoryForm({
           <DialogHeader>
             <DialogTitle>Edit Sub-Category</DialogTitle>
             <DialogDescription>
-              Update the sub-category details and available sizes
+              Update the sub-category details. Sizes are managed separately in
+              the Category Sizes section.
             </DialogDescription>
           </DialogHeader>
           {renderSubCategoryForm(true)}

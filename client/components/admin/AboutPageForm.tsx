@@ -39,7 +39,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import ImageSelector from "../ui/image-selector";
-import { useImages } from "../../hooks/useSupabase";
 
 export interface AboutSection {
   id: string;
@@ -62,6 +61,7 @@ export interface AboutSection {
 
 interface AboutPageFormProps {
   aboutSections: AboutSection[];
+  images?: any[];
   createAboutSection: (section: any) => Promise<any>;
   updateAboutSection: (id: string, updates: any) => Promise<any>;
   deleteAboutSection: (id: string) => Promise<void>;
@@ -69,6 +69,7 @@ interface AboutPageFormProps {
 
 export default function AboutPageForm({
   aboutSections,
+  images = [],
   createAboutSection,
   updateAboutSection,
   deleteAboutSection,
@@ -79,7 +80,6 @@ export default function AboutPageForm({
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { images } = useImages();
   const [newSection, setNewSection] = useState<Partial<AboutSection>>({
     type: "text",
     title: "",
