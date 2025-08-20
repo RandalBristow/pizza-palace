@@ -361,6 +361,34 @@ export default function CategorySizesForm({
             </div>
           </div>
         )}
+
+        {/* Form Actions */}
+        <div className="mt-6 flex justify-end space-x-2 pt-4 border-t">
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (isEdit) {
+                setEditingSize(null);
+              } else {
+                setIsAddingSize(false);
+              }
+              resetForm();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={isEdit ? handleUpdateSize : handleAddSize}
+            disabled={
+              !selectedCategoryId ||
+              !sizeName ||
+              selectedSubCategories.length === 0
+            }
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {isEdit ? "Update Size" : "Save Size"}
+          </Button>
+        </div>
       </div>
     </div>
   );
