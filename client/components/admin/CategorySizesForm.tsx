@@ -99,7 +99,9 @@ export default function CategorySizesForm({
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [sizeName, setSizeName] = useState("");
   const [displayOrder, setDisplayOrder] = useState(1);
-  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([]);
+  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>(
+    [],
+  );
 
   // Reset form
   const resetForm = () => {
@@ -111,7 +113,11 @@ export default function CategorySizesForm({
 
   // Handle adding new size
   const handleAddSize = async () => {
-    if (!selectedCategoryId || !sizeName || selectedSubCategories.length === 0) {
+    if (
+      !selectedCategoryId ||
+      !sizeName ||
+      selectedSubCategories.length === 0
+    ) {
       return;
     }
 
@@ -125,7 +131,10 @@ export default function CategorySizesForm({
 
       // Link the size to selected sub-categories
       if (updateCategorySizeSubCategories && newSize?.id) {
-        await updateCategorySizeSubCategories(newSize.id, selectedSubCategories);
+        await updateCategorySizeSubCategories(
+          newSize.id,
+          selectedSubCategories,
+        );
       }
 
       setIsAddingSize(false);
@@ -144,14 +153,19 @@ export default function CategorySizesForm({
 
     // Load existing sub-category associations
     const linkedSubCategories = categorySizeSubCategories
-      .filter(link => link.categorySizeId === size.id)
-      .map(link => link.subCategoryId);
+      .filter((link) => link.categorySizeId === size.id)
+      .map((link) => link.subCategoryId);
     setSelectedSubCategories(linkedSubCategories);
   };
 
   // Handle updating size
   const handleUpdateSize = async () => {
-    if (!editingSize || !selectedCategoryId || !sizeName || selectedSubCategories.length === 0) {
+    if (
+      !editingSize ||
+      !selectedCategoryId ||
+      !sizeName ||
+      selectedSubCategories.length === 0
+    ) {
       return;
     }
 
@@ -165,7 +179,10 @@ export default function CategorySizesForm({
 
       // Update sub-category associations
       if (updateCategorySizeSubCategories) {
-        await updateCategorySizeSubCategories(editingSize.id, selectedSubCategories);
+        await updateCategorySizeSubCategories(
+          editingSize.id,
+          selectedSubCategories,
+        );
       }
 
       setEditingSize(null);
@@ -199,28 +216,32 @@ export default function CategorySizesForm({
   // Handle sub-category selection
   const handleSubCategoryToggle = (subCategoryId: string, checked: boolean) => {
     if (checked) {
-      setSelectedSubCategories(prev => [...prev, subCategoryId]);
+      setSelectedSubCategories((prev) => [...prev, subCategoryId]);
     } else {
-      setSelectedSubCategories(prev => prev.filter(id => id !== subCategoryId));
+      setSelectedSubCategories((prev) =>
+        prev.filter((id) => id !== subCategoryId),
+      );
     }
   };
 
   // Get sub-categories for selected category
   const availableSubCategories = selectedCategoryId
-    ? subCategories.filter(
-        (sub) => sub.categoryId === selectedCategoryId && sub.isActive,
-      ).sort((a, b) => a.displayOrder - b.displayOrder)
+    ? subCategories
+        .filter((sub) => sub.categoryId === selectedCategoryId && sub.isActive)
+        .sort((a, b) => a.displayOrder - b.displayOrder)
     : [];
 
   // Get linked sub-categories for a size
   const getLinkedSubCategories = (sizeId: string) => {
     return categorySizeSubCategories
-      .filter(link => link.categorySizeId === sizeId)
-      .map(link => {
-        const subCategory = subCategories.find(sub => sub.id === link.subCategoryId);
-        return subCategory?.name || 'Unknown';
+      .filter((link) => link.categorySizeId === sizeId)
+      .map((link) => {
+        const subCategory = subCategories.find(
+          (sub) => sub.id === link.subCategoryId,
+        );
+        return subCategory?.name || "Unknown";
       })
-      .join(', ');
+      .join(", ");
   };
 
   // Render the unified form
@@ -315,7 +336,8 @@ export default function CategorySizesForm({
             {availableSubCategories.length > 0 ? (
               <div className="border rounded-lg p-4 h-full overflow-y-auto">
                 <Label className="text-sm font-medium mb-3 block">
-                  Available Sub-Categories ({selectedSubCategories.length} selected)
+                  Available Sub-Categories ({selectedSubCategories.length}{" "}
+                  selected)
                 </Label>
                 <div className="space-y-3">
                   {availableSubCategories.map((subCategory) => (
@@ -327,7 +349,10 @@ export default function CategorySizesForm({
                         id={`subcategory-${subCategory.id}`}
                         checked={selectedSubCategories.includes(subCategory.id)}
                         onCheckedChange={(checked) =>
-                          handleSubCategoryToggle(subCategory.id, checked as boolean)
+                          handleSubCategoryToggle(
+                            subCategory.id,
+                            checked as boolean,
+                          )
                         }
                       />
                       <Label
@@ -348,7 +373,9 @@ export default function CategorySizesForm({
                 <div className="text-center">
                   <Ruler className="h-12 w-12 mx-auto mb-2 text-gray-400" />
                   <p>No sub-categories available</p>
-                  <p className="text-sm">Create sub-categories for this category first</p>
+                  <p className="text-sm">
+                    Create sub-categories for this category first
+                  </p>
                 </div>
               </div>
             )}
@@ -477,7 +504,9 @@ export default function CategorySizesForm({
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => toggleSizeStatus(size.id)}
+                                        onClick={() =>
+                                          toggleSizeStatus(size.id)
+                                        }
                                       >
                                         {size.isActive ? (
                                           <ThumbsUp className="h-4 w-4" />
@@ -487,7 +516,9 @@ export default function CategorySizesForm({
                                       </Button>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                      {size.isActive ? "Deactivate" : "Activate"}
+                                      {size.isActive
+                                        ? "Deactivate"
+                                        : "Activate"}
                                     </TooltipContent>
                                   </Tooltip>
                                 </TooltipProvider>
@@ -540,7 +571,9 @@ export default function CategorySizesForm({
         <DialogContent className="max-w-6xl h-[calc(80vh)] flex flex-col p-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Edit Category Size</DialogTitle>
-            <DialogDescription>Update the size details and sub-category assignments</DialogDescription>
+            <DialogDescription>
+              Update the size details and sub-category assignments
+            </DialogDescription>
           </DialogHeader>
           {renderSizeForm(true)}
         </DialogContent>

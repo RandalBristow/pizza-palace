@@ -50,7 +50,9 @@ export default function CategorySizesPage({
         <div>
           <h2 className="text-xl font-semibold">Category Sizes</h2>
           <p className="text-gray-600 mt-1">
-            Manage sizes for categories and assign them to sub-categories. Each size can be used by multiple sub-categories within the same category.
+            Manage sizes for categories and assign them to sub-categories. Each
+            size can be used by multiple sub-categories within the same
+            category.
           </p>
         </div>
         <div className="flex items-center space-x-4">
