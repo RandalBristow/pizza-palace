@@ -129,7 +129,8 @@ export const transformCategorySize = (
   dbCategorySize: DatabaseCategorySize,
 ) => ({
   id: dbCategorySize.id,
-  subCategoryId: dbCategorySize.sub_category_id, // Changed: now uses sub_category_id
+  categoryId: dbCategorySize.category_id, // New: unified approach uses category_id
+  subCategoryId: dbCategorySize.sub_category_id, // Keep for backward compatibility
   sizeName: dbCategorySize.size_name,
   displayOrder: dbCategorySize.display_order,
   isActive: dbCategorySize.is_active,
