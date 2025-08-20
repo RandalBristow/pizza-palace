@@ -1802,7 +1802,7 @@ export const useCategorySizes = () => {
       const { data, error } = await supabase
         .from(TABLES.CATEGORY_SIZES)
         .update({
-          sub_category_id: updates.subCategoryId, // Changed: now uses sub_category_id
+          category_id: updates.categoryId, // New: uses category_id for unified approach
           size_name: updates.sizeName,
           display_order: updates.displayOrder,
           is_active: updates.isActive,
