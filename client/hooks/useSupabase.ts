@@ -1776,7 +1776,7 @@ export const useCategorySizes = () => {
       const { data, error } = await supabase
         .from(TABLES.CATEGORY_SIZES)
         .insert({
-          sub_category_id: categorySize.subCategoryId, // Changed: now uses sub_category_id
+          category_id: categorySize.categoryId, // New: uses category_id for unified approach
           size_name: categorySize.sizeName,
           display_order: categorySize.displayOrder,
           is_active: categorySize.isActive,
