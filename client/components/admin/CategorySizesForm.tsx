@@ -1,9 +1,57 @@
+// #region CategorySizesForm Documentation
+/**
+ * Author: Randy Bristow
+ * Date: August 20, 2025
+ * Time: 3:24 PM
+ * 
+ * CategorySizesForm Component
+ * 
+ * Manages category sizes and their assignment to sub-categories.
+ * Allows adding, editing, deleting, and toggling status of sizes.
+ * 
+ * Props:
+ * - categories: Category[]
+ *     List of available categories.
+ * - subCategories: SubCategory[]
+ *     List of available sub-categories.
+ * - categorySizes: CategorySize[]
+ *     List of category sizes.
+ * - categorySizeSubCategories?: CategorySizeSubCategory[]
+ *     Links between sizes and sub-categories.
+ * - createCategorySize: function(categorySize: object): Promise<any>
+ *     Creates a new category size.
+ * - updateCategorySize: function(id: string, updates: object): Promise<any>
+ *     Updates an existing category size.
+ * - deleteCategorySize: function(id: string): Promise<void>
+ *     Deletes a category size.
+ * - updateCategorySizeSubCategories?: function(sizeId: string, subCategoryIds: string[]): Promise<void>
+ *     Updates sub-category assignments for a size.
+ * - showTitle?: boolean
+ *     Whether to show the title above the form.
+ * - hideAddButton?: boolean
+ *     Whether to hide the "Add Size" button.
+ * 
+ * Usage:
+ * <CategorySizesForm
+ *   categories={categories}
+ *   subCategories={subCategories}
+ *   categorySizes={categorySizes}
+ *   categorySizeSubCategories={categorySizeSubCategories}
+ *   createCategorySize={createCategorySize}
+ *   updateCategorySize={updateCategorySize}
+ *   deleteCategorySize={deleteCategorySize}
+ *   updateCategorySizeSubCategories={updateCategorySizeSubCategories}
+ *   showTitle={true}
+ *   hideAddButton={false}
+ * />
+ */
+// #endregion
+
 import { useState, useEffect } from "react";
+import MenuCategorySize from "../page_components/MenuCategorySize";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Badge } from "../ui/badge";
 import { Checkbox } from "../ui/checkbox";
 import {
   Dialog,
@@ -22,20 +70,10 @@ import {
 } from "../ui/select";
 import {
   Plus,
-  Edit,
-  Trash2,
   Save,
-  ThumbsUp,
-  ThumbsDown,
   Ruler,
   Settings,
 } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
 
 export interface CategorySize {
   id: string;
@@ -471,89 +509,18 @@ export default function CategorySizesForm({
                     {category.name}
                   </h4>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     {categorySizesForCategory
                       .sort((a, b) => a.displayOrder - b.displayOrder)
                       .map((size) => (
-                        <Card key={size.id}>
-                          <CardContent className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                              <h6 className="font-medium">{size.sizeName}</h6>
-                              <Badge
-                                className={
-                                  size.isActive
-                                    ? "bg-green-100 text-green-800"
-                                    : "bg-red-100 text-red-800"
-                                }
-                              >
-                                {size.isActive ? "Active" : "Inactive"}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-gray-500 mb-2">
-                              Order: {size.displayOrder}
-                            </p>
-                            <div className="text-xs text-gray-600 mb-3">
-                              <strong>Sub-categories:</strong>{" "}
-                              {getLinkedSubCategories(size.id) || "None"}
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <div className="flex space-x-1">
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() =>
-                                          toggleSizeStatus(size.id)
-                                        }
-                                      >
-                                        {size.isActive ? (
-                                          <ThumbsUp className="h-4 w-4" />
-                                        ) : (
-                                          <ThumbsDown className="h-4 w-4" />
-                                        )}
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      {size.isActive
-                                        ? "Deactivate"
-                                        : "Activate"}
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handleEditSize(size)}
-                                      >
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Edit Size</TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              </div>
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => handleDeleteSize(size.id)}
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>Delete Size</TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            </div>
-                          </CardContent>
-                        </Card>
+                        <MenuCategorySize
+                          key={size.id}
+                          size={size}
+                          toggleSizeStatus={toggleSizeStatus}
+                          handleEditSize={handleEditSize}
+                          handleDeleteSize={handleDeleteSize}
+                          getLinkedSubCategories={getLinkedSubCategories}
+                        />
                       ))}
                   </div>
                 </div>

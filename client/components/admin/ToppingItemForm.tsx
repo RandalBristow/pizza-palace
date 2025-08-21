@@ -401,7 +401,6 @@ export default function ToppingItemForm({
         <div className="flex items-center space-x-4">
           {/* Menu Category Filter */}
           <div className="flex items-center space-x-2">
-            <Label htmlFor="menuCategoryFilter">Filter by Menu Category:</Label>
             <Select
               value={selectedToppingCategory}
               onValueChange={onSelectedCategoryChange}
@@ -442,7 +441,7 @@ export default function ToppingItemForm({
       </div>
 
       {/* Toppings List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
         {filteredToppings.map((topping) => {
           const toppingSizes = getToppingSizePrices(topping.id);
           const menuCategory = categories.find(
@@ -454,9 +453,9 @@ export default function ToppingItemForm({
 
           return (
             <Card key={topping.id}>
-              <CardContent className="p-4">
+              <CardContent className="p-4 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium">{topping.name}</h4>
+                  <h6 className="font-medium">{topping.name}</h6>
                   <Badge
                     className={
                       topping.isActive
@@ -468,16 +467,15 @@ export default function ToppingItemForm({
                   </Badge>
                 </div>
 
-                <div className="text-sm text-gray-600 mb-3">
+                <div className="text-xs text-gray-600 mb-3">
                   <p>
                     <strong>Menu:</strong> {menuCategory?.name || "Unknown"}
                   </p>
                   <p>
-                    <strong>Category:</strong>{" "}
+                    <strong>Category: </strong>
                     {toppingCategory?.name || "Unknown"}
                   </p>
                 </div>
-
                 {/* Size Prices */}
                 {toppingSizes.length > 0 && (
                   <div className="mb-3">
@@ -501,7 +499,7 @@ export default function ToppingItemForm({
                   </div>
                 )}
 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-end items-center mt-auto">
                   <div className="flex space-x-1">
                     <TooltipProvider>
                       <Tooltip>
@@ -537,21 +535,21 @@ export default function ToppingItemForm({
                         <TooltipContent>Edit Topping</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteTopping(topping.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete Topping</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDeleteTopping(topping.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Delete Topping</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 </div>
               </CardContent>
             </Card>

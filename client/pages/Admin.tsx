@@ -34,7 +34,6 @@ import CarouselForm from "../components/admin/CarouselForm";
 import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 import AboutPageForm from "../components/admin/AboutPageForm";
 import ImageManagerForm from "../components/admin/ImageManagerForm";
-import DatabaseSetup from "../components/admin/DatabaseSetup";
 import CategorySizesPage from "../components/admin/CategorySizesPage";
 import SubCategoriesPage from "../components/admin/SubCategoriesPage";
 
@@ -43,6 +42,30 @@ export default function Admin() {
 
   // Filter states
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
+
+  // Wrapper functions to trigger refetches after data changes
+  const createCategorySizeWithRefetch = async (categorySize: any) => {
+    const result = await createCategorySize(categorySize);
+    // Refetch all related data to ensure consistency
+    await Promise.all([
+      refetchCategorySizes(),
+      refetchSubCategorySizes(),
+      refetchCategorySizeSubCategories(),
+    ]);
+    return result;
+  };
+
+  const updateCategorySizeSubCategoriesWithRefetch = async (
+    sizeId: string,
+    subCategoryIds: string[],
+  ) => {
+    await updateCategorySizeSubCategories(sizeId, subCategoryIds);
+    // Refetch all related data to ensure consistency
+    await Promise.all([
+      refetchSubCategorySizes(),
+      refetchCategorySizeSubCategories(),
+    ]);
+  };
   const [selectedToppingCategory, setSelectedToppingCategory] = useState("all");
 
   // All hooks - restore normal usage
@@ -135,18 +158,21 @@ export default function Admin() {
     createCategorySize,
     updateCategorySize,
     deleteCategorySize,
+    refetch: refetchCategorySizes,
   } = useCategorySizes();
 
   const {
     subCategorySizes,
     loading: subCategorySizesLoading,
     updateSubCategorySizes,
+    refetch: refetchSubCategorySizes,
   } = useSubCategorySizes();
 
   const {
     categorySizeSubCategories,
     loading: categorySizeSubCategoriesLoading,
     updateCategorySizeSubCategories,
+    refetch: refetchCategorySizeSubCategories,
   } = useCategorySizeSubCategories();
 
   const {
@@ -315,10 +341,10 @@ export default function Admin() {
             subCategories={subCategories}
             categorySizes={categorySizes}
             categorySizeSubCategories={categorySizeSubCategories}
-            createCategorySize={createCategorySize}
+            createCategorySize={createCategorySizeWithRefetch}
             updateCategorySize={updateCategorySize}
             deleteCategorySize={deleteCategorySize}
-            updateCategorySizeSubCategories={updateCategorySizeSubCategories}
+            updateCategorySizeSubCategories={updateCategorySizeSubCategoriesWithRefetch}
           />
         );
       case "sub-categories":
@@ -439,8 +465,6 @@ export default function Admin() {
             deleteCustomerFavorite={deleteCustomerFavorite}
           />
         );
-      case "database-setup":
-        return <DatabaseSetup />;
       default:
         return (
           <SettingsForm

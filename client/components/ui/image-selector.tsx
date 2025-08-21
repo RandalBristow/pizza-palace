@@ -52,7 +52,7 @@ export default function ImageSelector({
   };
 
   return (
-    <div className="space-y-2">
+    <div>
       <Label>
         {label} {required && "*"}
       </Label>

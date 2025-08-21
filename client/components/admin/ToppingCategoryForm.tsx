@@ -55,7 +55,7 @@ export default function ToppingCategoryForm({
   onSelectedCategoryChange,
   createToppingCategory,
   updateToppingCategory,
-  deleteToppingCategory
+  deleteToppingCategory,
 }: ToppingCategoryFormProps) {
   const [isAddingToppingCategory, setIsAddingToppingCategory] = useState(false);
   const [editingToppingCategory, setEditingToppingCategory] =
@@ -78,7 +78,7 @@ export default function ToppingCategoryForm({
         menuItemCategory: "",
       });
     } catch (error) {
-      console.error('Failed to create topping category:', error);
+      console.error("Failed to create topping category:", error);
     }
   };
 
@@ -96,7 +96,10 @@ export default function ToppingCategoryForm({
     if (!editingToppingCategory) return;
 
     try {
-      await updateToppingCategory(editingToppingCategory.id, newToppingCategory);
+      await updateToppingCategory(
+        editingToppingCategory.id,
+        newToppingCategory,
+      );
       setEditingToppingCategory(null);
       setNewToppingCategory({
         name: "",
@@ -105,7 +108,7 @@ export default function ToppingCategoryForm({
         menuItemCategory: "",
       });
     } catch (error) {
-      console.error('Failed to update topping category:', error);
+      console.error("Failed to update topping category:", error);
     }
   };
 
@@ -126,18 +129,21 @@ export default function ToppingCategoryForm({
     try {
       await deleteToppingCategory(id);
     } catch (error) {
-      console.error('Failed to delete topping category:', error);
+      console.error("Failed to delete topping category:", error);
     }
   };
 
   const toggleToppingCategoryStatus = async (id: string) => {
-    const toppingCategory = toppingCategories.find(cat => cat.id === id);
+    const toppingCategory = toppingCategories.find((cat) => cat.id === id);
     if (!toppingCategory) return;
 
     try {
-      await updateToppingCategory(id, { ...toppingCategory, isActive: !toppingCategory.isActive });
+      await updateToppingCategory(id, {
+        ...toppingCategory,
+        isActive: !toppingCategory.isActive,
+      });
     } catch (error) {
-      console.error('Failed to toggle topping category status:', error);
+      console.error("Failed to toggle topping category status:", error);
     }
   };
 
@@ -269,14 +275,14 @@ export default function ToppingCategoryForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {filteredToppingCategories.map((toppingCategory) => (
           <Card key={toppingCategory.id}>
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="font-semibold">{toppingCategory.name}</h3>
+                    <h3 className="font-medium">{toppingCategory.name}</h3>
                     <Badge
                       className={
                         toppingCategory.isActive
@@ -287,12 +293,6 @@ export default function ToppingCategoryForm({
                       {toppingCategory.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-600">
-                    Menu:{" "}
-                    {categories.find(
-                      (c) => c.id === toppingCategory.menuItemCategory,
-                    )?.name || "Unknown"}
-                  </p>
                 </div>
                 <div className="flex items-center space-x-1">
                   <TooltipProvider>
@@ -358,6 +358,12 @@ export default function ToppingCategoryForm({
                   </TooltipProvider>
                 </div>
               </div>
+              <p className="text-xs text-gray-600 mb-1">
+                <strong>Menu Category:</strong>{" "}
+                {categories.find(
+                  (c) => c.id === toppingCategory.menuItemCategory,
+                )?.name || "Unknown"}
+              </p>
             </CardContent>
           </Card>
         ))}

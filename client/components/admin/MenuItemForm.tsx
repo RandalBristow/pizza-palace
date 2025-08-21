@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import MenuItem from "../page_components/MenuItem";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
-import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
 import { Checkbox } from "../ui/checkbox";
 import {
   Dialog,
@@ -24,14 +23,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
   Plus,
-  Edit,
-  Trash2,
   Save,
   ThumbsUp,
-  ThumbsDown,
-  Pizza,
-  Power,
-  PowerOff,
+  ThumbsDown
 } from "lucide-react";
 import {
   Tooltip,
@@ -50,6 +44,8 @@ export interface MenuItem {
   subCategoryId?: string;
   imageId?: string;
   isActive: boolean;
+  image?: string;
+  defaultToppings?: string[];
 }
 
 export interface ToppingCategory {
@@ -155,7 +151,6 @@ export default function MenuItemForm({
     [key: string]: boolean;
   }>({});
 
-
   const handleAddMenuItem = async () => {
     try {
       const defaultToppingsArray = Object.keys(defaultToppings).filter(
@@ -248,7 +243,6 @@ export default function MenuItemForm({
       const defaultToppingsArray = Object.keys(defaultToppings).filter(
         (toppingId) => defaultToppings[toppingId],
       );
-
 
       await updateMenuItem(editingMenuItem.id, {
         ...newMenuItem,
@@ -518,8 +512,8 @@ export default function MenuItemForm({
                 setSelectedImageId(imageId);
                 setNewMenuItem({ ...newMenuItem, image: imageUrl || "" });
               }}
-              label="Menu Item Image"
               placeholder="Select an image (optional)..."
+              label="Menu Item Image"
               required={false}
               showPreview={false}
             />
@@ -856,100 +850,22 @@ export default function MenuItemForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {filteredMenuItems.map((menuItem) => {
           const menuItemImage = menuItem.imageId
             ? images.find((img) => img.id === menuItem.imageId)
             : null;
 
           return (
-            <Card key={menuItem.id}>
-              <CardContent className="p-4">
-                {menuItemImage ? (
-                  <img
-                    src={menuItemImage.url}
-                    alt={menuItemImage.altText || menuItem.name}
-                    className="w-full h-32 object-cover rounded mb-3"
-                  />
-                ) : (
-                  <div className="w-full h-32 bg-gray-200 rounded mb-3 flex items-center justify-center">
-                    <Pizza className="h-12 w-12 text-gray-400" />
-                  </div>
-                )}
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="font-semibold">{menuItem.name}</h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">
-                      {menuItem.description}
-                    </p>
-                    <p className="text-lg font-bold text-green-600">
-                      {getMenuItemPrice(menuItem)}
-                    </p>
-                  </div>
-                  <Badge
-                    className={
-                      menuItem.isActive
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }
-                  >
-                    {menuItem.isActive ? "Active" : "Inactive"}
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center mt-3">
-                  <div className="flex items-center space-x-1">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toggleMenuItemStatus(menuItem.id)}
-                          >
-                            {menuItem.isActive ? (
-                              <ThumbsUp className="h-4 w-4" />
-                            ) : (
-                              <ThumbsDown className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {menuItem.isActive ? "Deactivate" : "Activate"}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditMenuItem(menuItem)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Edit Menu Item</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteMenuItem(menuItem.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Delete Menu Item</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <MenuItem
+              key={menuItem.id}
+              menuItem={menuItem}
+              menuItemImage={menuItemImage}
+              getMenuItemPrice={getMenuItemPrice}
+              toggleMenuItemStatus={toggleMenuItemStatus}
+              handleEditMenuItem={handleEditMenuItem}
+              handleDeleteMenuItem={handleDeleteMenuItem}
+            />
           );
         })}
       </div>

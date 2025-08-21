@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import MenuCategory from "../page_components/MenuCategory";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -247,81 +248,17 @@ export default function MenuCategoryForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* Menu Category Component */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {categories.map((category) => (
-          <Card key={category.id}>
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <h3 className="font-semibold">{category.name}</h3>
-                  <Badge
-                    className={
-                      category.isActive
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }
-                  >
-                    {category.isActive ? "Active" : "Inactive"}
-                  </Badge>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleCategoryStatus(category.id)}
-                        >
-                          {category.isActive ? (
-                            <ThumbsUp className="h-4 w-4" />
-                          ) : (
-                            <ThumbsDown className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {category.isActive ? "Deactivate" : "Activate"}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditCategory(category)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Edit Category</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={!canDeleteCategory(category.id)}
-                          onClick={() => handleDeleteCategory(category.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {canDeleteCategory(category.id)
-                          ? "Delete Category"
-                          : "Cannot delete: Has related items"}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <MenuCategory
+            key={category.id}
+            category={category}
+            toggleCategoryStatus={toggleCategoryStatus}
+            handleEditCategory={handleEditCategory}
+            handleDeleteCategory={handleDeleteCategory}
+            canDeleteCategory={canDeleteCategory}
+          />
         ))}
       </div>
 

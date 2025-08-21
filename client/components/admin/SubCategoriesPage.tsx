@@ -99,7 +99,8 @@ export default function SubCategoriesPage({
                 ))}
             </SelectContent>
           </Select>
-          <Dialog open={isAddingSubCategory} onOpenChange={setIsAddingSubCategory}>
+          <Dialog 
+            open={isAddingSubCategory} onOpenChange={setIsAddingSubCategory}>
             <DialogTrigger asChild>
               <Button disabled={categories.length === 0}>
                 <Plus className="h-4 w-4 mr-2" />

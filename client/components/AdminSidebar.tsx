@@ -26,11 +26,6 @@ interface AdminSidebarProps {
 
 const sidebarItems: SidebarItem[] = [
   {
-    id: "database-setup",
-    label: "Database Setup",
-    icon: Database,
-  },
-  {
     id: "settings",
     label: "Settings",
     icon: Settings,
