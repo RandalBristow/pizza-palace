@@ -79,8 +79,10 @@ function MenuCategorySize({ size, toggleSizeStatus, handleEditSize, handleDelete
           </div>
         </div>
         <div className="text-xs text-gray-600 mb-1">
-          <strong>Sub-categories:</strong>{" "}
-          {getLinkedSubCategories(size.id) || "None"}
+          <strong>Sub-Categories:</strong>{" "}
+          {getLinkedSubCategories(size.id).length > 0 
+            ? getLinkedSubCategories(size.id).map(sub => sub.name).join(", ")
+            : "None"}
         </div>
       </CardContent>
     </Card>

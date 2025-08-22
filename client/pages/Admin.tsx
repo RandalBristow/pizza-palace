@@ -25,17 +25,17 @@ import {
 
 // Import form components
 import SettingsForm from "../components/admin/SettingsForm";
-import MenuCategoryForm from "../components/admin/MenuCategoryForm";
-import MenuItemForm from "../components/admin/MenuItemForm";
-import ToppingCategoryForm from "../components/admin/ToppingCategoryForm";
-import ToppingItemForm from "../components/admin/ToppingItemForm";
+import MenuCategoriesForm from "../components/admin/MenuCategoriesForm";
+import MenuSubCategoriesForm from "../components/admin/MenuSubCategoriesForm";
+import MenuCategorySizesForm from "../components/admin/MenuCategorySizesForm";
+import MenuItemsForm from "../components/admin/MenuItemsForm";
+import ToppingCategoriesForm from "../components/admin/ToppingCategoriesForm";
+import ToppingItemsForm from "../components/admin/ToppingItemsForm";
 import SpecialForm from "../components/admin/SpecialForm";
-import CarouselForm from "../components/admin/CarouselForm";
+import CarouselImagesForm from "../components/admin/CarouselImagesForm";
 import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 import AboutPageForm from "../components/admin/AboutPageForm";
-import ImageManagerForm from "../components/admin/ImageManagerForm";
-import CategorySizesPage from "../components/admin/CategorySizesPage";
-import SubCategoriesPage from "../components/admin/SubCategoriesPage";
+import SiteImagesForm from "../components/admin/SiteImagesForm";
 
 export default function Admin() {
   const [selectedItem, setSelectedItem] = useState("categories");
@@ -313,9 +313,9 @@ export default function Admin() {
             onSettingsChange={updateSettings}
           />
         );
-      case "categories":
+      case "menu-categories":
         return (
-          <MenuCategoryForm
+          <MenuCategoriesForm
             categories={categories}
             subCategories={subCategories}
             menuItems={menuItems}
@@ -325,18 +325,13 @@ export default function Admin() {
             createCategory={createCategory}
             updateCategory={updateCategory}
             deleteCategory={deleteCategory}
-            createSubCategory={createSubCategory}
-            updateSubCategory={updateSubCategory}
-            deleteSubCategory={deleteSubCategory}
-            createCategorySize={createCategorySize}
-            updateCategorySize={updateCategorySize}
-            deleteCategorySize={deleteCategorySize}
-            updateSubCategorySizes={updateSubCategorySizes}
+            showTitle={true}
+            hideAddButton={false}
           />
         );
-      case "category-sizes":
+      case "menu-category-sizes":
         return (
-          <CategorySizesPage
+          <MenuCategorySizesForm
             categories={categories}
             subCategories={subCategories}
             categorySizes={categorySizes}
@@ -344,12 +339,16 @@ export default function Admin() {
             createCategorySize={createCategorySizeWithRefetch}
             updateCategorySize={updateCategorySize}
             deleteCategorySize={deleteCategorySize}
-            updateCategorySizeSubCategories={updateCategorySizeSubCategoriesWithRefetch}
+            updateCategorySizeSubCategories={
+              updateCategorySizeSubCategoriesWithRefetch
+            }
+            showTitle={true}
+            hideAddButton={false}
           />
         );
-      case "sub-categories":
+      case "menu-sub-categories":
         return (
-          <SubCategoriesPage
+          <MenuSubCategoriesForm
             categories={categories}
             subCategories={subCategories}
             categorySizes={categorySizes}
@@ -357,12 +356,13 @@ export default function Admin() {
             createSubCategory={createSubCategory}
             updateSubCategory={updateSubCategory}
             deleteSubCategory={deleteSubCategory}
-            updateSubCategorySizes={updateSubCategorySizes}
+            showTitle={true}
+            hideAddButton={false}
           />
         );
       case "menu-items":
         return (
-          <MenuItemForm
+          <MenuItemsForm
             menuItems={menuItems}
             categories={categories}
             subCategories={subCategories}
@@ -382,11 +382,13 @@ export default function Admin() {
             updateMenuItemSizesForItem={updateMenuItemSizesForItem}
             updateMenuItemSizeToppings={updateMenuItemSizeToppings}
             getToppingPriceForSize={getToppingPriceForSize}
+            showTitle={true}
+            hideAddButton={false}
           />
         );
       case "topping-categories":
         return (
-          <ToppingCategoryForm
+          <ToppingCategoriesForm
             toppingCategories={toppingCategories}
             categories={categories}
             toppings={toppings}
@@ -395,11 +397,13 @@ export default function Admin() {
             createToppingCategory={createToppingCategory}
             updateToppingCategory={updateToppingCategory}
             deleteToppingCategory={deleteToppingCategory}
+            showTitle={true}
+            hideAddButton={false}
           />
         );
       case "topping-items":
         return (
-          <ToppingItemForm
+          <ToppingItemsForm
             toppings={toppings}
             categories={categories}
             toppingCategories={toppingCategories}
@@ -413,6 +417,8 @@ export default function Admin() {
             updateToppingSizePrices={updateToppingSizePrices}
             getToppingSizePrices={getToppingSizePrices}
             getToppingPriceForSize={getToppingPriceForSize}
+            showTitle={true}
+            hideAddButton={false}
           />
         );
       case "specials":
@@ -438,22 +444,26 @@ export default function Admin() {
         );
       case "image-manager":
         return (
-          <ImageManagerForm
+          <SiteImagesForm
             images={images}
             uploadImageFile={uploadImageFile}
             createImageFromUrl={createImageFromUrl}
             updateImage={updateImage}
             deleteImage={deleteImage}
+            showTitle={true}
+            hideAddButton={false}
           />
         );
       case "carousel-images":
         return (
-          <CarouselForm
+          <CarouselImagesForm
             carouselImages={carouselImages}
             images={images}
             createCarouselImage={createCarouselImage}
             updateCarouselImage={updateCarouselImage}
             deleteCarouselImage={deleteCarouselImage}
+            showTitle={true}
+            hideAddButton={false}
           />
         );
       case "customer-favorites":

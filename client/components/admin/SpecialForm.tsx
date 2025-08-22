@@ -30,8 +30,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { Category } from "./MenuCategoryForm";
-import { MenuItem } from "./MenuItemForm";
+import { Category } from "./MenuCategoriesForm";
+import { MenuItem } from "./MenuItemsForm";
 
 export interface Special {
   id: string;

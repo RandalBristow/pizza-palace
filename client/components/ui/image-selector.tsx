@@ -90,10 +90,10 @@ export default function ImageSelector({
       </Select>
 
       {showPreview && selectedImage && selectedImage.url && (
-        <Card>
+        <Card className="mt-4">
           <CardContent className="p-4">
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-start gap-2">
                 <span className="text-sm font-medium">Preview:</span>
                 <Badge variant="outline" className="text-xs">
                   {selectedImage.name}
