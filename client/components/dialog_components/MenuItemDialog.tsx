@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -113,12 +112,8 @@ export default function MenuItemDialog({
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>(undefined);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [sizePrices, setSizePrices] = useState<{ [key: string]: number }>({});
-  const [sizeToppings, setSizeToppings] = useState<{
-    [key: string]: { [key: string]: boolean };
-  }>({});
-  const [defaultToppings, setDefaultToppings] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [sizeToppings, setSizeToppings] = useState<{ [key: string]: { [key: string]: boolean }; }>({});
+  const [defaultToppings, setDefaultToppings] = useState<{ [key: string]: boolean; }>({});
 
   const isEdit = !!menuItem;
 
@@ -445,7 +440,7 @@ export default function MenuItemDialog({
                         formData.category,
                         formData.subCategoryId,
                       ).map((size) => (
-                        <div key={size.id} className="flex items-center space-x-2">
+                        <div key={size.id} className="flex items-center justify-between">
                           <Label className="text-xs min-w-[60px] font-medium">
                             {size.sizeName}:
                           </Label>
@@ -460,7 +455,7 @@ export default function MenuItemDialog({
                                 parseFloat(e.target.value) || 0,
                               )
                             }
-                            className="w-24 h-7 py-0 text-xs"
+                            className="w-24 h-7 py-0 px-0 text-xs text-right" // <-- add text-right here
                             required
                           />
                         </div>
@@ -529,7 +524,7 @@ export default function MenuItemDialog({
                   return (
                     <Tabs
                       defaultValue={availableCategories[0]?.id}
-                      className="w-full h-full rounded-md overflow-hidden border-2 border-red-600"
+                      className="w-full h-full overflow-hidden border rounded"
                       key={`${formData.category}-${selectedSize}`}
                     >
                       <TabsList className="w-full justify-start">
@@ -543,14 +538,14 @@ export default function MenuItemDialog({
                           </TabsTrigger>
                         ))}
                       </TabsList>
-                      <div className="mt-4 flex-1 overflow-y-auto">
+                      <div className="mt-3 flex-1 overflow-y-auto">
                         {availableCategories.map((toppingCategory) => (
                           <TabsContent
                             key={toppingCategory.id}
                             value={toppingCategory.id}
                             className="mt-0 space-y-2"
                           >
-                            <div className="space-y-2">
+                            <div className="space-y-1">
                               {toppings
                                 .filter(
                                   (t) =>
@@ -572,7 +567,7 @@ export default function MenuItemDialog({
                                   return (
                                     <div
                                       key={topping.id}
-                                      className="flex items-center justify-between p-2 border rounded text-xs"
+                                      className="flex items-center justify-between mx-1 py-1 px-2 border rounded text-xs"
                                     >
                                       <div className="flex items-center space-x-2 flex-1 min-w-0">
                                         <Checkbox
@@ -585,7 +580,7 @@ export default function MenuItemDialog({
                                               !!checked,
                                             )
                                           }
-                                          className="w-3 h-3"
+                                          className="w-4 h-4"
                                         />
                                         <div className="flex flex-col flex-1 min-w-0">
                                           <span className="font-medium truncate">
@@ -602,7 +597,6 @@ export default function MenuItemDialog({
                                             <Button
                                               variant="outline"
                                               size="sm"
-                                              className="ml-2 h-6 w-6 p-0"
                                               onClick={() =>
                                                 handleToppingToggle(
                                                   topping.id,
@@ -611,9 +605,9 @@ export default function MenuItemDialog({
                                               }
                                             >
                                               {isActive ? (
-                                                <ThumbsUp className="h-3 w-3" />
+                                                <ThumbsUp className="h-4 w-4" />
                                               ) : (
-                                                <ThumbsDown className="h-3 w-3" />
+                                                <ThumbsDown className="h-4 w-4" />
                                               )}
                                             </Button>
                                           </TooltipTrigger>

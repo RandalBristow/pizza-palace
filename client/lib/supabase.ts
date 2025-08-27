@@ -11,8 +11,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const TABLES = {
   CATEGORIES: "categories",
   MENU_SUB_CATEGORIES: "menu_sub_categories",
-  CATEGORY_SIZE_SUB_CATEGORIES: "category_size_sub_categories", // New junction table
   CATEGORY_SIZES: "category_sizes",
+  CATEGORY_SIZE_SUB_CATEGORIES: "category_size_sub_categories", // New junction table
   MENU_ITEMS: "menu_items",
   MENU_ITEM_SIZES: "menu_item_sizes",
   MENU_ITEM_SIZE_TOPPINGS: "menu_item_size_toppings",
@@ -37,6 +37,34 @@ export interface DatabaseCategory {
   updated_at: string;
 }
 
+export interface DatabaseMenuSubCategory {
+  id: string;
+  name: string;
+  category_id: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseCategorySize {
+  id: string;
+  category_id: string; // New: unified approach uses category_id
+  sub_category_id: string; // Keep for backward compatibility
+  size_name: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseCategorySizeSubCategory {
+  id: string;
+  category_size_id: string;
+  sub_category_id: string;
+  created_at: string;
+}
+
 export interface DatabaseMenuItem {
   id: string;
   name: string;
@@ -45,6 +73,26 @@ export interface DatabaseMenuItem {
   category_id: string;
   sub_category_id?: string;
   image_id?: string;
+  default_toppings?: string[]; // Add this field
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseMenuItemSize {
+  id: string;
+  menu_item_id: string;
+  category_size_id: string;
+  price: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseToppingCategory {
+  id: string;
+  name: string;
+  menu_item_category_id: string;
+  order: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -61,21 +109,20 @@ export interface DatabaseTopping {
   updated_at: string;
 }
 
+export interface DatabaseMenuItemSizeTopping {
+  id: string;
+  menu_item_size_id: string;
+  topping_id: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DatabaseToppingSizePrice {
   id: string;
   topping_id: string;
   category_size_id: string;
   price: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseToppingCategory {
-  id: string;
-  name: string;
-  menu_item_category_id: string;
-  order: number;
-  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -94,6 +141,21 @@ export interface DatabaseSpecial {
   menu_items: string[];
   discount_type: "percentage" | "flat";
   discount_value: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseImage {
+  id: string;
+  name: string;
+  storage_path: string;
+  public_url?: string;
+  alt_text?: string;
+  file_size?: number;
+  width?: number;
+  height?: number;
+  mime_type?: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -132,67 +194,6 @@ export interface DatabaseSettings {
   >;
   created_at: string;
   updated_at: string;
-}
-
-export interface DatabaseImage {
-  id: string;
-  name: string;
-  storage_path: string;
-  public_url?: string;
-  alt_text?: string;
-  file_size?: number;
-  width?: number;
-  height?: number;
-  mime_type?: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseMenuSubCategory {
-  id: string;
-  name: string;
-  category_id: string;
-  display_order: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseCategorySize {
-  id: string;
-  category_id: string; // New: unified approach uses category_id
-  sub_category_id: string; // Keep for backward compatibility
-  size_name: string;
-  display_order: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseMenuItemSize {
-  id: string;
-  menu_item_id: string;
-  category_size_id: string;
-  price: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseMenuItemSizeTopping {
-  id: string;
-  menu_item_size_id: string;
-  topping_id: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseCategorySizeSubCategory {
-  id: string;
-  category_size_id: string;
-  sub_category_id: string;
-  created_at: string;
 }
 
 export interface DatabaseAboutSection {

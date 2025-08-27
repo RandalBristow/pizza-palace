@@ -40,7 +40,7 @@ import { Badge } from "../ui/badge";
 import { Edit, Trash2, ThumbsUp, ThumbsDown} from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "../ui/tooltip";
 
-function MenuCategory({ category, toggleCategoryStatus, handleEditCategory, handleDeleteCategory, canDeleteCategory}) {
+function MenuCategory({ category, toggleCategoryStatus, handleEditCategory, handleDeleteCategory, canDeleteCategory }) {
   return (
     <Card key={category.id}>
       <CardContent className="p-2">

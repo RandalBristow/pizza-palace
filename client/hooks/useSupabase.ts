@@ -14,10 +14,11 @@ import type {
   DatabaseImage,
   DatabaseMenuSubCategory,
   DatabaseCategorySize,
-  DatabaseSubCategorySize,
+  DatabaseCategorySizeSubCategory,
 } from "../lib/supabase";
 
-// Transform database objects to frontend format
+// transformCategory: TABLES.CATEGORIES
+//   Fields: id, name, is_active, order_num
 export const transformCategory = (dbCategory: DatabaseCategory) => ({
   id: dbCategory.id,
   name: dbCategory.name,
@@ -25,6 +26,29 @@ export const transformCategory = (dbCategory: DatabaseCategory) => ({
   order: dbCategory.order_num,
 });
 
+// transformSubCategory: TABLES.MENU_SUB_CATEGORIES
+//   Fields: id, name, category_id, display_order, is_active
+export const transformSubCategory = (dbSubCategory: DatabaseMenuSubCategory) => ({
+  id: dbSubCategory.id,
+  name: dbSubCategory.name,
+  categoryId: dbSubCategory.category_id,
+  displayOrder: dbSubCategory.display_order,
+  isActive: dbSubCategory.is_active,
+});
+
+// transformCategorySize: TABLES.CATEGORY_SIZES
+//   Fields: id, category_id, sub_category_id, size_name, display_order, is_active
+export const transformCategorySize = (dbCategorySize: DatabaseCategorySize) => ({
+  id: dbCategorySize.id,
+  categoryId: dbCategorySize.category_id, // New: unified approach uses category_id
+  subCategoryId: dbCategorySize.sub_category_id, // Keep for backward compatibility
+  sizeName: dbCategorySize.size_name,
+  displayOrder: dbCategorySize.display_order,
+  isActive: dbCategorySize.is_active,
+});
+
+// transformMenuItem: TABLES.MENU_ITEMS
+//   Fields: id, name, description, price, category_id, sub_category_id, image_id, default_toppings, is_active
 export const transformMenuItem = (dbMenuItem: DatabaseMenuItem) => ({
   id: dbMenuItem.id,
   name: dbMenuItem.name,
@@ -37,6 +61,18 @@ export const transformMenuItem = (dbMenuItem: DatabaseMenuItem) => ({
   isActive: dbMenuItem.is_active,
 });
 
+// transformToppingCategory: TABLES.TOPPING_CATEGORIES
+//   Fields: id, name, menu_item_category_id, order, is_active
+export const transformToppingCategory = (dbToppingCategory: DatabaseToppingCategory) => ({
+  id: dbToppingCategory.id,
+  name: dbToppingCategory.name,
+  menuItemCategory: dbToppingCategory.menu_item_category_id,
+  order: dbToppingCategory.order,
+  isActive: dbToppingCategory.is_active,
+});
+
+// transformTopping: TABLES.TOPPINGS
+//   Fields: id, name, price, category_id, menu_item_category_id, is_active
 export const transformTopping = (dbTopping: DatabaseTopping) => ({
   id: dbTopping.id,
   name: dbTopping.name,
@@ -46,16 +82,8 @@ export const transformTopping = (dbTopping: DatabaseTopping) => ({
   isActive: dbTopping.is_active,
 });
 
-export const transformToppingCategory = (
-  dbToppingCategory: DatabaseToppingCategory,
-) => ({
-  id: dbToppingCategory.id,
-  name: dbToppingCategory.name,
-  menuItemCategory: dbToppingCategory.menu_item_category_id,
-  order: dbToppingCategory.order,
-  isActive: dbToppingCategory.is_active,
-});
-
+// transformSpecial: TABLES.SPECIALS
+//   Fields: id, name, description, type, start_date, end_date, start_time, end_time, days_of_week, day_of_week, menu_items, discount_type, discount_value, is_active
 export const transformSpecial = (dbSpecial: DatabaseSpecial) => ({
   id: dbSpecial.id,
   name: dbSpecial.name,
@@ -73,35 +101,8 @@ export const transformSpecial = (dbSpecial: DatabaseSpecial) => ({
   isActive: dbSpecial.is_active,
 });
 
-export const transformCarouselImage = (
-  dbCarouselImage: DatabaseCarouselImage,
-) => ({
-  id: dbCarouselImage.id,
-  url: dbCarouselImage.url,
-  title: dbCarouselImage.title,
-  subtitle: dbCarouselImage.subtitle,
-  imageId: dbCarouselImage.image_id,
-  isActive: dbCarouselImage.is_active,
-  order: dbCarouselImage.order_num,
-});
-
-export const transformCustomerFavorite = (
-  dbCustomerFavorite: DatabaseCustomerFavorite,
-) => ({
-  id: dbCustomerFavorite.id,
-  title: dbCustomerFavorite.title,
-  description: dbCustomerFavorite.description,
-  icon: dbCustomerFavorite.icon,
-  isActive: dbCustomerFavorite.is_active,
-  order: dbCustomerFavorite.order_num,
-});
-
-export const transformSettings = (dbSettings: DatabaseSettings) => ({
-  taxRate: dbSettings.tax_rate,
-  deliveryFee: dbSettings.delivery_fee,
-  businessHours: dbSettings.business_hours,
-});
-
+// transformImage: TABLES.IMAGES
+//   Fields: id, name, storage_path, public_url, alt_text, file_size, width, height, mime_type, is_active
 export const transformImage = (dbImage: DatabaseImage) => ({
   id: dbImage.id,
   name: dbImage.name,
@@ -115,30 +116,40 @@ export const transformImage = (dbImage: DatabaseImage) => ({
   isActive: dbImage.is_active,
 });
 
-export const transformSubCategory = (
-  dbSubCategory: DatabaseMenuSubCategory,
-) => ({
-  id: dbSubCategory.id,
-  name: dbSubCategory.name,
-  categoryId: dbSubCategory.category_id,
-  displayOrder: dbSubCategory.display_order,
-  isActive: dbSubCategory.is_active,
+// transformCarouselImage: TABLES.CAROUSEL_IMAGES
+//   Fields: id, url, title, subtitle, image_id, is_active, order_num
+export const transformCarouselImage = (dbCarouselImage: DatabaseCarouselImage) => ({
+  id: dbCarouselImage.id,
+  url: dbCarouselImage.url,
+  title: dbCarouselImage.title,
+  subtitle: dbCarouselImage.subtitle,
+  imageId: dbCarouselImage.image_id,
+  isActive: dbCarouselImage.is_active,
+  order: dbCarouselImage.order_num,
 });
 
-export const transformCategorySize = (
-  dbCategorySize: DatabaseCategorySize,
-) => ({
-  id: dbCategorySize.id,
-  categoryId: dbCategorySize.category_id, // New: unified approach uses category_id
-  subCategoryId: dbCategorySize.sub_category_id, // Keep for backward compatibility
-  sizeName: dbCategorySize.size_name,
-  displayOrder: dbCategorySize.display_order,
-  isActive: dbCategorySize.is_active,
+// transformCustomerFavorite: TABLES.CUSTOMER_FAVORITES
+//   Fields: id, title, description, icon, is_active, order_num
+export const transformCustomerFavorite = (dbCustomerFavorite: DatabaseCustomerFavorite) => ({
+  id: dbCustomerFavorite.id,
+  title: dbCustomerFavorite.title,
+  description: dbCustomerFavorite.description,
+  icon: dbCustomerFavorite.icon,
+  isActive: dbCustomerFavorite.is_active,
+  order: dbCustomerFavorite.order_num,
 });
 
-export const transformAboutSection = (
-  dbAboutSection: DatabaseAboutSection,
-) => ({
+// transformSettings: TABLES.SETTINGS
+//   Fields: tax_rate, delivery_fee, business_hours
+export const transformSettings = (dbSettings: DatabaseSettings) => ({
+  taxRate: dbSettings.tax_rate,
+  deliveryFee: dbSettings.delivery_fee,
+  businessHours: dbSettings.business_hours,
+});
+
+// transformAboutSection: TABLES.ABOUT_SECTIONS
+//   Fields: id, type, title, content, image_url, image_alt_text, image_position, links, text_overlay, columns, order_num, is_active
+export const transformAboutSection = (dbAboutSection: DatabaseAboutSection) => ({
   id: dbAboutSection.id,
   type: dbAboutSection.type,
   title: dbAboutSection.title,
@@ -153,17 +164,17 @@ export const transformAboutSection = (
   isActive: dbAboutSection.is_active,
 });
 
-export const transformCategorySizeSubCategory = (
-  dbCategorySizeSubCategory: DatabaseCategorySizeSubCategory,
-) => ({
+// transformCategorySizeSubCategory: TABLES.CATEGORY_SIZE_SUB_CATEGORIES
+//   Fields: id, category_size_id, sub_category_id
+export const transformCategorySizeSubCategory = (dbCategorySizeSubCategory: DatabaseCategorySizeSubCategory) => ({
   id: dbCategorySizeSubCategory.id,
   categorySizeId: dbCategorySizeSubCategory.category_size_id,
   subCategoryId: dbCategorySizeSubCategory.sub_category_id,
 });
 
-export const transformToppingSizePrice = (
-  dbToppingSizePrice: DatabaseToppingSizePrice,
-) => ({
+// transformToppingSizePrice: TABLES.TOPPING_SIZE_PRICES
+//   Fields: id, topping_id, category_size_id, price
+export const transformToppingSizePrice = (dbToppingSizePrice: DatabaseToppingSizePrice) => ({
   id: dbToppingSizePrice.id,
   toppingId: dbToppingSizePrice.topping_id,
   categorySizeId: dbToppingSizePrice.category_size_id,

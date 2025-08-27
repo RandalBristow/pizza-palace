@@ -45,7 +45,10 @@ interface ToppingItemDialogProps {
   toppingCategories: ToppingCategory[];
   categorySizes: CategorySize[];
   getToppingSizePrices: (toppingId: string) => any[];
-  onSave: (toppingData: any, sizePrices: Record<string, number>) => Promise<void>;
+  onSave: (
+    toppingData: any,
+    sizePrices: Record<string, number>,
+  ) => Promise<void>;
 }
 
 export default function ToppingItemDialog({
@@ -226,41 +229,39 @@ export default function ToppingItemDialog({
           </div>
 
           {/* Right Side - Size-based Pricing */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium mb-4">Size-based Pricing</h3>
+          <div className="space-y-2 w-full h-full">
+            <h3 className="text-lg font-medium mb-0">Size-Based Pricing</h3>
 
-            {formData.menuItemCategory ? (
-              <div className="space-y-3">
-                {getAvailableSizes(formData.menuItemCategory).map((size) => (
-                  <div
-                    key={size.id}
-                    className="flex items-center justify-between space-x-3"
-                  >
-                    <Label className="flex-1 text-sm font-medium">
-                      {size.sizeName}
-                    </Label>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-500">$</span>
+            <div className="py-1 px-2 overflow-hidden border rounded">
+              {formData.menuItemCategory ? (
+                <div className="space-y-1">
+                  {getAvailableSizes(formData.menuItemCategory).map((size) => (
+                    <div
+                      key={size.id}
+                      className="flex items-center justify-between"
+                    >
+                      <Label className="text-xs min-w-[60px] font-medium">
+                        {size.sizeName}
+                      </Label>
                       <Input
                         type="number"
                         step="0.01"
-                        min="0"
                         placeholder="0.00"
-                        className="w-20 text-right"
-                        value={sizePrices[size.id] || ""}
+                        className="w-24 h-7 py-0 px-0 text-xs text-right"
+                        value={sizePrices[size.id] ? sizePrices[size.id].toFixed(2) : ""}
                         onChange={(e) =>
                           handleSizePriceChange(size.id, e.target.value)
                         }
                       />
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <p>Select a menu category to see available sizes</p>
-              </div>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>Select a menu category to see available sizes</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Form Actions */}
