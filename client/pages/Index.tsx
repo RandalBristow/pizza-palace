@@ -149,7 +149,7 @@ export default function Index() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       <HeaderWithDelivery />
 
       {/* Hero Carousel Section */}
@@ -162,14 +162,30 @@ export default function Index() {
 
         {/* Call to Action Below Carousel */}
         <div className="text-center py-8">
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl mb-8 max-w-2xl mx-auto" style={{ color: 'var(--muted-foreground)' }}>
             At Pronto Pizza Cafe, we serve authentic Italian-style pizzas and
             freshly brewed coffee. Every order is made fresh just for you!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="text-lg px-8 py-3 bg-red-600 hover:bg-red-700"
+              className="text-lg px-8 py-3"
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-2px)';
+                target.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
               asChild
             >
               <Link to="/menu">Order Now</Link>
@@ -179,9 +195,9 @@ export default function Index() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4" style={{ backgroundColor: 'var(--card)' }}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ color: 'var(--foreground)' }}>
             Why Choose Pronto?
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -191,14 +207,19 @@ export default function Index() {
               .map((favorite) => (
                 <Card
                   key={favorite.id}
-                  className="text-center border-none shadow-lg hover:shadow-xl transition-shadow"
+                  className="text-center shadow-lg hover:shadow-xl transition-shadow"
+                  style={{ 
+                    backgroundColor: 'var(--background)', 
+                    borderColor: 'var(--border)',
+                    border: '1px solid var(--border)'
+                  }}
                 >
                   <CardHeader>
                     <div className="text-4xl mb-4">{favorite.icon}</div>
-                    <CardTitle>{favorite.title}</CardTitle>
+                    <CardTitle style={{ color: 'var(--foreground)' }}>{favorite.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-base">
+                    <CardDescription className="text-base" style={{ color: 'var(--muted-foreground)' }}>
                       {favorite.description}
                     </CardDescription>
                   </CardContent>
@@ -209,13 +230,20 @@ export default function Index() {
       </section>
 
       {/* Popular Items */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-16 px-4" style={{ backgroundColor: 'var(--muted)' }}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ color: 'var(--foreground)' }}>
             Customer Favorites
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="overflow-hidden hover:shadow-xl transition-shadow">
+            <Card 
+              className="overflow-hidden hover:shadow-xl transition-shadow"
+              style={{ 
+                backgroundColor: 'var(--card)', 
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)'
+              }}
+            >
               <div
                 className="h-48 relative overflow-hidden bg-cover bg-center"
                 style={{
@@ -233,28 +261,35 @@ export default function Index() {
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle>Margherita Pizza</CardTitle>
-                  <Badge>Popular</Badge>
+                  <CardTitle style={{ color: 'var(--card-foreground)' }}>Margherita Pizza</CardTitle>
+                  <Badge style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>Popular</Badge>
                 </div>
-                <CardDescription>
+                <CardDescription style={{ color: 'var(--muted-foreground)' }}>
                   Fresh mozzarella, tomato sauce, and basil on our signature
                   crust
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-red-600">
+                  <span className="text-lg font-bold" style={{ color: 'var(--primary)' }}>
                     From $12.99
                   </span>
                   <div className="flex items-center">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="ml-1 text-sm text-gray-600">4.8</span>
+                    <span className="ml-1 text-sm" style={{ color: 'var(--muted-foreground)' }}>4.8</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden hover:shadow-xl transition-shadow">
+            <Card 
+              className="overflow-hidden hover:shadow-xl transition-shadow"
+              style={{ 
+                backgroundColor: 'var(--card)', 
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)'
+              }}
+            >
               <div
                 className="h-48 relative overflow-hidden bg-cover bg-center"
                 style={{
@@ -272,27 +307,34 @@ export default function Index() {
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle>Pronto Blend Coffee</CardTitle>
-                  <Badge variant="secondary">Signature</Badge>
+                  <CardTitle style={{ color: 'var(--card-foreground)' }}>Pronto Blend Coffee</CardTitle>
+                  <Badge variant="secondary" style={{ backgroundColor: 'var(--secondary)', color: 'var(--secondary-foreground)' }}>Signature</Badge>
                 </div>
-                <CardDescription>
+                <CardDescription style={{ color: 'var(--muted-foreground)' }}>
                   Our house blend with notes of chocolate and caramel
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-amber-700">
+                  <span className="text-lg font-bold" style={{ color: '#d97706' }}>
                     $2.99
                   </span>
                   <div className="flex items-center">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="ml-1 text-sm text-gray-600">4.9</span>
+                    <span className="ml-1 text-sm" style={{ color: 'var(--muted-foreground)' }}>4.9</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden hover:shadow-xl transition-shadow">
+            <Card 
+              className="overflow-hidden hover:shadow-xl transition-shadow"
+              style={{ 
+                backgroundColor: 'var(--card)', 
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)'
+              }}
+            >
               <div
                 className="h-48 relative overflow-hidden bg-cover bg-center"
                 style={{
@@ -310,21 +352,30 @@ export default function Index() {
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle>Supreme Pizza</CardTitle>
-                  <Badge variant="outline">Best Seller</Badge>
+                  <CardTitle style={{ color: 'var(--card-foreground)' }}>Supreme Pizza</CardTitle>
+                  <Badge 
+                    variant="outline"
+                    style={{ 
+                      borderColor: 'var(--border)', 
+                      color: 'var(--foreground)',
+                      backgroundColor: 'var(--background)'
+                    }}
+                  >
+                    Best Seller
+                  </Badge>
                 </div>
-                <CardDescription>
+                <CardDescription style={{ color: 'var(--muted-foreground)' }}>
                   Pepperoni, sausage, peppers, onions, mushrooms, and olives
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-red-600">
+                  <span className="text-lg font-bold" style={{ color: 'var(--primary)' }}>
                     From $16.99
                   </span>
                   <div className="flex items-center">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="ml-1 text-sm text-gray-600">4.7</span>
+                    <span className="ml-1 text-sm" style={{ color: 'var(--muted-foreground)' }}>4.7</span>
                   </div>
                 </div>
               </CardContent>
@@ -334,39 +385,48 @@ export default function Index() {
       </section>
 
       {/* Location & Contact */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4" style={{ backgroundColor: 'var(--card)' }}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <h2 className="text-3xl font-bold text-center mb-12" style={{ color: 'var(--foreground)' }}>
             Visit Us Today
           </h2>
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h3 className="text-xl font-semibold mb-6">Location & Hours</h3>
+              <h3 className="text-xl font-semibold mb-6" style={{ color: 'var(--foreground)' }}>Location & Hours</h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <MapPin className="h-5 w-5 text-red-600 mt-1" />
+                  <MapPin className="h-5 w-5 mt-1" style={{ color: 'var(--primary)' }} />
                   <div>
-                    <p className="font-medium">914 Ashland Rd</p>
-                    <p className="text-gray-600">Mansfield, OH 44905</p>
+                    <p className="font-medium" style={{ color: 'var(--foreground)' }}>914 Ashland Rd</p>
+                    <p style={{ color: 'var(--muted-foreground)' }}>Mansfield, OH 44905</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Phone className="h-5 w-5 text-red-600" />
+                  <Phone className="h-5 w-5" style={{ color: 'var(--primary)' }} />
                   <a
                     href="tel:419-589-7777"
-                    className="font-medium hover:text-red-600"
+                    className="font-medium hover:underline"
+                    style={{ color: 'var(--foreground)' }}
+                    onMouseEnter={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.color = 'var(--primary)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.color = 'var(--foreground)';
+                    }}
                   >
                     (419) 589-7777
                   </a>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <Clock className="h-5 w-5 text-red-600 mt-1" />
+                  <Clock className="h-5 w-5 mt-1" style={{ color: 'var(--primary)' }} />
                   <div>
-                    <p className="font-medium">
+                    <p className="font-medium" style={{ color: 'var(--foreground)' }}>
                       {formatBusinessHours().status}
                     </p>
                     {formatBusinessHours().hours && (
-                      <p className="text-gray-600">
+                      <p style={{ color: 'var(--muted-foreground)' }}>
                         {formatBusinessHours().hours}
                       </p>
                     )}
@@ -374,7 +434,26 @@ export default function Index() {
                 </div>
               </div>
               <div className="mt-8">
-                <Button asChild className="w-full sm:w-auto">
+                <Button 
+                  className="w-full sm:w-auto"
+                  style={{
+                    backgroundColor: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
+                    borderColor: 'var(--primary)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(-1px)';
+                    target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(0)';
+                    target.style.boxShadow = 'none';
+                  }}
+                  asChild
+                >
                   <Link to="/order">Start Your Order</Link>
                 </Button>
               </div>
@@ -394,6 +473,20 @@ export default function Index() {
                 <Button
                   size="sm"
                   variant="secondary"
+                  style={{
+                    backgroundColor: 'var(--secondary)',
+                    color: 'var(--secondary-foreground)',
+                    borderColor: 'var(--border)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'scale(1)';
+                  }}
                   onClick={() =>
                     window.open(
                       "https://maps.google.com/?q=914+Ashland+Rd+Mansfield+OH+44905",
@@ -401,7 +494,7 @@ export default function Index() {
                     )
                   }
                 >
-                  <MapPin className="h-4 w-4 mr-1" />
+                  <MapPin className="h-4 w-4 mr-1" style={{ color: 'var(--secondary-foreground)' }} />
                   Get Directions
                 </Button>
               </div>

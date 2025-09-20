@@ -182,12 +182,12 @@ export default function CategorySizesForm({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
       <div className="flex justify-between items-center">
         {showTitle && (
           <div>
-            <h2 className="text-xl font-semibold">Category Sizes</h2>
-            <p className="text-gray-600 mt-1">
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Category Sizes</h2>
+            <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>
               Manage sizes for categories and assign them to sub-categories. Each
               size can be used by multiple sub-categories within the same
               category.
@@ -199,16 +199,33 @@ export default function CategorySizesForm({
             value={selectedCategoryFilter}
             onValueChange={setSelectedCategoryFilter}
           >
-            <SelectTrigger className="w-48">
+            <SelectTrigger 
+              className="w-48"
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = 'none';
+              }}
+            >
               <SelectValue placeholder="Filter by category" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+            <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+              <SelectItem value="all" style={{ color: 'var(--popover-foreground)' }}>All Categories</SelectItem>
               {categories
                 .filter((c) => c.isActive)
                 .sort((a, b) => a.order - b.order)
                 .map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
+                  <SelectItem key={category.id} value={category.id} style={{ color: 'var(--popover-foreground)' }}>
                     {category.name}
                   </SelectItem>
                 ))}
@@ -218,8 +235,26 @@ export default function CategorySizesForm({
             <Button 
               onClick={() => setIsDialogOpen(true)}
               disabled={categories.length === 0}
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (!e.currentTarget.disabled) {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = 'translateY(-1px)';
+                  target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               Add Size
             </Button>
           )}
@@ -227,12 +262,12 @@ export default function CategorySizesForm({
       </div>
 
       {/* Category Sizes List */}
-      <div className="bg-white rounded-lg border p-6">
+      <div className="rounded-lg p-6" style={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)' }}>
         {filteredCategorySizes.length === 0 ? (
           <div className="text-center py-8">
-            <Ruler className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No sizes yet.</p>
-            <p className="text-sm text-gray-400">
+            <Ruler className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--muted-foreground)' }} />
+            <p style={{ color: 'var(--muted-foreground)' }}>No sizes yet.</p>
+            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
               Create sizes for your categories.
             </p>
           </div>
@@ -246,9 +281,9 @@ export default function CategorySizesForm({
               if (categorySizesForCategory.length === 0) return null;
 
               return (
-                <div key={category.id} className="border rounded-lg p-4">
-                  <h4 className="font-semibold text-lg mb-3 flex items-center">
-                    <Ruler className="h-5 w-5 mr-2 text-blue-600" />
+                <div key={category.id} className="rounded-lg p-4" style={{ border: '1px solid var(--border)' }}>
+                  <h4 className="font-semibold text-lg mb-3 flex items-center" style={{ color: 'var(--card-foreground)' }}>
+                    <Ruler className="h-5 w-5 mr-2" style={{ color: 'var(--primary)' }} />
                     {category.name}
                   </h4>
 

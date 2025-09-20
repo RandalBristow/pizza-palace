@@ -42,17 +42,22 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "../ui/t
 
 function MenuCategory({ category, toggleCategoryStatus, handleEditCategory, handleDeleteCategory, canDeleteCategory }) {
   return (
-    <Card key={category.id}>
+    <Card key={category.id} style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}>
       <CardContent className="p-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <h3 className="font-semibold">{category.name}</h3>
+            <h3 className="font-semibold" style={{ color: 'var(--muted-foreground)' }}>{category.name}</h3>
             <Badge
               className={
                 category.isActive
                   ? "bg-green-100 text-green-800"
                   : "bg-red-100 text-red-800"
               }
+              style={{
+                backgroundColor: category.isActive ? '#bbf7d0' : '#fecaca',
+                color: category.isActive ? '#14532d' : '#991b1b',
+                border: '1px solid var(--border)'
+              }}
             >
               {category.isActive ? "Active" : "Inactive"}
             </Badge>
@@ -65,15 +70,31 @@ function MenuCategory({ category, toggleCategoryStatus, handleEditCategory, hand
                     variant="outline"
                     size="sm"
                     onClick={() => toggleCategoryStatus(category.id)}
+                    style={{
+                      backgroundColor: 'var(--card)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--muted-foreground)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--accent)';
+                      target.style.transform = 'scale(1.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--card)';
+                      target.style.transform = 'scale(1)';
+                    }}
                   >
                     {category.isActive ? (
-                      <ThumbsUp className="h-4 w-4" />
+                      <ThumbsUp className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                     ) : (
-                      <ThumbsDown className="h-4 w-4" />
+                      <ThumbsDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
                   {category.isActive ? "Deactivate" : "Activate"}
                 </TooltipContent>
               </Tooltip>
@@ -85,11 +106,27 @@ function MenuCategory({ category, toggleCategoryStatus, handleEditCategory, hand
                     variant="outline"
                     size="sm"
                     onClick={() => handleEditCategory(category)}
+                    style={{
+                      backgroundColor: 'var(--card)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--muted-foreground)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--accent)';
+                      target.style.transform = 'scale(1.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--card)';
+                      target.style.transform = 'scale(1)';
+                    }}
                   >
-                    <Edit className="h-4 w-4" />
+                    <Edit className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Edit Category</TooltipContent>
+                <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Category</TooltipContent>
               </Tooltip>
             </TooltipProvider>
             <TooltipProvider>
@@ -100,11 +137,30 @@ function MenuCategory({ category, toggleCategoryStatus, handleEditCategory, hand
                     size="sm"
                     disabled={!canDeleteCategory(category.id)}
                     onClick={() => handleDeleteCategory(category.id)}
+                    style={{
+                      backgroundColor: 'var(--card)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--muted-foreground)',
+                      opacity: !canDeleteCategory(category.id) ? 0.5 : 1,
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (canDeleteCategory(category.id)) {
+                        const target = e.target;
+                        target.style.backgroundColor = 'var(--accent)';
+                        target.style.transform = 'scale(1.05)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--card)';
+                      target.style.transform = 'scale(1)';
+                    }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
                   {canDeleteCategory(category.id)
                     ? "Delete Category"
                     : "Cannot delete: Has related items"}

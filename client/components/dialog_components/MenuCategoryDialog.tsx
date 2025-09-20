@@ -67,18 +67,30 @@ export default function MenuCategoryDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent
+        style={{
+          backgroundColor: "var(--card)",
+          borderColor: "var(--border)",
+        }}
+      >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle style={{ color: "var(--card-foreground)" }}>
             {isEdit ? "Edit Category" : "Add New Category"}
           </DialogTitle>
-          <DialogDescription>
-            {isEdit ? "Update the category details" : "Create a new menu category"}
+          <DialogDescription style={{ color: "var(--muted-foreground)" }}>
+            {isEdit
+              ? "Update the category details"
+              : "Create a new menu category"}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="categoryName">Category Name</Label>
+            <Label
+              htmlFor="categoryName"
+              style={{ color: "var(--foreground)" }}
+            >
+              Category Name
+            </Label>
             <Input
               id="categoryName"
               placeholder="e.g., Appetizers"
@@ -86,10 +98,30 @@ export default function MenuCategoryDialog({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
+              style={{
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+                outline: "none",
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = "none";
+              }}
             />
           </div>
           <div>
-            <Label htmlFor="categoryOrder">Display Order</Label>
+            <Label
+              htmlFor="categoryOrder"
+              style={{ color: "var(--foreground)" }}
+            >
+              Display Order
+            </Label>
             <Input
               id="categoryOrder"
               type="number"
@@ -101,14 +133,69 @@ export default function MenuCategoryDialog({
                   order: parseInt(e.target.value) || 1,
                 })
               }
+              style={{
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+                outline: "none",
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = "none";
+              }}
             />
           </div>
           <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={handleCancel}>
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              style={{
+                backgroundColor: "var(--card)",
+                borderColor: "var(--border)",
+                color: "var(--muted-foreground)",
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--accent)';
+                target.style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--card)';
+                target.style.transform = 'scale(1)';
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              <Save className="h-4 w-4 mr-2" />
+            <Button
+              onClick={handleSave}
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+                borderColor: "var(--primary)",
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
+            >
+              <Save
+                className="h-4 w-4 mr-2"
+                style={{ color: "var(--primary-foreground)" }}
+              />
               {isEdit ? "Update Category" : "Save Category"}
             </Button>
           </div>

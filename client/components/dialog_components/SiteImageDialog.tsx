@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -159,10 +158,13 @@ export default function SiteImageDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent 
+        className="max-w-2xl"
+        style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}
+      >
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit Image" : "Add New Image"}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle style={{ color: 'var(--card-foreground)' }}>{isEdit ? "Edit Image" : "Add New Image"}</DialogTitle>
+          <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
             {isEdit
               ? "Update the image details and settings"
               : "Upload a new image by URL or file upload"}
@@ -176,25 +178,40 @@ export default function SiteImageDialog({
           )}
 
           <div>
-            <Label htmlFor="uploadType">Upload Method</Label>
+            <Label htmlFor="uploadType" style={{ color: 'var(--foreground)' }}>Upload Method</Label>
             <Select
               value={uploadType}
               onValueChange={(value: "file" | "url") =>
                 setUploadType(value || "file")
               }
             >
-              <SelectTrigger>
-                <SelectValue />
+              <SelectTrigger
+                style={{
+                  backgroundColor: 'var(--input)',
+                  borderColor: 'var(--border)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)'
+                }}
+                onFocus={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = 'none';
+                }}
+              >
+                <SelectValue placeholder="Select method" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="file">Upload File</SelectItem>
-                <SelectItem value="url">From URL</SelectItem>
+              <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+                <SelectItem value="file" style={{ color: 'var(--popover-foreground)' }}>Upload File</SelectItem>
+                <SelectItem value="url" style={{ color: 'var(--popover-foreground)' }}>From URL</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="imageName">Name *</Label>
+            <Label htmlFor="imageName" style={{ color: 'var(--foreground)' }}>Name *</Label>
             <Input
               id="imageName"
               placeholder={
@@ -206,12 +223,27 @@ export default function SiteImageDialog({
               onChange={(e) =>
                 setNewImage({ ...newImage, name: e.target.value || "" })
               }
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = 'none';
+              }}
             />
           </div>
 
           {uploadType === "file" ? (
             <div>
-              <Label htmlFor="imageFile">Select Image File *</Label>
+              <Label htmlFor="imageFile" style={{ color: 'var(--foreground)' }}>Image File *</Label>
               <Input
                 key={`file-input-${isEdit ? "edit" : "add"}-${isOpen ? "open" : "closed"}`}
                 id="imageFile"
@@ -219,19 +251,36 @@ export default function SiteImageDialog({
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  setSelectedFile(file || null);
-                  if (file && !(newImage.name || "").trim()) {
-                    setNewImage({
-                      ...newImage,
-                      name: file.name.split(".").slice(0, -1).join(".") || "",
-                    });
+                  if (file) {
+                    setSelectedFile(file);
+                    if (!newImage.name?.trim()) {
+                      setNewImage({
+                        ...newImage,
+                        name: file.name.replace(/\.[^/.]+$/, ""),
+                      });
+                    }
                   }
+                }}
+                style={{
+                  backgroundColor: 'var(--input)',
+                  borderColor: 'var(--border)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = 'none';
                 }}
               />
             </div>
           ) : (
             <div>
-              <Label htmlFor="imageUrl">Image URL *</Label>
+              <Label htmlFor="imageUrl" style={{ color: 'var(--foreground)' }}>Image URL *</Label>
               <Input
                 id="imageUrl"
                 placeholder="https://example.com/image.jpg"
@@ -239,12 +288,27 @@ export default function SiteImageDialog({
                 onChange={(e) =>
                   setNewImage({ ...newImage, url: e.target.value || "" })
                 }
+                style={{
+                  backgroundColor: 'var(--input)',
+                  borderColor: 'var(--border)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = 'none';
+                }}
               />
             </div>
           )}
 
           <div>
-            <Label htmlFor="imageAltText">Alt Text</Label>
+            <Label htmlFor="imageAltText" style={{ color: 'var(--foreground)' }}>Alt Text</Label>
             <Input
               id="imageAltText"
               placeholder="Description of the image"
@@ -252,23 +316,38 @@ export default function SiteImageDialog({
               onChange={(e) =>
                 setNewImage({ ...newImage, altText: e.target.value || "" })
               }
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = 'none';
+              }}
             />
           </div>
 
           {(newImage.url || selectedFile) && (
             <div>
-              <Label>Preview</Label>
-              <div className="mt-2 border rounded-lg p-4">
+              <Label style={{ color: 'var(--foreground)' }}>Preview</Label>
+              <div className="border rounded-lg p-2" style={{ borderColor: 'var(--border)' }}>
                 <img
                   src={
-                    selectedFile
-                      ? URL.createObjectURL(selectedFile)
-                      : newImage.url || ""
+                    newImage.url ||
+                    (selectedFile ? URL.createObjectURL(selectedFile) : "")
                   }
-                  alt={newImage.altText || "Preview"}
-                  className="max-w-full max-h-48 object-contain"
+                  alt="Preview"
+                  className="w-full h-32 object-cover rounded"
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    e.currentTarget.src =
+                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4=";
                   }}
                 />
               </div>
@@ -280,21 +359,50 @@ export default function SiteImageDialog({
               variant="outline"
               onClick={handleCancel}
               disabled={isLoading}
+              style={{
+                backgroundColor: 'var(--card)',
+                borderColor: 'var(--border)',
+                color: 'var(--muted-foreground)',
+                cursor: isLoading ? 'not-allowed' : 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  const target = e.target as HTMLElement;
+                  target.style.backgroundColor = 'var(--accent)';
+                  target.style.transform = 'scale(1.02)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--card)';
+                target.style.transform = 'scale(1)';
+              }}
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
-              disabled={
-                isLoading ||
-                !(newImage.name || "").trim() ||
-                (!isEdit &&
-                  (uploadType === "file"
-                    ? !selectedFile
-                    : !(newImage.url || "").trim()))
-              }
+              disabled={isLoading}
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                cursor: isLoading ? 'not-allowed' : 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = 'translateY(-1px)';
+                  target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
             >
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               {isLoading ? "Saving..." : isEdit ? "Update Image" : "Save Image"}
             </Button>
           </div>
@@ -303,4 +411,3 @@ export default function SiteImageDialog({
     </Dialog>
   );
 }
-

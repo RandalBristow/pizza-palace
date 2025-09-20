@@ -102,9 +102,9 @@ export default function AdminSidebar({
     return (
       <div key={item.id}>
         <Button
-          variant={isSelected ? "default" : "ghost"}
-          className={`justify-start text-left h-auto py-3 px-4 ${
-            level > 0 ? "w-[90%] self-center text-sm ml-6" : "w-full"
+          variant="ghost"
+          className={`justify-start text-left h-auto py-3 px-4 w-full ${
+            level > 0 ? "ml-6 w-[calc(100%-1.5rem)] text-sm" : ""
           }`}
           onClick={() => {
             if (hasChildren) {
@@ -113,15 +113,65 @@ export default function AdminSidebar({
               onSelectItem(item.id);
             }
           }}
+          style={{
+            backgroundColor: isSelected ? "var(--primary)" : "transparent",
+            color: isSelected ? "var(--primary-foreground)" : "var(--foreground)",
+            border: "none",
+            justifyContent: "flex-start",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            if (!isSelected) {
+              e.currentTarget.style.backgroundColor = "var(--accent)";
+              e.currentTarget.style.color = "var(--accent-foreground)";
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isSelected) {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = "var(--foreground)";
+            }
+          }}
         >
           <div className="flex items-center space-x-2 w-full">
-            {item.icon && <item.icon className="h-4 w-4" />}
-            <span className="flex-1">{item.label}</span>
+            {item.icon && (
+              <item.icon
+                className="h-4 w-4"
+                style={{
+                  color: isSelected
+                    ? "var(--primary-foreground)"
+                    : "var(--muted-foreground)",
+                }}
+              />
+            )}
+            <span
+              className="flex-1"
+              style={{
+                color: isSelected ? "var(--primary-foreground)" : "var(--foreground)",
+              }}
+            >
+              {item.label}
+            </span>
             {hasChildren &&
               (isExpanded ? (
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown
+                  className="h-4 w-4"
+                  style={{
+                    color: isSelected
+                      ? "var(--primary-foreground)"
+                      : "var(--muted-foreground)",
+                  }}
+                />
               ) : (
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight
+                  className="h-4 w-4"
+                  style={{
+                    color: isSelected
+                      ? "var(--primary-foreground)"
+                      : "var(--muted-foreground)",
+                  }}
+                />
               ))}
           </div>
         </Button>
@@ -136,9 +186,18 @@ export default function AdminSidebar({
   };
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-full">
+    <div
+      className="w-64 h-full"
+      style={{
+        backgroundColor: "var(--card)",
+        borderRight: "1px solid var(--border)",
+      }}
+    >
       <div className="p-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2
+          className="text-lg font-semibold mb-4"
+          style={{ color: "var(--card-foreground)" }}
+        >
           Admin Panel
         </h2>
         <nav className="space-y-2">

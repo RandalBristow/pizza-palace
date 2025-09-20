@@ -158,12 +158,12 @@ export default function ToppingItemForm({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
       <div className="flex justify-between items-center">
         {showTitle && (
           <div>
-            <h2 className="text-xl font-semibold">Toppings</h2>
-            <p className="text-gray-600 mt-1">
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Toppings</h2>
+            <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>
               Manage topping items with size-specific pricing
             </p>
           </div>
@@ -173,23 +173,58 @@ export default function ToppingItemForm({
             value={selectedToppingCategory}
             onValueChange={onSelectedCategoryChange}
           >
-            <SelectTrigger className="w-48">
+            <SelectTrigger 
+              className="w-48"
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = 'none';
+              }}
+            >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Menu Categories</SelectItem>
+            <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+              <SelectItem value="all" style={{ color: 'var(--popover-foreground)' }}>All Menu Categories</SelectItem>
               {categories
                 .filter((c) => c.isActive)
                 .map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
+                  <SelectItem key={category.id} value={category.id} style={{ color: 'var(--popover-foreground)' }}>
                     {category.name}
                   </SelectItem>
                 ))}
             </SelectContent>
           </Select>
           {!hideAddButton && (
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button 
+              onClick={() => setIsDialogOpen(true)}
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               Add Topping
             </Button>
           )}
@@ -208,34 +243,39 @@ export default function ToppingItemForm({
           );
 
           return (
-            <Card key={topping.id}>
+            <Card key={topping.id} style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}>
               <CardContent className="p-4 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-2">
-                  <h6 className="font-medium">{topping.name}</h6>
+                  <h6 className="font-medium" style={{ color: 'var(--muted-foreground)' }}>{topping.name}</h6>
                   <Badge
                     className={
                       topping.isActive
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }
+                    style={{
+                      backgroundColor: topping.isActive ? '#bbf7d0' : '#fecaca',
+                      color: topping.isActive ? '#14532d' : '#991b1b',
+                      border: '1px solid var(--border)'
+                    }}
                   >
                     {topping.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </div>
 
-                <div className="text-xs text-gray-600 mb-3">
+                <div className="text-xs mb-3" style={{ color: 'var(--muted-foreground)' }}>
                   <p>
-                    <strong>Menu:</strong> {menuCategory?.name || "Unknown"}
+                    <strong style={{ color: 'var(--muted-foreground)' }}>Menu:</strong> {menuCategory?.name || "Unknown"}
                   </p>
                   <p>
-                    <strong>Category: </strong>
+                    <strong style={{ color: 'var(--muted-foreground)' }}>Category: </strong>
                     {toppingCategory?.name || "Unknown"}
                   </p>
                 </div>
                 {/* Size Prices */}
                 {toppingSizes.length > 0 && (
                   <div className="mb-3">
-                    <p className="text-xs text-gray-600 mb-1">Size Prices:</p>
+                    <p className="text-xs mb-1" style={{ color: 'var(--muted-foreground)' }}>Size Prices:</p>
                     <div className="space-y-1">
                       {toppingSizes.map((ts) => {
                         const size = categorySizes.find(
@@ -245,6 +285,7 @@ export default function ToppingItemForm({
                           <div
                             key={ts.id}
                             className="flex justify-between text-xs"
+                            style={{ color: 'var(--muted-foreground)' }}
                           >
                             <span>{size.sizeName}:</span>
                             <span>${ts.price.toFixed(2)}</span>
@@ -264,15 +305,31 @@ export default function ToppingItemForm({
                             variant="outline"
                             size="sm"
                             onClick={() => toggleToppingStatus(topping.id)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
                             {topping.isActive ? (
-                              <ThumbsUp className="h-4 w-4" />
+                              <ThumbsUp className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                             ) : (
-                              <ThumbsDown className="h-4 w-4" />
+                              <ThumbsDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                             )}
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
                           {topping.isActive ? "Deactivate" : "Activate"}
                         </TooltipContent>
                       </Tooltip>
@@ -284,11 +341,27 @@ export default function ToppingItemForm({
                             variant="outline"
                             size="sm"
                             onClick={() => handleEditTopping(topping)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Edit Topping</TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Topping</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                     <TooltipProvider>
@@ -298,11 +371,27 @@ export default function ToppingItemForm({
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteTopping(topping.id)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Delete Topping</TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Delete Topping</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>
@@ -315,7 +404,7 @@ export default function ToppingItemForm({
 
       {filteredToppings.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">
+          <p style={{ color: 'var(--muted-foreground)' }}>
             No toppings found for the selected category.
           </p>
         </div>

@@ -249,10 +249,10 @@ export default function SpecialForm({
       {/* Left Column - Basic Info */}
       <div className="w-1/2 pr-6 pl-6 py-6 space-y-4 overflow-y-auto max-h-full">
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--card-foreground)' }}>
             {isEdit ? "Edit Special" : "Add New Special"}
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
             {isEdit
               ? "Update the special offer details and settings"
               : "Create a new special offer with menu items and discount settings"}
@@ -265,7 +265,7 @@ export default function SpecialForm({
           </Alert>
         )}
         <div>
-          <Label htmlFor="specialName">Special Name</Label>
+          <Label htmlFor="specialName" style={{ color: 'var(--foreground)' }}>Special Name</Label>
           <Input
             id="specialName"
             placeholder="e.g., Lunch Pizza Special"
@@ -273,10 +273,23 @@ export default function SpecialForm({
             onChange={(e) =>
               setNewSpecial({ ...newSpecial, name: e.target.value })
             }
+            style={{
+              backgroundColor: 'var(--input)',
+              borderColor: 'var(--border)',
+              border: '1px solid var(--border)',
+              color: 'var(--foreground)',
+              outline: 'none'
+            }}
+            onFocus={(e) => {
+              e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+            }}
+            onBlur={(e) => {
+              e.target.style.boxShadow = 'none';
+            }}
           />
         </div>
         <div>
-          <Label htmlFor="specialDescription">Description</Label>
+          <Label htmlFor="specialDescription" style={{ color: 'var(--foreground)' }}>Description</Label>
           <Textarea
             id="specialDescription"
             placeholder="Describe the special offer"
@@ -288,27 +301,54 @@ export default function SpecialForm({
                 description: e.target.value,
               })
             }
+            style={{
+              backgroundColor: 'var(--input)',
+              borderColor: 'var(--border)',
+              border: '1px solid var(--border)',
+              color: 'var(--foreground)',
+              outline: 'none'
+            }}
+            onFocus={(e) => {
+              e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+            }}
+            onBlur={(e) => {
+              e.target.style.boxShadow = 'none';
+            }}
           />
         </div>
         <div>
-          <Label htmlFor="specialType">Type</Label>
+          <Label htmlFor="specialType" style={{ color: 'var(--foreground)' }}>Type</Label>
           <Select
             value={newSpecial.type}
             onValueChange={(value: any) =>
               setNewSpecial({ ...newSpecial, type: value })
             }
           >
-            <SelectTrigger>
+            <SelectTrigger
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                cursor: 'pointer'
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = 'none';
+              }}
+            >
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="hourly">
+            <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+              <SelectItem value="hourly" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>
                 Hourly by Day (e.g., lunch specials)
               </SelectItem>
-              <SelectItem value="daily">
+              <SelectItem value="daily" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>
                 Daily (every day for a period)
               </SelectItem>
-              <SelectItem value="weekly">
+              <SelectItem value="weekly" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>
                 Weekly (specific day each week)
               </SelectItem>
             </SelectContent>
@@ -320,7 +360,7 @@ export default function SpecialForm({
           <>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="startTime">Start Time</Label>
+                <Label htmlFor="startTime" style={{ color: 'var(--foreground)' }}>Start Time</Label>
                 <Input
                   id="startTime"
                   type="time"
@@ -331,10 +371,23 @@ export default function SpecialForm({
                       startTime: e.target.value,
                     })
                   }
+                  style={{
+                    backgroundColor: 'var(--input)',
+                    borderColor: 'var(--border)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--foreground)',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
               <div>
-                <Label htmlFor="endTime">End Time</Label>
+                <Label htmlFor="endTime" style={{ color: 'var(--foreground)' }}>End Time</Label>
                 <Input
                   id="endTime"
                   type="time"
@@ -345,11 +398,24 @@ export default function SpecialForm({
                       endTime: e.target.value,
                     })
                   }
+                  style={{
+                    backgroundColor: 'var(--input)',
+                    borderColor: 'var(--border)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--foreground)',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
             </div>
             <div>
-              <Label>Days of Week</Label>
+              <Label style={{ color: 'var(--foreground)' }}>Days of Week</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {[
                   "Sunday",
@@ -378,8 +444,9 @@ export default function SpecialForm({
                           });
                         }
                       }}
+                      style={{ cursor: 'pointer' }}
                     />
-                    <Label htmlFor={`day-${index}`} className="text-sm">
+                    <Label htmlFor={`day-${index}`} className="text-sm" style={{ color: 'var(--foreground)', cursor: 'pointer' }}>
                       {day}
                     </Label>
                   </div>
@@ -391,7 +458,7 @@ export default function SpecialForm({
 
         {newSpecial.type === "weekly" && (
           <div>
-            <Label>Day of Week</Label>
+            <Label style={{ color: 'var(--foreground)' }}>Day of Week</Label>
             <Select
               value={newSpecial.dayOfWeek?.toString()}
               onValueChange={(value) =>
@@ -401,17 +468,31 @@ export default function SpecialForm({
                 })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger
+                style={{
+                  backgroundColor: 'var(--input)',
+                  borderColor: 'var(--border)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)',
+                  cursor: 'pointer'
+                }}
+                onFocus={(e) => {
+                  e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
                 <SelectValue placeholder="Select day" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">Sunday</SelectItem>
-                <SelectItem value="1">Monday</SelectItem>
-                <SelectItem value="2">Tuesday</SelectItem>
-                <SelectItem value="3">Wednesday</SelectItem>
-                <SelectItem value="4">Thursday</SelectItem>
-                <SelectItem value="5">Friday</SelectItem>
-                <SelectItem value="6">Saturday</SelectItem>
+              <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+                <SelectItem value="0" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Sunday</SelectItem>
+                <SelectItem value="1" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Monday</SelectItem>
+                <SelectItem value="2" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Tuesday</SelectItem>
+                <SelectItem value="3" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Wednesday</SelectItem>
+                <SelectItem value="4" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Thursday</SelectItem>
+                <SelectItem value="5" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Friday</SelectItem>
+                <SelectItem value="6" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Saturday</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -419,7 +500,7 @@ export default function SpecialForm({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="startDate">Start Date</Label>
+            <Label htmlFor="startDate" style={{ color: 'var(--foreground)' }}>Start Date</Label>
             <Input
               id="startDate"
               type="date"
@@ -430,10 +511,23 @@ export default function SpecialForm({
                   startDate: e.target.value,
                 })
               }
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
           <div>
-            <Label htmlFor="endDate">End Date</Label>
+            <Label htmlFor="endDate" style={{ color: 'var(--foreground)' }}>End Date</Label>
             <Input
               id="endDate"
               type="date"
@@ -444,16 +538,29 @@ export default function SpecialForm({
                   endDate: e.target.value,
                 })
               }
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
         </div>
       </div>
 
       {/* Right Column - Menu Selection */}
-      <div className="w-1/2 px-6 border-l flex flex-col h-full pb-16 gap-1.5">
+      <div className="w-1/2 px-6 flex flex-col h-full pb-16 gap-1.5" style={{ borderLeft: '1px solid var(--border)' }}>
         <div className="mb-4 py-6">
-          <h2 className="text-lg font-semibold text-gray-900">Menu Items</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--card-foreground)' }}>Menu Items</h2>
+          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
             Select which menu items this special applies to
           </p>
         </div>
@@ -526,22 +633,17 @@ export default function SpecialForm({
                                 <div className="flex justify-between items-center">
                                   <span>{item.name}</span>
                                   <span className="text-gray-500 text-xs">
-                                    ${item.price.toFixed(2)}
+                                    {/* Remove price display since MenuItem doesn't have a price property */}
                                     {newSpecial.discountType === "percentage" &&
                                       newSpecial.discountValue > 0 && (
                                         <span className="ml-2 text-green-600">
-                                          → $
-                                          {(
-                                            item.price *
-                                            (1 - newSpecial.discountValue / 100)
-                                          ).toFixed(2)}
+                                          {newSpecial.discountValue}% off
                                         </span>
                                       )}
                                     {newSpecial.discountType === "flat" &&
                                       newSpecial.discountValue > 0 && (
                                         <span className="ml-2 text-green-600">
-                                          → $
-                                          {newSpecial.discountValue.toFixed(2)}
+                                          ${newSpecial.discountValue.toFixed(2)}
                                         </span>
                                       )}
                                   </span>
@@ -550,7 +652,7 @@ export default function SpecialForm({
                             </div>
                           ))
                         ) : (
-                          <p className="text-gray-500 text-center py-4">
+                          <p className="text-center py-4" style={{ color: 'var(--muted-foreground)' }}>
                             No active menu items in {category.name}
                           </p>
                         )}
@@ -564,14 +666,14 @@ export default function SpecialForm({
         </div>
 
         {/* Discount Section */}
-        <div className="mt-2 py-2 pb-6 border-t">
-          <h4 className="text-md font-semibold text-gray-900 mb-3">
+        <div className="mt-2 py-2 pb-6" style={{ borderTop: '1px solid var(--border)' }}>
+          <h4 className="text-md font-semibold mb-3" style={{ color: 'var(--card-foreground)' }}>
             Discount Settings
           </h4>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="discountType">Discount Type</Label>
+                <Label htmlFor="discountType" style={{ color: 'var(--foreground)' }}>Discount Type</Label>
                 <Select
                   value={newSpecial.discountType}
                   onValueChange={(value: any) =>
@@ -581,17 +683,31 @@ export default function SpecialForm({
                     })
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger
+                    style={{
+                      backgroundColor: 'var(--input)',
+                      borderColor: 'var(--border)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--foreground)',
+                      cursor: 'pointer'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  >
                     <SelectValue placeholder="Select discount type" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="percentage">Percentage Off</SelectItem>
-                    <SelectItem value="flat">Flat Price</SelectItem>
+                  <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+                    <SelectItem value="percentage" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Percentage Off</SelectItem>
+                    <SelectItem value="flat" style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>Flat Price</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label htmlFor="discountValue">
+                <Label htmlFor="discountValue" style={{ color: 'var(--foreground)' }}>
                   {newSpecial.discountType === "percentage"
                     ? "Percentage (%)"
                     : "Flat Price ($)"}
@@ -616,6 +732,19 @@ export default function SpecialForm({
                       discountValue: parseFloat(e.target.value) || 0,
                     })
                   }
+                  style={{
+                    backgroundColor: 'var(--input)',
+                    borderColor: 'var(--border)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--foreground)',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
             </div>
@@ -624,8 +753,8 @@ export default function SpecialForm({
               {newSpecial.discountType === "percentage" &&
                 newSpecial.discountValue > 0 && (
                   <div>
-                    <Label>Preview Discount</Label>
-                    <div className="p-2 bg-green-50 border rounded text-sm text-green-700">
+                    <Label style={{ color: 'var(--foreground)' }}>Preview Discount</Label>
+                    <div className="p-2 border rounded text-sm" style={{ backgroundColor: 'var(--accent)', borderColor: 'var(--border)', color: 'var(--card-foreground)' }}>
                       Example: $10.00 → $
                       {(10 * (1 - newSpecial.discountValue / 100)).toFixed(2)}
                     </div>
@@ -637,7 +766,7 @@ export default function SpecialForm({
       </div>
 
       {/* Buttons fixed at bottom of entire dialog */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-4 border-t bg-gray-50 z-10">
+      <div className="absolute bottom-0 left-0 right-0 flex justify-end space-x-2 p-4 z-10" style={{ borderTop: '1px solid var(--border)', backgroundColor: 'var(--card)' }}>
         <Button
           variant="outline"
           onClick={() => {
@@ -649,14 +778,50 @@ export default function SpecialForm({
             resetForm();
           }}
           disabled={isLoading}
+          style={{
+            backgroundColor: 'var(--card)',
+            borderColor: 'var(--border)',
+            color: 'var(--muted-foreground)',
+            cursor: isLoading ? 'not-allowed' : 'pointer'
+          }}
+          onMouseEnter={(e) => {
+            if (!isLoading) {
+              const target = e.target as HTMLElement;
+              target.style.backgroundColor = 'var(--accent)';
+              target.style.transform = 'scale(1.02)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            const target = e.target as HTMLElement;
+            target.style.backgroundColor = 'var(--card)';
+            target.style.transform = 'scale(1)';
+          }}
         >
           Cancel
         </Button>
         <Button
           onClick={isEdit ? handleUpdateSpecial : handleAddSpecial}
           disabled={isLoading}
+          style={{
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-foreground)',
+            borderColor: 'var(--primary)',
+            cursor: isLoading ? 'not-allowed' : 'pointer'
+          }}
+          onMouseEnter={(e) => {
+            if (!isLoading) {
+              const target = e.target as HTMLElement;
+              target.style.transform = 'translateY(-1px)';
+              target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            const target = e.target as HTMLElement;
+            target.style.transform = 'translateY(0)';
+            target.style.boxShadow = 'none';
+          }}
         >
-          <Save className="h-4 w-4 mr-2" />
+          <Save className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
           {isLoading ? "Saving..." : (isEdit ? "Update Special" : "Save Special")}
         </Button>
       </div>
@@ -664,20 +829,40 @@ export default function SpecialForm({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Specials</h2>
+        <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Specials</h2>
         <Dialog open={isAddingSpecial} onOpenChange={setIsAddingSpecial}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               Add Special
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-7xl h-[95vh] max-h-[95vh] overflow-hidden p-0">
+          <DialogContent 
+            className="max-w-7xl h-[95vh] max-h-[95vh] overflow-hidden p-0"
+            style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}
+          >
             <DialogHeader className="sr-only">
-              <DialogTitle>Add New Special</DialogTitle>
-              <DialogDescription>
+              <DialogTitle style={{ color: 'var(--card-foreground)' }}>Add New Special</DialogTitle>
+              <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
                 Create a new hourly, daily, or weekly special offer with menu
                 selection and discount options
               </DialogDescription>
@@ -695,12 +880,12 @@ export default function SpecialForm({
 
       <div className="grid grid-cols-2 gap-4">
         {specials.map((special) => (
-          <Card key={special.id}>
+          <Card key={special.id} style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="font-semibold">{special.name}</h3>
+                    <h3 className="font-semibold" style={{ color: 'var(--muted-foreground)' }}>{special.name}</h3>
                     <Badge variant="outline">
                       {special.type === "hourly"
                         ? "Hourly"
@@ -709,19 +894,19 @@ export default function SpecialForm({
                           : "Weekly"}
                     </Badge>
                     <Badge
-                      className={
-                        special.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }
+                      style={{
+                        backgroundColor: special.isActive ? '#bbf7d0' : '#fecaca',
+                        color: special.isActive ? '#14532d' : '#991b1b',
+                        border: '1px solid var(--border)'
+                      }}
                     >
                       {special.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </div>
-                  <p className="text-gray-600 text-sm mb-2">
+                  <p className="text-sm mb-2" style={{ color: 'var(--muted-foreground)' }}>
                     {special.description}
                   </p>
-                  <div className="text-xs text-gray-500 space-y-1">
+                  <div className="text-xs space-y-1" style={{ color: 'var(--muted-foreground)' }}>
                     <div>
                       {special.startDate} to {special.endDate}
                     </div>
@@ -783,15 +968,31 @@ export default function SpecialForm({
                           variant="outline"
                           size="sm"
                           onClick={() => toggleSpecialStatus(special.id)}
+                          style={{
+                            backgroundColor: 'var(--card)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--muted-foreground)',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.backgroundColor = 'var(--accent)';
+                            target.style.transform = 'scale(1.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.backgroundColor = 'var(--card)';
+                            target.style.transform = 'scale(1)';
+                          }}
                         >
                           {special.isActive ? (
-                            <ThumbsUp className="h-4 w-4" />
+                            <ThumbsUp className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                           ) : (
-                            <ThumbsDown className="h-4 w-4" />
+                            <ThumbsDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                           )}
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
                         {special.isActive ? "Deactivate" : "Activate"}
                       </TooltipContent>
                     </Tooltip>
@@ -803,11 +1004,28 @@ export default function SpecialForm({
                           variant="outline"
                           size="sm"
                           onClick={() => handleEditSpecial(special)}
+                          style={{
+                            backgroundColor: 'var(--card)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--muted-foreground)',
+                            transition: 'all 0.2s ease',
+                            cursor: 'pointer'
+                          }}
+                          onMouseEnter={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.backgroundColor = 'var(--accent)';
+                            target.style.transform = 'scale(1.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.backgroundColor = 'var(--card)';
+                            target.style.transform = 'scale(1)';
+                          }}
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>Edit Special</TooltipContent>
+                      <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Special</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                   <TooltipProvider>
@@ -817,11 +1035,28 @@ export default function SpecialForm({
                           variant="outline"
                           size="sm"
                           onClick={() => handleDeleteSpecial(special.id)}
+                          style={{
+                            backgroundColor: 'var(--card)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--muted-foreground)',
+                            transition: 'all 0.2s ease',
+                            cursor: 'pointer'
+                          }}
+                          onMouseEnter={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.backgroundColor = 'var(--accent)';
+                            target.style.transform = 'scale(1.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.backgroundColor = 'var(--card)';
+                            target.style.transform = 'scale(1)';
+                          }}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>Delete Special</TooltipContent>
+                      <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Delete Special</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
@@ -838,8 +1073,8 @@ export default function SpecialForm({
       >
         <DialogContent className="max-w-7xl h-[95vh] max-h-[95vh] overflow-hidden p-0">
           <DialogHeader className="sr-only">
-            <DialogTitle>Edit Special</DialogTitle>
-            <DialogDescription>
+            <DialogTitle style={{ color: 'var(--card-foreground)' }}>Edit Special</DialogTitle>
+            <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
               Update the special offer details and settings
             </DialogDescription>
           </DialogHeader>

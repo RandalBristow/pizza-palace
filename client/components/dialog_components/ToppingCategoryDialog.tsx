@@ -90,85 +90,159 @@ export default function ToppingCategoryDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent
+        className="max-w-md"
+        style={{
+          backgroundColor: "var(--card)",
+          borderColor: "var(--border)",
+          border: "1px solid var(--border)",
+        }}
+      >
         <DialogHeader>
-          <DialogTitle>
-            {isEdit ? "Edit Topping Category" : "Add New Topping Category"}
+          <DialogTitle style={{ color: "var(--card-foreground)" }}>
+            {toppingCategory
+              ? "Edit Topping Category"
+              : "Add New Topping Category"}
           </DialogTitle>
-          <DialogDescription>
-            {isEdit
-              ? "Update the topping category details"
-              : "Create a new topping category"}
-          </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
+        <form onSubmit={handleSave} className="space-y-4">
           <div>
-            <Label htmlFor="menuItemType">Menu Category</Label>
+            <Label
+              htmlFor="name"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              Category Name
+            </Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              required
+              style={{
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+                outline: "none",
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = "none";
+              }}
+            />
+          </div>
+
+          <div>
+            <Label
+              htmlFor="menuItemCategory"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              Menu Category
+            </Label>
             <Select
               value={formData.menuItemCategory}
               onValueChange={(value) =>
-                setFormData({
-                  ...formData,
-                  menuItemCategory: value,
-                })
+                setFormData({ ...formData, menuItemCategory: value })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger
+                style={{
+                  backgroundColor: "var(--input)",
+                  borderColor: "var(--border)",
+                  border: "1px solid var(--border)",
+                  color: "var(--foreground)",
+                  outline: "none",
+                }}
+                onFocus={(e) => {
+                  e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.boxShadow = "none";
+                }}
+              >
                 <SelectValue placeholder="Select menu category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent
+                style={{
+                  backgroundColor: "var(--popover)",
+                  borderColor: "var(--border)",
+                }}
+              >
                 {categories
                   .filter((c) => c.isActive)
                   .map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
+                    <SelectItem
+                      key={category.id}
+                      value={category.id}
+                      style={{ color: "var(--popover-foreground)" }}
+                    >
                       {category.name}
                     </SelectItem>
                   ))}
               </SelectContent>
             </Select>
           </div>
+
           <div>
-            <Label htmlFor="toppingCategoryName">Category Name</Label>
+            <Label
+              htmlFor="order"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              Display Order
+            </Label>
             <Input
-              id="toppingCategoryName"
-              placeholder="e.g., Premium Toppings"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  name: e.target.value,
-                })
-              }
-            />
-          </div>
-          <div>
-            <Label htmlFor="toppingCategoryOrder">Display Order</Label>
-            <Input
-              id="toppingCategoryOrder"
+              id="order"
               type="number"
-              placeholder="1"
+              min="0"
               value={formData.order}
               onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  order: parseInt(e.target.value) || 1,
-                })
+                setFormData({ ...formData, order: parseInt(e.target.value) || 0 })
               }
+              style={{
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+                outline: "none",
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = "none";
+              }}
             />
           </div>
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={handleCancel}>
+
+          <div className="flex justify-end space-x-2 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              style={{
+                backgroundColor: "var(--card)",
+                borderColor: "var(--border)",
+                color: "var(--muted-foreground)",
+              }}
+            >
               Cancel
             </Button>
             <Button
-              onClick={handleSave}
-              disabled={!formData.name || !formData.menuItemCategory}
+              type="submit"
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+                borderColor: "var(--primary)",
+              }}
             >
-              <Save className="h-4 w-4 mr-2" />
-              {isEdit ? "Update Category" : "Save Category"}
+              {toppingCategory ? "Update" : "Create"} Category
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import DeliverySelection from "../components/DeliverySelection";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
-import { useOrder } from "../context/OrderContext";
+import { useOrder } from "../contexts/OrderContext";
 import {
   Card,
   CardContent,
@@ -34,7 +34,18 @@ import {
   useMenuItemSizes,
   useSubCategories,
 } from "../hooks/useSupabase";
-import { type MenuItem } from "../data/mockData";
+
+// Define MenuItem type (adjust fields as needed)
+type MenuItem = {
+  id: string;
+  name: string;
+  description?: string;
+  category: string;
+  subCategoryId?: string;
+  imageId?: string;
+  price?: number;
+  isActive: boolean;
+};
 
 export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -256,10 +267,10 @@ export default function Menu() {
     menuItemSizesLoading
   ) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading menu...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 mx-auto" style={{ borderColor: 'var(--primary)' }}></div>
+          <p className="mt-4" style={{ color: 'var(--muted-foreground)' }}>Loading menu...</p>
         </div>
       </div>
     );
@@ -273,8 +284,12 @@ export default function Menu() {
     );
 
     return (
-      <Card key={item.id} className="flex flex-col h-full">
-        <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
+      <Card 
+        key={item.id} 
+        className="flex flex-col h-full"
+        style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}
+      >
+        <div className="aspect-video rounded-t-lg overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}>
           {(() => {
             const menuItemImage = item.imageId
               ? images.find((img) => img.id === item.imageId)
@@ -286,7 +301,7 @@ export default function Menu() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
+              <div className="w-full h-full flex items-center justify-center" style={{ color: 'var(--muted-foreground)' }}>
                 <Pizza className="h-16 w-16" />
               </div>
             );
@@ -295,15 +310,15 @@ export default function Menu() {
         <CardContent className="flex flex-col flex-1 p-4">
           <div className="flex-1">
             <div className="flex items-start justify-between mb-2">
-              <h3 className="font-semibold text-lg text-blue-600">
+              <h3 className="font-semibold text-lg" style={{ color: 'var(--primary)' }}>
                 {item.name}
               </h3>
-              <div className="flex items-center text-sm text-gray-500">
+              <div className="flex items-center text-sm" style={{ color: 'var(--muted-foreground)' }}>
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
                 <span>4.8</span>
               </div>
             </div>
-            <p className="text-gray-600 text-sm mb-3">{item.description}</p>
+            <p className="text-sm mb-3" style={{ color: 'var(--muted-foreground)' }}>{item.description}</p>
           </div>
 
           <div className="mt-auto space-y-3">
@@ -313,16 +328,36 @@ export default function Menu() {
                   value={currentSelectedSize}
                   onValueChange={(value) => handleSizeChange(item.id, value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger
+                    style={{
+                      backgroundColor: 'var(--input)',
+                      borderColor: 'var(--border)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--foreground)',
+                      outline: 'none'
+                    }}
+                    onFocus={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                    }}
+                    onBlur={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.boxShadow = 'none';
+                    }}
+                  >
                     <SelectValue>
                       {selectedSizeOption
                         ? `${selectedSizeOption.size} - $${selectedSizeOption.price.toFixed(2)}`
                         : `${sizeOptions[sizeOptions.length - 1]?.size} - $${sizeOptions[sizeOptions.length - 1]?.price.toFixed(2)}`}
                     </SelectValue>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
                     {sizeOptions.map((sizeOption) => (
-                      <SelectItem key={sizeOption.size} value={sizeOption.size}>
+                      <SelectItem 
+                        key={sizeOption.size} 
+                        value={sizeOption.size}
+                        style={{ color: 'var(--popover-foreground)' }}
+                      >
                         {sizeOption.size} - ${sizeOption.price.toFixed(2)}
                       </SelectItem>
                     ))}
@@ -331,13 +366,42 @@ export default function Menu() {
                 <div className="flex space-x-2">
                   <Button
                     variant="outline"
-                    className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
+                    className="flex-1"
+                    style={{
+                      color: 'var(--primary)',
+                      borderColor: 'var(--primary)',
+                      backgroundColor: 'var(--card)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.backgroundColor = 'var(--accent)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.backgroundColor = 'var(--card)';
+                    }}
                     onClick={() => customizeItem(item)}
                   >
                     CUSTOMIZE
                   </Button>
                   <Button
-                    className="flex-1 bg-red-600 hover:bg-red-700"
+                    className="flex-1"
+                    style={{
+                      backgroundColor: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.transform = 'translateY(-1px)';
+                      target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.transform = 'translateY(0)';
+                      target.style.boxShadow = 'none';
+                    }}
                     onClick={() => addToCart(item)}
                   >
                     ADD TO ORDER
@@ -348,13 +412,42 @@ export default function Menu() {
               <div className="flex space-x-2">
                 <Button
                   variant="outline"
-                  className="flex-1 text-blue-600 border-blue-600 hover:bg-blue-50"
+                  className="flex-1"
+                  style={{
+                    color: 'var(--primary)',
+                    borderColor: 'var(--primary)',
+                    backgroundColor: 'var(--card)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.backgroundColor = 'var(--accent)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.backgroundColor = 'var(--card)';
+                  }}
                   onClick={() => customizeItem(item)}
                 >
                   CUSTOMIZE
                 </Button>
                 <Button
-                  className="flex-1 bg-red-600 hover:bg-red-700"
+                  className="flex-1"
+                  style={{
+                    backgroundColor: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(-1px)';
+                    target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(0)';
+                    target.style.boxShadow = 'none';
+                  }}
                   onClick={() => addToCart(item)}
                 >
                   ADD TO ORDER
@@ -368,19 +461,22 @@ export default function Menu() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       <HeaderWithDelivery cart={cart} breadcrumbs={[{ label: "Menu" }]} />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Our Menu</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>Our Menu</h1>
+          <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>
             Fresh ingredients, authentic flavors
           </p>
         </div>
 
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-          <TabsList className="grid w-full grid-cols-6 mb-8">
+          <TabsList 
+            className="grid w-full grid-cols-6 mb-8"
+            style={{ backgroundColor: 'var(--muted)', borderColor: 'var(--border)' }}
+          >
             {categories.map((category) => {
               const Icon = category.icon;
               return (
@@ -388,6 +484,10 @@ export default function Menu() {
                   key={category.id}
                   value={category.id}
                   className="flex items-center space-x-2"
+                  style={{
+                    color: selectedCategory === category.id ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
+                    backgroundColor: selectedCategory === category.id ? 'var(--primary)' : 'transparent'
+                  }}
                 >
                   <Icon className="h-4 w-4" />
                   <span>{category.name}</span>
@@ -439,7 +539,7 @@ export default function Menu() {
 
                     return (
                       <div key={subCategory.id}>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                        <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
                           {subCategory.name}
                         </h2>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -454,13 +554,13 @@ export default function Menu() {
                   {/* Show message if no items in category */}
                   {filteredItems.length === 0 && (
                     <div className="col-span-full text-center py-12">
-                      <div className="text-gray-400 mb-4">
+                      <div className="mb-4" style={{ color: 'var(--muted-foreground)' }}>
                         <Pizza className="h-16 w-16 mx-auto" />
                       </div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      <h3 className="text-lg font-medium mb-2" style={{ color: 'var(--foreground)' }}>
                         No items available
                       </h3>
-                      <p className="text-gray-500">
+                      <p style={{ color: 'var(--muted-foreground)' }}>
                         We're working on adding items to this category.
                       </p>
                     </div>

@@ -205,12 +205,12 @@ export default function MenuItemForm({
       : menuItems.filter((item) => item.category === selectedMenuCategory);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
       <div className="flex justify-between items-center">
         {showTitle && (
           <div>
-            <h2 className="text-xl font-semibold">Menu Items</h2>
-            <p className="text-gray-600 mt-1">
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Menu Items</h2>
+            <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>
               Manage menu items with size-based pricing and toppings
             </p>
           </div>
@@ -220,23 +220,58 @@ export default function MenuItemForm({
             value={selectedMenuCategory}
             onValueChange={onSelectedCategoryChange}
           >
-            <SelectTrigger className="w-48">
+            <SelectTrigger 
+              className="w-48"
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = 'none';
+              }}
+            >
               <SelectValue placeholder="Filter by category" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+            <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+              <SelectItem value="all" style={{ color: 'var(--popover-foreground)' }}>All Categories</SelectItem>
               {categories
                 .filter((c) => c.isActive)
                 .map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
+                  <SelectItem key={category.id} value={category.id} style={{ color: 'var(--popover-foreground)' }}>
                     {category.name}
                   </SelectItem>
                 ))}
             </SelectContent>
           </Select>
           {!hideAddButton && (
-            <Button onClick={() => setIsAddingMenuItem(true)}>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button 
+              onClick={() => setIsAddingMenuItem(true)}
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               Add Menu Item
             </Button>
           )}
@@ -262,6 +297,14 @@ export default function MenuItemForm({
           );
         })}
       </div>
+
+      {filteredMenuItems.length === 0 && (
+        <div className="text-center py-12">
+          <p style={{ color: 'var(--muted-foreground)' }}>
+            No menu items found for the selected category.
+          </p>
+        </div>
+      )}
 
       {/* Add Menu Item Dialog */}
       <MenuItemDialog

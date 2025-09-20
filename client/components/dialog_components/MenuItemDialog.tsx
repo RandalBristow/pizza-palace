@@ -265,12 +265,15 @@ export default function MenuItemDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl h-[calc(68vh+100px)] flex flex-col p-0">
+      <DialogContent 
+        className="max-w-6xl h-[calc(68vh+100px)] flex flex-col p-0"
+        style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}
+      >
         <DialogHeader className="sr-only">
-          <DialogTitle>
+          <DialogTitle style={{ color: 'var(--card-foreground)' }}>
             {isEdit ? "Edit Menu Item" : "Add New Menu Item"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
             {isEdit
               ? "Update menu item details and size-based pricing"
               : "Create a new menu item with size-based pricing"}
@@ -279,12 +282,12 @@ export default function MenuItemDialog({
 
         <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
           {/* Left Column - Item Details */}
-          <div className="p-6 pl-8 border-r border-gray-200 space-y-4">
+          <div className="p-6 pl-8 space-y-4" style={{ borderRight: '1px solid var(--border)' }}>
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--card-foreground)' }}>
                 {isEdit ? "Edit Menu Item" : "Add New Menu Item"}
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
                 {isEdit
                   ? "Update menu item details and size-based pricing"
                   : "Create a new menu item with size-based pricing"}
@@ -294,7 +297,7 @@ export default function MenuItemDialog({
             {/* Category and Sub-Category Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="category" className="text-red-600">
+                <Label htmlFor="category" style={{ color: 'var(--destructive)' }}>
                   * Category
                 </Label>
                 <Select
@@ -311,14 +314,29 @@ export default function MenuItemDialog({
                   }}
                   required
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                  <SelectTrigger
+                    style={{
+                      backgroundColor: 'var(--input)',
+                      borderColor: 'var(--border)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--foreground)'
+                    }}
+                    onFocus={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                    }}
+                    onBlur={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.boxShadow = 'none';
+                    }}
+                  >
+                    <SelectValue placeholder="Select category" style={{ color: 'var(--muted-foreground)' }} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
                     {categories
                       .filter((c) => c.isActive)
                       .map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
+                        <SelectItem key={category.id} value={category.id} style={{ color: 'var(--popover-foreground)' }}>
                           {category.name}
                         </SelectItem>
                       ))}
@@ -327,7 +345,7 @@ export default function MenuItemDialog({
               </div>
 
               <div>
-                <Label htmlFor="subCategory" className="text-red-600">
+                <Label htmlFor="subCategory" style={{ color: 'var(--destructive)' }}>
                   * Sub-Category
                 </Label>
                 <Select
@@ -343,10 +361,25 @@ export default function MenuItemDialog({
                   disabled={!formData.category}
                   required
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select sub-category" />
+                  <SelectTrigger
+                    style={{
+                      backgroundColor: 'var(--input)',
+                      borderColor: 'var(--border)',
+                      border: '1px solid var(--border)',
+                      color: 'var(--foreground)'
+                    }}
+                    onFocus={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                    }}
+                    onBlur={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.boxShadow = 'none';
+                    }}
+                  >
+                    <SelectValue placeholder="Select sub-category" style={{ color: 'var(--muted-foreground)' }} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
                     {subCategories
                       .filter(
                         (sub) =>
@@ -354,7 +387,7 @@ export default function MenuItemDialog({
                       )
                       .sort((a, b) => a.displayOrder - b.displayOrder)
                       .map((subCategory) => (
-                        <SelectItem key={subCategory.id} value={subCategory.id}>
+                        <SelectItem key={subCategory.id} value={subCategory.id} style={{ color: 'var(--popover-foreground)' }}>
                           {subCategory.name}
                         </SelectItem>
                       ))}
@@ -366,7 +399,7 @@ export default function MenuItemDialog({
             {/* Name and Image Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name" className="text-red-600">
+                <Label htmlFor="name" style={{ color: 'var(--destructive)' }}>
                   * Name
                 </Label>
                 <Input
@@ -380,6 +413,21 @@ export default function MenuItemDialog({
                   }
                   placeholder="Item name"
                   required
+                  style={{
+                    backgroundColor: 'var(--input)',
+                    borderColor: 'var(--border)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--foreground)',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                  }}
+                  onBlur={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
@@ -401,7 +449,7 @@ export default function MenuItemDialog({
 
             {/* Description */}
             <div>
-              <Label htmlFor="description" className="text-red-600">
+              <Label htmlFor="description" style={{ color: 'var(--destructive)' }}>
                 * Description
               </Label>
               <Textarea
@@ -416,20 +464,35 @@ export default function MenuItemDialog({
                 placeholder="Item description"
                 rows={3}
                 required
+                style={{
+                  backgroundColor: 'var(--input)',
+                  borderColor: 'var(--border)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = 'none';
+                }}
               />
             </div>
 
             {/* Size-based Pricing */}
             {formData.category && formData.subCategoryId && (
               <div>
-                <Label className="text-red-600">* Size-based Pricing</Label>
-                <div className="mt-1 border rounded-lg py-1 px-4">
+                <Label style={{ color: 'var(--destructive)' }}>* Size-based Pricing</Label>
+                <div className="mt-1 rounded-lg py-1 px-4" style={{ border: '1px solid var(--border)' }}>
                   {getAvailableSizes(
                     formData.category,
                     formData.subCategoryId,
                   ).length === 0 ? (
                     <div className="space-y-2">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
                         No sizes defined for this sub-category. Please configure
                         sizes for the sub-category first.
                       </p>
@@ -441,7 +504,7 @@ export default function MenuItemDialog({
                         formData.subCategoryId,
                       ).map((size) => (
                         <div key={size.id} className="flex items-center justify-between">
-                          <Label className="text-xs min-w-[60px] font-medium">
+                          <Label className="text-xs min-w-[60px] font-medium" style={{ color: 'var(--foreground)' }}>
                             {size.sizeName}:
                           </Label>
                           <Input
@@ -455,8 +518,23 @@ export default function MenuItemDialog({
                                 parseFloat(e.target.value) || 0,
                               )
                             }
-                            className="w-24 h-7 py-0 px-0 text-xs text-right" // <-- add text-right here
+                            className="w-24 h-7 py-0 px-0 text-xs text-right"
                             required
+                            style={{
+                              backgroundColor: 'var(--input)',
+                              borderColor: 'var(--border)',
+                              border: '1px solid var(--border)',
+                              color: 'var(--foreground)',
+                              outline: 'none'
+                            }}
+                            onFocus={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                            }}
+                            onBlur={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.boxShadow = 'none';
+                            }}
                           />
                         </div>
                       ))}
@@ -467,8 +545,8 @@ export default function MenuItemDialog({
             )}
 
             {formData.category && !formData.subCategoryId && (
-              <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-3">
-                <p className="text-sm text-yellow-800">
+              <div className="rounded-lg p-3" style={{ border: '1px solid var(--border)', backgroundColor: 'var(--accent)' }}>
+                <p className="text-sm" style={{ color: 'var(--card-foreground)' }}>
                   Please select a sub-category to configure size-based pricing.
                 </p>
               </div>
@@ -478,10 +556,10 @@ export default function MenuItemDialog({
           {/* Right Column - Toppings */}
           <div className="p-6 flex flex-col h-full">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--card-foreground)' }}>
                 Topping Management
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
                 Select a size to enable/disable toppings. Check boxes to set default
                 toppings for this menu item.
               </p>
@@ -493,17 +571,32 @@ export default function MenuItemDialog({
               getAvailableSizes(formData.category, formData.subCategoryId)
                 .length > 0 && (
                 <div className="mb-4">
-                  <Label htmlFor="sizeSelect">Select Size</Label>
+                  <Label htmlFor="sizeSelect" style={{ color: 'var(--foreground)' }}>Select Size</Label>
                   <Select value={selectedSize} onValueChange={setSelectedSize}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a size to manage toppings..." />
+                    <SelectTrigger
+                      style={{
+                        backgroundColor: 'var(--input)',
+                        borderColor: 'var(--border)',
+                        border: '1px solid var(--border)',
+                        color: 'var(--foreground)'
+                      }}
+                      onFocus={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                      }}
+                      onBlur={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.boxShadow = 'none';
+                      }}
+                    >
+                      <SelectValue placeholder="Select a size to manage toppings..." style={{ color: 'var(--muted-foreground)' }} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
                       {getAvailableSizes(
                         formData.category,
                         formData.subCategoryId,
                       ).map((size) => (
-                        <SelectItem key={size.id} value={size.id}>
+                        <SelectItem key={size.id} value={size.id} style={{ color: 'var(--popover-foreground)' }}>
                           {size.sizeName} - $
                           {sizePrices[size.id]?.toFixed(2) || "0.00"}
                         </SelectItem>
@@ -627,7 +720,7 @@ export default function MenuItemDialog({
                   );
                 })()
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
+                <div className="flex items-center justify-center h-full border-2 border-dashed rounded-lg" style={{ borderColor: 'var(--border)', color: 'var(--muted-foreground)' }}>
                   <div className="text-center">
                     <p>Select category, sub-category, and size to manage toppings</p>
                   </div>
@@ -636,8 +729,27 @@ export default function MenuItemDialog({
             </div>
 
             {/* Form Actions */}
-            <div className="mt-6 flex justify-end space-x-2 pt-4 border-t">
-              <Button variant="outline" onClick={handleCancel}>
+            <div className="mt-6 flex justify-end space-x-2 pt-4" style={{ borderTop: '1px solid var(--border)' }}>
+              <Button 
+                variant="outline" 
+                onClick={handleCancel}
+                style={{
+                  backgroundColor: 'var(--card)',
+                  borderColor: 'var(--border)',
+                  color: 'var(--muted-foreground)',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.backgroundColor = 'var(--accent)';
+                  target.style.transform = 'scale(1.02)';
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.backgroundColor = 'var(--card)';
+                  target.style.transform = 'scale(1)';
+                }}
+              >
                 Cancel
               </Button>
               <Button
@@ -654,8 +766,26 @@ export default function MenuItemDialog({
                     formData.subCategoryId,
                   ).some((size) => !sizePrices[size.id] || sizePrices[size.id] <= 0)
                 }
+                style={{
+                  backgroundColor: 'var(--primary)',
+                  color: 'var(--primary-foreground)',
+                  borderColor: 'var(--primary)',
+                  cursor: (!formData.name || !formData.description || !formData.category || !formData.subCategoryId || getAvailableSizes(formData.category, formData.subCategoryId).length === 0 || getAvailableSizes(formData.category, formData.subCategoryId).some((size) => !sizePrices[size.id] || sizePrices[size.id] <= 0)) ? 'not-allowed' : 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    const target = e.target as HTMLElement;
+                    target.style.transform = 'translateY(-1px)';
+                    target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = 'translateY(0)';
+                  target.style.boxShadow = 'none';
+                }}
               >
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
                 {isEdit ? "Update Item" : "Save Item"}
               </Button>
             </div>

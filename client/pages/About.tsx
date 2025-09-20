@@ -165,10 +165,21 @@ export default function About() {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: "var(--background)" }}
+      >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading about page...</p>
+          <div
+            className="animate-spin rounded-full h-32 w-32 border-b-2 mx-auto"
+            style={{ borderColor: "var(--primary)" }}
+          ></div>
+          <p
+            className="mt-4"
+            style={{ color: "var(--muted-foreground)" }}
+          >
+            Loading about page...
+          </p>
         </div>
       </div>
     );
@@ -180,17 +191,26 @@ export default function About() {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: "var(--background)" }}
+    >
       <HeaderWithDelivery breadcrumbs={[{ label: "About" }]} />
 
       <main className="max-w-6xl mx-auto px-1 py-8">
         {/* Default header if no sections exist */}
         {activeSections.length === 0 && (
           <section className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1
+              className="text-4xl font-bold mb-4"
+              style={{ color: "var(--foreground)" }}
+            >
               About Pronto Pizza Cafe
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p
+              className="text-xl max-w-3xl mx-auto"
+              style={{ color: "var(--muted-foreground)" }}
+            >
               Serving Mansfield, Ohio with authentic Italian-style pizza and
               premium coffee since our founding. Every order is made fresh with
               love and the finest ingredients.
@@ -211,19 +231,67 @@ export default function About() {
 
         {/* Default CTA section if no sections exist */}
         {activeSections.length === 0 && (
-          <section className="text-center bg-white rounded-lg p-8 shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <section
+            className="text-center rounded-lg p-8 shadow-lg"
+            style={{ backgroundColor: "var(--card)" }}
+          >
+            <h2
+              className="text-2xl font-bold mb-4"
+              style={{ color: "var(--card-foreground)" }}
+            >
               Ready to Try Our Pizza?
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p
+              className="mb-6"
+              style={{ color: "var(--muted-foreground)" }}
+            >
               Experience the difference that fresh ingredients and authentic
               recipes make. Order now for pickup!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
+              <Button
+                size="lg"
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "var(--primary-foreground)",
+                  borderColor: "var(--primary)",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = "translateY(-1px)";
+                  target.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = "translateY(0)";
+                  target.style.boxShadow = "none";
+                }}
+                asChild
+              >
                 <Link to="/order">Start Your Order</Link>
               </Button>
-              <Button variant="outline" size="lg" asChild>
+              <Button
+                variant="outline"
+                size="lg"
+                style={{
+                  backgroundColor: "var(--card)",
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.backgroundColor = "var(--accent)";
+                  target.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.backgroundColor = "var(--card)";
+                  target.style.transform = "translateY(0)";
+                }}
+                asChild
+              >
                 <Link to="/menu">View Full Menu</Link>
               </Button>
             </div>

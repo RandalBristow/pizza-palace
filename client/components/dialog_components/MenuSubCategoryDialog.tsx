@@ -3,19 +3,19 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Save } from "lucide-react";
 
 export interface SubCategory {
@@ -86,58 +86,104 @@ export default function SubCategoryDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent
+        style={{
+          backgroundColor: "var(--card)",
+          borderColor: "var(--border)",
+        }}
+      >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle style={{ color: "var(--card-foreground)" }}>
             {isEdit ? "Edit Sub-Category" : "Add New Sub-Category"}
           </DialogTitle>
-          <DialogDescription>
-            {isEdit 
-              ? "Update the sub-category details. Sizes are managed separately in the Category Sizes section."
-              : "Create a new sub-category within a menu category. Sizes will be managed separately in the Category Sizes section."
-            }
+          <DialogDescription style={{ color: "var(--muted-foreground)" }}>
+            {isEdit
+              ? "Update the sub-category details"
+              : "Create a new sub-category"}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div>
-            <Label htmlFor="parentCategory">Parent Category</Label>
+            <Label htmlFor="category" style={{ color: 'var(--destructive)' }}>
+              * Category
+            </Label>
             <Select
               value={formData.categoryId}
-              onValueChange={(value) => {
-                setFormData({ ...formData, categoryId: value });
-              }}
+              onValueChange={(value) =>
+                setFormData({ ...formData, categoryId: value })
+              }
+              required
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category..." />
+              <SelectTrigger
+                style={{
+                  backgroundColor: 'var(--input)',
+                  borderColor: 'var(--border)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)'
+                }}
+                onFocus={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = 'none';
+                }}
+              >
+                <SelectValue placeholder="Select category..." style={{ color: 'var(--muted-foreground)' }} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
                 {categories
                   .filter((c) => c.isActive)
+                  .sort((a, b) => a.order - b.order)
                   .map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
+                    <SelectItem key={category.id} value={category.id} style={{ color: 'var(--popover-foreground)', cursor: 'pointer' }}>
                       {category.name}
                     </SelectItem>
                   ))}
               </SelectContent>
             </Select>
           </div>
-
           <div>
-            <Label htmlFor="subCategoryName">Sub-Category Name</Label>
+            <Label
+              htmlFor="subCategoryName"
+              style={{ color: "var(--destructive)" }}
+            >
+              * Sub-Category Name
+            </Label>
             <Input
               id="subCategoryName"
-              placeholder="e.g., Build Your Own, Boneless Wings, Traditional Wings"
+              placeholder="e.g., Boneless Wings"
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
+              style={{
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+                outline: "none",
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = "none";
+              }}
             />
           </div>
-
           <div>
-            <Label htmlFor="subDisplayOrder">Display Order</Label>
+            <Label
+              htmlFor="displayOrder"
+              style={{ color: "var(--destructive)" }}
+            >
+              * Display Order
+            </Label>
             <Input
-              id="subDisplayOrder"
+              id="displayOrder"
               type="number"
               placeholder="1"
               value={formData.displayOrder}
@@ -147,26 +193,69 @@ export default function SubCategoryDialog({
                   displayOrder: parseInt(e.target.value) || 1,
                 })
               }
+              style={{
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+                outline: "none",
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = "none";
+              }}
             />
           </div>
-
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>Note:</strong> Sizes for this sub-category will be managed in
-              the Category Sizes section. Create the sub-category first, then go to
-              Category Sizes to define which sizes apply to this sub-category.
-            </p>
-          </div>
-
           <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={handleCancel}>
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              style={{
+                backgroundColor: "var(--card)",
+                borderColor: "var(--border)",
+                color: "var(--muted-foreground)",
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--accent)';
+                target.style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--card)';
+                target.style.transform = 'scale(1)';
+              }}
+            >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
-              disabled={!formData.name || !formData.categoryId}
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+                borderColor: "var(--primary)",
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
             >
-              <Save className="h-4 w-4 mr-2" />
+              <Save
+                className="h-4 w-4 mr-2"
+                style={{ color: "var(--primary-foreground)" }}
+              />
               {isEdit ? "Update Sub-Category" : "Save Sub-Category"}
             </Button>
           </div>

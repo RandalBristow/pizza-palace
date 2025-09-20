@@ -106,20 +106,38 @@ export default function MenuCategoryForm({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
       <div className="flex justify-between items-center">
         {showTitle && (
           <div>
-            <h2 className="text-xl font-semibold">Menu Categories</h2>
-            <p className="text-gray-600 mt-1">
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Menu Categories</h2>
+            <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>
               Manage main menu categories and their organization
             </p>
           </div>
         )}
         <div className="flex items-center space-x-4">
           {!hideAddButton && (
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button 
+              onClick={() => setIsDialogOpen(true)}
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               Add Category
             </Button>
           )}

@@ -147,85 +147,159 @@ export default function ToppingItemDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent
+        className="max-w-md"
+        style={{
+          backgroundColor: "var(--card)",
+          borderColor: "var(--border)",
+        }}
+      >
         <DialogHeader>
-          <DialogTitle>
-            {isEdit ? "Edit Topping" : "Add New Topping"}
+          <DialogTitle style={{ color: "var(--card-foreground)" }}>
+            {topping ? "Edit Topping" : "Add New Topping"}
           </DialogTitle>
           <DialogDescription>
-            {isEdit
+            {topping
               ? "Update the topping details and size-specific pricing"
               : "Create a new topping with size-specific pricing"}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Side - Basic Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium mb-4">Basic Information</h3>
+        <form onSubmit={handleSave} className="space-y-4">
+          <div>
+            <Label
+              htmlFor="name"
+              style={{ color: "var(--foreground)" }}
+            >
+              Topping Name
+            </Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              required
+              style={{
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+                outline: "none",
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = "none";
+              }}
+            />
+          </div>
 
-            <div>
-              <Label htmlFor="menuItemCategory">Menu Category *</Label>
-              <Select
-                value={formData.menuItemCategory}
-                onValueChange={(value) => {
-                  setFormData({ ...formData, menuItemCategory: value });
-                  setSizePrices({}); // Reset size prices when category changes
+          <div>
+            <Label
+              htmlFor="menuItemCategory"
+              style={{ color: "var(--foreground)" }}
+            >
+              Menu Category
+            </Label>
+            <Select
+              value={formData.menuItemCategory}
+              onValueChange={(value) =>
+                setFormData({ ...formData, menuItemCategory: value })
+              }
+            >
+              <SelectTrigger
+                style={{
+                  backgroundColor: "var(--input)",
+                  borderColor: "var(--border)",
+                  border: "1px solid var(--border)",
+                  color: "var(--foreground)",
+                  outline: "none",
+                }}
+                onFocus={(e) => {
+                  e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.boxShadow = "none";
                 }}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select menu category..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories
-                    .filter((c) => c.isActive)
-                    .map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="toppingCategory">Topping Category *</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, category: value })
-                }
+                <SelectValue placeholder="Select menu category" />
+              </SelectTrigger>
+              <SelectContent
+                style={{
+                  backgroundColor: "var(--popover)",
+                  borderColor: "var(--border)",
+                }}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select topping category..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {toppingCategories
-                    .filter(
-                      (tc) =>
-                        tc.isActive &&
-                        (tc.menuItemCategory === formData.menuItemCategory ||
-                          !formData.menuItemCategory),
-                    )
-                    .map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
+                {categories
+                  .filter((c) => c.isActive)
+                  .map((category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id}
+                      style={{ color: "var(--popover-foreground)" }}
+                    >
+                      {category.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div>
-              <Label htmlFor="toppingName">Topping Name *</Label>
-              <Input
-                id="toppingName"
-                placeholder="e.g., Pepperoni"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-              />
-            </div>
+          <div>
+            <Label
+              htmlFor="toppingCategory"
+              style={{ color: "var(--foreground)" }}
+            >
+              Topping Category
+            </Label>
+            <Select
+              value={formData.category}
+              onValueChange={(value) =>
+                setFormData({ ...formData, category: value })
+              }
+            >
+              <SelectTrigger
+                style={{
+                  backgroundColor: "var(--input)",
+                  borderColor: "var(--border)",
+                  border: "1px solid var(--border)",
+                  color: "var(--foreground)",
+                  outline: "none",
+                }}
+                onFocus={(e) => {
+                  e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.boxShadow = "none";
+                }}
+              >
+                <SelectValue placeholder="Select topping category" />
+              </SelectTrigger>
+              <SelectContent
+                style={{
+                  backgroundColor: "var(--popover)",
+                  borderColor: "var(--border)",
+                }}
+              >
+                {toppingCategories
+                  .filter(
+                    (tc) =>
+                      tc.isActive &&
+                      (tc.menuItemCategory === formData.menuItemCategory ||
+                        !formData.menuItemCategory)
+                  )
+                  .map((category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id}
+                      style={{ color: "var(--popover-foreground)" }}
+                    >
+                      {category.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Right Side - Size-based Pricing */}
@@ -248,7 +322,11 @@ export default function ToppingItemDialog({
                         step="0.01"
                         placeholder="0.00"
                         className="w-24 h-7 py-0 px-0 text-xs text-right"
-                        value={sizePrices[size.id] ? sizePrices[size.id].toFixed(2) : ""}
+                        value={
+                          sizePrices[size.id]
+                            ? sizePrices[size.id].toFixed(2)
+                            : ""
+                        }
                         onChange={(e) =>
                           handleSizePriceChange(size.id, e.target.value)
                         }
@@ -266,22 +344,30 @@ export default function ToppingItemDialog({
 
           {/* Form Actions */}
           <div className="lg:col-span-2 flex justify-end space-x-2 pt-4 border-t">
-            <Button variant="outline" onClick={handleCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              style={{
+                backgroundColor: "var(--card)",
+                borderColor: "var(--border)",
+                color: "var(--card-foreground)",
+              }}
+            >
               Cancel
             </Button>
             <Button
-              onClick={handleSave}
-              disabled={
-                !formData.name ||
-                !formData.menuItemCategory ||
-                !formData.category
-              }
+              type="submit"
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+                borderColor: "var(--primary)",
+              }}
             >
-              <Save className="h-4 w-4 mr-2" />
-              {isEdit ? "Update Topping" : "Save Topping"}
+              {topping ? "Update" : "Create"} Topping
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

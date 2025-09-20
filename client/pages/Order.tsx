@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useOrder } from "../context/OrderContext";
+import { useOrder } from "../contexts/OrderContext";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import DeliverySelection from "../components/DeliverySelection";
-import { mockMenuItems, mockToppings } from "../data/mockData";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -12,31 +11,14 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Label } from "../components/ui/label";
-import { Checkbox } from "../components/ui/checkbox";
-import {
-  Pizza,
-  Coffee,
-  ArrowLeft,
-  ShoppingCart,
-  Plus,
-  Minus,
-} from "lucide-react";
 
 interface Topping {
   id: string;
@@ -240,7 +222,7 @@ export default function Order() {
     const itemId = searchParams.get("item");
     const size = searchParams.get("size");
 
-    if (itemId) {
+/*     if (itemId) {
       const menuItem = mockMenuItems.find((item) => item.id === itemId);
       if (menuItem && menuItem.defaultToppings) {
         // Load default toppings
@@ -294,7 +276,7 @@ export default function Order() {
           basePrice: sizeInfo?.price || 0,
         }));
       }
-    }
+    } */
   }, [hasDeliveryDetails, searchParams]);
 
   const toppingCategories = [

@@ -1,12 +1,13 @@
 import "./global.css";
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 // Import comprehensive ResizeObserver error fix
 import "./utils/resizeObserverFix";
 
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { OrderProvider } from "./context/OrderContext";
+import { OrderProvider } from "./contexts/OrderContext";
 import Footer from "./components/Footer";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
@@ -36,27 +37,34 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
 // App component (not exported to avoid HMR issues)
 const App = () => (
-  <OrderProvider>
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/order" element={<Order />} />
-          <Route path="/wings" element={<Wings />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/specials" element={<Specials />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
-  </OrderProvider>
+  <ThemeProvider>
+    <OrderProvider>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/order" element={<Order />} />
+            <Route path="/wings" element={<Wings />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/specials" element={<Specials />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </OrderProvider>
+  </ThemeProvider>
 );
 
 // Proper root management to prevent duplicate createRoot calls

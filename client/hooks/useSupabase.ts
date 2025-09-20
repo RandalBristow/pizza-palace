@@ -145,6 +145,7 @@ export const transformSettings = (dbSettings: DatabaseSettings) => ({
   taxRate: dbSettings.tax_rate,
   deliveryFee: dbSettings.delivery_fee,
   businessHours: dbSettings.business_hours,
+  theme: dbSettings.theme || 'classic-pizza', // Add theme with default
 });
 
 // transformAboutSection: TABLES.ABOUT_SECTIONS
@@ -1264,12 +1265,18 @@ export const useSettings = () => {
       }
 
       if (data) {
-        setSettings(transformSettings(data));
+        const transformedSettings = transformSettings(data);
+        setSettings(transformedSettings);
+        // Apply theme on initial load
+        if (transformedSettings.theme) {
+          applyTheme(transformedSettings.theme);
+        }
       } else {
         // Create default settings if none exist
         const defaultSettings = {
           tax_rate: 8.5,
           delivery_fee: 2.99,
+          theme: 'classic-pizza', // Add default theme
           business_hours: {
             monday: { open: "09:00", close: "22:00", closed: false },
             tuesday: { open: "09:00", close: "22:00", closed: false },
@@ -1289,7 +1296,10 @@ export const useSettings = () => {
 
         if (createError) throw createError;
 
-        setSettings(transformSettings(newData));
+        const transformedSettings = transformSettings(newData);
+        setSettings(transformedSettings);
+        // Apply default theme
+        applyTheme(transformedSettings.theme);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch settings");
@@ -1300,28 +1310,90 @@ export const useSettings = () => {
 
   const updateSettings = async (updates: any) => {
     try {
-      const { data, error } = await supabase
+      // First, check if settings exist to get the correct ID
+      const { data: existingSettings } = await supabase
         .from(TABLES.SETTINGS)
-        .upsert({
-          id: "1", // Single settings row
-          tax_rate: updates.taxRate,
-          delivery_fee: updates.deliveryFee,
-          business_hours: updates.businessHours,
-          updated_at: new Date().toISOString(),
-        })
-        .select()
+        .select("id")
         .single();
+
+      const settingsData = {
+        tax_rate: updates.taxRate,
+        delivery_fee: updates.deliveryFee,
+        business_hours: updates.businessHours,
+        theme: updates.theme,
+        updated_at: new Date().toISOString(),
+      };
+
+      let data, error;
+      
+      if (existingSettings?.id) {
+        // Update existing settings
+        ({ data, error } = await supabase
+          .from(TABLES.SETTINGS)
+          .update(settingsData)
+          .eq("id", existingSettings.id)
+          .select()
+          .single());
+      } else {
+        // Insert new settings (let database generate UUID)
+        ({ data, error } = await supabase
+          .from(TABLES.SETTINGS)
+          .insert(settingsData)
+          .select()
+          .single());
+      }
 
       if (error) throw error;
 
       const updatedSettings = transformSettings(data);
       setSettings(updatedSettings);
+      
+      // Apply theme immediately after settings update
+      if (updates.theme) {
+        applyTheme(updates.theme);
+      }
+      
       return updatedSettings;
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to update settings",
       );
       throw err;
+    }
+  };
+
+  // Add theme application helper function
+  const applyTheme = (themeName: string) => {
+    const THEMES = {
+      'classic-pizza': {
+        name: 'Classic Pizza',
+        colors: { primary: '#DC2626', secondary: '#F59E0B', accent: '#FEF3C7' }
+      },
+      'espresso-dark': {
+        name: 'Espresso Dark',
+        colors: { primary: '#78350F', secondary: '#451A03', accent: '#FEF3C7' }
+      },
+      'margherita-fresh': {
+        name: 'Margherita Fresh',
+        colors: { primary: '#16A34A', secondary: '#DC2626', accent: '#F0FDF4' }
+      },
+      'cappuccino-cream': {
+        name: 'Cappuccino Cream',
+        colors: { primary: '#A16207', secondary: '#92400E', accent: '#FFFBEB' }
+      },
+      'pepperoni-spice': {
+        name: 'Pepperoni Spice',
+        colors: { primary: '#B91C1C', secondary: '#7F1D1D', accent: '#FEF2F2' }
+      }
+    };
+
+    const theme = THEMES[themeName as keyof typeof THEMES];
+    if (theme) {
+      const root = document.documentElement;
+      root.style.setProperty('--theme-primary', theme.colors.primary);
+      root.style.setProperty('--theme-secondary', theme.colors.secondary);
+      root.style.setProperty('--theme-accent', theme.colors.accent);
+      root.setAttribute('data-theme', themeName);
     }
   };
 

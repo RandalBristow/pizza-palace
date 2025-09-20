@@ -549,22 +549,41 @@ export default function AboutPageForm({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">About Page Sections</h2>
+        <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>About Page Sections</h2>
         <Dialog open={isAddingSection} onOpenChange={setIsAddingSection}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               Add Section
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent 
+            className="max-w-2xl"
+            style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}
+          >
             <DialogHeader>
-              <DialogTitle>Add New Section</DialogTitle>
-              <DialogDescription>
-                Create a new section for the about page with text, images, and
-                links
+              <DialogTitle style={{ color: 'var(--card-foreground)' }}>Add New Section</DialogTitle>
+              <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
+                Create a new section for the about page with text, images, and links
               </DialogDescription>
             </DialogHeader>
             {renderSectionForm(false)}
@@ -582,42 +601,41 @@ export default function AboutPageForm({
         {aboutSections
           .sort((a, b) => a.order - b.order)
           .map((section) => (
-            <Card key={section.id}>
+            <Card key={section.id} style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       {getSectionIcon(section.type)}
-                      <h3 className="font-semibold">
+                      <h3 className="font-semibold" style={{ color: 'var(--muted-foreground)' }}>
                         {section.title || `${section.type} Section`}
                       </h3>
                       <Badge variant="outline">Order: {section.order}</Badge>
                       <Badge variant="outline">
-                        {section.columns} Column
-                        {section.columns !== 1 ? "s" : ""}
+                        {section.columns} Column{section.columns !== 1 ? "s" : ""}
                       </Badge>
                       <Badge
-                        className={
-                          section.isActive
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }
+                        style={{
+                          backgroundColor: section.isActive ? '#bbf7d0' : '#fecaca',
+                          color: section.isActive ? '#14532d' : '#991b1b',
+                          border: '1px solid var(--border)'
+                        }}
                       >
                         {section.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </div>
                     {section.content && (
-                      <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                      <p className="text-sm mb-2 line-clamp-2" style={{ color: 'var(--muted-foreground)' }}>
                         {section.content}
                       </p>
                     )}
                     {section.imageUrl && (
-                      <div className="text-xs text-gray-500 mb-2">
+                      <div className="text-xs mb-2" style={{ color: 'var(--muted-foreground)' }}>
                         Image: {section.imageUrl}
                       </div>
                     )}
                     {section.links && section.links.length > 0 && (
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
                         Links: {section.links.length}
                       </div>
                     )}
@@ -630,15 +648,31 @@ export default function AboutPageForm({
                             variant="outline"
                             size="sm"
                             onClick={() => toggleSectionStatus(section.id)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
                             {section.isActive ? (
-                              <ThumbsUp className="h-4 w-4" />
+                              <ThumbsUp className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                             ) : (
-                              <ThumbsDown className="h-4 w-4" />
+                              <ThumbsDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                             )}
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
                           {section.isActive ? "Deactivate" : "Activate"}
                         </TooltipContent>
                       </Tooltip>
@@ -650,11 +684,27 @@ export default function AboutPageForm({
                             variant="outline"
                             size="sm"
                             onClick={() => handleEditSection(section)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Edit Section</TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Section</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                     <TooltipProvider>
@@ -664,11 +714,27 @@ export default function AboutPageForm({
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteSection(section.id)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Delete Section</TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Delete Section</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>
@@ -683,10 +749,13 @@ export default function AboutPageForm({
         open={editingSection !== null}
         onOpenChange={(open) => !open && setEditingSection(null)}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent 
+          className="max-w-2xl"
+          style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}
+        >
           <DialogHeader>
-            <DialogTitle>Edit Section</DialogTitle>
-            <DialogDescription>
+            <DialogTitle style={{ color: 'var(--card-foreground)' }}>Edit Section</DialogTitle>
+            <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
               Update the section details and settings
             </DialogDescription>
           </DialogHeader>

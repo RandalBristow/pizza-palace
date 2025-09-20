@@ -192,6 +192,7 @@ export interface DatabaseSettings {
     string,
     { open: string; close: string; closed: boolean }
   >;
+  theme?: string; // Add theme field
   created_at: string;
   updated_at: string;
 }

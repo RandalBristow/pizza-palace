@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { useOrder } from "../context/OrderContext";
+import { useOrder } from "../contexts/OrderContext";
 import DeliverySelection from "./DeliverySelection";
 import { ShoppingCart, MapPin, Store, ChevronRight } from "lucide-react";
 
@@ -34,7 +34,7 @@ export default function HeaderWithDelivery({
 
   return (
     <>
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+      <header className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: 'var(--card)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             {/* Logo and Breadcrumbs - Always shown */}
@@ -46,24 +46,48 @@ export default function HeaderWithDelivery({
                   className="h-10 w-auto"
                 />
               </Link>
-              <nav className="flex items-center space-x-1 text-sm text-gray-500 min-h-[20px]">
+              <nav className="flex items-center space-x-1 text-sm min-h-[20px]" style={{ color: 'var(--muted-foreground)' }}>
                 {displayBreadcrumbs.length === 1 &&
                 displayBreadcrumbs[0].label === "Home" ? (
-                  <span className="text-gray-900 font-medium">Home</span>
+                  <span className="font-medium" style={{ color: 'var(--foreground)' }}>Home</span>
                 ) : (
                   <>
-                    <Link to="/" className="hover:text-gray-700">
+                    <Link 
+                      to="/" 
+                      className="hover:underline"
+                      style={{ color: 'var(--muted-foreground)' }}
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.color = 'var(--primary)';
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.color = 'var(--muted-foreground)';
+                      }}
+                    >
                       Home
                     </Link>
                     {displayBreadcrumbs.map((crumb, index) => (
                       <div key={index} className="flex items-center space-x-1">
-                        <ChevronRight className="h-3 w-3" />
+                        <ChevronRight className="h-3 w-3" style={{ color: 'var(--muted-foreground)' }} />
                         {crumb.href ? (
-                          <Link to={crumb.href} className="hover:text-gray-700">
+                          <Link 
+                            to={crumb.href} 
+                            className="hover:underline"
+                            style={{ color: 'var(--muted-foreground)' }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.color = 'var(--primary)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.color = 'var(--muted-foreground)';
+                            }}
+                          >
                             {crumb.label}
                           </Link>
                         ) : (
-                          <span className="text-gray-900 font-medium">
+                          <span className="font-medium" style={{ color: 'var(--foreground)' }}>
                             {crumb.label}
                           </span>
                         )}
@@ -79,31 +103,76 @@ export default function HeaderWithDelivery({
               <div className="hidden md:flex items-center space-x-6">
                 <Link
                   to="/menu"
-                  className="text-gray-700 hover:text-red-600 font-medium"
+                  className="font-medium"
+                  style={{ color: 'var(--foreground)' }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--foreground)';
+                  }}
                 >
                   Menu
                 </Link>
                 <Link
                   to="/specials"
-                  className="text-gray-700 hover:text-red-600 font-medium"
+                  className="font-medium"
+                  style={{ color: 'var(--foreground)' }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--foreground)';
+                  }}
                 >
                   Specials
                 </Link>
                 <Link
                   to="/about"
-                  className="text-gray-700 hover:text-red-600 font-medium"
+                  className="font-medium"
+                  style={{ color: 'var(--foreground)' }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--foreground)';
+                  }}
                 >
                   About
                 </Link>
                 <Link
                   to="/admin"
-                  className="text-gray-700 hover:text-red-600 font-medium text-sm"
+                  className="font-medium text-sm"
+                  style={{ color: 'var(--foreground)' }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--foreground)';
+                  }}
                 >
                   Admin
                 </Link>
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-red-600 font-medium"
+                  className="font-medium"
+                  style={{ color: 'var(--foreground)' }}
+                  onMouseEnter={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.target as HTMLElement;
+                    target.style.color = 'var(--foreground)';
+                  }}
                 >
                   Sign In
                 </Link>
@@ -114,21 +183,38 @@ export default function HeaderWithDelivery({
                 <Button
                   variant="outline"
                   onClick={() => setShowDeliverySelection(true)}
-                  className="text-sm flex flex-col items-center h-auto py-2 px-3 border-2 hover:bg-gray-50"
+                  className="text-sm flex flex-col items-center h-auto py-2 px-3"
+                  style={{
+                    backgroundColor: 'var(--card)',
+                    borderColor: 'var(--border)',
+                    border: '2px solid var(--border)',
+                    color: 'var(--foreground)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.backgroundColor = 'var(--accent)';
+                    target.style.borderColor = 'var(--primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.backgroundColor = 'var(--card)';
+                    target.style.borderColor = 'var(--border)';
+                  }}
                 >
                   <div className="flex items-center space-x-1">
                     {deliveryDetails?.method === "carryout" ? (
-                      <Store className="h-4 w-4" />
+                      <Store className="h-4 w-4" style={{ color: 'var(--primary)' }} />
                     ) : (
-                      <MapPin className="h-4 w-4" />
+                      <MapPin className="h-4 w-4" style={{ color: 'var(--primary)' }} />
                     )}
-                    <span className="font-semibold text-xs">
+                    <span className="font-semibold text-xs" style={{ color: 'var(--foreground)' }}>
                       {deliveryDetails?.method === "carryout"
                         ? "CARRYOUT FROM"
                         : "DELIVERY TO"}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-600">
+                  <span className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
                     {deliveryDetails?.method === "carryout"
                       ? "914 Ashland Rd"
                       : `${deliveryDetails?.address?.city || ""}, ${deliveryDetails?.address?.state || ""}`}
@@ -137,10 +223,33 @@ export default function HeaderWithDelivery({
               )}
 
               {/* Large Cart Icon - Domino's style, not a button */}
-              <Link to="/cart" className="relative">
+              <Link 
+                to="/cart" 
+                className="relative"
+                style={{ transition: 'all 0.2s ease' }}
+                onMouseEnter={(e) => {
+                  const icon = e.currentTarget.querySelector('svg');
+                  if (icon) {
+                    (icon as SVGSVGElement).style.color = 'var(--primary)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  const icon = e.currentTarget.querySelector('svg');
+                  if (icon) {
+                    (icon as SVGSVGElement).style.color = 'var(--foreground)';
+                  }
+                }}
+              >
                 <div className="relative">
-                  <ShoppingCart className="h-8 w-8 text-gray-700 hover:text-gray-900 transition-colors" />
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600 text-white">
+                  <ShoppingCart className="h-8 w-8 transition-colors" style={{ color: 'var(--foreground)' }} />
+                  <Badge 
+                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                    style={{
+                      backgroundColor: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
+                      borderColor: 'var(--primary)'
+                    }}
+                  >
                     {cart.length}
                   </Badge>
                 </div>

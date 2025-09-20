@@ -11,7 +11,7 @@ import {
 
 function MenuItem({ menuItem, menuItemImage, getMenuItemPrice, toggleMenuItemStatus, handleEditMenuItem, handleDeleteMenuItem }) {
   return (
-    <Card>
+    <Card style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}>
       <CardContent className="p-4 flex flex-col h-full">
         {menuItemImage ? (
           <img
@@ -20,17 +20,17 @@ function MenuItem({ menuItem, menuItemImage, getMenuItemPrice, toggleMenuItemSta
             className="w-full h-32 object-cover rounded mb-3"
           />
         ) : (
-          <div className="w-full h-32 bg-gray-200 rounded mb-3 flex items-center justify-center">
-            <Pizza className="h-12 w-12 text-gray-400" />
+          <div className="w-full h-32 rounded mb-3 flex items-center justify-center" style={{ backgroundColor: 'var(--muted)' }}>
+            <Pizza className="h-12 w-12" style={{ color: 'var(--muted-foreground)' }} />
           </div>
         )}
         <div className="flex justify-between items-start mb-2">
           <div>
-            <h3 className="font-semibold">{menuItem.name}</h3>
-            <p className="text-sm text-gray-600 line-clamp-2">
+            <h3 className="font-semibold" style={{ color: 'var(--muted-foreground)' }}>{menuItem.name}</h3>
+            <p className="text-sm line-clamp-2" style={{ color: 'var(--muted-foreground)' }}>
               {menuItem.description}
             </p>
-            <p className="text-lg font-bold text-green-600">
+            <p className="text-lg font-bold" style={{ color: 'var(--primary)' }}>
               {getMenuItemPrice(menuItem)}
             </p>
           </div>
@@ -40,6 +40,11 @@ function MenuItem({ menuItem, menuItemImage, getMenuItemPrice, toggleMenuItemSta
                 ? "bg-green-100 text-green-800"
                 : "bg-red-100 text-red-800"
             }
+            style={{
+              backgroundColor: menuItem.isActive ? '#bbf7d0' : '#fecaca',
+              color: menuItem.isActive ? '#14532d' : '#991b1b',
+              border: '1px solid var(--border)'
+            }}
           >
             {menuItem.isActive ? "Active" : "Inactive"}
           </Badge>
@@ -53,15 +58,32 @@ function MenuItem({ menuItem, menuItemImage, getMenuItemPrice, toggleMenuItemSta
                     variant="outline"
                     size="sm"
                     onClick={() => toggleMenuItemStatus(menuItem.id)}
+                    style={{
+                      backgroundColor: 'var(--card)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--muted-foreground)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--accent)';
+                      target.style.transform = 'scale(1.05)';
+                      target.style.cursor = 'pointer';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--card)';
+                      target.style.transform = 'scale(1)';
+                    }}
                   >
                     {menuItem.isActive ? (
-                      <ThumbsUp className="h-4 w-4" />
+                      <ThumbsUp className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                     ) : (
-                      <ThumbsDown className="h-4 w-4" />
+                      <ThumbsDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
                   {menuItem.isActive ? "Deactivate" : "Activate"}
                 </TooltipContent>
               </Tooltip>
@@ -73,11 +95,28 @@ function MenuItem({ menuItem, menuItemImage, getMenuItemPrice, toggleMenuItemSta
                     variant="outline"
                     size="sm"
                     onClick={() => handleEditMenuItem(menuItem)}
+                    style={{
+                      backgroundColor: 'var(--card)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--muted-foreground)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--accent)';
+                      target.style.transform = 'scale(1.05)';
+                      target.style.cursor = 'pointer';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--card)';
+                      target.style.transform = 'scale(1)';
+                    }}
                   >
-                    <Edit className="h-4 w-4" />
+                    <Edit className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Edit Menu Item</TooltipContent>
+                <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Menu Item</TooltipContent>
               </Tooltip>
             </TooltipProvider>
             <TooltipProvider>
@@ -87,11 +126,28 @@ function MenuItem({ menuItem, menuItemImage, getMenuItemPrice, toggleMenuItemSta
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteMenuItem(menuItem.id)}
+                    style={{
+                      backgroundColor: 'var(--card)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--muted-foreground)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--accent)';
+                      target.style.transform = 'scale(1.05)';
+                      target.style.cursor = 'pointer';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target;
+                      target.style.backgroundColor = 'var(--card)';
+                      target.style.transform = 'scale(1)';
+                    }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Delete Menu Item</TooltipContent>
+                <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Delete Menu Item</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>

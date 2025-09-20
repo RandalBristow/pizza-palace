@@ -153,43 +153,92 @@ export default function ImageManagerForm({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
       <div className="flex justify-between items-center">
-        {showTitle && <h2 className="text-xl font-semibold">Image Manager</h2>}
+        {showTitle && <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Image Manager</h2>}
         <div className="flex-1 ml-6">
           <div className="relative w-96">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
             <Input
               placeholder="Search images by name..."
               value={searchFilter || ""}
               onChange={(e) => setSearchFilter(e.target.value || "")}
               className="pl-10"
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.boxShadow = 'none';
+              }}
             />
           </div>
         </div>
         {/* Filters and Controls */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="flex items-center space-x-2 ml-8">
-            <Label>Thumbnail Size:</Label>
+            <Label style={{ color: 'var(--foreground)' }}>Thumbnail Size:</Label>
             <Select
               value={thumbnailSize}
               onValueChange={(value: "small" | "medium" | "large") =>
                 setThumbnailSize(value || "medium")
               }
             >
-              <SelectTrigger className="w-32">
+              <SelectTrigger 
+                className="w-32"
+                style={{
+                  backgroundColor: 'var(--input)',
+                  borderColor: 'var(--border)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)'
+                }}
+                onFocus={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                }}
+                onBlur={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.boxShadow = 'none';
+                }}
+              >
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="small">Small</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="large">Large</SelectItem>
+              <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+                <SelectItem value="small" style={{ color: 'var(--popover-foreground)' }}>Small</SelectItem>
+                <SelectItem value="medium" style={{ color: 'var(--popover-foreground)' }}>Medium</SelectItem>
+                <SelectItem value="large" style={{ color: 'var(--popover-foreground)' }}>Large</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {!hideAddButton && (
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button 
+              onClick={() => setIsDialogOpen(true)}
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               Add Image
             </Button>
           )}
@@ -205,7 +254,7 @@ export default function ImageManagerForm({
       {/* Images Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {filteredImages.map((image) => (
-          <Card key={image.id} className="overflow-hidden">
+          <Card key={image.id} className="overflow-hidden" style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}>
             <CardContent className="p-0">
               <div className="relative">
                 <img
@@ -219,18 +268,18 @@ export default function ImageManagerForm({
                 />
                 <div className="absolute top-2 right-2">
                   <Badge
-                    className={
-                      image.isActive
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }
+                    style={{
+                      backgroundColor: image.isActive ? '#bbf7d0' : '#fecaca',
+                      color: image.isActive ? '#14532d' : '#991b1b',
+                      border: '1px solid var(--border)'
+                    }}
                   >
                     {image.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </div>
               </div>
               <div className="p-3">
-                <h4 className="font-medium text-sm truncate mb-2">
+                <h4 className="font-medium text-sm truncate mb-2" style={{ color: 'var(--muted-foreground)' }}>
                   {image.name}
                 </h4>
                 <div className="flex justify-between items-center">
@@ -242,15 +291,31 @@ export default function ImageManagerForm({
                             variant="outline"
                             size="sm"
                             onClick={() => toggleImageStatus(image.id)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
                             {image.isActive ? (
-                              <ThumbsUp className="h-3 w-3" />
+                              <ThumbsUp className="h-3 w-3" style={{ color: 'var(--muted-foreground)' }} />
                             ) : (
-                              <ThumbsDown className="h-3 w-3" />
+                              <ThumbsDown className="h-3 w-3" style={{ color: 'var(--muted-foreground)' }} />
                             )}
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
                           {image.isActive ? "Deactivate" : "Activate"}
                         </TooltipContent>
                       </Tooltip>
@@ -262,11 +327,27 @@ export default function ImageManagerForm({
                             variant="outline"
                             size="sm"
                             onClick={() => handleEditImage(image)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
-                            <Edit className="h-3 w-3" />
+                            <Edit className="h-3 w-3" style={{ color: 'var(--muted-foreground)' }} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Edit Image</TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Image</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>
@@ -277,11 +358,27 @@ export default function ImageManagerForm({
                           variant="outline"
                           size="sm"
                           onClick={() => handleDeleteImage(image.id)}
+                          style={{
+                            backgroundColor: 'var(--card)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--muted-foreground)',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.backgroundColor = 'var(--accent)';
+                            target.style.transform = 'scale(1.05)';
+                          }}
+                          onMouseLeave={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.backgroundColor = 'var(--card)';
+                            target.style.transform = 'scale(1)';
+                          }}
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-3 w-3" style={{ color: 'var(--muted-foreground)' }} />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>Delete Image</TooltipContent>
+                      <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Delete Image</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
@@ -293,18 +390,26 @@ export default function ImageManagerForm({
 
       {filteredImages.length === 0 && (
         <div className="text-center py-12">
-          <Upload className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <Upload className="h-16 w-16 mx-auto mb-4" style={{ color: 'var(--muted-foreground)' }} />
+          <h3 className="text-lg font-medium mb-2" style={{ color: 'var(--card-foreground)' }}>
             {searchFilter ? "No images found" : "No images uploaded"}
           </h3>
-          <p className="text-gray-500 mb-4">
+          <p className="mb-4" style={{ color: 'var(--muted-foreground)' }}>
             {searchFilter
               ? "Try adjusting your search term"
               : "Get started by uploading your first image"}
           </p>
           {!searchFilter && !hideAddButton && (
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button 
+              onClick={() => setIsDialogOpen(true)}
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               Add Your First Image
             </Button>
           )}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -129,10 +128,10 @@ export default function CarouselImageDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}>
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit Carousel Image" : "Add Carousel Image"}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle style={{ color: 'var(--card-foreground)' }}>{isEdit ? "Edit Carousel Image" : "Add Carousel Image"}</DialogTitle>
+          <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
             {isEdit ? "Update the carousel image details" : "Add a new image to the homepage carousel"}
           </DialogDescription>
         </DialogHeader>
@@ -160,7 +159,7 @@ export default function CarouselImageDialog({
           />
 
           <div>
-            <Label htmlFor="imageTitle">Title</Label>
+            <Label htmlFor="imageTitle" style={{ color: 'var(--foreground)' }}>Title</Label>
             <Input
               id="imageTitle"
               placeholder="Image title"
@@ -171,11 +170,24 @@ export default function CarouselImageDialog({
                   title: e.target.value,
                 })
               }
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
 
           <div>
-            <Label htmlFor="imageSubtitle">Subtitle</Label>
+            <Label htmlFor="imageSubtitle" style={{ color: 'var(--foreground)' }}>Subtitle</Label>
             <Input
               id="imageSubtitle"
               placeholder="Image subtitle"
@@ -186,11 +198,24 @@ export default function CarouselImageDialog({
                   subtitle: e.target.value,
                 })
               }
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
 
           <div>
-            <Label htmlFor="imageOrder">Display Order</Label>
+            <Label htmlFor="imageOrder" style={{ color: 'var(--foreground)' }}>Display Order</Label>
             <Input
               id="imageOrder"
               type="number"
@@ -202,6 +227,19 @@ export default function CarouselImageDialog({
                   order: parseInt(e.target.value) || 1,
                 })
               }
+              style={{
+                backgroundColor: 'var(--input)',
+                borderColor: 'var(--border)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
 
@@ -210,11 +248,50 @@ export default function CarouselImageDialog({
               variant="outline"
               onClick={handleCancel}
               disabled={isLoading}
+              style={{
+                backgroundColor: 'var(--card)',
+                borderColor: 'var(--border)',
+                color: 'var(--muted-foreground)',
+                cursor: isLoading ? 'not-allowed' : 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  const target = e.target as HTMLElement;
+                  target.style.backgroundColor = 'var(--accent)';
+                  target.style.transform = 'scale(1.02)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--card)';
+                target.style.transform = 'scale(1)';
+              }}
             >
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={isLoading}>
-              <Save className="h-4 w-4 mr-2" />
+            <Button 
+              onClick={handleSave} 
+              disabled={isLoading}
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                borderColor: 'var(--primary)',
+                cursor: isLoading ? 'not-allowed' : 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = 'translateY(-1px)';
+                  target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
+              }}
+            >
+              <Save className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
               {isLoading ? "Saving..." : isEdit ? "Update Image" : "Save Image"}
             </Button>
           </div>

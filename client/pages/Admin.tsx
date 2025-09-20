@@ -22,6 +22,7 @@ import {
   useMenuItemSizeToppings,
   useToppingSizePrices,
 } from "../hooks/useSupabase";
+import { ThemeProvider } from "../contexts/ThemeContext";
 
 // Import form components
 import SettingsForm from "../components/admin/SettingsForm";
@@ -214,12 +215,13 @@ export default function Admin() {
     menuItemSizeToppingsLoading ||
     toppingSizePricesLoading;
 
+  // Show loading state while data is being fetched
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading admin dashboard...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 mx-auto" style={{ borderColor: 'var(--primary)' }}></div>
+          <p className="mt-4" style={{ color: 'var(--muted-foreground)' }}>Loading admin dashboard...</p>
         </div>
       </div>
     );
@@ -488,36 +490,57 @@ export default function Admin() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <HeaderWithDelivery breadcrumbs={[{ label: "Admin Dashboard" }]} />
+    <ThemeProvider initialTheme={settings?.theme || "classic-pizza"}>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+        <HeaderWithDelivery breadcrumbs={[{ label: "Admin Dashboard" }]} />
 
-      <div className="flex h-screen">
-        {/* Sidebar */}
-        <AdminSidebar
-          selectedItem={selectedItem}
-          onSelectItem={setSelectedItem}
-        />
+        <div className="flex h-screen">
+          {/* Sidebar */}
+          <AdminSidebar
+            selectedItem={selectedItem}
+            onSelectItem={setSelectedItem}
+          />
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="p-8">
-            <div className="mb-8 flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Admin Dashboard
-              </h1>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" onClick={generateMenuPDF}>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Print Menu PDF
-                </Button>
+          {/* Main Content */}
+          <div className="flex-1 overflow-auto">
+            <div className="p-8">
+              <div className="mb-8 flex items-center justify-between">
+                <h1 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>
+                  Admin Dashboard
+                </h1>
+                <div className="flex items-center space-x-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={generateMenuPDF}
+                    style={{
+                      backgroundColor: 'var(--card)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--foreground)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.backgroundColor = 'var(--accent)';
+                      target.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target as HTMLElement;
+                      target.style.backgroundColor = 'var(--card)';
+                      target.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    <FileText className="h-4 w-4 mr-2" style={{ color: 'var(--foreground)' }} />
+                    Print Menu PDF
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            {/* Dynamic Content */}
-            {renderContent()}
+              {/* Dynamic Content */}
+              {renderContent()}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }

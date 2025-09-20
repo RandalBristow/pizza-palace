@@ -58,42 +58,60 @@ export default function CustomerFavoriteForm({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Customer Favorites</h2>
-        <Button onClick={() => setIsAdding(true)}>
-          <Plus className="h-4 w-4 mr-2" />
+        <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Customer Favorites</h2>
+        <Button 
+          onClick={() => setIsAdding(true)}
+          style={{
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-foreground)',
+            borderColor: 'var(--primary)',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            const target = e.target as HTMLElement;
+            target.style.transform = 'translateY(-1px)';
+            target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+          }}
+          onMouseLeave={(e) => {
+            const target = e.target as HTMLElement;
+            target.style.transform = 'translateY(0)';
+            target.style.boxShadow = 'none';
+          }}
+        >
+          <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
           Add Favorite
         </Button>
       </div>
 
-      <div className="bg-white rounded-lg border p-6">
-        <p className="text-gray-600 mb-4">
+      <div className="rounded-lg p-6" style={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)' }}>
+        <p className="mb-4" style={{ color: 'var(--muted-foreground)' }}>
           Manage customer favorite items displayed on the homepage.
         </p>
 
         {customerFavorites.length === 0 ? (
           <div className="text-center py-8">
-            <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No customer favorites yet.</p>
-            <p className="text-sm text-gray-400">
+            <Star className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--muted-foreground)' }} />
+            <p style={{ color: 'var(--muted-foreground)' }}>No customer favorites yet.</p>
+            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
               Add favorite items to showcase on the homepage.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {customerFavorites.map((favorite) => (
-              <div key={favorite.id} className="border rounded-lg p-4">
+              <div key={favorite.id} className="rounded-lg p-4" style={{ border: '1px solid var(--border)' }}>
                 <div className="text-2xl mb-2">{favorite.icon}</div>
-                <h3 className="font-semibold">{favorite.title}</h3>
-                <p className="text-sm text-gray-600">{favorite.description}</p>
+                <h3 className="font-semibold" style={{ color: 'var(--muted-foreground)' }}>{favorite.title}</h3>
+                <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{favorite.description}</p>
                 <div className="mt-2 flex justify-between items-center">
                   <Badge
-                    className={
-                      favorite.isActive
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }
+                    style={{
+                      backgroundColor: favorite.isActive ? '#bbf7d0' : '#fecaca',
+                      color: favorite.isActive ? '#14532d' : '#991b1b',
+                      border: '1px solid var(--border)'
+                    }}
                   >
                     {favorite.isActive ? "Active" : "Inactive"}
                   </Badge>
@@ -105,15 +123,31 @@ export default function CustomerFavoriteForm({
                             variant="outline"
                             size="sm"
                             onClick={() => toggleStatus(favorite.id)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
                             {favorite.isActive ? (
-                              <ThumbsUp className="h-4 w-4" />
+                              <ThumbsUp className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                             ) : (
-                              <ThumbsDown className="h-4 w-4" />
+                              <ThumbsDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                             )}
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
                           {favorite.isActive ? "Deactivate" : "Activate"}
                         </TooltipContent>
                       </Tooltip>
@@ -126,11 +160,27 @@ export default function CustomerFavoriteForm({
                             variant="outline"
                             size="sm"
                             onClick={() => setEditingFavorite(favorite)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Edit Favorite</TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Favorite</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
 
@@ -141,11 +191,27 @@ export default function CustomerFavoriteForm({
                             variant="outline"
                             size="sm"
                             onClick={() => handleDelete(favorite.id)}
+                            style={{
+                              backgroundColor: 'var(--card)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--muted-foreground)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--accent)';
+                              target.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as HTMLElement;
+                              target.style.backgroundColor = 'var(--card)';
+                              target.style.transform = 'scale(1)';
+                            }}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Delete Favorite</TooltipContent>
+                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Delete Favorite</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>

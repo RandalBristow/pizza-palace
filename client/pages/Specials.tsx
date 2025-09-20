@@ -123,30 +123,30 @@ export default function Specials() {
   // Show loading state while data is being fetched
   if (specialsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading specials...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 mx-auto" style={{ borderColor: 'var(--primary)' }}></div>
+          <p className="mt-4" style={{ color: 'var(--muted-foreground)' }}>Loading specials...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       <HeaderWithDelivery breadcrumbs={[{ label: "Specials" }]} />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
         <section className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
             Today's Specials
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
+          <p className="text-xl max-w-3xl mx-auto mb-6" style={{ color: 'var(--muted-foreground)' }}>
             Save money on your favorite pizza and coffee with our daily and
             weekly specials. Check back regularly for new deals!
           </p>
-          <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
+          <div className="flex items-center justify-center space-x-4 text-sm" style={{ color: 'var(--muted-foreground)' }}>
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1" />
               {getDayName(currentTime.getDay())},{" "}
@@ -166,7 +166,7 @@ export default function Specials() {
         {/* Today's Active Specials */}
         {todaysSpecials.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <h2 className="text-2xl font-bold mb-6 flex items-center" style={{ color: 'var(--foreground)' }}>
               <Star className="h-6 w-6 text-yellow-500 mr-2" />
               Available Right Now
             </h2>
@@ -174,43 +174,48 @@ export default function Specials() {
               {todaysSpecials.map((special) => (
                 <Card
                   key={special.id}
-                  className="border-green-200 bg-green-50 shadow-lg"
+                  className="shadow-lg"
+                  style={{ 
+                    backgroundColor: 'var(--card)', 
+                    borderColor: 'var(--primary)',
+                    border: '2px solid var(--primary)'
+                  }}
                 >
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-green-800">
+                      <CardTitle style={{ color: 'var(--primary)' }}>
                         {special.name}
                       </CardTitle>
-                      <Badge className="bg-green-600">
+                      <Badge style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>
                         {special.type === "hourly" && isHappyHour()
                           ? "Active Now!"
                           : "Available Today"}
                       </Badge>
                     </div>
-                    <CardDescription className="text-green-700">
+                    <CardDescription style={{ color: 'var(--muted-foreground)' }}>
                       {special.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-green-800">
+                        <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>
                           Discount:
                         </span>
-                        <span className="text-lg font-bold text-green-600">
+                        <span className="text-lg font-bold" style={{ color: 'var(--primary)' }}>
                           {formatDiscount(special)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-green-800">
+                        <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>
                           Valid:
                         </span>
-                        <span className="text-sm text-green-700 ml-2">
+                        <span className="text-sm ml-2" style={{ color: 'var(--muted-foreground)' }}>
                           {formatValidDates(special)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-green-800">
+                        <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>
                           Includes:
                         </span>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -218,14 +223,38 @@ export default function Specials() {
                             <Badge
                               key={index}
                               variant="outline"
-                              className="text-xs border-green-300 text-green-700"
+                              className="text-xs"
+                              style={{ 
+                                borderColor: 'var(--primary)', 
+                                color: 'var(--primary)',
+                                backgroundColor: 'var(--background)'
+                              }}
                             >
                               {item}
                             </Badge>
                           ))}
                         </div>
                       </div>
-                      <Button className="w-full mt-4" asChild>
+                      <Button 
+                        className="w-full mt-4"
+                        style={{
+                          backgroundColor: 'var(--primary)',
+                          color: 'var(--primary-foreground)',
+                          borderColor: 'var(--primary)',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          const target = e.target as HTMLElement;
+                          target.style.transform = 'translateY(-1px)';
+                          target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                        }}
+                        onMouseLeave={(e) => {
+                          const target = e.target as HTMLElement;
+                          target.style.transform = 'translateY(0)';
+                          target.style.boxShadow = 'none';
+                        }}
+                        asChild
+                      >
                         <Link to="/order">Order Now</Link>
                       </Button>
                     </div>
@@ -238,52 +267,60 @@ export default function Specials() {
 
         {/* Weekly Specials */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--foreground)' }}>
             Weekly Specials
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {weeklySpecials.map((special) => (
               <Card
                 key={special.id}
-                className={`${isSpecialActiveToday(special) ? "border-blue-200 bg-blue-50" : ""}`}
+                className={isSpecialActiveToday(special) ? "shadow-lg" : ""}
+                style={{ 
+                  backgroundColor: 'var(--card)', 
+                  borderColor: isSpecialActiveToday(special) ? 'var(--primary)' : 'var(--border)',
+                  border: `1px solid ${isSpecialActiveToday(special) ? 'var(--primary)' : 'var(--border)'}`
+                }}
               >
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle
-                      className={isSpecialActiveToday(special) ? "text-blue-800" : ""}
-                    >
+                    <CardTitle style={{ color: isSpecialActiveToday(special) ? 'var(--primary)' : 'var(--foreground)' }}>
                       {special.name}
                     </CardTitle>
-                    {isSpecialActiveToday(special) && <Badge>Today!</Badge>}
+                    {isSpecialActiveToday(special) && (
+                      <Badge style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>Today!</Badge>
+                    )}
                   </div>
-                  <CardDescription
-                    className={isSpecialActiveToday(special) ? "text-blue-700" : ""}
-                  >
+                  <CardDescription style={{ color: 'var(--muted-foreground)' }}>
                     {special.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Discount:</span>
-                      <span className="text-lg font-bold text-red-600">
+                      <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>Discount:</span>
+                      <span className="text-lg font-bold" style={{ color: 'var(--primary)' }}>
                         {formatDiscount(special)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-sm font-medium">When:</span>
-                      <span className="text-sm text-gray-600 ml-2">
+                      <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>When:</span>
+                      <span className="text-sm ml-2" style={{ color: 'var(--muted-foreground)' }}>
                         {formatValidDates(special)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-sm font-medium">Includes:</span>
+                      <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>Includes:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {getMenuItemNames(special).map((item, index) => (
                           <Badge
                             key={index}
                             variant="outline"
                             className="text-xs"
+                            style={{ 
+                              borderColor: 'var(--border)', 
+                              color: 'var(--muted-foreground)',
+                              backgroundColor: 'var(--background)'
+                            }}
                           >
                             {item}
                           </Badge>
@@ -299,41 +336,54 @@ export default function Specials() {
 
         {/* Daily Specials */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--foreground)' }}>
             Daily Specials
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             {dailySpecials.map((special) => (
-              <Card key={special.id}>
+              <Card 
+                key={special.id}
+                style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>{special.name}</CardTitle>
-                    <Badge variant="secondary">Every Day</Badge>
+                    <CardTitle style={{ color: 'var(--foreground)' }}>{special.name}</CardTitle>
+                    <Badge 
+                      variant="secondary"
+                      style={{ backgroundColor: 'var(--secondary)', color: 'var(--secondary-foreground)' }}
+                    >
+                      Every Day
+                    </Badge>
                   </div>
-                  <CardDescription>{special.description}</CardDescription>
+                  <CardDescription style={{ color: 'var(--muted-foreground)' }}>{special.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Offer:</span>
-                      <span className="text-lg font-bold text-red-600">
+                      <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>Offer:</span>
+                      <span className="text-lg font-bold" style={{ color: 'var(--primary)' }}>
                         {formatDiscount(special)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-sm font-medium">Valid:</span>
-                      <span className="text-sm text-gray-600 ml-2">
+                      <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>Valid:</span>
+                      <span className="text-sm ml-2" style={{ color: 'var(--muted-foreground)' }}>
                         {formatValidDates(special)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-sm font-medium">Includes:</span>
+                      <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>Includes:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {getMenuItemNames(special).map((item, index) => (
                           <Badge
                             key={index}
                             variant="outline"
                             className="text-xs"
+                            style={{ 
+                              borderColor: 'var(--border)', 
+                              color: 'var(--muted-foreground)',
+                              backgroundColor: 'var(--background)'
+                            }}
                           >
                             {item}
                           </Badge>
@@ -349,14 +399,14 @@ export default function Specials() {
 
         {/* Terms and Information */}
         <section>
-          <Card>
+          <Card style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}>
             <CardHeader>
-              <CardTitle>Special Offer Terms</CardTitle>
+              <CardTitle style={{ color: 'var(--card-foreground)' }}>Special Offer Terms</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-6 text-sm text-gray-600">
+              <div className="grid md:grid-cols-2 gap-6 text-sm" style={{ color: 'var(--muted-foreground)' }}>
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">
+                  <h4 className="font-medium mb-2" style={{ color: 'var(--foreground)' }}>
                     General Terms:
                   </h4>
                   <ul className="space-y-1">
@@ -367,7 +417,7 @@ export default function Specials() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">
+                  <h4 className="font-medium mb-2" style={{ color: 'var(--foreground)' }}>
                     How to Order:
                   </h4>
                   <ul className="space-y-1">
@@ -384,7 +434,10 @@ export default function Specials() {
 
         {/* CTA Section */}
         <section className="text-center mt-12">
-          <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg p-8">
+          <div 
+            className="text-white rounded-lg p-8"
+            style={{ background: 'linear-gradient(to right, var(--primary), var(--primary))' }}
+          >
             <h2 className="text-2xl font-bold mb-4">
               Don't Miss Out on These Great Deals!
             </h2>
@@ -392,13 +445,49 @@ export default function Specials() {
               Order now and save on your favorite pizza and coffee combinations.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" asChild>
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                style={{
+                  backgroundColor: 'var(--secondary)',
+                  color: 'var(--secondary-foreground)',
+                  borderColor: 'var(--secondary)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = 'translateY(-1px)';
+                  target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.transform = 'translateY(0)';
+                  target.style.boxShadow = 'none';
+                }}
+                asChild
+              >
                 <Link to="/order">Start Your Order</Link>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="text-white border-white hover:bg-white hover:text-red-500"
+                className="text-white border-white"
+                style={{
+                  borderColor: 'white',
+                  color: 'white',
+                  backgroundColor: 'transparent',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.backgroundColor = 'white';
+                  target.style.color = 'var(--primary)';
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLElement;
+                  target.style.backgroundColor = 'transparent';
+                  target.style.color = 'white';
+                }}
                 asChild
               >
                 <Link to="/menu">View Full Menu</Link>
