@@ -27,6 +27,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isAdminPage = location.pathname === "/admin";
 
+  // SPA behavior: no forced remount on route changes to avoid flashing
   return (
     <>
       {children}

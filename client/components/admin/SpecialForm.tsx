@@ -7,31 +7,16 @@ import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Checkbox } from "../ui/checkbox";
 import { Alert, AlertDescription } from "../ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Plus, Edit, Trash2, Save, ThumbsUp, ThumbsDown } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+import { Save } from "lucide-react";
 import { Category } from "./MenuCategoriesForm";
 import { MenuItem } from "./MenuItemsForm";
+import AddButton from "../shared_components/AddButton";
+import EditButton from "../shared_components/EditButton";
+import DeleteButton from "../shared_components/DeleteButton";
+import ActivationButton from "../shared_components/ActivationButton";
 
 export interface Special {
   id: string;
@@ -834,27 +819,7 @@ export default function SpecialForm({
         <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Specials</h2>
         <Dialog open={isAddingSpecial} onOpenChange={setIsAddingSpecial}>
           <DialogTrigger asChild>
-            <Button
-              style={{
-                backgroundColor: 'var(--primary)',
-                color: 'var(--primary-foreground)',
-                borderColor: 'var(--primary)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.transform = 'translateY(-1px)';
-                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
-              }}
-              onMouseLeave={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.transform = 'translateY(0)';
-                target.style.boxShadow = 'none';
-              }}
-            >
-              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
-              Add Special
-            </Button>
+          <AddButton label="Add Special" onClick={() => setIsAddingSpecial(true)} />
           </DialogTrigger>
           <DialogContent 
             className="max-w-7xl h-[95vh] max-h-[95vh] overflow-hidden p-0"
@@ -961,104 +926,16 @@ export default function SpecialForm({
                   </div>
                 </div>
                 <div className="flex flex-col items-center space-y-1">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleSpecialStatus(special.id)}
-                          style={{
-                            backgroundColor: 'var(--card)',
-                            borderColor: 'var(--border)',
-                            color: 'var(--muted-foreground)',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            const target = e.target as HTMLElement;
-                            target.style.backgroundColor = 'var(--accent)';
-                            target.style.transform = 'scale(1.05)';
-                          }}
-                          onMouseLeave={(e) => {
-                            const target = e.target as HTMLElement;
-                            target.style.backgroundColor = 'var(--card)';
-                            target.style.transform = 'scale(1)';
-                          }}
-                        >
-                          {special.isActive ? (
-                            <ThumbsUp className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
-                          ) : (
-                            <ThumbsDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
-                        {special.isActive ? "Deactivate" : "Activate"}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditSpecial(special)}
-                          style={{
-                            backgroundColor: 'var(--card)',
-                            borderColor: 'var(--border)',
-                            color: 'var(--muted-foreground)',
-                            transition: 'all 0.2s ease',
-                            cursor: 'pointer'
-                          }}
-                          onMouseEnter={(e) => {
-                            const target = e.target as HTMLElement;
-                            target.style.backgroundColor = 'var(--accent)';
-                            target.style.transform = 'scale(1.05)';
-                          }}
-                          onMouseLeave={(e) => {
-                            const target = e.target as HTMLElement;
-                            target.style.backgroundColor = 'var(--card)';
-                            target.style.transform = 'scale(1)';
-                          }}
-                        >
-                          <Edit className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Special</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDeleteSpecial(special.id)}
-                          style={{
-                            backgroundColor: 'var(--card)',
-                            borderColor: 'var(--border)',
-                            color: 'var(--muted-foreground)',
-                            transition: 'all 0.2s ease',
-                            cursor: 'pointer'
-                          }}
-                          onMouseEnter={(e) => {
-                            const target = e.target as HTMLElement;
-                            target.style.backgroundColor = 'var(--accent)';
-                            target.style.transform = 'scale(1.05)';
-                          }}
-                          onMouseLeave={(e) => {
-                            const target = e.target as HTMLElement;
-                            target.style.backgroundColor = 'var(--card)';
-                            target.style.transform = 'scale(1)';
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Delete Special</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <ActivationButton
+                    isActive={special.isActive}
+                    onToggle={() => toggleSpecialStatus(special.id)}
+                  />
+                  <EditButton onClick={() => handleEditSpecial(special)} />
+                  <DeleteButton
+                    entityTitle="Special"
+                    subjectName={special.name}
+                    onConfirm={() => handleDeleteSpecial(special.id)}
+                  />
                 </div>
               </div>
             </CardContent>

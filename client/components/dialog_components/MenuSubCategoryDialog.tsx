@@ -2,21 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Save } from "lucide-react";
+import { RequiredFieldLabel } from "../ui/required-field-label";
 
 export interface SubCategory {
   id: string;
@@ -70,6 +59,12 @@ export default function SubCategoryDialog({
     }
   }, [subCategory]);
 
+  // Validation: require category, name, and positive displayOrder
+  const hasCategory = (formData.categoryId || "").trim().length > 0;
+  const hasName = (formData.name || "").trim().length > 0;
+  const orderValid = Number.isFinite(Number(formData.displayOrder)) && Number(formData.displayOrder) > 0;
+  const canSave = hasCategory && hasName && orderValid;
+
   const handleSave = async () => {
     try {
       await onSave(formData);
@@ -104,9 +99,12 @@ export default function SubCategoryDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="category" style={{ color: 'var(--destructive)' }}>
-              * Category
-            </Label>
+            <RequiredFieldLabel
+              htmlFor="category"
+              style={{ color: "var(--foreground)" }}
+            >
+              Category
+            </RequiredFieldLabel>
             <Select
               value={formData.categoryId}
               onValueChange={(value) =>
@@ -145,12 +143,12 @@ export default function SubCategoryDialog({
             </Select>
           </div>
           <div>
-            <Label
+            <RequiredFieldLabel
               htmlFor="subCategoryName"
-              style={{ color: "var(--destructive)" }}
+              style={{ color: "var(--foreground)" }}
             >
-              * Sub-Category Name
-            </Label>
+              Sub-Category Name
+            </RequiredFieldLabel>
             <Input
               id="subCategoryName"
               placeholder="e.g., Boneless Wings"
@@ -158,6 +156,7 @@ export default function SubCategoryDialog({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
+              required
               style={{
                 backgroundColor: "var(--input)",
                 borderColor: "var(--border)",
@@ -178,9 +177,9 @@ export default function SubCategoryDialog({
           <div>
             <Label
               htmlFor="displayOrder"
-              style={{ color: "var(--destructive)" }}
+              style={{ color: "var(--foreground)" }}
             >
-              * Display Order
+              Display Order
             </Label>
             <Input
               id="displayOrder"
@@ -193,6 +192,8 @@ export default function SubCategoryDialog({
                   displayOrder: parseInt(e.target.value) || 1,
                 })
               }
+              required
+              min={1}
               style={{
                 backgroundColor: "var(--input)",
                 borderColor: "var(--border)",
@@ -235,11 +236,12 @@ export default function SubCategoryDialog({
             </Button>
             <Button
               onClick={handleSave}
+              disabled={!canSave}
               style={{
                 backgroundColor: "var(--primary)",
                 color: "var(--primary-foreground)",
                 borderColor: "var(--primary)",
-                cursor: 'pointer'
+                cursor: !canSave ? 'not-allowed' : 'pointer'
               }}
               onMouseEnter={(e) => {
                 const target = e.target as HTMLElement;

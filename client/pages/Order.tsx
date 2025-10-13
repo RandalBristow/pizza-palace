@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useOrder } from "../contexts/OrderContext";
+import { useState, useEffect, useCallback } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
-import DeliverySelection from "../components/DeliverySelection";
+import CustomizerView from "../components/CustomizerView";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -12,23 +11,32 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
-import { Label } from "../components/ui/label";
+  useCustomizerTemplates,
+  useCustomizerPanels,
+  useCustomizerPanelItems,
+  useCustomizerPanelItemConditionals,
+  useCategorySizes,
+  useToppings,
+  useToppingCategories,
+  useCategories,
+  useMenuItems,
+  useSubCategories,
+  useMenuItemSizes,
+  useToppingSizePrices,
+  useSettings,
+} from "../hooks/useSupabase";
 
 interface Topping {
   id: string;
   name: string;
-  price: number;
-  category: "sauce" | "cheese" | "meat" | "veggie";
+  price?: number;
+  category: string;
+  menuItemCategory: string;
 }
 
 interface PizzaTopping extends Topping {
   placement: "left" | "right" | "whole";
+  amount?: "normal" | "extra";
 }
 
 interface PizzaOrder {
@@ -39,168 +47,15 @@ interface PizzaOrder {
   basePrice: number;
 }
 
-const pizzaSizes = [
-  { size: '10"', price: 10.99, label: "10 inch - Personal" },
-  { size: '12"', price: 13.99, label: "12 inch - Small" },
-  { size: '14"', price: 16.99, label: "14 inch - Medium" },
-  { size: '16"', price: 19.99, label: "16 inch - Large" },
-  { size: '10" GF', price: 12.99, label: "10 inch - Gluten Free" },
-];
-
-const crustTypes = [
-  { id: "regular", name: "Regular Crust" },
-  { id: "thin", name: "Thin Crust" },
-  { id: "thick", name: "Thick Crust" },
-];
-
-const sauceTypes = [
-  { id: "marinara", name: "Marinara Sauce" },
-  { id: "white", name: "White Sauce" },
-  { id: "bbq", name: "BBQ Sauce" },
-  { id: "pesto", name: "Pesto Sauce" },
-];
-
-const toppings: Topping[] = [
-  // Cheese
-  { id: "ch1", name: "Mozzarella", price: 0, category: "cheese" },
-  { id: "ch2", name: "Extra Mozzarella", price: 2.0, category: "cheese" },
-  { id: "ch3", name: "Parmesan", price: 1.5, category: "cheese" },
-  { id: "ch4", name: "Ricotta", price: 2.0, category: "cheese" },
-  { id: "ch5", name: "Feta", price: 2.5, category: "cheese" },
-
-  // Meat
-  { id: "m1", name: "Pepperoni", price: 2.0, category: "meat" },
-  { id: "m2", name: "Italian Sausage", price: 2.5, category: "meat" },
-  { id: "m3", name: "Ham", price: 2.0, category: "meat" },
-  { id: "m4", name: "Bacon", price: 2.5, category: "meat" },
-  { id: "m5", name: "Ground Beef", price: 2.5, category: "meat" },
-  { id: "m6", name: "Chicken", price: 3.0, category: "meat" },
-
-  // Vegetables
-  { id: "v1", name: "Mushrooms", price: 1.5, category: "veggie" },
-  { id: "v2", name: "Bell Peppers", price: 1.5, category: "veggie" },
-  { id: "v3", name: "Red Onions", price: 1.0, category: "veggie" },
-  { id: "v4", name: "Black Olives", price: 1.5, category: "veggie" },
-  { id: "v5", name: "Green Olives", price: 1.5, category: "veggie" },
-  { id: "v6", name: "Tomatoes", price: 1.5, category: "veggie" },
-  { id: "v7", name: "Spinach", price: 2.0, category: "veggie" },
-  { id: "v8", name: "Jalapeños", price: 1.0, category: "veggie" },
-  { id: "v9", name: "Pineapple", price: 1.5, category: "veggie" },
-];
-
-const ToppingRow = ({
-  topping,
-  selectedToppings,
-  onToppingChange,
-}: {
-  topping: Topping;
-  selectedToppings: PizzaTopping[];
-  onToppingChange: (topping: Topping, placement: string | null) => void;
-}) => {
-  const selectedTopping = selectedToppings.find((t) => t.id === topping.id);
-
-  const handlePlacementClick = (placement: "left" | "right" | "whole") => {
-    console.log(`Changing placement for ${topping.name} to ${placement}`);
-    onToppingChange(topping, placement);
-  };
-
-  const handleRemoveTopping = () => {
-    console.log(`Removing topping ${topping.name}`);
-    onToppingChange(topping, null);
-  };
-
-  const getCircle = (
-    placement: "left" | "right" | "whole",
-    isActive: boolean,
-  ) => {
-    const baseClasses =
-      "w-6 h-6 rounded-full border-2 cursor-pointer transition-all hover:scale-110";
-    const borderColor = isActive ? "border-red-500" : "border-gray-300";
-
-    switch (placement) {
-      case "left":
-        return (
-          <div
-            className={`${baseClasses} ${borderColor} bg-white relative overflow-hidden`}
-            onClick={() => handlePlacementClick("left")}
-          >
-            <div
-              className={`absolute left-0 top-0 w-3 h-6 rounded-l-full ${isActive ? "bg-red-500" : "bg-gray-200"}`}
-            ></div>
-          </div>
-        );
-      case "right":
-        return (
-          <div
-            className={`${baseClasses} ${borderColor} bg-white relative overflow-hidden`}
-            onClick={() => handlePlacementClick("right")}
-          >
-            <div
-              className={`absolute right-0 top-0 w-3 h-6 rounded-r-full ${isActive ? "bg-red-500" : "bg-gray-200"}`}
-            ></div>
-          </div>
-        );
-      case "whole":
-        return (
-          <div
-            className={`${baseClasses} ${borderColor} ${isActive ? "bg-red-500" : "bg-gray-200"}`}
-            onClick={() => handlePlacementClick("whole")}
-          ></div>
-        );
-    }
-  };
-
-  return (
-    <div className="flex items-center justify-between py-2 px-4 hover:bg-gray-50">
-      <div className="flex-1">
-        <span className="text-sm font-medium text-gray-700">
-          {topping.name}
-        </span>
-      </div>
-
-      {/* Placement circles */}
-      <div className="flex items-center space-x-3 mx-6">
-        {getCircle("left", selectedTopping?.placement === "left")}
-        {getCircle("whole", selectedTopping?.placement === "whole")}
-        {getCircle("right", selectedTopping?.placement === "right")}
-      </div>
-
-      {/* Action buttons */}
-      <div className="flex items-center space-x-2">
-        {selectedTopping && (
-          <Button size="sm" variant="outline" className="text-xs px-2 py-1 h-7">
-            Extra
-          </Button>
-        )}
-        {selectedTopping ? (
-          <Button
-            size="sm"
-            className="text-xs px-2 py-1 h-7 bg-red-500 hover:bg-red-600 text-white"
-          >
-            Normal
-          </Button>
-        ) : null}
-        {selectedTopping && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleRemoveTopping}
-            className="text-xs px-2 py-1 h-7 text-red-600 hover:text-red-700"
-          >
-            Remove
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-};
+// Hardcoded data removed - now using dynamic customizer panels
 
 export default function Order() {
-  const navigate = useNavigate();
-  const { hasDeliveryDetails, deliveryDetails, setDeliveryDetails } =
-    useOrder();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
   const [searchParams] = useSearchParams();
 
+  // Legacy pizza order state (for fallback)
   const [pizzaOrder, setPizzaOrder] = useState<PizzaOrder>({
     size: "",
     crust: "",
@@ -208,317 +63,520 @@ export default function Order() {
     toppings: [],
     basePrice: 0,
   });
-  const [selectedToppingCategory, setSelectedToppingCategory] =
-    useState("cheese");
-  const [showDeliverySelection, setShowDeliverySelection] = useState(false);
 
+  // New customizer state
+  const [customizerSelections, setCustomizerSelections] = useState<Record<string, any>>({});
+  const [menuItemId, setMenuItemId] = useState<string | null>(null);
+  const [subCategoryId, setSubCategoryId] = useState<string | null>(null);
+  const [currentMenuItem, setCurrentMenuItem] = useState<any>(null);
+  const [selectionsInitialized, setSelectionsInitialized] = useState(false);
+
+  // Fetch data
+  const { customizerTemplates, loading: templatesLoading } = useCustomizerTemplates();
+  const { customizerPanels, loading: panelsLoading } = useCustomizerPanels();
+  const { customizerPanelItems, loading: itemsLoading } = useCustomizerPanelItems();
+  const { customizerPanelItemConditionals, loading: conditionalsLoading } = useCustomizerPanelItemConditionals();
+  const { categorySizes: catSizes, loading: sizesLoading } = useCategorySizes();
+  const { toppings: allToppings, loading: toppingsLoading } = useToppings();
+  const { toppingCategories, loading: toppingCategoriesLoading } = useToppingCategories();
+  const { categories, loading: categoriesLoading } = useCategories();
+  const { menuItems, loading: menuItemsLoading } = useMenuItems();
+  const { subCategories, loading: subCategoriesLoading } = useSubCategories();
+  const { menuItemSizes, loading: menuItemSizesLoading } = useMenuItemSizes();
+  const { toppingSizePrices, loading: toppingSizePricesLoading } = useToppingSizePrices();
+  const { settings, loading: settingsLoading } = useSettings();
+
+  // Option B: Do not auto-open delivery modal on this page; let header control it
+
+  // Load menu item from URL params
   useEffect(() => {
-    // Show delivery selection modal if delivery details are not set
-    if (!hasDeliveryDetails) {
-      setShowDeliverySelection(true);
-    }
-
-    // Load default toppings if customizing a specific menu item
     const itemId = searchParams.get("item");
-    const size = searchParams.get("size");
+    
+    if (!itemId) {
+      // Reset when navigating away
+      setMenuItemId(null);
+      setCurrentMenuItem(null);
+      setSubCategoryId(null);
+      setSelectionsInitialized(false);
+      return;
+    }
+    
+    if (menuItemsLoading || !menuItems.length) return;
+    
+    const menuItem = menuItems.find((item) => item.id === itemId);
+    if (!menuItem) return;
+    
+    // Set menu item data
+    setMenuItemId(itemId);
+    setCurrentMenuItem(menuItem);
+    setSubCategoryId(menuItem.subCategoryId || null);
+    setSelectionsInitialized(false); // Will trigger building selections
+  }, [searchParams, menuItems, menuItemsLoading]);
 
-/*     if (itemId) {
-      const menuItem = mockMenuItems.find((item) => item.id === itemId);
-      if (menuItem && menuItem.defaultToppings) {
-        // Load default toppings
-        const defaultPizzaToppings: PizzaTopping[] = menuItem.defaultToppings
-          .map((toppingId) => {
-            const topping = mockToppings.find((t) => t.id === toppingId);
-            if (topping) {
-              // Map category names to match Order interface
-              let category: "sauce" | "cheese" | "meat" | "veggie" = "cheese";
-              if (topping.category === "veggies") {
-                category = "veggie";
-              } else if (
-                ["sauce", "cheese", "meat"].includes(topping.category)
-              ) {
-                category = topping.category as "sauce" | "cheese" | "meat";
-              }
+  const getSizePrice = useCallback((menuItemId: string, categorySizeId: string) => {
+    const priceRecord = menuItemSizes.find((size) => {
+      const recordMenuItemId = String(size.menu_item_id ?? size.menuItemId ?? "");
+      const recordSizeId = String(size.category_size_id ?? size.categorySizeId ?? size.sizeId ?? "");
+      return (
+        recordMenuItemId === String(menuItemId) &&
+        recordSizeId === String(categorySizeId)
+      );
+    });
+    return priceRecord?.price ?? 0;
+  }, [menuItemSizes]);
 
-              return {
-                id: topping.id,
-                name: topping.name,
-                price: topping.price,
-                category,
-                placement: "whole" as const,
-              };
+  const buildInitialSelections = useCallback((template: any, menuItem: any, sizeParam: string | null) => {
+    const initialSelections: Record<string, any> = {};
+    const panels = customizerPanels.filter((p) => p.customizerTemplateId === template.id && p.isActive);
+    
+    panels.forEach((panel) => {
+      const panelItems = customizerPanelItems.filter((item) => item.customizerPanelId === panel.id && item.isActive);
+      
+      if (panel.panelType === "size") {
+        let sizeItem = null;
+        
+        // Try to find size matching URL parameter first
+        if (sizeParam) {
+          sizeItem = panelItems.find((item) => {
+            if (item.itemType === "custom") {
+              return item.customName?.includes(sizeParam);
+            } else if (item.itemType === "size") {
+              const size = catSizes.find((s) => s.id === item.itemId);
+              return size?.sizeName?.includes(sizeParam);
             }
-            return null;
-          })
-          .filter(Boolean) as PizzaTopping[];
-
-        // Set default size if provided
-        if (size) {
-          const sizeInfo = pizzaSizes.find((s) => s.size === size);
-          setPizzaOrder((prev) => ({
-            ...prev,
-            size: size,
-            basePrice: sizeInfo?.price || 0,
-            toppings: defaultPizzaToppings,
-          }));
-        } else {
-          setPizzaOrder((prev) => ({
-            ...prev,
-            toppings: defaultPizzaToppings,
-          }));
+            return false;
+          });
         }
-      } else if (size) {
-        // Just set size if no default toppings
-        const sizeInfo = pizzaSizes.find((s) => s.size === size);
-        setPizzaOrder((prev) => ({
-          ...prev,
-          size: size,
-          basePrice: sizeInfo?.price || 0,
-        }));
+        
+        // If no match or no sizeParam, use first item as default
+        if (!sizeItem && panelItems.length > 0) {
+          sizeItem = panelItems[0];
+        }
+        
+        if (sizeItem) {
+          const sizeName = sizeItem.itemType === "custom" 
+            ? sizeItem.customName 
+            : catSizes.find((s) => s.id === sizeItem.itemId)?.sizeName || "";
+          
+          // Get price from size-based pricing or custom price
+          const price = sizeItem.itemType === "custom" 
+            ? sizeItem.customPrice || 0 
+            : getSizePrice(menuItem.id, sizeItem.itemId);
+          
+          initialSelections[panel.id] = {
+            itemId: sizeItem.id,
+            name: sizeName,
+            price: price,
+          };
+        }
+      } else if (panel.panelType === "custom_list" && panelItems.length > 0) {
+        // Select first item by default for list panels
+        const firstItem = panelItems[0];
+        const itemName = firstItem.itemType === "custom" ? firstItem.customName : "";
+        const price = firstItem.itemType === "custom" ? firstItem.customPrice || 0 : 0;
+        
+        initialSelections[panel.id] = {
+          itemId: firstItem.id,
+          name: itemName,
+          price: price,
+        };
+      } else if (panel.panelType === "topping" && menuItem.defaultToppings) {
+        // Pre-select default toppings - default toppings are free
+        const defaultToppings = menuItem.defaultToppings.map((toppingId: string) => {
+          const topping = allToppings.find((t) => t.id === toppingId);
+          if (topping) {
+            return {
+              id: topping.id,
+              name: topping.name,
+              price: 0, // Default toppings are free
+              category: topping.category || "",
+              menuItemCategory: topping.menuItemCategory || "",
+              placement: "whole" as const,
+              amount: "normal" as const,
+            };
+          }
+          return null;
+        }).filter(Boolean);
+        
+        initialSelections.toppings = defaultToppings;
       }
-    } */
-  }, [hasDeliveryDetails, searchParams]);
+    });
+    
+    setCustomizerSelections(initialSelections);
+  }, [customizerPanels, customizerPanelItems, catSizes, allToppings, getSizePrice]);
 
-  const toppingCategories = [
-    { id: "cheese", name: "Cheese", icon: "🧀" },
-    { id: "meat", name: "Meat", icon: "🥓" },
-    { id: "veggie", name: "Vegetables", icon: "🥬" },
-  ];
-
-  const handleSizeChange = (size: string) => {
-    const sizeInfo = pizzaSizes.find((s) => s.size === size);
-    setPizzaOrder((prev) => ({
-      ...prev,
-      size,
-      basePrice: sizeInfo?.price || 0,
-    }));
-  };
-
-  const handleCrustChange = (crust: string) => {
-    setPizzaOrder((prev) => ({ ...prev, crust }));
-  };
-
-  const handleSauceChange = (sauce: string) => {
-    setPizzaOrder((prev) => ({ ...prev, sauce }));
-  };
-
-  const handleToppingChange = (topping: Topping, placement: string | null) => {
-    console.log(
-      `handleToppingChange called: ${topping.name}, placement: ${placement}`,
+  // Build initial selections when menu item and data are ready
+  useEffect(() => {
+    if (!currentMenuItem || !menuItemId) return;
+    if (selectionsInitialized) return;
+    if (templatesLoading || panelsLoading || itemsLoading || sizesLoading || menuItemSizesLoading) return;
+    if (customizerTemplates.length === 0 || customizerPanels.length === 0) return;
+    if (customizerPanelItems.length === 0) return;
+    
+    const sizeParam = searchParams.get("size");
+    
+    const template = customizerTemplates.find(
+      (t) => t.subCategoryId === currentMenuItem.subCategoryId && t.isActive
     );
+    
+    if (template) {
+      buildInitialSelections(template, currentMenuItem, sizeParam);
+      setSelectionsInitialized(true);
+    }
+  }, [currentMenuItem, menuItemId, selectionsInitialized, templatesLoading, panelsLoading, itemsLoading, sizesLoading, menuItemSizesLoading, buildInitialSelections]);
 
+  // Legacy handlers kept for backward compatibility
+  const handleToppingChange = (topping: Topping, placement: string | null, amount?: "normal" | "extra") => {
     setPizzaOrder((prev) => {
       const existingToppings = prev.toppings.filter((t) => t.id !== topping.id);
 
       if (placement === null) {
-        console.log(`Removing topping ${topping.name}`);
         return { ...prev, toppings: existingToppings };
       }
 
       const newTopping: PizzaTopping = {
         ...topping,
         placement: placement as "left" | "right" | "whole",
+        amount: amount || "normal",
       };
 
-      console.log(`Adding/updating topping:`, newTopping);
-      const newState = { ...prev, toppings: [...existingToppings, newTopping] };
-      console.log(`New toppings array:`, newState.toppings);
-      return newState;
+      return { ...prev, toppings: [...existingToppings, newTopping] };
     });
   };
 
   const calculateTotal = () => {
     const toppingsTotal = pizzaOrder.toppings.reduce(
-      (sum, topping) => sum + topping.price,
+      (sum, topping) => {
+        const basePrice = topping.price || 0;
+        const multiplier = topping.amount === "extra" ? 1.5 : 1;
+        return sum + (basePrice * multiplier);
+      },
       0,
     );
     return pizzaOrder.basePrice + toppingsTotal;
   };
 
-  const filteredToppings = toppings.filter(
-    (topping) => topping.category === selectedToppingCategory,
+  // Determine if we should use the dynamic customizer
+  const customizerTemplate = customizerTemplates.find(
+    (t) => t.subCategoryId === subCategoryId && t.isActive
+  );
+  const useDynamicCustomizer = !!customizerTemplate;
+
+  // Get panels and items for the current template
+  const templatePanels = customizerPanels.filter(
+    (p) => p.customizerTemplateId === customizerTemplate?.id && p.isActive
   );
 
+  const isLoading =
+    templatesLoading ||
+    panelsLoading ||
+    itemsLoading ||
+    conditionalsLoading ||
+    sizesLoading ||
+    toppingsLoading ||
+    menuItemsLoading ||
+    categoriesLoading ||
+    toppingCategoriesLoading ||
+    subCategoriesLoading ||
+    menuItemSizesLoading ||
+    toppingSizePricesLoading ||
+    settingsLoading;
+
+  const calculateCustomizerTotal = () => {
+    let total = 0;
+    
+    // Add up prices from all panel selections (size, crust, sauce, etc.)
+    Object.values(customizerSelections).forEach((selection: any) => {
+      if (selection && typeof selection === 'object') {
+        if (selection.price) {
+          total += selection.price;
+        }
+      }
+    });
+
+    // Calculate topping prices with new logic
+    if (customizerSelections.toppings && Array.isArray(customizerSelections.toppings)) {
+      const selectedToppings = customizerSelections.toppings;
+      const defaultToppings = currentMenuItem?.defaultToppings || [];
+      const swappableDefaultItems = settings?.swappableDefaultItems ?? true;
+      const halfPriceToppings = settings?.halfPriceToppings ?? true;
+      
+      // Get the selected size to determine topping prices
+      const sizePanel = templatePanels.find(p => p.panelType === 'size');
+      const selectedSizeId = sizePanel ? customizerSelections[sizePanel.id]?.itemId : null;
+      
+      let categorySizeId = null;
+      if (selectedSizeId) {
+        const selectedSizeItem = customizerPanelItems.find(item => item.id === selectedSizeId);
+        if (selectedSizeItem?.itemType === 'size') {
+          categorySizeId = selectedSizeItem.itemId;
+        }
+      }
+
+      // Swappable logic: allocate free units to default toppings first, then non-defaults
+      let freeRemaining = swappableDefaultItems ? defaultToppings.length : 0;
+      const defaultsSelected = selectedToppings.filter((t: any) => defaultToppings.includes(t.id));
+      const nonDefaultsSelected = selectedToppings.filter((t: any) => !defaultToppings.includes(t.id));
+
+      const processGroup = (group: any[]) => {
+        group.forEach((topping: any) => {
+          // Determine base price (size-based override if available)
+          let basePrice = topping.price || 0;
+          if (categorySizeId && toppingSizePrices.length > 0) {
+            const sizePrice = toppingSizePrices.find(
+              tsp => tsp.toppingId === topping.id && tsp.categorySizeId === categorySizeId
+            );
+            if (sizePrice) basePrice = sizePrice.price;
+          }
+
+          // Placement multiplier (half price for half-side if enabled)
+          let priceMultiplier = 1;
+          if (halfPriceToppings && (topping.placement === 'left' || topping.placement === 'right')) {
+            priceMultiplier = 0.5;
+          }
+
+          // Each topping is 1 unit; "extra" means 2 units
+          const quantity = topping.amount === 'extra' ? 2 : 1;
+
+          let chargeableUnits = 0;
+          if (swappableDefaultItems) {
+            // Consume available free units first
+            if (freeRemaining > 0) {
+              const usedFree = Math.min(freeRemaining, quantity);
+              freeRemaining -= usedFree;
+              chargeableUnits = quantity - usedFree;
+            } else {
+              chargeableUnits = quantity;
+            }
+          } else {
+            // Non-swappable: default normal is free (0 units), default extra charges 1 unit;
+            // non-default normal charges 1 unit; non-default extra charges 2 units
+            const isDefault = defaultToppings.includes(topping.id);
+            if (isDefault) {
+              chargeableUnits = topping.amount === 'extra' ? 1 : 0;
+            } else {
+              chargeableUnits = topping.amount === 'extra' ? 2 : 1;
+            }
+          }
+
+          if (chargeableUnits > 0) {
+            total += chargeableUnits * basePrice * priceMultiplier;
+          }
+        });
+      };
+
+      if (swappableDefaultItems) {
+        processGroup(defaultsSelected);
+        processGroup(nonDefaultsSelected);
+      } else {
+        processGroup(selectedToppings);
+      }
+    }
+
+    return total;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 mx-auto" style={{ borderColor: 'var(--primary)' }}></div>
+          <p className="mt-4" style={{ color: 'var(--muted-foreground)' }}>Loading customizer...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       <HeaderWithDelivery
         breadcrumbs={[
           { label: "Menu", href: "/menu" },
-          { label: "Build Your Own Pizza" },
+          { label: currentMenuItem?.name || "Customize Order" },
         ]}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Pizza Builder */}
+          {/* Customizer or Legacy Pizza Builder */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Size Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle>1. Choose Size</CardTitle>
-                <CardDescription>
-                  Select your pizza size (gluten-free available in 10" only)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup
-                  value={pizzaOrder.size}
-                  onValueChange={handleSizeChange}
-                  className="space-y-3"
-                >
-                  {pizzaSizes.map((size) => (
-                    <div
-                      key={size.size}
-                      className="flex items-center space-x-2 p-3 border rounded hover:bg-gray-50"
-                    >
-                      <RadioGroupItem value={size.size} id={size.size} />
-                      <Label
-                        htmlFor={size.size}
-                        className="flex-1 cursor-pointer"
-                      >
-                        <div className="flex justify-between items-center">
-                          <span>{size.label}</span>
-                          <span className="font-semibold">
-                            ${size.price.toFixed(2)}
-                          </span>
+            {useDynamicCustomizer ? (
+              <>
+                {/* Item Being Customized */}
+                {currentMenuItem && (
+                  <Card style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}>
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1">
+                          <h2 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{currentMenuItem.name}</h2>
+                          {currentMenuItem.description && (
+                            <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>{currentMenuItem.description}</p>
+                          )}
                         </div>
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </CardContent>
-            </Card>
-
-            {/* Crust Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle>2. Choose Crust</CardTitle>
-                <CardDescription>
-                  Pick your preferred crust style
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup
-                  value={pizzaOrder.crust}
-                  onValueChange={handleCrustChange}
-                  className="space-y-3"
-                >
-                  {crustTypes.map((crust) => (
-                    <div
-                      key={crust.id}
-                      className="flex items-center space-x-2 p-3 border rounded hover:bg-gray-50"
-                    >
-                      <RadioGroupItem value={crust.id} id={crust.id} />
-                      <Label
-                        htmlFor={crust.id}
-                        className="flex-1 cursor-pointer"
-                      >
-                        {crust.name}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </CardContent>
-            </Card>
-
-            {/* Sauce Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle>3. Choose Sauce</CardTitle>
-                <CardDescription>Select your sauce type</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup
-                  value={pizzaOrder.sauce}
-                  onValueChange={handleSauceChange}
-                  className="space-y-3"
-                >
-                  {sauceTypes.map((sauce) => (
-                    <div
-                      key={sauce.id}
-                      className="flex items-center space-x-2 p-3 border rounded hover:bg-gray-50"
-                    >
-                      <RadioGroupItem value={sauce.id} id={sauce.id} />
-                      <Label
-                        htmlFor={sauce.id}
-                        className="flex-1 cursor-pointer"
-                      >
-                        {sauce.name}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </CardContent>
-            </Card>
-
-            {/* Toppings Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle>4. Add Toppings</CardTitle>
-                <CardDescription>
-                  Choose toppings and specify placement (left half, right half,
-                  or whole pizza)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Tabs
-                  value={selectedToppingCategory}
-                  onValueChange={setSelectedToppingCategory}
-                  className="w-full"
-                >
-                  <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-gray-100">
-                    <TabsTrigger
-                      value="cheese"
-                      className="text-sm py-2 data-[state=active]:bg-black data-[state=active]:text-white"
-                    >
-                      Cheese
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="meat"
-                      className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
-                    >
-                      Meats
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="veggie"
-                      className="text-sm py-2 data-[state=active]:bg-red-500 data-[state=active]:text-white"
-                    >
-                      Veggies
-                    </TabsTrigger>
-                  </TabsList>
-
-                  {toppingCategories.map((category) => (
-                    <TabsContent
-                      key={category.id}
-                      value={category.id}
-                      className="mt-0 bg-white border border-t-0 rounded-b-lg"
-                    >
-                      <div className="divide-y divide-gray-200">
-                        {filteredToppings.map((topping) => (
-                          <ToppingRow
-                            key={topping.id}
-                            topping={topping}
-                            selectedToppings={pizzaOrder.toppings}
-                            onToppingChange={handleToppingChange}
-                          />
-                        ))}
                       </div>
-                    </TabsContent>
-                  ))}
-                </Tabs>
-              </CardContent>
-            </Card>
+                    </CardContent>
+                  </Card>
+                )}
+                
+                <CustomizerView
+                  template={customizerTemplate}
+                  panels={templatePanels}
+                  panelItems={customizerPanelItems}
+                  conditionals={customizerPanelItemConditionals}
+                  categorySizes={catSizes}
+                  toppings={allToppings}
+                  toppingCategories={toppingCategories}
+                  subCategories={subCategories}
+                  menuItemSizes={menuItemSizes}
+                  toppingSizePrices={toppingSizePrices}
+                  currentMenuItemId={menuItemId}
+                  onSelectionChange={setCustomizerSelections}
+                  initialSelections={customizerSelections}
+                />
+              </>
+            ) : (
+              <Card className="text-center py-12">
+                <CardHeader>
+                  <CardTitle className="text-2xl">Customizer Coming Soon!</CardTitle>
+                  <CardDescription className="text-lg mt-4">
+                    We're working on building a customizer for this item. Please check back soon!
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    In the meantime, you can browse our other menu items or contact us to place a custom order.
+                  </p>
+                  <div className="mt-6">
+                    <Link to="/menu">
+                      <Button variant="default">
+                        Back to Menu
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Order Summary */}
           <div>
-            <Card className="sticky top-4">
+            <Card className="sticky top-32" style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}>
               <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
+                <CardTitle style={{ color: 'var(--card-foreground)' }}>Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Pizza Visualization */}
-                {pizzaOrder.size && (
+                {/* Dynamic Customizer Summary */}
+                {useDynamicCustomizer ? (
+                  <>
+                    {Object.entries(customizerSelections).map(([panelId, selection]: [string, any]) => {
+                      if (panelId === 'toppings') return null; // Handle toppings separately
+                      if (!selection || typeof selection !== 'object') return null;
+                      
+                      return (
+                        <div key={panelId} className="flex justify-between">
+                          <span style={{ color: 'var(--foreground)' }}>{selection.name}</span>
+                          {selection.price > 0 && (
+                            <span style={{ color: 'var(--foreground)' }}>${selection.price.toFixed(2)}</span>
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {/* Toppings */}
+                    {customizerSelections.toppings && Array.isArray(customizerSelections.toppings) && customizerSelections.toppings.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-sm" style={{ color: 'var(--foreground)' }}>Toppings:</h4>
+                        {(() => {
+                          const selectedToppings = customizerSelections.toppings;
+                          const defaultToppings = currentMenuItem?.defaultToppings || [];
+                          const swappableDefaultItems = settings?.swappableDefaultItems ?? true;
+                          const halfPriceToppings = settings?.halfPriceToppings ?? true;
+                          
+                          // Get the selected size
+                          const sizePanel = templatePanels.find(p => p.panelType === 'size');
+                          const selectedSizeId = sizePanel ? customizerSelections[sizePanel.id]?.itemId : null;
+                          
+                          let categorySizeId = null;
+                          if (selectedSizeId) {
+                            const selectedSizeItem = customizerPanelItems.find(item => item.id === selectedSizeId);
+                            if (selectedSizeItem?.itemType === 'size') {
+                              categorySizeId = selectedSizeItem.itemId;
+                            }
+                          }
+                          
+                          // Compute chargeable units per topping with default-first allocation
+                          let freeRemaining = swappableDefaultItems ? defaultToppings.length : 0;
+                          const defaultsSelected = selectedToppings.filter((t: any) => defaultToppings.includes(t.id));
+                          const nonDefaultsSelected = selectedToppings.filter((t: any) => !defaultToppings.includes(t.id));
+                          const chargeUnitsMap: Record<string, number> = {};
+
+                          const allocGroup = (group: any[]) => {
+                            group.forEach((topping: any) => {
+                              const quantity = topping.amount === 'extra' ? 2 : 1;
+                              if (swappableDefaultItems) {
+                                if (freeRemaining > 0) {
+                                  const usedFree = Math.min(freeRemaining, quantity);
+                                  freeRemaining -= usedFree;
+                                  chargeUnitsMap[topping.id] = quantity - usedFree;
+                                } else {
+                                  chargeUnitsMap[topping.id] = quantity;
+                                }
+                              } else {
+                                const isDefault = defaultToppings.includes(topping.id);
+                                chargeUnitsMap[topping.id] = isDefault
+                                  ? (topping.amount === 'extra' ? 1 : 0)
+                                  : (topping.amount === 'extra' ? 2 : 1);
+                              }
+                            });
+                          };
+
+                          if (swappableDefaultItems) {
+                            allocGroup(defaultsSelected);
+                            allocGroup(nonDefaultsSelected);
+                          } else {
+                            allocGroup(selectedToppings);
+                          }
+
+                          return selectedToppings.map((topping: any, index: number) => {
+                            // Get the correct price for this topping
+                            let basePrice = topping.price || 0;
+                            
+                            if (categorySizeId && toppingSizePrices.length > 0) {
+                              const sizePrice = toppingSizePrices.find(
+                                tsp => tsp.toppingId === topping.id && tsp.categorySizeId === categorySizeId
+                              );
+                              if (sizePrice) {
+                                basePrice = sizePrice.price;
+                              }
+                            }
+                            
+                            // Determine chargeable units and display price (mirrors total logic)
+                            let priceMultiplier = 1;
+                            if (halfPriceToppings && (topping.placement === 'left' || topping.placement === 'right')) {
+                              priceMultiplier = 0.5;
+                            }
+                            const chargeableUnits = chargeUnitsMap[topping.id] ?? 0;
+                            const displayPrice = chargeableUnits * basePrice * priceMultiplier;
+                            
+                            return (
+                              <div key={index} className="flex justify-between text-sm">
+                                <span style={{ color: 'var(--muted-foreground)' }}>
+                                  {topping.name} ({topping.placement}) - {topping.amount === "extra" ? "Extra" : "Normal"}
+                                </span>
+                                <span style={{ color: 'var(--foreground)' }}>
+                                  {displayPrice > 0 ? `+$${displayPrice.toFixed(2)}` : 'Free'}
+                                </span>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {/* Legacy Pizza Visualization */}
+                    {pizzaOrder.size && (
                   <div className="flex justify-center mb-4">
                     <div className="relative w-24 h-24 bg-yellow-200 rounded-full border-4 border-yellow-300 shadow-lg">
                       {/* Show selected toppings visually */}
@@ -582,67 +640,57 @@ export default function Order() {
                   </div>
                 )}
 
-                {/* Pizza Base */}
-                {pizzaOrder.size && (
-                  <div className="flex justify-between">
-                    <span>
-                      {pizzaOrder.size} {pizzaOrder.crust} Pizza
-                    </span>
-                    <span>${pizzaOrder.basePrice.toFixed(2)}</span>
-                  </div>
-                )}
-
-                {/* Sauce */}
-                {pizzaOrder.sauce && (
-                  <div className="flex justify-between text-sm">
-                    <span>
-                      Sauce:{" "}
-                      {sauceTypes.find((s) => s.id === pizzaOrder.sauce)?.name}
-                    </span>
-                    <span>Included</span>
-                  </div>
-                )}
-
-                {/* Toppings */}
+                {/* Toppings (Legacy - for backward compatibility) */}
                 {pizzaOrder.toppings.length > 0 && (
                   <div className="space-y-2">
                     <h4 className="font-medium text-sm">Toppings:</h4>
-                    {pizzaOrder.toppings.map((topping, index) => (
-                      <div key={index} className="flex justify-between text-sm">
-                        <span>
-                          {topping.name} ({topping.placement})
-                        </span>
-                        <span>
-                          {topping.price > 0 && `+$${topping.price.toFixed(2)}`}
-                        </span>
-                      </div>
-                    ))}
+                    {pizzaOrder.toppings.map((topping, index) => {
+                      const basePrice = topping.price || 0;
+                      const multiplier = topping.amount === "extra" ? 1.5 : 1;
+                      const toppingPrice = basePrice * multiplier;
+                      
+                      return (
+                        <div key={index} className="flex justify-between text-sm">
+                          <span>
+                            {topping.name} ({topping.placement}) - {topping.amount === "extra" ? "Extra" : "Normal"}
+                          </span>
+                          <span>
+                            {toppingPrice > 0 && `+$${toppingPrice.toFixed(2)}`}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 
-                {/* Debug Info */}
-                <div className="text-xs text-gray-400 border-t pt-2">
-                  <p>Debug: {pizzaOrder.toppings.length} toppings selected</p>
-                  {pizzaOrder.toppings.map((t, i) => (
-                    <p key={i}>
-                      {t.name}: {t.placement}
-                    </p>
-                  ))}
-                </div>
-
+                    {/* Debug Info */}
+                    <div className="text-xs text-gray-400 border-t pt-2">
+                      <p>Debug: {pizzaOrder.toppings.length} toppings selected</p>
+                      {pizzaOrder.toppings.map((t, i) => (
+                        <p key={i}>
+                          {t.name}: {t.placement} - {t.amount || "normal"}
+                        </p>
+                      ))}
+                    </div>
+                  </>
+                )}
+                
                 {/* Total */}
-                <div className="border-t pt-4">
+                <div className="pt-4" style={{ borderTop: '1px solid var(--border)' }}>
                   <div className="flex justify-between font-bold text-lg">
-                    <span>Total:</span>
-                    <span>${calculateTotal().toFixed(2)}</span>
+                    <span style={{ color: 'var(--foreground)' }}>Total:</span>
+                    <span style={{ color: 'var(--primary)' }}>
+                      ${useDynamicCustomizer ? calculateCustomizerTotal().toFixed(2) : calculateTotal().toFixed(2)}
+                    </span>
                   </div>
                 </div>
 
                 {/* Add to Cart Button */}
                 <Button
-                  className="w-full"
                   disabled={
-                    !pizzaOrder.size || !pizzaOrder.crust || !pizzaOrder.sauce
+                    useDynamicCustomizer 
+                      ? Object.keys(customizerSelections).length === 0
+                      : !pizzaOrder.size || !pizzaOrder.crust || !pizzaOrder.sauce
                   }
                 >
                   Add to Cart
@@ -656,20 +704,6 @@ export default function Order() {
           </div>
         </div>
       </main>
-
-      {/* Delivery Selection Modal */}
-      <DeliverySelection
-        isOpen={showDeliverySelection}
-        onClose={() => {
-          setShowDeliverySelection(false);
-          navigate("/menu");
-        }}
-        onConfirm={(details) => {
-          setDeliveryDetails(details);
-          setShowDeliverySelection(false);
-        }}
-        currentDetails={deliveryDetails}
-      />
     </div>
   );
 }

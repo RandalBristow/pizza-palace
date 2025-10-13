@@ -1,8 +1,11 @@
 import { useState } from "react";
-import MenuCategory from "../page_components/MenuCategory";
 import MenuCategoryDialog from "../dialog_components/MenuCategoryDialog";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
+import SingleItemCard from "../shared_components/SingleItemCard";
+import ActivationButton from "../shared_components/ActivationButton";
+import EditButton from "../shared_components/EditButton";
+import DeleteButton from "../shared_components/DeleteButton";
 
 export interface Category {
   id: string;
@@ -106,53 +109,69 @@ export default function MenuCategoryForm({
   };
 
   return (
-    <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
+    <div className="space-y-6" style={{ backgroundColor: "var(--background)" }}>
       <div className="flex justify-between items-center">
         {showTitle && (
           <div>
-            <h2 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Menu Categories</h2>
-            <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>
+            <h2
+              className="text-xl font-semibold"
+              style={{ color: "var(--foreground)" }}
+            >
+              Menu Categories
+            </h2>
+            <p className="mt-1" style={{ color: "var(--muted-foreground)" }}>
               Manage main menu categories and their organization
             </p>
           </div>
         )}
         <div className="flex items-center space-x-4">
           {!hideAddButton && (
-            <Button 
+            <Button
               onClick={() => setIsDialogOpen(true)}
+              className="transition-all duration-200 hover:-translate-y-px hover:shadow-md"
               style={{
-                backgroundColor: 'var(--primary)',
-                color: 'var(--primary-foreground)',
-                borderColor: 'var(--primary)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.transform = 'translateY(-1px)';
-                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
-              }}
-              onMouseLeave={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.transform = 'translateY(0)';
-                target.style.boxShadow = 'none';
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+                borderColor: "var(--primary)",
               }}
             >
-              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
+              <Plus
+                className="h-4 w-4 mr-2"
+                style={{ color: "var(--primary-foreground)" }}
+              />
               Add Category
             </Button>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {categories.map((category) => (
-          <MenuCategory
-            key={category.id}
-            category={category}
-            toggleCategoryStatus={toggleCategoryStatus}
-            handleEditCategory={handleEditCategory}
-            handleDeleteCategory={handleDeleteCategory}
-            canDeleteCategory={canDeleteCategory}
+          <SingleItemCard
+            title={category.name}
+            isActive={category.isActive}
+            rightActions={
+              <>
+                <ActivationButton
+                  isActive={category.isActive}
+                  onToggle={() => toggleCategoryStatus(category.id)}
+                  activeTooltip="Deactivate"
+                  inactiveTooltip="Activate"
+                />
+                <EditButton
+                  label="Edit Category"
+                  onClick={() => handleEditCategory(category)}
+                />
+                <DeleteButton
+                  entityTitle="Category"
+                  subjectName={category.name}
+                  canDelete={canDeleteCategory(category.id)}
+                  tooltipWhenAllowed="Delete Category"
+                  tooltipWhenBlocked="Cannot Delete: Has Related Items"
+                  onConfirm={() => handleDeleteCategory(category.id)}
+                />
+              </>
+            }
           />
         ))}
       </div>

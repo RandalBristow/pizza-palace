@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
-import ToppingCategory from "../page_components/ToppingCategory";
+import ActivationButton from "../shared_components/ActivationButton";
+import EditButton from "../shared_components/EditButton";
+import DeleteButton from "../shared_components/DeleteButton";
+import SingleItemCard from "../shared_components/SingleItemCard";
 import ToppingCategoryDialog from "../dialog_components/ToppingCategoryDialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../ui/select";
 import { Plus } from "lucide-react";
@@ -176,18 +179,65 @@ export default function ToppingCategoryForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {filteredToppingCategories.map((toppingCategory) => (
-          <ToppingCategory
-            key={toppingCategory.id}
-            toppingCategory={toppingCategory}
-            toggleToppingCategoryStatus={toggleToppingCategoryStatus}
-            handleEditToppingCategory={handleEditToppingCategory}
-            handleDeleteToppingCategory={handleDeleteToppingCategory}
-            canDeleteToppingCategory={canDeleteToppingCategory}
-          />
-        ))}
-      </div>
+      {filteredToppingCategories.length === 0 ? (
+        <div className="text-center py-8">
+          <p style={{ color: 'var(--muted-foreground)' }}>No topping categories yet.</p>
+          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+            Create topping categories to organize your toppings.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {categories.map((category) => {
+            const categoryToppingCategories = filteredToppingCategories.filter(
+              (tc) => tc.menuItemCategory === category.id,
+            );
+            if (categoryToppingCategories.length === 0) return null;
+
+            return (
+              <div key={category.id} className="rounded-lg p-4" style={{ border: '1px solid var(--border)' }}>
+                <h4 className="font-semibold text-lg mb-3 flex items-center" style={{ color: 'var(--card-foreground)' }}>
+                  {category.name}
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {categoryToppingCategories
+                    .sort((a, b) => a.order - b.order)
+                    .map((toppingCategory) => (
+                      <SingleItemCard
+                        key={toppingCategory.id}
+                        title={toppingCategory.name}
+                        displayOrder={toppingCategory.order}
+                        isActive={toppingCategory.isActive}
+                        rightActions={
+                          <>
+                            <ActivationButton
+                              isActive={toppingCategory.isActive}
+                              onToggle={() => toggleToppingCategoryStatus(toppingCategory.id)}
+                              activeTooltip="Deactivate"
+                              inactiveTooltip="Activate"
+                            />
+                            <EditButton
+                              label="Edit Category"
+                              onClick={() => handleEditToppingCategory(toppingCategory)}
+                            />
+                            <DeleteButton
+                              entityTitle="Topping Category"
+                              subjectName={toppingCategory.name}
+                              canDelete={canDeleteToppingCategory(toppingCategory.id)}
+                              tooltipWhenAllowed="Delete Category"
+                              tooltipWhenBlocked="Cannot Delete: Has Related Items"
+                              onConfirm={() => handleDeleteToppingCategory(toppingCategory.id)}
+                            />
+                          </>
+                        }
+                      />
+                    ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <ToppingCategoryDialog
         isOpen={isDialogOpen}

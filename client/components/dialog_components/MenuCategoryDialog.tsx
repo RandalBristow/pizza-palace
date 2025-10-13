@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { Save } from "lucide-react";
+import { RequiredFieldLabel } from "../ui/required-field-label";
 
 export interface Category {
   id: string;
@@ -51,6 +52,11 @@ export default function MenuCategoryDialog({
     }
   }, [category]);
 
+  // Validation – require name and a positive order
+  const hasName = (formData.name || "").trim().length > 0;
+  const orderValid = Number.isFinite(Number(formData.order)) && Number(formData.order) > 0;
+  const canSave = hasName && orderValid;
+
   const handleSave = async () => {
     try {
       await onSave(formData);
@@ -85,12 +91,12 @@ export default function MenuCategoryDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label
+            <RequiredFieldLabel
               htmlFor="categoryName"
               style={{ color: "var(--foreground)" }}
             >
               Category Name
-            </Label>
+            </RequiredFieldLabel>
             <Input
               id="categoryName"
               placeholder="e.g., Appetizers"
@@ -98,6 +104,7 @@ export default function MenuCategoryDialog({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
+              required
               style={{
                 backgroundColor: "var(--input)",
                 borderColor: "var(--border)",
@@ -133,6 +140,8 @@ export default function MenuCategoryDialog({
                   order: parseInt(e.target.value) || 1,
                 })
               }
+              required
+              min={1}
               style={{
                 backgroundColor: "var(--input)",
                 borderColor: "var(--border)",
@@ -150,6 +159,7 @@ export default function MenuCategoryDialog({
               }}
             />
           </div>
+          
           <div className="flex justify-end space-x-2">
             <Button
               variant="outline"
@@ -175,11 +185,12 @@ export default function MenuCategoryDialog({
             </Button>
             <Button
               onClick={handleSave}
+              disabled={!canSave}
               style={{
                 backgroundColor: "var(--primary)",
                 color: "var(--primary-foreground)",
                 borderColor: "var(--primary)",
-                cursor: 'pointer'
+                cursor: !canSave ? 'not-allowed' : 'pointer'
               }}
               onMouseEnter={(e) => {
                 const target = e.target as HTMLElement;

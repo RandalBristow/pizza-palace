@@ -3,15 +3,10 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Alert, AlertDescription } from "../ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Save } from "lucide-react";
 import ImageSelector from "../ui/image-selector";
+import { RequiredFieldLabel } from "../ui/required-field-label";
 
 export interface CarouselImage {
   id: string;
@@ -72,6 +67,14 @@ export default function CarouselImageDialog({
       resetForm();
     }
   }, [carouselImage, images]);
+
+  // Validation: require image selection (url + imageId), title, subtitle, and order > 0
+  const hasUrl = (newCarouselImage.url || "").trim().length > 0;
+  const hasTitle = (newCarouselImage.title || "").trim().length > 0;
+  const hasSubtitle = (newCarouselImage.subtitle || "").trim().length > 0;
+  const hasImage = !!selectedImageId;
+  const orderValid = Number.isFinite(Number(newCarouselImage.order)) && Number(newCarouselImage.order) > 0;
+  const canSave = hasUrl && hasTitle && hasSubtitle && hasImage && orderValid;
 
   const handleSave = async () => {
     setError(null);
@@ -142,6 +145,12 @@ export default function CarouselImageDialog({
             </Alert>
           )}
 
+          <RequiredFieldLabel
+            htmlFor="carouselImage"
+            className="text-[var(--foreground)]"
+          >
+            Carousel Image
+          </RequiredFieldLabel>
           <ImageSelector
             images={images}
             selectedImageId={selectedImageId}
@@ -152,14 +161,19 @@ export default function CarouselImageDialog({
                 url: imageUrl || "",
               });
             }}
-            label="Carousel Image"
+            label=""
             placeholder="Select an image..."
             required={true}
             showPreview={false}
           />
 
           <div>
-            <Label htmlFor="imageTitle" style={{ color: 'var(--foreground)' }}>Title</Label>
+            <RequiredFieldLabel
+              htmlFor="imageTitle"
+              className="text-[var(--foreground)]"
+            >
+              Title
+            </RequiredFieldLabel>
             <Input
               id="imageTitle"
               placeholder="Image title"
@@ -170,6 +184,7 @@ export default function CarouselImageDialog({
                   title: e.target.value,
                 })
               }
+              required
               style={{
                 backgroundColor: 'var(--input)',
                 borderColor: 'var(--border)',
@@ -187,7 +202,12 @@ export default function CarouselImageDialog({
           </div>
 
           <div>
-            <Label htmlFor="imageSubtitle" style={{ color: 'var(--foreground)' }}>Subtitle</Label>
+            <RequiredFieldLabel
+              htmlFor="imageSubtitle"
+              className="text-[var(--foreground)]"
+            >
+              Subtitle
+            </RequiredFieldLabel>
             <Input
               id="imageSubtitle"
               placeholder="Image subtitle"
@@ -198,6 +218,7 @@ export default function CarouselImageDialog({
                   subtitle: e.target.value,
                 })
               }
+              required
               style={{
                 backgroundColor: 'var(--input)',
                 borderColor: 'var(--border)',
@@ -213,7 +234,7 @@ export default function CarouselImageDialog({
               }}
             />
           </div>
-
+          
           <div>
             <Label htmlFor="imageOrder" style={{ color: 'var(--foreground)' }}>Display Order</Label>
             <Input
@@ -227,6 +248,8 @@ export default function CarouselImageDialog({
                   order: parseInt(e.target.value) || 1,
                 })
               }
+              min={1}
+              required
               style={{
                 backgroundColor: 'var(--input)',
                 borderColor: 'var(--border)',
@@ -271,7 +294,7 @@ export default function CarouselImageDialog({
             </Button>
             <Button 
               onClick={handleSave} 
-              disabled={isLoading}
+              disabled={isLoading || !canSave}
               style={{
                 backgroundColor: 'var(--primary)',
                 color: 'var(--primary-foreground)',

@@ -2,21 +2,9 @@ import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Save } from "lucide-react";
+import { RequiredFieldLabel } from "../ui/required-field-label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Category } from "../admin/MenuCategoriesForm";
 import { ToppingCategory } from "../admin/ToppingCategoriesForm";
 
@@ -69,8 +57,6 @@ export default function ToppingItemDialog({
   });
   const [sizePrices, setSizePrices] = useState<Record<string, number>>({});
 
-  const isEdit = !!topping;
-
   // Get available sizes for the selected menu category
   const getAvailableSizes = (menuCategoryId: string) => {
     return categorySizes
@@ -113,6 +99,12 @@ export default function ToppingItemDialog({
     }
   }, [formData.menuItemCategory]);
 
+  // Validation: require name, menuItemCategory, and category
+  const hasName = (formData.name || "").trim().length > 0;
+  const hasMenuCategory = (formData.menuItemCategory || "").trim().length > 0;
+  const hasToppingCategory = (formData.category || "").trim().length > 0;
+  const canSave = hasName && hasMenuCategory && hasToppingCategory;
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -140,38 +132,40 @@ export default function ToppingItemDialog({
     }
   };
 
-  const handleCancel = () => {
-    resetForm();
-    onClose();
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="max-w-md"
+        className="max-w-md max-h-[80vh] p-0 flex flex-col"
         style={{
           backgroundColor: "var(--card)",
           borderColor: "var(--border)",
         }}
       >
-        <DialogHeader>
+        <DialogHeader className="px-6 pt-6 pb-0">
           <DialogTitle style={{ color: "var(--card-foreground)" }}>
             {topping ? "Edit Topping" : "Add New Topping"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
             {topping
               ? "Update the topping details and size-specific pricing"
               : "Create a new topping with size-specific pricing"}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSave} className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave();
+          }}
+          className="flex-1 flex flex-col"
+        >
+          <div className="px-6 space-y-4 overflow-y-auto">
           <div>
-            <Label
+            <RequiredFieldLabel
               htmlFor="name"
               style={{ color: "var(--foreground)" }}
             >
               Topping Name
-            </Label>
+            </RequiredFieldLabel>
             <Input
               id="name"
               value={formData.name}
@@ -196,40 +190,27 @@ export default function ToppingItemDialog({
           </div>
 
           <div>
-            <Label
+            <RequiredFieldLabel
               htmlFor="menuItemCategory"
               style={{ color: "var(--foreground)" }}
             >
               Menu Category
-            </Label>
+            </RequiredFieldLabel>
             <Select
               value={formData.menuItemCategory}
-              onValueChange={(value) =>
-                setFormData({ ...formData, menuItemCategory: value })
-              }
+              onValueChange={(value) => {
+                // When menu category changes, clear the dependent topping category
+                setFormData({ ...formData, menuItemCategory: value, category: "" });
+              }}
+              disabled={!hasName}
             >
               <SelectTrigger
-                style={{
-                  backgroundColor: "var(--input)",
-                  borderColor: "var(--border)",
-                  border: "1px solid var(--border)",
-                  color: "var(--foreground)",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
-                }}
-                onBlur={(e) => {
-                  e.target.style.boxShadow = "none";
-                }}
+                className="bg-[var(--input)] border-[var(--border)] text-[var(--foreground)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
               >
                 <SelectValue placeholder="Select menu category" />
               </SelectTrigger>
               <SelectContent
-                style={{
-                  backgroundColor: "var(--popover)",
-                  borderColor: "var(--border)",
-                }}
+                className="bg-[var(--popover)] border-[var(--border)]"
               >
                 {categories
                   .filter((c) => c.isActive)
@@ -237,7 +218,7 @@ export default function ToppingItemDialog({
                     <SelectItem
                       key={category.id}
                       value={category.id}
-                      style={{ color: "var(--popover-foreground)" }}
+                      className="text-[var(--popover-foreground)]"
                     >
                       {category.name}
                     </SelectItem>
@@ -247,40 +228,26 @@ export default function ToppingItemDialog({
           </div>
 
           <div>
-            <Label
+            <RequiredFieldLabel
               htmlFor="toppingCategory"
               style={{ color: "var(--foreground)" }}
             >
               Topping Category
-            </Label>
+            </RequiredFieldLabel>
             <Select
               value={formData.category}
               onValueChange={(value) =>
                 setFormData({ ...formData, category: value })
               }
+              disabled={!hasName || !hasMenuCategory}
             >
               <SelectTrigger
-                style={{
-                  backgroundColor: "var(--input)",
-                  borderColor: "var(--border)",
-                  border: "1px solid var(--border)",
-                  color: "var(--foreground)",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
-                }}
-                onBlur={(e) => {
-                  e.target.style.boxShadow = "none";
-                }}
+                className="bg-[var(--input)] border-[var(--border)] text-[var(--foreground)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
               >
                 <SelectValue placeholder="Select topping category" />
               </SelectTrigger>
               <SelectContent
-                style={{
-                  backgroundColor: "var(--popover)",
-                  borderColor: "var(--border)",
-                }}
+                className="bg-[var(--popover)] border-[var(--border)]"
               >
                 {toppingCategories
                   .filter(
@@ -293,7 +260,7 @@ export default function ToppingItemDialog({
                     <SelectItem
                       key={category.id}
                       value={category.id}
-                      style={{ color: "var(--popover-foreground)" }}
+                      className="text-[var(--popover-foreground)]"
                     >
                       {category.name}
                     </SelectItem>
@@ -302,66 +269,84 @@ export default function ToppingItemDialog({
             </Select>
           </div>
 
-          {/* Right Side - Size-based Pricing */}
-          <div className="space-y-2 w-full h-full">
-            <h3 className="text-lg font-medium mb-0">Size-Based Pricing</h3>
+          {hasName && hasMenuCategory && hasToppingCategory && (
+            <div className="space-y-2 w-full">
+              <h3 className="text-sm font-medium mb-1 text-[var(--foreground)]">Size-Based Pricing</h3>
 
-            <div className="py-1 px-2 overflow-hidden border rounded">
-              {formData.menuItemCategory ? (
-                <div className="space-y-1">
-                  {getAvailableSizes(formData.menuItemCategory).map((size) => (
-                    <div
-                      key={size.id}
-                      className="flex items-center justify-between"
-                    >
-                      <Label className="text-xs min-w-[60px] font-medium">
-                        {size.sizeName}
-                      </Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        className="w-24 h-7 py-0 px-0 text-xs text-right"
-                        value={
-                          sizePrices[size.id]
-                            ? sizePrices[size.id].toFixed(2)
-                            : ""
-                        }
-                        onChange={(e) =>
-                          handleSizePriceChange(size.id, e.target.value)
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p>Select a menu category to see available sizes</p>
-                </div>
-              )}
+              <div className="py-1 px-2 overflow-hidden border rounded bg-[var(--card)] border-[var(--border)]">
+                {getAvailableSizes(formData.menuItemCategory).length === 0 ? (
+                  <div className="text-center py-8 text-[var(--muted-foreground)]">
+                    <p>No sizes defined for this topping category</p>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    {getAvailableSizes(formData.menuItemCategory).map((size) => (
+                      <div
+                        key={size.id}
+                        className="flex items-center justify-between"
+                      >
+                        <Label className="text-xs min-w-[60px] font-medium text-[var(--foreground)]">
+                          {size.sizeName}
+                        </Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          className="w-24 h-7 py-0 px-0 text-xs text-right bg-[var(--input)] border-[var(--border)] text-[var(--foreground)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
+                          value={
+                            sizePrices[size.id]
+                              ? sizePrices[size.id].toFixed(2)
+                              : ""
+                          }
+                          onChange={(e) =>
+                            handleSizePriceChange(size.id, e.target.value)
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+          )}
+
           </div>
 
           {/* Form Actions */}
-          <div className="lg:col-span-2 flex justify-end space-x-2 pt-4 border-t">
+          <div className="lg:col-span-2 mt-0 flex justify-end space-x-2 p-6 bg-[var(--card)]">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              style={{
-                backgroundColor: "var(--card)",
-                borderColor: "var(--border)",
-                color: "var(--card-foreground)",
+              className="bg-[var(--card)] border-[var(--border)] text-[var(--muted-foreground)]"
+              style={{ transition: 'all 0.2s ease' }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--accent)';
+                target.style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--card)';
+                target.style.transform = 'scale(1)';
               }}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              style={{
-                backgroundColor: "var(--primary)",
-                color: "var(--primary-foreground)",
-                borderColor: "var(--primary)",
+              className="bg-[var(--primary)] text-[var(--primary-foreground)] border-[var(--primary)]"
+              disabled={!canSave}
+              style={{ transition: 'all 0.2s ease' }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
               }}
             >
               {topping ? "Update" : "Create"} Topping

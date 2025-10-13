@@ -34,7 +34,7 @@ export default function HeaderWithDelivery({
 
   return (
     <>
-      <header className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: 'var(--card)', borderBottom: '1px solid var(--border)' }}>
+      <header className="sticky top-0 z-[9999] shadow-sm" style={{ backgroundColor: 'var(--card)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             {/* Logo and Breadcrumbs - Always shown */}
@@ -54,16 +54,8 @@ export default function HeaderWithDelivery({
                   <>
                     <Link 
                       to="/" 
-                      className="hover:underline"
+                      className="hover:underline transition-colors hover:text-[var(--primary)]"
                       style={{ color: 'var(--muted-foreground)' }}
-                      onMouseEnter={(e) => {
-                        const target = e.target as HTMLElement;
-                        target.style.color = 'var(--primary)';
-                      }}
-                      onMouseLeave={(e) => {
-                        const target = e.target as HTMLElement;
-                        target.style.color = 'var(--muted-foreground)';
-                      }}
                     >
                       Home
                     </Link>
@@ -73,16 +65,8 @@ export default function HeaderWithDelivery({
                         {crumb.href ? (
                           <Link 
                             to={crumb.href} 
-                            className="hover:underline"
+                            className="hover:underline transition-colors hover:text-[var(--primary)]"
                             style={{ color: 'var(--muted-foreground)' }}
-                            onMouseEnter={(e) => {
-                              const target = e.target as HTMLElement;
-                              target.style.color = 'var(--primary)';
-                            }}
-                            onMouseLeave={(e) => {
-                              const target = e.target as HTMLElement;
-                              target.style.color = 'var(--muted-foreground)';
-                            }}
                           >
                             {crumb.label}
                           </Link>
@@ -103,76 +87,36 @@ export default function HeaderWithDelivery({
               <div className="hidden md:flex items-center space-x-6">
                 <Link
                   to="/menu"
-                  className="font-medium"
+                  className="font-medium transition-colors hover:text-[var(--primary)]"
                   style={{ color: 'var(--foreground)' }}
-                  onMouseEnter={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--primary)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--foreground)';
-                  }}
                 >
                   Menu
                 </Link>
                 <Link
                   to="/specials"
-                  className="font-medium"
+                  className="font-medium transition-colors hover:text-[var(--primary)]"
                   style={{ color: 'var(--foreground)' }}
-                  onMouseEnter={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--primary)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--foreground)';
-                  }}
                 >
                   Specials
                 </Link>
                 <Link
                   to="/about"
-                  className="font-medium"
+                  className="font-medium text-sm transition-colors hover:text-[var(--primary)]"
                   style={{ color: 'var(--foreground)' }}
-                  onMouseEnter={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--primary)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--foreground)';
-                  }}
                 >
                   About
                 </Link>
                 <Link
                   to="/admin"
-                  className="font-medium text-sm"
+                  className="font-medium text-sm transition-colors hover:text-[var(--primary)]"
                   style={{ color: 'var(--foreground)' }}
-                  onMouseEnter={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--primary)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--foreground)';
-                  }}
                 >
                   Admin
                 </Link>
                 <Link
                   to="/login"
-                  className="font-medium"
+                  className="font-medium transition-colors hover:text-[var(--primary)]"
                   style={{ color: 'var(--foreground)' }}
-                  onMouseEnter={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--primary)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.color = 'var(--foreground)';
-                  }}
                 >
                   Sign In
                 </Link>

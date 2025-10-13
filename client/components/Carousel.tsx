@@ -82,7 +82,7 @@ export default function Carousel({
   const currentImage = activeImages[currentIndex];
 
   return (
-    <div className="relative w-full h-96 rounded-lg overflow-hidden group">
+    <div className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-900 group">
       {/* Main Image */}
       <div className="relative w-full h-full">
         <img
@@ -101,9 +101,13 @@ export default function Carousel({
         />
 
         {/* Text Content */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-          <h2 className="text-3xl font-bold mb-2">{currentImage.title}</h2>
-          <p className="text-lg opacity-90">{currentImage.subtitle}</p>
+        <div className="absolute inset-0 flex items-center justify-center text-center text-white">
+          <div className="max-w-2xl mx-auto px-4">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              {currentImage.title}
+            </h1>
+            <p className="text-xl md:text-2xl mb-8">{currentImage.subtitle}</p>
+          </div>
         </div>
       </div>
 

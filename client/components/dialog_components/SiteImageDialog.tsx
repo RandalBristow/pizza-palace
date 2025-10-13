@@ -2,21 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { RequiredFieldLabel } from "../ui/required-field-label";
 import { Alert, AlertDescription } from "../ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Save } from "lucide-react";
 
 export interface Image {
@@ -66,6 +55,31 @@ export default function SiteImageDialog({
 
   const isEdit = !!image;
 
+  const canSave = (() => {
+    if (isLoading) return false;
+    if (isEdit) {
+      return (
+        (newImage.name || "").trim().length > 0 &&
+        (newImage.altText || "").trim().length > 0
+      );
+    }
+    if (uploadType === "file") {
+      return (
+        !!selectedFile &&
+        (newImage.name || "").trim().length > 0 &&
+        (newImage.altText || "").trim().length > 0
+      );
+    }
+    if (uploadType === "url") {
+      return (
+        (newImage.url || "").trim().length > 0 &&
+        (newImage.name || "").trim().length > 0 &&
+        (newImage.altText || "").trim().length > 0
+      );
+    }
+    return false;
+  })();
+
   useEffect(() => {
     if (image) {
       setNewImage({
@@ -77,9 +91,10 @@ export default function SiteImageDialog({
     } else {
       resetForm();
     }
-  }, [image]);
+  }, [image, isOpen]);
 
   const handleSave = async () => {
+    if (!canSave) return;
     setError(null);
     setIsLoading(true);
 
@@ -114,7 +129,9 @@ export default function SiteImageDialog({
       onClose();
       resetForm();
     } catch (error) {
-      let errorMessage = isEdit ? "Failed to update image" : "Failed to create image";
+      let errorMessage = isEdit
+        ? "Failed to update image"
+        : "Failed to create image";
 
       if (error instanceof Error) {
         errorMessage = error.message;
@@ -158,13 +175,15 @@ export default function SiteImageDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
+      <DialogContent
         className="max-w-2xl"
-        style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}
+        style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}
       >
         <DialogHeader>
-          <DialogTitle style={{ color: 'var(--card-foreground)' }}>{isEdit ? "Edit Image" : "Add New Image"}</DialogTitle>
-          <DialogDescription style={{ color: 'var(--muted-foreground)' }}>
+          <DialogTitle style={{ color: "var(--card-foreground)" }}>
+            {isEdit ? "Edit Image" : "Add New Image"}
+          </DialogTitle>
+          <DialogDescription style={{ color: "var(--muted-foreground)" }}>
             {isEdit
               ? "Update the image details and settings"
               : "Upload a new image by URL or file upload"}
@@ -177,41 +196,61 @@ export default function SiteImageDialog({
             </Alert>
           )}
 
-          <div>
-            <Label htmlFor="uploadType" style={{ color: 'var(--foreground)' }}>Upload Method</Label>
-            <Select
-              value={uploadType}
-              onValueChange={(value: "file" | "url") =>
-                setUploadType(value || "file")
-              }
-            >
-              <SelectTrigger
-                style={{
-                  backgroundColor: 'var(--input)',
-                  borderColor: 'var(--border)',
-                  border: '1px solid var(--border)',
-                  color: 'var(--foreground)'
-                }}
-                onFocus={(e) => {
-                  const target = e.target as HTMLElement;
-                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
-                }}
-                onBlur={(e) => {
-                  const target = e.target as HTMLElement;
-                  target.style.boxShadow = 'none';
-                }}
+          {!isEdit && (
+            <div>
+              <RequiredFieldLabel
+                htmlFor="uploadType"
+                style={{ color: "var(--foreground)" }}
               >
-                <SelectValue placeholder="Select method" />
-              </SelectTrigger>
-              <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
-                <SelectItem value="file" style={{ color: 'var(--popover-foreground)' }}>Upload File</SelectItem>
-                <SelectItem value="url" style={{ color: 'var(--popover-foreground)' }}>From URL</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                Upload Method
+              </RequiredFieldLabel>
+              <Select
+                value={uploadType}
+                onValueChange={(value: "file" | "url") =>
+                  setUploadType(value || "file")
+                }
+              >
+                <SelectTrigger
+                  className="focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0 data-[state=open]:ring-2 data-[state=open]:ring-[var(--ring)] data-[state=open]:ring-offset-0"
+                  style={{
+                    backgroundColor: "var(--input)",
+                    borderColor: "var(--border)",
+                    border: "1px solid var(--border)",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  <SelectValue placeholder="Select method" />
+                </SelectTrigger>
+                <SelectContent
+                  style={{
+                    backgroundColor: "var(--popover)",
+                    borderColor: "var(--border)",
+                  }}
+                >
+                  <SelectItem
+                    value="file"
+                    style={{ color: "var(--popover-foreground)" }}
+                  >
+                    Upload File
+                  </SelectItem>
+                  <SelectItem
+                    value="url"
+                    style={{ color: "var(--popover-foreground)" }}
+                  >
+                    From URL
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div>
-            <Label htmlFor="imageName" style={{ color: 'var(--foreground)' }}>Name *</Label>
+            <RequiredFieldLabel
+              htmlFor="imageAltText"
+              style={{ color: "var(--foreground)" }}
+            >
+              Name
+            </RequiredFieldLabel>
             <Input
               id="imageName"
               placeholder={
@@ -223,29 +262,26 @@ export default function SiteImageDialog({
               onChange={(e) =>
                 setNewImage({ ...newImage, name: e.target.value || "" })
               }
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
               style={{
-                backgroundColor: 'var(--input)',
-                borderColor: 'var(--border)',
-                border: '1px solid var(--border)',
-                color: 'var(--foreground)',
-                outline: 'none'
-              }}
-              onFocus={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.boxShadow = `0 0 0 2px var(--ring)`;
-              }}
-              onBlur={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.boxShadow = 'none';
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
               }}
             />
           </div>
 
-          {uploadType === "file" ? (
+          {!isEdit && uploadType === "file" ? (
             <div>
-              <Label htmlFor="imageFile" style={{ color: 'var(--foreground)' }}>Image File *</Label>
+              <RequiredFieldLabel
+                htmlFor="imageAltText"
+                style={{ color: "var(--foreground)" }}
+              >
+                Image File
+              </RequiredFieldLabel>
               <Input
-                key={`file-input-${isEdit ? "edit" : "add"}-${isOpen ? "open" : "closed"}`}
+                key={`file-input-${isOpen ? "open" : "closed"}`}
                 id="imageFile"
                 type="file"
                 accept="image/*"
@@ -261,54 +297,50 @@ export default function SiteImageDialog({
                     }
                   }
                 }}
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
                 style={{
-                  backgroundColor: 'var(--input)',
-                  borderColor: 'var(--border)',
-                  border: '1px solid var(--border)',
-                  color: 'var(--foreground)',
-                  outline: 'none'
-                }}
-                onFocus={(e) => {
-                  const target = e.target as HTMLElement;
-                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
-                }}
-                onBlur={(e) => {
-                  const target = e.target as HTMLElement;
-                  target.style.boxShadow = 'none';
+                  backgroundColor: "var(--input)",
+                  borderColor: "var(--border)",
+                  border: "1px solid var(--border)",
+                  color: "var(--foreground)",
                 }}
               />
             </div>
           ) : (
-            <div>
-              <Label htmlFor="imageUrl" style={{ color: 'var(--foreground)' }}>Image URL *</Label>
-              <Input
-                id="imageUrl"
-                placeholder="https://example.com/image.jpg"
-                value={newImage.url || ""}
-                onChange={(e) =>
-                  setNewImage({ ...newImage, url: e.target.value || "" })
-                }
-                style={{
-                  backgroundColor: 'var(--input)',
-                  borderColor: 'var(--border)',
-                  border: '1px solid var(--border)',
-                  color: 'var(--foreground)',
-                  outline: 'none'
-                }}
-                onFocus={(e) => {
-                  const target = e.target as HTMLElement;
-                  target.style.boxShadow = `0 0 0 2px var(--ring)`;
-                }}
-                onBlur={(e) => {
-                  const target = e.target as HTMLElement;
-                  target.style.boxShadow = 'none';
-                }}
-              />
-            </div>
+            !isEdit && (
+              <div>
+                <RequiredFieldLabel
+                  htmlFor="imageAltText"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Image URL
+                </RequiredFieldLabel>
+                <Input
+                  id="imageUrl"
+                  placeholder="https://example.com/image.jpg"
+                  value={newImage.url || ""}
+                  onChange={(e) =>
+                    setNewImage({ ...newImage, url: e.target.value || "" })
+                  }
+                  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
+                  style={{
+                    backgroundColor: "var(--input)",
+                    borderColor: "var(--border)",
+                    border: "1px solid var(--border)",
+                    color: "var(--foreground)",
+                  }}
+                />
+              </div>
+            )
           )}
 
           <div>
-            <Label htmlFor="imageAltText" style={{ color: 'var(--foreground)' }}>Alt Text</Label>
+            <RequiredFieldLabel
+              htmlFor="imageAltText"
+              style={{ color: "var(--foreground)" }}
+            >
+              Alt Text
+            </RequiredFieldLabel>
             <Input
               id="imageAltText"
               placeholder="Description of the image"
@@ -316,28 +348,23 @@ export default function SiteImageDialog({
               onChange={(e) =>
                 setNewImage({ ...newImage, altText: e.target.value || "" })
               }
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
               style={{
-                backgroundColor: 'var(--input)',
-                borderColor: 'var(--border)',
-                border: '1px solid var(--border)',
-                color: 'var(--foreground)',
-                outline: 'none'
-              }}
-              onFocus={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.boxShadow = `0 0 0 2px var(--ring)`;
-              }}
-              onBlur={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.boxShadow = 'none';
+                backgroundColor: "var(--input)",
+                borderColor: "var(--border)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
               }}
             />
           </div>
 
           {(newImage.url || selectedFile) && (
             <div>
-              <Label style={{ color: 'var(--foreground)' }}>Preview</Label>
-              <div className="border rounded-lg p-2" style={{ borderColor: 'var(--border)' }}>
+              <Label style={{ color: "var(--foreground)" }}>Preview</Label>
+              <div
+                className="border rounded-lg p-2"
+                style={{ borderColor: "var(--border)" }}
+              >
                 <img
                   src={
                     newImage.url ||
@@ -359,50 +386,28 @@ export default function SiteImageDialog({
               variant="outline"
               onClick={handleCancel}
               disabled={isLoading}
+              className="border bg-[var(--card)] border-[var(--border)] text-[var(--muted-foreground)] transition-colors duration-200 hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0 focus-visible:ring-offset-[var(--card)]"
               style={{
-                backgroundColor: 'var(--card)',
-                borderColor: 'var(--border)',
-                color: 'var(--muted-foreground)',
-                cursor: isLoading ? 'not-allowed' : 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                if (!isLoading) {
-                  const target = e.target as HTMLElement;
-                  target.style.backgroundColor = 'var(--accent)';
-                  target.style.transform = 'scale(1.02)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.backgroundColor = 'var(--card)';
-                target.style.transform = 'scale(1)';
+                cursor: isLoading ? "not-allowed" : "pointer",
               }}
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
-              disabled={isLoading}
+              disabled={!canSave}
+              className="transition-all duration-200 hover:-translate-y-px hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
               style={{
-                backgroundColor: 'var(--primary)',
-                color: 'var(--primary-foreground)',
-                borderColor: 'var(--primary)',
-                cursor: isLoading ? 'not-allowed' : 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                if (!isLoading) {
-                  const target = e.target as HTMLElement;
-                  target.style.transform = 'translateY(-1px)';
-                  target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.transform = 'translateY(0)';
-                target.style.boxShadow = 'none';
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+                borderColor: "var(--primary)",
+                cursor: !canSave || isLoading ? "not-allowed" : "pointer",
               }}
             >
-              <Save className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
+              <Save
+                className="h-4 w-4 mr-2"
+                style={{ color: "var(--primary-foreground)" }}
+              />
               {isLoading ? "Saving..." : isEdit ? "Update Image" : "Save Image"}
             </Button>
           </div>

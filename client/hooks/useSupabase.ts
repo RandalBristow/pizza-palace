@@ -15,6 +15,10 @@ import type {
   DatabaseMenuSubCategory,
   DatabaseCategorySize,
   DatabaseCategorySizeSubCategory,
+  DatabaseCustomizerTemplate,
+  DatabaseCustomizerPanel,
+  DatabaseCustomizerPanelItem,
+  DatabaseCustomizerPanelItemConditional,
 } from "../lib/supabase";
 
 // transformCategory: TABLES.CATEGORIES
@@ -67,7 +71,7 @@ export const transformToppingCategory = (dbToppingCategory: DatabaseToppingCateg
   id: dbToppingCategory.id,
   name: dbToppingCategory.name,
   menuItemCategory: dbToppingCategory.menu_item_category_id,
-  order: dbToppingCategory.order,
+  order: dbToppingCategory.order_num,
   isActive: dbToppingCategory.is_active,
 });
 
@@ -140,12 +144,14 @@ export const transformCustomerFavorite = (dbCustomerFavorite: DatabaseCustomerFa
 });
 
 // transformSettings: TABLES.SETTINGS
-//   Fields: tax_rate, delivery_fee, business_hours
+//   Fields: tax_rate, delivery_fee, business_hours, theme, swappable_default_items, half_price_toppings
 export const transformSettings = (dbSettings: DatabaseSettings) => ({
   taxRate: dbSettings.tax_rate,
   deliveryFee: dbSettings.delivery_fee,
   businessHours: dbSettings.business_hours,
-  theme: dbSettings.theme || 'classic-pizza', // Add theme with default
+  theme: dbSettings.theme || 'classic-pizza',
+  swappableDefaultItems: dbSettings.swappable_default_items ?? true,
+  halfPriceToppings: dbSettings.half_price_toppings ?? true,
 });
 
 // transformAboutSection: TABLES.ABOUT_SECTIONS
@@ -180,6 +186,53 @@ export const transformToppingSizePrice = (dbToppingSizePrice: DatabaseToppingSiz
   toppingId: dbToppingSizePrice.topping_id,
   categorySizeId: dbToppingSizePrice.category_size_id,
   price: dbToppingSizePrice.price,
+});
+
+// transformCustomizerTemplate: TABLES.CUSTOMIZER_TEMPLATES
+//   Fields: id, sub_category_id, name, is_active
+export const transformCustomizerTemplate = (dbTemplate: DatabaseCustomizerTemplate) => ({
+  id: dbTemplate.id,
+  subCategoryId: dbTemplate.sub_category_id,
+  name: dbTemplate.name,
+  isActive: dbTemplate.is_active,
+});
+
+// transformCustomizerPanel: TABLES.CUSTOMIZER_PANELS
+//   Fields: id, customizer_template_id, panel_type, title, subtitle, message, display_order, is_active
+//   New Fields: show_placement_controls, show_amount_controls
+export const transformCustomizerPanel = (dbPanel: DatabaseCustomizerPanel) => ({
+  id: dbPanel.id,
+  customizerTemplateId: dbPanel.customizer_template_id,
+  panelType: dbPanel.panel_type,
+  title: dbPanel.title,
+  subtitle: dbPanel.subtitle,
+  message: dbPanel.message,
+  displayOrder: dbPanel.display_order,
+  isActive: dbPanel.is_active,
+  showPlacementControls: (dbPanel as any).show_placement_controls ?? true,
+});
+
+// transformCustomizerPanelItem: TABLES.CUSTOMIZER_PANEL_ITEMS
+//   Fields: id, customizer_panel_id, item_type, item_id, custom_name, custom_price, display_order, is_active
+export const transformCustomizerPanelItem = (dbItem: DatabaseCustomizerPanelItem) => ({
+  id: dbItem.id,
+  customizerPanelId: dbItem.customizer_panel_id,
+  itemType: dbItem.item_type,
+  itemId: dbItem.item_id,
+  customName: dbItem.custom_name,
+  customPrice: dbItem.custom_price,
+  displayOrder: dbItem.display_order,
+  isActive: dbItem.is_active,
+});
+
+// transformCustomizerPanelItemConditional: TABLES.CUSTOMIZER_PANEL_ITEM_CONDITIONALS
+//   Fields: id, customizer_panel_id, parent_panel_item_id, child_panel_item_id, is_visible
+export const transformCustomizerPanelItemConditional = (dbConditional: DatabaseCustomizerPanelItemConditional) => ({
+  id: dbConditional.id,
+  customizerPanelId: dbConditional.customizer_panel_id,
+  parentPanelItemId: dbConditional.parent_panel_item_id,
+  childPanelItemId: dbConditional.child_panel_item_id,
+  isVisible: dbConditional.is_visible,
 });
 
 // Custom hooks for each data type
@@ -1276,7 +1329,9 @@ export const useSettings = () => {
         const defaultSettings = {
           tax_rate: 8.5,
           delivery_fee: 2.99,
-          theme: 'classic-pizza', // Add default theme
+          theme: 'classic-pizza',
+          swappable_default_items: true,
+          half_price_toppings: true,
           business_hours: {
             monday: { open: "09:00", close: "22:00", closed: false },
             tuesday: { open: "09:00", close: "22:00", closed: false },
@@ -1321,6 +1376,8 @@ export const useSettings = () => {
         delivery_fee: updates.deliveryFee,
         business_hours: updates.businessHours,
         theme: updates.theme,
+        swappable_default_items: updates.swappableDefaultItems ?? true,
+        half_price_toppings: updates.halfPriceToppings ?? true,
         updated_at: new Date().toISOString(),
       };
 
@@ -2339,21 +2396,14 @@ export const useToppingSizePrices = () => {
     sizePrices: { categorySizeId: string; price: number }[],
   ) => {
     try {
-      console.log(
-        "Updating topping size prices for topping:",
-        toppingId,
-        "with prices:",
-        sizePrices,
-      );
 
-      // First, delete existing prices for this topping
+      // Delete existing rows for this topping
       const { error: deleteError } = await supabase
         .from(TABLES.TOPPING_SIZE_PRICES)
         .delete()
         .eq("topping_id", toppingId);
 
       if (deleteError) {
-        // Check if table doesn't exist
         if (
           deleteError.code === "42P01" ||
           deleteError.message?.includes("does not exist")
@@ -2362,28 +2412,25 @@ export const useToppingSizePrices = () => {
             "The topping_size_prices table does not exist. Please run the database migration script first.",
           );
         }
-        console.error("Delete error:", deleteError);
         throw new Error(
           `Failed to delete existing prices: ${deleteError.message || deleteError.details || deleteError.hint || "Unknown error"}`,
         );
       }
 
-      // Then, insert new prices
-      if (sizePrices.length > 0) {
-        const insertData = sizePrices.map((sizePrice) => ({
-          topping_id: toppingId,
-          category_size_id: sizePrice.categorySizeId,
-          price: sizePrice.price,
-        }));
+      // Prepare new rows
+      const insertData = sizePrices.map((sizePrice) => ({
+        topping_id: toppingId,
+        category_size_id: sizePrice.categorySizeId,
+        price: sizePrice.price,
+      }));
 
-        console.log("Inserting topping size prices:", insertData);
-
+      // Only insert when we actually have rows
+      if (insertData.length > 0) {
         const { error: insertError } = await supabase
           .from(TABLES.TOPPING_SIZE_PRICES)
           .insert(insertData);
 
         if (insertError) {
-          // Check if table doesn't exist
           if (
             insertError.code === "42P01" ||
             insertError.message?.includes("does not exist")
@@ -2392,7 +2439,6 @@ export const useToppingSizePrices = () => {
               "The topping_size_prices table does not exist. Please run the database migration script first.",
             );
           }
-          console.error("Insert error:", insertError);
           throw new Error(
             `Failed to insert new prices: ${insertError.message || insertError.details || insertError.hint || "Unknown error"}`,
           );
@@ -2402,6 +2448,7 @@ export const useToppingSizePrices = () => {
       // Refresh the data
       await fetchToppingSizePrices();
     } catch (err) {
+      console.error("updateToppingSizePrices error", err);
       const errorMessage =
         err instanceof Error
           ? err.message
@@ -2442,5 +2489,392 @@ export const useToppingSizePrices = () => {
     getToppingSizePrices,
     getToppingPriceForSize,
     refetch: fetchToppingSizePrices,
+  };
+};
+
+// Customizer Templates Hook
+export const useCustomizerTemplates = () => {
+  const [customizerTemplates, setCustomizerTemplates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCustomizerTemplates = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CUSTOMIZER_TEMPLATES)
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+      setCustomizerTemplates(data ? data.map(transformCustomizerTemplate) : []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch customizer templates");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const createCustomizerTemplate = async (template: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CUSTOMIZER_TEMPLATES)
+        .insert({
+          sub_category_id: template.subCategoryId,
+          name: template.name,
+          is_active: template.isActive ?? true,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchCustomizerTemplates();
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create customizer template");
+      throw err;
+    }
+  };
+
+  const updateCustomizerTemplate = async (id: string, template: any) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CUSTOMIZER_TEMPLATES)
+        .update({
+          sub_category_id: template.subCategoryId,
+          name: template.name,
+          is_active: template.isActive,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      await fetchCustomizerTemplates();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update customizer template");
+      throw err;
+    }
+  };
+
+  const deleteCustomizerTemplate = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CUSTOMIZER_TEMPLATES)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      await fetchCustomizerTemplates();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete customizer template");
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomizerTemplates();
+  }, []);
+
+  return {
+    customizerTemplates,
+    loading,
+    error,
+    createCustomizerTemplate,
+    updateCustomizerTemplate,
+    deleteCustomizerTemplate,
+    refetch: fetchCustomizerTemplates,
+  };
+};
+
+// Customizer Panels Hook
+export const useCustomizerPanels = () => {
+  const [customizerPanels, setCustomizerPanels] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCustomizerPanels = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANELS)
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      setCustomizerPanels(data ? data.map(transformCustomizerPanel) : []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch customizer panels");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const createCustomizerPanel = async (panel: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANELS)
+        .insert({
+          customizer_template_id: panel.customizerTemplateId,
+          panel_type: panel.panelType,
+          title: panel.title,
+          subtitle: panel.subtitle,
+          message: panel.message,
+          display_order: panel.displayOrder,
+          is_active: panel.isActive ?? true,
+          show_placement_controls: panel.showPlacementControls ?? true,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchCustomizerPanels();
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create customizer panel");
+      throw err;
+    }
+  };
+
+  const updateCustomizerPanel = async (id: string, panel: any) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANELS)
+        .update({
+          customizer_template_id: panel.customizerTemplateId,
+          panel_type: panel.panelType,
+          title: panel.title,
+          subtitle: panel.subtitle,
+          message: panel.message,
+          display_order: panel.displayOrder,
+          is_active: panel.isActive,
+          show_placement_controls: panel.showPlacementControls ?? true,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      await fetchCustomizerPanels();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update customizer panel");
+      throw err;
+    }
+  };
+
+  const deleteCustomizerPanel = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANELS)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      await fetchCustomizerPanels();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete customizer panel");
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomizerPanels();
+  }, []);
+
+  return {
+    customizerPanels,
+    loading,
+    error,
+    createCustomizerPanel,
+    updateCustomizerPanel,
+    deleteCustomizerPanel,
+    refetch: fetchCustomizerPanels,
+  };
+};
+
+// Customizer Panel Items Hook
+export const useCustomizerPanelItems = () => {
+  const [customizerPanelItems, setCustomizerPanelItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCustomizerPanelItems = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANEL_ITEMS)
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      setCustomizerPanelItems(data ? data.map(transformCustomizerPanelItem) : []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch customizer panel items");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const createCustomizerPanelItem = async (item: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANEL_ITEMS)
+        .insert({
+          customizer_panel_id: item.customizerPanelId,
+          item_type: item.itemType,
+          item_id: item.itemId,
+          custom_name: item.customName,
+          custom_price: item.customPrice,
+          display_order: item.displayOrder,
+          is_active: item.isActive ?? true,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchCustomizerPanelItems();
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create customizer panel item");
+      throw err;
+    }
+  };
+
+  const updateCustomizerPanelItem = async (id: string, item: any) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANEL_ITEMS)
+        .update({
+          customizer_panel_id: item.customizerPanelId,
+          item_type: item.itemType,
+          item_id: item.itemId,
+          custom_name: item.customName,
+          custom_price: item.customPrice,
+          display_order: item.displayOrder,
+          is_active: item.isActive,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      await fetchCustomizerPanelItems();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update customizer panel item");
+      throw err;
+    }
+  };
+
+  const deleteCustomizerPanelItem = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANEL_ITEMS)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      await fetchCustomizerPanelItems();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete customizer panel item");
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomizerPanelItems();
+  }, []);
+
+  return {
+    customizerPanelItems,
+    loading,
+    error,
+    createCustomizerPanelItem,
+    updateCustomizerPanelItem,
+    deleteCustomizerPanelItem,
+    refetch: fetchCustomizerPanelItems,
+  };
+};
+
+// Customizer Panel Item Conditionals Hook
+export const useCustomizerPanelItemConditionals = () => {
+  const [customizerPanelItemConditionals, setCustomizerPanelItemConditionals] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCustomizerPanelItemConditionals = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANEL_ITEM_CONDITIONALS)
+        .select("*");
+
+      if (error) throw error;
+      setCustomizerPanelItemConditionals(data ? data.map(transformCustomizerPanelItemConditional) : []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch customizer panel item conditionals");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const createCustomizerPanelItemConditional = async (conditional: any) => {
+    try {
+      const { data, error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANEL_ITEM_CONDITIONALS)
+        .insert({
+          customizer_panel_id: conditional.customizerPanelId,
+          parent_panel_item_id: conditional.parentPanelItemId,
+          child_panel_item_id: conditional.childPanelItemId,
+          is_visible: conditional.isVisible,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      await fetchCustomizerPanelItemConditionals();
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create customizer panel item conditional");
+      throw err;
+    }
+  };
+
+  const updateCustomizerPanelItemConditional = async (id: string, conditional: any) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANEL_ITEM_CONDITIONALS)
+        .update({
+          customizer_panel_id: conditional.customizerPanelId,
+          parent_panel_item_id: conditional.parentPanelItemId,
+          child_panel_item_id: conditional.childPanelItemId,
+          is_visible: conditional.isVisible,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      await fetchCustomizerPanelItemConditionals();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update customizer panel item conditional");
+      throw err;
+    }
+  };
+
+  const deleteCustomizerPanelItemConditional = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from(TABLES.CUSTOMIZER_PANEL_ITEM_CONDITIONALS)
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      await fetchCustomizerPanelItemConditionals();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete customizer panel item conditional");
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomizerPanelItemConditionals();
+  }, []);
+
+  return {
+    customizerPanelItemConditionals,
+    loading,
+    error,
+    createCustomizerPanelItemConditional,
+    updateCustomizerPanelItemConditional,
+    deleteCustomizerPanelItemConditional,
+    refetch: fetchCustomizerPanelItemConditionals,
   };
 };

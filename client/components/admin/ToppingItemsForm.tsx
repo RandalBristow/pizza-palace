@@ -1,22 +1,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
+import ActivationButton from "../shared_components/ActivationButton";
+import EditButton from "../shared_components/EditButton";
+import DeleteButton from "../shared_components/DeleteButton";
+import PriceListCard from "../shared_components/PriceListCard";
 import ToppingItemDialog from "../dialog_components/ToppingItemDialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Plus, Edit, Trash2, ThumbsUp, ThumbsDown } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Plus } from "lucide-react";
 import { Category } from "./MenuCategoriesForm";
 import { ToppingCategory } from "./ToppingCategoriesForm";
 
@@ -77,6 +67,7 @@ export default function ToppingItemForm({
 }: ToppingItemFormProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTopping, setEditingTopping] = useState<Topping | null>(null);
+  // Using shared DeleteButton's internal confirm dialog; no local confirm state needed
 
   const handleSave = async (toppingData: any, sizePrices: Record<string, number>) => {
     try {
@@ -95,9 +86,8 @@ export default function ToppingItemForm({
         ([categorySizeId, price]) => ({ categorySizeId, price: price || 0 }),
       );
 
-      if (sizePriceEntries.length > 0) {
-        await updateToppingSizePrices(toppingId, sizePriceEntries);
-      }
+      // Always call to ensure existing rows are cleared when list is empty
+      await updateToppingSizePrices(toppingId, sizePriceEntries);
 
       setEditingTopping(null);
     } catch (error) {
@@ -207,21 +197,11 @@ export default function ToppingItemForm({
           {!hideAddButton && (
             <Button 
               onClick={() => setIsDialogOpen(true)}
+              className="transition-all duration-200 hover:-translate-y-px hover:shadow-md"
               style={{
                 backgroundColor: 'var(--primary)',
                 color: 'var(--primary-foreground)',
-                borderColor: 'var(--primary)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.transform = 'translateY(-1px)';
-                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
-              }}
-              onMouseLeave={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.transform = 'translateY(0)';
-                target.style.boxShadow = 'none';
+                borderColor: 'var(--primary)'
               }}
             >
               <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
@@ -232,181 +212,86 @@ export default function ToppingItemForm({
       </div>
 
       {/* Toppings List */}
-      <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
-        {filteredToppings.map((topping) => {
-          const toppingSizes = getToppingSizePrices(topping.id);
-          const menuCategory = categories.find(
-            (c) => c.id === topping.menuItemCategory,
-          );
-          const toppingCategory = toppingCategories.find(
-            (tc) => tc.id === topping.category,
-          );
+      {filteredToppings.length === 0 ? (
+        <div className="text-center py-8">
+          <p style={{ color: 'var(--muted-foreground)' }}>No toppings found for the selected category.</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {categories.map((menuCategory) => {
+            const menuCategoryToppings = filteredToppings.filter(
+              (topping) => topping.menuItemCategory === menuCategory.id,
+            );
+            if (menuCategoryToppings.length === 0) return null;
 
-          return (
-            <Card key={topping.id} style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}>
-              <CardContent className="p-4 flex flex-col h-full">
-                <div className="flex justify-between items-start mb-2">
-                  <h6 className="font-medium" style={{ color: 'var(--muted-foreground)' }}>{topping.name}</h6>
-                  <Badge
-                    className={
-                      topping.isActive
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }
-                    style={{
-                      backgroundColor: topping.isActive ? '#bbf7d0' : '#fecaca',
-                      color: topping.isActive ? '#14532d' : '#991b1b',
-                      border: '1px solid var(--border)'
-                    }}
-                  >
-                    {topping.isActive ? "Active" : "Inactive"}
-                  </Badge>
-                </div>
+            // Group by topping category within this menu category
+            const toppingCategoryGroups = toppingCategories.reduce((acc, toppingCategory) => {
+              const categoryToppings = menuCategoryToppings.filter(
+                (topping) => topping.category === toppingCategory.id,
+              );
+              if (categoryToppings.length > 0) {
+                acc.push({
+                  toppingCategory,
+                  toppings: categoryToppings,
+                });
+              }
+              return acc;
+            }, [] as { toppingCategory: ToppingCategory; toppings: Topping[] }[]);
 
-                <div className="text-xs mb-3" style={{ color: 'var(--muted-foreground)' }}>
-                  <p>
-                    <strong style={{ color: 'var(--muted-foreground)' }}>Menu:</strong> {menuCategory?.name || "Unknown"}
-                  </p>
-                  <p>
-                    <strong style={{ color: 'var(--muted-foreground)' }}>Category: </strong>
-                    {toppingCategory?.name || "Unknown"}
-                  </p>
-                </div>
-                {/* Size Prices */}
-                {toppingSizes.length > 0 && (
-                  <div className="mb-3">
-                    <p className="text-xs mb-1" style={{ color: 'var(--muted-foreground)' }}>Size Prices:</p>
-                    <div className="space-y-1">
-                      {toppingSizes.map((ts) => {
-                        const size = categorySizes.find(
-                          (cs) => cs.id === ts.categorySizeId,
+            if (toppingCategoryGroups.length === 0) return null;
+
+            return (
+              <div key={menuCategory.id} className="space-y-4">
+                {toppingCategoryGroups.map(({ toppingCategory, toppings: categoryToppings }) => (
+                  <div key={`${menuCategory.id}-${toppingCategory.id}`} className="rounded-lg p-4" style={{ border: '1px solid var(--border)' }}>
+                    <h4 className="font-semibold text-lg mb-3 flex items-center" style={{ color: 'var(--card-foreground)' }}>
+                      {menuCategory.name}: {toppingCategory.name}
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                      {categoryToppings.map((topping) => {
+                        const toppingSizes = getToppingSizePrices(topping.id);
+                        const priceList = toppingSizes
+                          .map((ts) => {
+                            const size = categorySizes.find((cs) => cs.id === ts.categorySizeId);
+                            if (!size) return null;
+                            return { label: size.sizeName, value: ts.price };
+                          })
+                          .filter(Boolean) as { label: string; value: number }[];
+
+                        return (
+                          <PriceListCard
+                            key={topping.id}
+                            title={topping.name}
+                            isActive={topping.isActive}
+                            priceList={priceList}
+                            rightActions={
+                              <>
+                                <ActivationButton
+                                  isActive={topping.isActive}
+                                  onToggle={() => toggleToppingStatus(topping.id)}
+                                  activeTooltip="Deactivate"
+                                  inactiveTooltip="Activate"
+                                />
+                                <EditButton
+                                  label="Edit Topping"
+                                  onClick={() => handleEditTopping(topping)}
+                                />
+                                <DeleteButton
+                                  entityTitle="Topping"
+                                  subjectName={topping.name}
+                                  onConfirm={() => handleDeleteTopping(topping.id)}
+                                />
+                              </>
+                            }
+                          />
                         );
-                        return size ? (
-                          <div
-                            key={ts.id}
-                            className="flex justify-between text-xs"
-                            style={{ color: 'var(--muted-foreground)' }}
-                          >
-                            <span>{size.sizeName}:</span>
-                            <span>${ts.price.toFixed(2)}</span>
-                          </div>
-                        ) : null;
                       })}
                     </div>
                   </div>
-                )}
-
-                <div className="flex justify-end items-center mt-auto">
-                  <div className="flex space-x-1">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toggleToppingStatus(topping.id)}
-                            style={{
-                              backgroundColor: 'var(--card)',
-                              borderColor: 'var(--border)',
-                              color: 'var(--muted-foreground)',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => {
-                              const target = e.target as HTMLElement;
-                              target.style.backgroundColor = 'var(--accent)';
-                              target.style.transform = 'scale(1.05)';
-                            }}
-                            onMouseLeave={(e) => {
-                              const target = e.target as HTMLElement;
-                              target.style.backgroundColor = 'var(--card)';
-                              target.style.transform = 'scale(1)';
-                            }}
-                          >
-                            {topping.isActive ? (
-                              <ThumbsUp className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
-                            ) : (
-                              <ThumbsDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>
-                          {topping.isActive ? "Deactivate" : "Activate"}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditTopping(topping)}
-                            style={{
-                              backgroundColor: 'var(--card)',
-                              borderColor: 'var(--border)',
-                              color: 'var(--muted-foreground)',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => {
-                              const target = e.target as HTMLElement;
-                              target.style.backgroundColor = 'var(--accent)';
-                              target.style.transform = 'scale(1.05)';
-                            }}
-                            onMouseLeave={(e) => {
-                              const target = e.target as HTMLElement;
-                              target.style.backgroundColor = 'var(--card)';
-                              target.style.transform = 'scale(1)';
-                            }}
-                          >
-                            <Edit className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Edit Topping</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteTopping(topping.id)}
-                            style={{
-                              backgroundColor: 'var(--card)',
-                              borderColor: 'var(--border)',
-                              color: 'var(--muted-foreground)',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => {
-                              const target = e.target as HTMLElement;
-                              target.style.backgroundColor = 'var(--accent)';
-                              target.style.transform = 'scale(1.05)';
-                            }}
-                            onMouseLeave={(e) => {
-                              const target = e.target as HTMLElement;
-                              target.style.backgroundColor = 'var(--card)';
-                              target.style.transform = 'scale(1)';
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" style={{ color: 'var(--muted-foreground)' }} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent style={{ backgroundColor: 'var(--popover)', color: 'var(--popover-foreground)' }}>Delete Topping</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {filteredToppings.length === 0 && (
-        <div className="text-center py-12">
-          <p style={{ color: 'var(--muted-foreground)' }}>
-            No toppings found for the selected category.
-          </p>
+                ))}
+              </div>
+            );
+          })}
         </div>
       )}
 

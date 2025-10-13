@@ -2,21 +2,10 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { RequiredFieldLabel } from "./ui/required-field-label";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { MapPin, Car, Truck, X } from "lucide-react";
 
 interface DeliveryDetails {
@@ -88,13 +77,13 @@ export default function DeliverySelection({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[var(--card)] border-[var(--border)]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-gray-800">
+          <DialogTitle className="text-xl font-bold text-[var(--card-foreground)]">
             ORDER DETAILS
           </DialogTitle>
-          <DialogDescription className="text-gray-600">
+          <DialogDescription className="text-[var(--muted-foreground)]">
             How do you want your Pronto's today?
           </DialogDescription>
         </DialogHeader>
@@ -104,53 +93,38 @@ export default function DeliverySelection({
           <div className="space-y-4">
             {/* Carryout Option */}
             <Card
-              className={`cursor-pointer transition-all border-2 ${
-                selectedMethod === "carryout"
-                  ? "border-blue-500 bg-blue-500 text-white"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`cursor-pointer transition-all border-2 ${selectedMethod === 'carryout' ? 'border-[var(--primary)] bg-[var(--primary)]/10' : 'border-[var(--border)] hover:border-[var(--primary)]'}`}
               onClick={() => setSelectedMethod("carryout")}
             >
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center space-x-3">
-                  <Car className="h-6 w-6" />
+                  <Car className="h-6 w-6 text-[var(--primary)]" />
                   <div>
-                    <div className="text-lg font-bold">STORE PICKUP</div>
-                    <div
-                      className={`text-sm ${
-                        selectedMethod === "carryout"
-                          ? "text-blue-100"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      Order will be waiting for you in the store.
+                    <div className="text-lg font-bold text-[var(--card-foreground)]">STORE PICKUP</div>
+                    <div className={`text-sm text-[var(--muted-foreground)]`}>
+                      • Order will be waiting for you in the store.
                     </div>
                   </div>
                 </CardTitle>
               </CardHeader>
             </Card>
 
-            <div className="text-center text-gray-500 font-medium">OR</div>
+            <div className="text-center text-[var(--muted-foreground)] font-medium">OR</div>
 
             {/* Delivery Option */}
             <Card
-              className={`cursor-pointer transition-all border-2 ${
-                selectedMethod === "delivery"
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`cursor-pointer transition-all border-2 ${selectedMethod === 'delivery' ? 'border-[var(--primary)] bg-[var(--primary)]/10' : 'border-[var(--border)] hover:border-[var(--primary)]'}`}
               onClick={() => setSelectedMethod("delivery")}
             >
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center space-x-3">
-                  <Truck className="h-6 w-6 text-blue-600" />
+                  <Truck className="h-6 w-6 text-[var(--primary)]" />
                   <div>
-                    <div className="text-lg font-bold text-gray-800">
+                    <div className="text-lg font-bold text-[var(--card-foreground)]">
                       ORDER DELIVERY
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-[var(--muted-foreground)]">
                       • Traditional Delivery
-                      <br />• Pronto's Hotspots*
                     </div>
                   </div>
                 </CardTitle>
@@ -160,20 +134,17 @@ export default function DeliverySelection({
 
           {/* Store Information */}
           {selectedMethod === "carryout" && (
-            <Card className="bg-gray-50">
+            <Card className="bg-[var(--muted)]">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-gray-800">
+                <CardTitle className="flex items-center space-x-2 text-[var(--card-foreground)]">
                   <MapPin className="h-5 w-5" />
                   <span>STORE</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-1">
-                  <div className="font-semibold">914 Ashland Rd</div>
-                  <div className="text-gray-600">Mansfield OH 44905</div>
-                  <Button variant="link" className="p-0 h-auto text-blue-600">
-                    Change Store
-                  </Button>
+                  <div className="font-semibold text-[var(--card-foreground)]">914 Ashland Rd</div>
+                  <div className="text-[var(--muted-foreground)]">Mansfield OH 44905</div>
                 </div>
               </CardContent>
             </Card>
@@ -181,15 +152,17 @@ export default function DeliverySelection({
 
           {/* Delivery Address Form */}
           {selectedMethod === "delivery" && (
-            <Card>
+            <Card className="border-[var(--border)]">
               <CardHeader>
-                <CardTitle className="text-gray-800">
+                <CardTitle className="text-[var(--card-foreground)]">
                   Delivery Address
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="addressType">Address Type</Label>
+                    <RequiredFieldLabel htmlFor="addressType" className="text-[var(--card-foreground)]">
+                      Address Type
+                    </RequiredFieldLabel>
                   <Select
                     value={deliveryAddress.addressType}
                     onValueChange={(value) =>
@@ -210,62 +183,49 @@ export default function DeliverySelection({
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div>
-                  <Label htmlFor="street" className="text-red-600">
-                    * Street Address:
-                  </Label>
-                  <Input
-                    id="street"
-                    value={deliveryAddress.street}
-                    onChange={(e) =>
-                      setDeliveryAddress({
-                        ...deliveryAddress,
-                        street: e.target.value,
-                      })
-                    }
-                    placeholder="Enter street address"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="unit">Unit #:</Label>
-                  <Input
-                    id="unit"
-                    value={deliveryAddress.unit}
-                    onChange={(e) =>
-                      setDeliveryAddress({
-                        ...deliveryAddress,
-                        unit: e.target.value,
-                      })
-                    }
-                    placeholder="Apt, Suite, etc."
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-[60%_auto] gap-4">
                   <div>
-                    <Label htmlFor="zipCode" className="text-red-600">
-                      * ZIP Code:
-                    </Label>
+                    <RequiredFieldLabel htmlFor="street" className="text-[var(--card-foreground)]">
+                      Street Address
+                    </RequiredFieldLabel>
                     <Input
-                      id="zipCode"
-                      value={deliveryAddress.zipCode}
+                      id="street"
+                      value={deliveryAddress.street}
                       onChange={(e) =>
                         setDeliveryAddress({
                           ...deliveryAddress,
-                          zipCode: e.target.value,
+                          street: e.target.value,
                         })
                       }
-                      placeholder="44905"
+                      placeholder="Enter street address"
                       required
+                      className="bg-[var(--input)] border-[var(--border)] text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
                     />
                   </div>
+
                   <div>
-                    <Label htmlFor="city" className="text-red-600">
-                      * City:
+                    <Label htmlFor="unit" className="text-[var(--card-foreground)]">
+                      Address Unit
                     </Label>
+                    <Input
+                      id="unit"
+                      value={deliveryAddress.unit}
+                      onChange={(e) =>
+                        setDeliveryAddress({
+                          ...deliveryAddress,
+                          unit: e.target.value,
+                        })
+                      }
+                      placeholder="Apt, Suite, etc."
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[60%_auto] gap-4">
+                  <div>
+                    <RequiredFieldLabel htmlFor="city" className="text-[var(--card-foreground)]">
+                      City
+                    </RequiredFieldLabel>
                     <Input
                       id="city"
                       value={deliveryAddress.city}
@@ -278,32 +238,25 @@ export default function DeliverySelection({
                       required
                     />
                   </div>
-                </div>
 
-                <div>
-                  <Label htmlFor="state" className="text-red-600">
-                    * State:
-                  </Label>
-                  <Select
-                    value={deliveryAddress.state}
-                    onValueChange={(value) =>
-                      setDeliveryAddress({ ...deliveryAddress, state: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="OH">OH</SelectItem>
-                      <SelectItem value="PA">PA</SelectItem>
-                      <SelectItem value="WV">WV</SelectItem>
-                      <SelectItem value="KY">KY</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="text-sm text-gray-500">
-                  * Indicates required field.
+                  <div>
+                    <RequiredFieldLabel htmlFor="zipCode" className="text-[var(--card-foreground)]">
+                      ZIP Code
+                    </RequiredFieldLabel>
+                    <Input
+                      id="zipCode"
+                      value={deliveryAddress.zipCode}
+                      onChange={(e) =>
+                        setDeliveryAddress({
+                          ...deliveryAddress,
+                          zipCode: e.target.value,
+                        })
+                      }
+                      placeholder="44905"
+                      required
+                      className="bg-[var(--input)] border-[var(--border)] text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -314,21 +267,13 @@ export default function DeliverySelection({
             <Button
               onClick={handleContinue}
               disabled={!isFormValid()}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 text-lg"
+              className="bg-[var(--primary)] text-[var(--primary-foreground)] border border-[var(--primary)] transition-colors duration-200 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-50 font-bold py-3 px-8 text-lg"
             >
               {selectedMethod === "delivery"
                 ? "CONTINUE FOR DELIVERY"
                 : "CONTINUE"}
             </Button>
           </div>
-
-          {selectedMethod === "delivery" && (
-            <div className="text-center">
-              <Button variant="link" className="text-blue-600">
-                Find Nearby Pronto's Hotspots*
-              </Button>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>

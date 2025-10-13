@@ -2,21 +2,9 @@ import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Save } from "lucide-react";
+import { RequiredFieldLabel } from "../ui/required-field-label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Category } from "../admin/MenuCategoriesForm";
 
 export interface ToppingCategory {
@@ -69,6 +57,12 @@ export default function ToppingCategoryDialog({
     }
   }, [toppingCategory]);
 
+  // Validation: require name, menuItemCategory, and order > 0
+  const hasName = (formData.name || "").trim().length > 0;
+  const hasCategory = (formData.menuItemCategory || "").trim().length > 0;
+  const orderValid = Number.isFinite(Number(formData.order)) && Number(formData.order) > 0;
+  const canSave = hasName && hasCategory && orderValid;
+
   const handleSave = async () => {
     try {
       await onSave(formData);
@@ -76,16 +70,6 @@ export default function ToppingCategoryDialog({
     } catch (error) {
       console.error("Failed to save topping category:", error);
     }
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      name: "",
-      order: 1,
-      isActive: true,
-      menuItemCategory: "",
-    });
-    onClose();
   };
 
   return (
@@ -107,14 +91,14 @@ export default function ToppingCategoryDialog({
         </DialogHeader>
         <form onSubmit={handleSave} className="space-y-4">
           <div>
-            <Label
-              htmlFor="name"
-              style={{ color: "var(--muted-foreground)" }}
+            <RequiredFieldLabel
+              htmlFor="categoryName"
+              style={{ color: "var(--foreground)" }}
             >
               Category Name
-            </Label>
+            </RequiredFieldLabel>
             <Input
-              id="name"
+              id="categoryName"
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
@@ -137,17 +121,19 @@ export default function ToppingCategoryDialog({
           </div>
 
           <div>
-            <Label
+            <RequiredFieldLabel
               htmlFor="menuItemCategory"
-              style={{ color: "var(--muted-foreground)" }}
+              style={{ color: "var(--foreground)" }}
             >
               Menu Category
-            </Label>
+            </RequiredFieldLabel>
             <Select
               value={formData.menuItemCategory}
+              disabled={!hasName}
               onValueChange={(value) =>
                 setFormData({ ...formData, menuItemCategory: value })
               }
+              required
             >
               <SelectTrigger
                 style={{
@@ -197,11 +183,13 @@ export default function ToppingCategoryDialog({
             <Input
               id="order"
               type="number"
-              min="0"
+              min="1"
               value={formData.order}
+              disabled={!hasName}
               onChange={(e) =>
-                setFormData({ ...formData, order: parseInt(e.target.value) || 0 })
+                setFormData({ ...formData, order: parseInt(e.target.value) || 1 })
               }
+              required
               style={{
                 backgroundColor: "var(--input)",
                 borderColor: "var(--border)",
@@ -223,23 +211,38 @@ export default function ToppingCategoryDialog({
               type="button"
               variant="outline"
               onClick={onClose}
-              style={{
-                backgroundColor: "var(--card)",
-                borderColor: "var(--border)",
-                color: "var(--muted-foreground)",
+              className="bg-[var(--card)] border-[var(--border)] text-[var(--muted-foreground)]"
+              style={{ transition: 'all 0.2s ease' }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--accent)';
+                target.style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.backgroundColor = 'var(--card)';
+                target.style.transform = 'scale(1)';
               }}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              style={{
-                backgroundColor: "var(--primary)",
-                color: "var(--primary-foreground)",
-                borderColor: "var(--primary)",
+              className="bg-[var(--primary)] text-[var(--primary-foreground)] border-[var(--primary)]"
+              disabled={!canSave}
+              style={{ transition: 'all 0.2s ease' }}
+              onMouseEnter={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(-1px)';
+                target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.transform = 'translateY(0)';
+                target.style.boxShadow = 'none';
               }}
             >
-              {toppingCategory ? "Update" : "Create"} Category
+              {toppingCategory ? "Update" : "Create"} Topping Category
             </Button>
           </div>
         </form>

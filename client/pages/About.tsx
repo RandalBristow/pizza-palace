@@ -15,12 +15,12 @@ export default function About() {
         return (
           <div className={baseClasses}>
             {section.title && (
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
                 {section.title}
               </h2>
             )}
             {section.content && (
-              <div className="text-gray-600 whitespace-pre-wrap leading-relaxed">
+              <div className="whitespace-pre-wrap leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                 {section.content}
               </div>
             )}
@@ -32,7 +32,7 @@ export default function About() {
         return (
           <div className={baseClasses}>
             {section.title && (
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
                 {section.title}
               </h2>
             )}
@@ -62,7 +62,7 @@ export default function About() {
         return (
           <div className={baseClasses}>
             {section.title && (
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
                 {section.title}
               </h2>
             )}
@@ -82,7 +82,7 @@ export default function About() {
                   )}
                   <div>
                     {section.content && (
-                      <div className="text-gray-600 whitespace-pre-wrap leading-relaxed">
+                      <div className="whitespace-pre-wrap leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                         {section.content}
                       </div>
                     )}
@@ -93,7 +93,7 @@ export default function About() {
                 <>
                   <div>
                     {section.content && (
-                      <div className="text-gray-600 whitespace-pre-wrap leading-relaxed">
+                      <div className="whitespace-pre-wrap leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                         {section.content}
                       </div>
                     )}

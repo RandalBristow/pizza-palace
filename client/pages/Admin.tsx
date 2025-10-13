@@ -21,8 +21,11 @@ import {
   useMenuItemSizes,
   useMenuItemSizeToppings,
   useToppingSizePrices,
+  useCustomizerTemplates,
+  useCustomizerPanels,
+  useCustomizerPanelItems,
+  useCustomizerPanelItemConditionals,
 } from "../hooks/useSupabase";
-import { ThemeProvider } from "../contexts/ThemeContext";
 
 // Import form components
 import SettingsForm from "../components/admin/SettingsForm";
@@ -37,9 +40,10 @@ import CarouselImagesForm from "../components/admin/CarouselImagesForm";
 import CustomerFavoriteForm from "../components/admin/CustomerFavoriteForm";
 import AboutPageForm from "../components/admin/AboutPageForm";
 import SiteImagesForm from "../components/admin/SiteImagesForm";
+import CustomizationEditorForm from "../components/admin/CustomizationEditorForm";
 
 export default function Admin() {
-  const [selectedItem, setSelectedItem] = useState("categories");
+  const [selectedItem, setSelectedItem] = useState("settings");
 
   // Filter states
   const [selectedMenuCategory, setSelectedMenuCategory] = useState("all");
@@ -196,6 +200,38 @@ export default function Admin() {
     getToppingPriceForSize,
   } = useToppingSizePrices();
 
+  const {
+    customizerTemplates,
+    loading: customizerTemplatesLoading,
+    createCustomizerTemplate,
+    updateCustomizerTemplate,
+    deleteCustomizerTemplate,
+  } = useCustomizerTemplates();
+
+  const {
+    customizerPanels,
+    loading: customizerPanelsLoading,
+    createCustomizerPanel,
+    updateCustomizerPanel,
+    deleteCustomizerPanel,
+  } = useCustomizerPanels();
+
+  const {
+    customizerPanelItems,
+    loading: customizerPanelItemsLoading,
+    createCustomizerPanelItem,
+    updateCustomizerPanelItem,
+    deleteCustomizerPanelItem,
+  } = useCustomizerPanelItems();
+
+  const {
+    customizerPanelItemConditionals,
+    loading: customizerPanelItemConditionalsLoading,
+    createCustomizerPanelItemConditional,
+    updateCustomizerPanelItemConditional,
+    deleteCustomizerPanelItemConditional,
+  } = useCustomizerPanelItemConditionals();
+
   const isLoading =
     categoriesLoading ||
     subCategoriesLoading ||
@@ -213,7 +249,11 @@ export default function Admin() {
     categorySizeSubCategoriesLoading ||
     menuItemSizesLoading ||
     menuItemSizeToppingsLoading ||
-    toppingSizePricesLoading;
+    toppingSizePricesLoading ||
+    customizerTemplatesLoading ||
+    customizerPanelsLoading ||
+    customizerPanelItemsLoading ||
+    customizerPanelItemConditionalsLoading;
 
   // Show loading state while data is being fetched
   if (isLoading) {
@@ -353,8 +393,6 @@ export default function Admin() {
           <MenuSubCategoriesForm
             categories={categories}
             subCategories={subCategories}
-            categorySizes={categorySizes}
-            subCategorySizes={subCategorySizes}
             createSubCategory={createSubCategory}
             updateSubCategory={updateSubCategory}
             deleteSubCategory={deleteSubCategory}
@@ -423,6 +461,34 @@ export default function Admin() {
             hideAddButton={false}
           />
         );
+      case "customization-editor":
+        return (
+          <div className="w-full 2xl:max-w-[50%] 2xl:mx-auto">
+            <CustomizationEditorForm
+              subCategories={subCategories}
+              categorySizes={categorySizes}
+              toppings={toppings}
+              toppingCategories={toppingCategories}
+              categories={categories}
+              customizerTemplates={customizerTemplates}
+              customizerPanels={customizerPanels}
+              customizerPanelItems={customizerPanelItems}
+              customizerPanelItemConditionals={customizerPanelItemConditionals}
+              createCustomizerTemplate={createCustomizerTemplate}
+              updateCustomizerTemplate={updateCustomizerTemplate}
+              deleteCustomizerTemplate={deleteCustomizerTemplate}
+              createCustomizerPanel={createCustomizerPanel}
+              updateCustomizerPanel={updateCustomizerPanel}
+              deleteCustomizerPanel={deleteCustomizerPanel}
+              createCustomizerPanelItem={createCustomizerPanelItem}
+              updateCustomizerPanelItem={updateCustomizerPanelItem}
+              deleteCustomizerPanelItem={deleteCustomizerPanelItem}
+              createCustomizerPanelItemConditional={createCustomizerPanelItemConditional}
+              updateCustomizerPanelItemConditional={updateCustomizerPanelItemConditional}
+              deleteCustomizerPanelItemConditional={deleteCustomizerPanelItemConditional}
+            />
+          </div>
+        );
       case "specials":
         return (
           <SpecialForm
@@ -490,7 +556,6 @@ export default function Admin() {
   };
 
   return (
-    <ThemeProvider initialTheme={settings?.theme || "classic-pizza"}>
       <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
         <HeaderWithDelivery breadcrumbs={[{ label: "Admin Dashboard" }]} />
 
@@ -541,6 +606,5 @@ export default function Admin() {
           </div>
         </div>
       </div>
-    </ThemeProvider>
   );
 }

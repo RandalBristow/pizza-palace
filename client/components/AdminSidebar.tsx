@@ -51,6 +51,11 @@ const sidebarItems: SidebarItem[] = [
     ],
   },
   {
+    id: "customization-editor",
+    label: "Customization Editor",
+    icon: Settings,
+  },
+  {
     id: "specials",
     label: "Specials",
     icon: Calendar,
@@ -80,9 +85,7 @@ export default function AdminSidebar({
   selectedItem,
   onSelectItem,
 }: AdminSidebarProps) {
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(
-    new Set(["settings", "menu", "toppings", "images"]),
-  );
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);

@@ -1,32 +1,17 @@
 import { useState } from "react";
-import MenuSubCategory from "../page_components/MenuSubCategory";
 import MenuSubCategoryDialog from "../dialog_components/MenuSubCategoryDialog";
-import { Button } from "../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import {
-  Plus,
-  Folder,
-  FolderOpen,
-} from "lucide-react";
+import ActivationButton from "../shared_components/ActivationButton";
+import EditButton from "../shared_components/EditButton";
+import DeleteButton from "../shared_components/DeleteButton";
+import SingleItemCard from "../shared_components/SingleItemCard";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Folder } from "lucide-react";
+import AddButton from "../shared_components/AddButton";
 
 export interface SubCategory {
   id: string;
   name: string;
   categoryId: string;
-  displayOrder: number;
-  isActive: boolean;
-}
-
-export interface CategorySize {
-  id: string;
-  categoryId: string;
-  sizeName: string;
   displayOrder: number;
   isActive: boolean;
 }
@@ -41,8 +26,6 @@ export interface Category {
 interface SubCategoryFormProps {
   categories: Category[];
   subCategories: SubCategory[];
-  categorySizes: CategorySize[];
-  subCategorySizes: any[];
   createSubCategory: (subCategory: any) => Promise<any>;
   updateSubCategory: (id: string, updates: any) => Promise<any>;
   deleteSubCategory: (id: string) => Promise<void>;
@@ -53,7 +36,6 @@ interface SubCategoryFormProps {
 export default function SubCategoryForm({
   categories,
   subCategories,
-  categorySizes,
   createSubCategory,
   updateSubCategory,
   deleteSubCategory,
@@ -153,37 +135,16 @@ export default function SubCategoryForm({
             </SelectContent>
           </Select>
           {!hideAddButton && (
-            <Button 
+            <AddButton
+              label="Add Sub-Category"
               onClick={() => setIsDialogOpen(true)}
               disabled={categories.length === 0}
-              style={{
-                backgroundColor: 'var(--primary)',
-                color: 'var(--primary-foreground)',
-                borderColor: 'var(--primary)',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (!e.currentTarget.disabled) {
-                  const target = e.target as HTMLElement;
-                  target.style.transform = 'translateY(-1px)';
-                  target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                const target = e.target as HTMLElement;
-                target.style.transform = 'translateY(0)';
-                target.style.boxShadow = 'none';
-              }}
-            >
-              <Plus className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
-              Add Sub-Category
-            </Button>
+            />
           )}
         </div>
       </div>
 
       {/* Sub-Categories List */}
-      <div className="rounded-lg p-6" style={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)' }}>
         {filteredSubCategories.length === 0 ? (
           <div className="text-center py-8">
             <Folder className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--muted-foreground)' }} />
@@ -203,20 +164,38 @@ export default function SubCategoryForm({
               return (
                 <div key={category.id} className="rounded-lg p-4" style={{ border: '1px solid var(--border)' }}>
                   <h4 className="font-semibold text-lg mb-3 flex items-center" style={{ color: 'var(--card-foreground)' }}>
-                    <FolderOpen className="h-5 w-5 mr-2" style={{ color: 'var(--primary)' }} />
                     {category.name}
                   </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {categorySubCategories
                       .sort((a, b) => a.displayOrder - b.displayOrder)
                       .map((subCategory) => {
                         return (
-                          <MenuSubCategory
-                            key={subCategory.id}
-                            subCategory={subCategory}
-                            toggleSubCategoryStatus={toggleSubCategoryStatus}
-                            handleEditSubCategory={handleEditSubCategory}
-                            handleDeleteSubCategory={handleDeleteSubCategory}
+                          <SingleItemCard
+                            title={subCategory.name}
+                            displayOrder={subCategory.displayOrder}
+                            isActive={subCategory.isActive}
+                            rightActions={
+                              <>
+                                <ActivationButton
+                                  isActive={subCategory.isActive}
+                                  onToggle={() => toggleSubCategoryStatus(subCategory.id)}
+                                  activeTooltip="Deactivate"
+                                  inactiveTooltip="Activate"
+                                />
+                                <EditButton
+                                  label="Edit Sub-Category"
+                                  onClick={() => handleEditSubCategory(subCategory)}
+                                />
+                                <DeleteButton
+                                  entityTitle="Sub-Category"
+                                  subjectName={subCategory.name}
+                                  tooltipWhenAllowed="Delete Sub-Category"
+                                  tooltipWhenBlocked="Cannot Delete: Has Related Items"
+                                  onConfirm={() => handleDeleteSubCategory(subCategory.id)}
+                                />
+                              </>
+                            }
                           />
                         );
                       })}
@@ -226,7 +205,7 @@ export default function SubCategoryForm({
             })}
           </div>
         )}
-      </div>
+
 
       <MenuSubCategoryDialog
         isOpen={isDialogOpen}

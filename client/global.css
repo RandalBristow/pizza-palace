@@ -35,6 +35,12 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.723 0.219 149.579);
+
+  /* Semantic badge state colors (used across all themes) */
+  --badge-active-bg: oklch(0.97 0.062 149);    /* green-100 */
+  --badge-active-fg: oklch(0.37 0.07 149);     /* green-900 */
+  --badge-inactive-bg: oklch(0.96 0.08 25);    /* red-100 */
+  --badge-inactive-fg: oklch(0.4 0.18 25);     /* red-900 */
 }
 
 .dark {
@@ -69,6 +75,12 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.527 0.154 150.069);
+
+  /* Ensure badge colors are consistent in dark as well */
+  --badge-active-bg: oklch(0.97 0.062 149);
+  --badge-active-fg: oklch(0.37 0.07 149);
+  --badge-inactive-bg: oklch(0.96 0.08 25);
+  --badge-inactive-fg: oklch(0.4 0.18 25);
 }
 
 /* Add new themes */
@@ -78,11 +90,12 @@
   --secondary: oklch(0.85 0.1 200);
   --secondary-foreground: oklch(0.2 0.05 200);
   --background: oklch(0.95 0.02 220);
-  --foreground: oklch(0.15 0.05 220);
+  /* Ocean: cool deep blue-gray foreground tint */
+  --foreground: oklch(0.28 0.05 220);
   --card: oklch(0.97 0.01 220);
-  --card-foreground: oklch(0.15 0.05 220);
+  --card-foreground: oklch(0.28 0.05 220);
   --popover: oklch(0.97 0.01 220);
-  --popover-foreground: oklch(0.15 0.05 220);
+  --popover-foreground: oklch(0.28 0.05 220);
   --muted: oklch(0.9 0.05 200);
   --muted-foreground: oklch(0.4 0.1 200);
   --accent: oklch(0.9 0.05 200);
@@ -91,6 +104,7 @@
   --border: oklch(0.85 0.05 200);
   --input: oklch(0.85 0.05 200);
   --ring: oklch(0.6 0.25 220);
+  --sidebar-foreground: oklch(0.28 0.05 220);
 }
 
 .theme-sunset {
@@ -99,11 +113,12 @@
   --secondary: oklch(0.85 0.1 20);
   --secondary-foreground: oklch(0.2 0.05 20);
   --background: oklch(0.97 0.02 30);
-  --foreground: oklch(0.15 0.05 30);
+  /* Sunset: warm brown/orange foreground tint */
+  --foreground: oklch(0.28 0.06 35);
   --card: oklch(0.98 0.01 30);
-  --card-foreground: oklch(0.15 0.05 30);
+  --card-foreground: oklch(0.28 0.06 35);
   --popover: oklch(0.98 0.01 30);
-  --popover-foreground: oklch(0.15 0.05 30);
+  --popover-foreground: oklch(0.28 0.06 35);
   --muted: oklch(0.9 0.05 25);
   --muted-foreground: oklch(0.4 0.1 25);
   --accent: oklch(0.9 0.05 25);
@@ -112,6 +127,7 @@
   --border: oklch(0.85 0.05 25);
   --input: oklch(0.85 0.05 25);
   --ring: oklch(0.65 0.22 35);
+  --sidebar-foreground: oklch(0.28 0.06 35);
 }
 
 .theme-forest {
@@ -120,11 +136,12 @@
   --secondary: oklch(0.8 0.1 120);
   --secondary-foreground: oklch(0.2 0.05 120);
   --background: oklch(0.96 0.02 130);
-  --foreground: oklch(0.15 0.05 130);
+  /* Forest: deep green-gray foreground tint */
+  --foreground: oklch(0.28 0.06 140);
   --card: oklch(0.97 0.01 130);
-  --card-foreground: oklch(0.15 0.05 130);
+  --card-foreground: oklch(0.28 0.06 140);
   --popover: oklch(0.97 0.01 130);
-  --popover-foreground: oklch(0.15 0.05 130);
+  --popover-foreground: oklch(0.28 0.06 140);
   --muted: oklch(0.88 0.05 120);
   --muted-foreground: oklch(0.4 0.1 120);
   --accent: oklch(0.88 0.05 120);
@@ -133,32 +150,17 @@
   --border: oklch(0.82 0.05 120);
   --input: oklch(0.82 0.05 120);
   --ring: oklch(0.5 0.2 140);
+  --sidebar-foreground: oklch(0.28 0.06 140);
 }
 
-/* Style numeric input arrows */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-/* For Firefox */
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-/* Alternative: If you want to keep and style the arrows instead of removing them */
-/*
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  opacity: 1;
-  background: var(--muted);
-  border-left: 1px solid var(--border);
-  cursor: pointer;
-}
-
-input[type="number"]::-webkit-outer-spin-button:hover,
-input[type="number"]::-webkit-inner-spin-button:hover {
-  background: var(--accent);
-}
-*/
+   
+   /* For Firefox */
+   input[type="number"] {
+   -moz-appearance: textfield;
+   appearance: textfield;
+   }

@@ -1,14 +1,11 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import MenuItem from "../page_components/MenuItem";
+import { useState } from "react";
 import MenuItemDialog from "../dialog_components/MenuItemDialog";
 import { Button } from "../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import ImageCard from "../shared_components/ImageCard";
+import ActivationButton from "../shared_components/ActivationButton";
+import EditButton from "../shared_components/EditButton";
+import DeleteButton from "../shared_components/DeleteButton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Plus } from "lucide-react";
 import { Category } from "./MenuCategoriesForm";
 
@@ -49,7 +46,7 @@ export interface CategorySize {
   isActive: boolean;
 }
 
-interface MenuItemFormProps {
+export interface MenuItemFormProps {
   menuItems: MenuItem[];
   categories: Category[];
   subCategories?: any[];
@@ -278,21 +275,44 @@ export default function MenuItemForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {filteredMenuItems.map((menuItem) => {
           const menuItemImage = menuItem.imageId
             ? images.find((img) => img.id === menuItem.imageId)
             : null;
+          const subTitle = <span className="line-clamp-2">{menuItem.description}</span>;
+          const pricing = <span>{getMenuItemPrice(menuItem)}</span>;
 
           return (
-            <MenuItem
-              key={menuItem.id}
-              menuItem={menuItem}
-              menuItemImage={menuItemImage}
-              getMenuItemPrice={getMenuItemPrice}
-              toggleMenuItemStatus={toggleMenuItemStatus}
-              handleEditMenuItem={handleEditMenuItem}
-              handleDeleteMenuItem={handleDeleteMenuItem}
+            <ImageCard
+              imageUrl={menuItemImage?.url}
+              alt={menuItemImage?.altText || menuItem.name}
+              title={menuItem.name}
+              subTitle={subTitle}
+              pricing={pricing}
+              isActive={menuItem.isActive}
+              thumbClassName="w-full h-32"
+              rightActions={
+                <>
+                  <ActivationButton
+                    isActive={menuItem.isActive}
+                    onToggle={() => toggleMenuItemStatus(menuItem.id)}
+                    activeTooltip="Deactivate"
+                    inactiveTooltip="Activate"
+                  />
+                  <EditButton
+                    label="Edit Menu Item"
+                    onClick={() => handleEditMenuItem(menuItem)}
+                  />
+                  <DeleteButton
+                    entityTitle="Menu Item"
+                    subjectName={menuItem.name}
+                    tooltipWhenAllowed="Delete Menu Item"
+                    tooltipWhenBlocked="Cannot Delete: Has Related Items"
+                    onConfirm={() => handleDeleteMenuItem(menuItem.id)}
+                  />
+                </>
+              }
             />
           );
         })}

@@ -3,20 +3,9 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { RequiredFieldLabel } from "../ui/required-field-label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Save, Ruler, Settings } from "lucide-react";
 
 export interface CategorySize {
@@ -173,9 +162,12 @@ export default function MenuCategorySizeDialog({
 
             {/* Category Selection */}
             <div>
-              <Label htmlFor="category" style={{ color: 'var(--destructive)' }}>
-                * Category
-              </Label>
+            <RequiredFieldLabel
+              htmlFor="category"
+              style={{ color: "var(--foreground)" }}
+            >
+              Category
+            </RequiredFieldLabel>
               <Select
                 value={formData.categoryId}
                 onValueChange={(value) => {
@@ -220,9 +212,12 @@ export default function MenuCategorySizeDialog({
 
             {/* Size Name */}
             <div>
-              <Label htmlFor="sizeName" style={{ color: 'var(--destructive)' }}>
-                * Size Name
-              </Label>
+            <RequiredFieldLabel
+              htmlFor="sizeName"
+              style={{ color: "var(--foreground)" }}
+            >
+              Size Name
+            </RequiredFieldLabel>
               <Input
                 id="sizeName"
                 placeholder="e.g., Large, 10-Piece, 12 inch"
@@ -251,8 +246,8 @@ export default function MenuCategorySizeDialog({
 
             {/* Display Order */}
             <div>
-              <Label htmlFor="displayOrder" style={{ color: 'var(--destructive)' }}>
-                * Display Order
+              <Label htmlFor="displayOrder" style={{ color: 'var(--foreground)' }}>
+                Display Order
               </Label>
               <Input
                 id="displayOrder"

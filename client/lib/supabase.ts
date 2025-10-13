@@ -25,6 +25,10 @@ export const TABLES = {
   SETTINGS: "settings",
   ABOUT_SECTIONS: "about_sections",
   IMAGES: "images",
+  CUSTOMIZER_TEMPLATES: "customizer_templates",
+  CUSTOMIZER_PANELS: "customizer_panels",
+  CUSTOMIZER_PANEL_ITEMS: "customizer_panel_items",
+  CUSTOMIZER_PANEL_ITEM_CONDITIONALS: "customizer_panel_item_conditionals",
 } as const;
 
 // Type definitions for Supabase tables
@@ -92,7 +96,7 @@ export interface DatabaseToppingCategory {
   id: string;
   name: string;
   menu_item_category_id: string;
-  order: number;
+  order_num: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -192,7 +196,9 @@ export interface DatabaseSettings {
     string,
     { open: string; close: string; closed: boolean }
   >;
-  theme?: string; // Add theme field
+  theme?: string;
+  swappable_default_items?: boolean;
+  half_price_toppings?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -214,6 +220,52 @@ export interface DatabaseAboutSection {
   columns: number;
   order_num: number;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Customizer System Types
+export interface DatabaseCustomizerTemplate {
+  id: string;
+  sub_category_id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseCustomizerPanel {
+  id: string;
+  customizer_template_id: string;
+  panel_type: "size" | "custom_list" | "topping";
+  title: string;
+  subtitle?: string;
+  message?: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseCustomizerPanelItem {
+  id: string;
+  customizer_panel_id: string;
+  item_type: "size" | "custom" | "topping";
+  item_id?: string; // References category_size_id or topping_id
+  custom_name?: string; // For custom items
+  custom_price?: number; // For custom items
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseCustomizerPanelItemConditional {
+  id: string;
+  customizer_panel_id: string;
+  parent_panel_item_id: string; // Item from the previous panel
+  child_panel_item_id: string; // Item in current panel to show/hide
+  is_visible: boolean; // Whether to show the child item when parent is selected
   created_at: string;
   updated_at: string;
 }

@@ -2,34 +2,13 @@ import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { RequiredFieldLabel } from "../ui/required-field-label";
 import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import {
-  Save,
-  ThumbsUp,
-  ThumbsDown
-} from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+import ActivationButton from "../shared_components/ActivationButton";
 import ImageSelector from "../ui/image-selector";
 import { Category } from "../admin/MenuCategoriesForm";
 
@@ -297,9 +276,12 @@ export default function MenuItemDialog({
             {/* Category and Sub-Category Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="category" style={{ color: 'var(--destructive)' }}>
-                  * Category
-                </Label>
+                <RequiredFieldLabel
+                  htmlFor="category"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Category
+                </RequiredFieldLabel>
                 <Select
                   value={formData.category}
                   onValueChange={(value) => {
@@ -345,9 +327,12 @@ export default function MenuItemDialog({
               </div>
 
               <div>
-                <Label htmlFor="subCategory" style={{ color: 'var(--destructive)' }}>
-                  * Sub-Category
-                </Label>
+                <RequiredFieldLabel
+                  htmlFor="subCategory"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Sub-Category
+                </RequiredFieldLabel>
                 <Select
                   value={formData.subCategoryId || ""}
                   onValueChange={(value) => {
@@ -399,9 +384,12 @@ export default function MenuItemDialog({
             {/* Name and Image Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name" style={{ color: 'var(--destructive)' }}>
-                  * Name
-                </Label>
+                <RequiredFieldLabel
+                  htmlFor="name"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Name
+                </RequiredFieldLabel>
                 <Input
                   id="name"
                   value={formData.name}
@@ -432,6 +420,12 @@ export default function MenuItemDialog({
               </div>
 
               <div>
+                <RequiredFieldLabel
+                  htmlFor="image"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Image
+                </RequiredFieldLabel>
                 <ImageSelector
                   images={images}
                   selectedImageId={selectedImageId}
@@ -440,7 +434,7 @@ export default function MenuItemDialog({
                     setFormData({ ...formData, image: imageUrl || "" });
                   }}
                   placeholder="Select an image (optional)..."
-                  label="Menu Item Image"
+                  label=""
                   required={false}
                   showPreview={false}
                 />
@@ -449,9 +443,12 @@ export default function MenuItemDialog({
 
             {/* Description */}
             <div>
-              <Label htmlFor="description" style={{ color: 'var(--destructive)' }}>
-                * Description
-              </Label>
+              <RequiredFieldLabel
+                htmlFor="description"
+                style={{ color: "var(--foreground)" }}
+              >
+                Description
+              </RequiredFieldLabel>
               <Textarea
                 id="description"
                 value={formData.description}
@@ -485,7 +482,12 @@ export default function MenuItemDialog({
             {/* Size-based Pricing */}
             {formData.category && formData.subCategoryId && (
               <div>
-                <Label style={{ color: 'var(--destructive)' }}>* Size-based Pricing</Label>
+                <RequiredFieldLabel
+                  htmlFor="description"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Size-based Pricing
+                </RequiredFieldLabel>
                 <div className="mt-1 rounded-lg py-1 px-4" style={{ border: '1px solid var(--border)' }}>
                   {getAvailableSizes(
                     formData.category,
@@ -556,10 +558,10 @@ export default function MenuItemDialog({
           {/* Right Column - Toppings */}
           <div className="p-6 flex flex-col h-full">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold" style={{ color: 'var(--card-foreground)' }}>
+              <h2 className="text-lg font-semibold text-[var(--card-foreground)]">
                 Topping Management
               </h2>
-              <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+              <p className="text-sm text-[var(--muted-foreground)]">
                 Select a size to enable/disable toppings. Check boxes to set default
                 toppings for this menu item.
               </p>
@@ -571,32 +573,19 @@ export default function MenuItemDialog({
               getAvailableSizes(formData.category, formData.subCategoryId)
                 .length > 0 && (
                 <div className="mb-4">
-                  <Label htmlFor="sizeSelect" style={{ color: 'var(--foreground)' }}>Select Size</Label>
+                  <Label htmlFor="sizeSelect" className="text-[var(--foreground)]">Select Size</Label>
                   <Select value={selectedSize} onValueChange={setSelectedSize}>
                     <SelectTrigger
-                      style={{
-                        backgroundColor: 'var(--input)',
-                        borderColor: 'var(--border)',
-                        border: '1px solid var(--border)',
-                        color: 'var(--foreground)'
-                      }}
-                      onFocus={(e) => {
-                        const target = e.target as HTMLElement;
-                        target.style.boxShadow = `0 0 0 2px var(--ring)`;
-                      }}
-                      onBlur={(e) => {
-                        const target = e.target as HTMLElement;
-                        target.style.boxShadow = 'none';
-                      }}
+                      className="bg-[var(--input)] border-[var(--border)] text-[var(--foreground)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
                     >
-                      <SelectValue placeholder="Select a size to manage toppings..." style={{ color: 'var(--muted-foreground)' }} />
+                      <SelectValue placeholder="Select a size to manage toppings..." />
                     </SelectTrigger>
-                    <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
+                    <SelectContent className="bg-[var(--popover)] border-[var(--border)]">
                       {getAvailableSizes(
                         formData.category,
                         formData.subCategoryId,
                       ).map((size) => (
-                        <SelectItem key={size.id} value={size.id} style={{ color: 'var(--popover-foreground)' }}>
+                        <SelectItem key={size.id} value={size.id} className="text-[var(--popover-foreground)]">
                           {size.sizeName} - $
                           {sizePrices[size.id]?.toFixed(2) || "0.00"}
                         </SelectItem>
@@ -617,15 +606,15 @@ export default function MenuItemDialog({
                   return (
                     <Tabs
                       defaultValue={availableCategories[0]?.id}
-                      className="w-full h-full overflow-hidden border rounded"
+                      className="w-full h-full overflow-hidden border rounded bg-[var(--card)] border-[var(--border)] text-[var(--foreground)]"
                       key={`${formData.category}-${selectedSize}`}
                     >
-                      <TabsList className="w-full justify-start">
+                      <TabsList className="w-full justify-start border-b border-[var(--border)]">
                         {availableCategories.map((toppingCategory) => (
                           <TabsTrigger
                             key={toppingCategory.id}
                             value={toppingCategory.id}
-                            className="text-xs"
+                            className="text-xs text-[var(--foreground)] data-[state=active]:bg-[var(--accent)] data-[state=active]:text-[var(--accent-foreground)]"
                           >
                             {toppingCategory.name}
                           </TabsTrigger>
@@ -660,7 +649,7 @@ export default function MenuItemDialog({
                                   return (
                                     <div
                                       key={topping.id}
-                                      className="flex items-center justify-between mx-1 py-1 px-2 border rounded text-xs"
+                                      className="flex items-center justify-between mx-1 py-1 px-2 border rounded text-xs bg-[var(--card)] border-[var(--border)] text-[var(--foreground)]"
                                     >
                                       <div className="flex items-center space-x-2 flex-1 min-w-0">
                                         <Checkbox
@@ -679,36 +668,22 @@ export default function MenuItemDialog({
                                           <span className="font-medium truncate">
                                             {topping.name}
                                           </span>
-                                          <span className="text-gray-500">
+                                          <span className="text-[var(--muted-foreground)]">
                                             +${toppingPrice.toFixed(2)}
                                           </span>
                                         </div>
                                       </div>
-                                      <TooltipProvider>
-                                        <Tooltip>
-                                          <TooltipTrigger asChild>
-                                            <Button
-                                              variant="outline"
-                                              size="sm"
-                                              onClick={() =>
-                                                handleToppingToggle(
-                                                  topping.id,
-                                                  !isActive,
-                                                )
-                                              }
-                                            >
-                                              {isActive ? (
-                                                <ThumbsUp className="h-4 w-4" />
-                                              ) : (
-                                                <ThumbsDown className="h-4 w-4" />
-                                              )}
-                                            </Button>
-                                          </TooltipTrigger>
-                                          <TooltipContent>
-                                            {isActive ? "Deactivate" : "Activate"}
-                                          </TooltipContent>
-                                        </Tooltip>
-                                      </TooltipProvider>
+                                      <ActivationButton
+                                        isActive={isActive}
+                                        onToggle={() =>
+                                          handleToppingToggle(
+                                            topping.id,
+                                            !isActive,
+                                          )
+                                        }
+                                        activeTooltip="Deactivate"
+                                        inactiveTooltip="Activate"
+                                      />
                                     </div>
                                   );
                                 })}
@@ -720,7 +695,7 @@ export default function MenuItemDialog({
                   );
                 })()
               ) : (
-                <div className="flex items-center justify-center h-full border-2 border-dashed rounded-lg" style={{ borderColor: 'var(--border)', color: 'var(--muted-foreground)' }}>
+                <div className="flex items-center justify-center h-full border-2 border-dashed rounded-lg border-[var(--border)] text-[var(--muted-foreground)]">
                   <div className="text-center">
                     <p>Select category, sub-category, and size to manage toppings</p>
                   </div>
@@ -729,7 +704,7 @@ export default function MenuItemDialog({
             </div>
 
             {/* Form Actions */}
-            <div className="mt-6 flex justify-end space-x-2 pt-4" style={{ borderTop: '1px solid var(--border)' }}>
+            <div className="mt-6 flex justify-end space-x-2 pt-4 border-t border-[var(--border)]">
               <Button 
                 variant="outline" 
                 onClick={handleCancel}
@@ -785,8 +760,7 @@ export default function MenuItemDialog({
                   target.style.boxShadow = 'none';
                 }}
               >
-                <Save className="h-4 w-4 mr-2" style={{ color: 'var(--primary-foreground)' }} />
-                {isEdit ? "Update Item" : "Save Item"}
+                {isEdit ? "Update Menu Item" : "Save Menu Item"}
               </Button>
             </div>
           </div>
