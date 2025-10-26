@@ -77,7 +77,11 @@ export interface DatabaseMenuItem {
   category_id: string;
   sub_category_id?: string;
   image_id?: string;
-  default_toppings?: string[]; // Add this field
+  customizer_template_id?: string; // Reference to specific customizer template
+  default_toppings?: string[];
+  default_list_selections?: Record<string, string>; // New field for default list panel selections
+  available_toppings?: string[]; // Array of topping IDs that are available for this menu item
+  show_add_to_cart?: boolean; // Whether to show Add to Cart button on menu page
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -108,6 +112,7 @@ export interface DatabaseTopping {
   price?: number; // Made optional as it's now deprecated
   category_id: string;
   menu_item_category_id: string;
+  display_order: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;

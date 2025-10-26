@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useOrder } from "../contexts/OrderContext";
+import { useCart } from "../contexts/CartContext";
 import DeliverySelection from "./DeliverySelection";
 import { ShoppingCart, MapPin, Store, ChevronRight } from "lucide-react";
 
@@ -19,6 +20,8 @@ export default function HeaderWithDelivery({
   const { deliveryDetails, setDeliveryDetails, hasDeliveryDetails } =
     useOrder();
   const location = useLocation();
+  const { items: cartItems } = useCart();
+  const cartCount = cartItems.length;
 
   // Don't show delivery button on admin pages
   const isAdminPage = location.pathname.includes("/admin");
@@ -194,7 +197,7 @@ export default function HeaderWithDelivery({
                       borderColor: 'var(--primary)'
                     }}
                   >
-                    {cart.length}
+                    {cartCount}
                   </Badge>
                 </div>
               </Link>

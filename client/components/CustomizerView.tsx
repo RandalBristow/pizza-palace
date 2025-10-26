@@ -17,6 +17,7 @@ interface CustomizerViewProps {
   menuItemSizes?: any[];
   toppingSizePrices?: any[];
   currentMenuItemId?: string | null;
+  availableToppings?: string[];
   onSelectionChange: (selections: Record<string, any>) => void;
   initialSelections?: Record<string, any>;
 }
@@ -27,6 +28,7 @@ interface ToppingSelection {
   price?: number;
   category: string;
   menuItemCategory: string;
+  displayOrder: number;
   placement: "left" | "right" | "whole";
   amount?: "normal" | "extra";
 }
@@ -43,6 +45,7 @@ export default function CustomizerView({
   menuItemSizes = [],
   toppingSizePrices = [],
   currentMenuItemId = null,
+  availableToppings = [],
   onSelectionChange,
   initialSelections = {},
 }: CustomizerViewProps) {
@@ -72,6 +75,7 @@ export default function CustomizerView({
           price: topping.price || 0,
           category: topping.category || "",
           menuItemCategory: topping.menuItemCategory || "",
+          displayOrder: topping.displayOrder || 0,
           placement,
           amount: amount || "normal",
         },
@@ -353,6 +357,7 @@ export default function CustomizerView({
         toppings={toppingsWithPrices}
         toppingCategories={toppingCategories}
         menuCategoryId={menuCategoryId}
+        availableToppings={availableToppings}
         selectedToppings={toppingSelections}
         onToppingChange={handleToppingChange}
         readonly={false}

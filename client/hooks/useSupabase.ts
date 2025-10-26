@@ -52,18 +52,58 @@ export const transformCategorySize = (dbCategorySize: DatabaseCategorySize) => (
 });
 
 // transformMenuItem: TABLES.MENU_ITEMS
-//   Fields: id, name, description, price, category_id, sub_category_id, image_id, default_toppings, is_active
-export const transformMenuItem = (dbMenuItem: DatabaseMenuItem) => ({
-  id: dbMenuItem.id,
-  name: dbMenuItem.name,
-  description: dbMenuItem.description,
-  price: dbMenuItem.price,
-  category: dbMenuItem.category_id,
-  subCategoryId: dbMenuItem.sub_category_id,
-  imageId: dbMenuItem.image_id,
-  defaultToppings: dbMenuItem.default_toppings,
-  isActive: dbMenuItem.is_active,
-});
+//   Fields: id, name, description, price, category_id, sub_category_id, image_id, customizer_template_id, default_toppings, default_list_selections, available_toppings, show_add_to_cart, is_active
+export const transformMenuItem = (dbMenuItem: DatabaseMenuItem) => {
+  // Convert default_list_selections from array to object format
+  let defaultListSelections: Record<string, string> = {};
+  if (Array.isArray(dbMenuItem.default_list_selections)) {
+    dbMenuItem.default_list_selections.forEach((item: any) => {
+      if (item && item.panelId && item.itemId) {
+        defaultListSelections[item.panelId] = item.itemId;
+      }
+    });
+  }
+
+  // Convert default_toppings from array to object format
+  let defaultToppings: Record<string, { amount: "normal" | "extra" }> = {};
+  if (Array.isArray(dbMenuItem.default_toppings)) {
+    dbMenuItem.default_toppings.forEach((item: any) => {
+      // Handle if item is a JSON string (parse it first)
+      let parsedItem = item;
+      if (typeof item === 'string') {
+        try {
+          parsedItem = JSON.parse(item);
+        } catch (e) {
+          console.error('Failed to parse default_toppings item:', item);
+          return;
+        }
+      }
+      
+      if (parsedItem && parsedItem.toppingId && parsedItem.amount) {
+        defaultToppings[parsedItem.toppingId] = { amount: parsedItem.amount };
+      }
+    });
+  } else if (dbMenuItem.default_toppings && typeof dbMenuItem.default_toppings === 'object') {
+    // Already in object format (backward compatibility)
+    defaultToppings = dbMenuItem.default_toppings as Record<string, { amount: "normal" | "extra" }>;
+  }
+
+  return {
+    id: dbMenuItem.id,
+    name: dbMenuItem.name,
+    description: dbMenuItem.description,
+    price: dbMenuItem.price,
+    category: dbMenuItem.category_id,
+    subCategoryId: dbMenuItem.sub_category_id,
+    imageId: dbMenuItem.image_id,
+    customizerTemplateId: dbMenuItem.customizer_template_id,
+    defaultToppings,
+    defaultListSelections,
+    availableToppings: dbMenuItem.available_toppings,
+    showAddToCart: dbMenuItem.show_add_to_cart ?? true, // Default to true for backward compatibility
+    isActive: dbMenuItem.is_active,
+  };
+};
 
 // transformToppingCategory: TABLES.TOPPING_CATEGORIES
 //   Fields: id, name, menu_item_category_id, order, is_active
@@ -76,13 +116,14 @@ export const transformToppingCategory = (dbToppingCategory: DatabaseToppingCateg
 });
 
 // transformTopping: TABLES.TOPPINGS
-//   Fields: id, name, price, category_id, menu_item_category_id, is_active
+//   Fields: id, name, price, category_id, menu_item_category_id, display_order, is_active
 export const transformTopping = (dbTopping: DatabaseTopping) => ({
   id: dbTopping.id,
   name: dbTopping.name,
   price: dbTopping.price,
   category: dbTopping.category_id,
   menuItemCategory: dbTopping.menu_item_category_id,
+  displayOrder: dbTopping.display_order,
   isActive: dbTopping.is_active,
 });
 
@@ -213,12 +254,13 @@ export const transformCustomizerPanel = (dbPanel: DatabaseCustomizerPanel) => ({
 });
 
 // transformCustomizerPanelItem: TABLES.CUSTOMIZER_PANEL_ITEMS
-//   Fields: id, customizer_panel_id, item_type, item_id, custom_name, custom_price, display_order, is_active
+//   Fields: id, customizer_panel_id, item_type, item_id, name, custom_name, custom_price, display_order, is_active
 export const transformCustomizerPanelItem = (dbItem: DatabaseCustomizerPanelItem) => ({
   id: dbItem.id,
   customizerPanelId: dbItem.customizer_panel_id,
   itemType: dbItem.item_type,
   itemId: dbItem.item_id,
+  name: (dbItem as any).name, // Add name field from database
   customName: dbItem.custom_name,
   customPrice: dbItem.custom_price,
   displayOrder: dbItem.display_order,
@@ -486,6 +528,26 @@ export const useMenuItems = () => {
 
   const createMenuItem = async (menuItem: any) => {
     try {
+      // Convert defaultToppings from object to array format for database
+      let defaultToppingsArray: Array<{toppingId: string; amount: "normal" | "extra"}> = [];
+      if (menuItem.defaultToppings && typeof menuItem.defaultToppings === 'object') {
+        defaultToppingsArray = Object.entries(menuItem.defaultToppings)
+          .map(([toppingId, value]: [string, any]) => ({
+            toppingId,
+            amount: value.amount || "normal"
+          }));
+      }
+      console.log('useSupabase createMenuItem: defaultToppings input:', menuItem.defaultToppings);
+      console.log('useSupabase createMenuItem: defaultToppingsArray output:', defaultToppingsArray);
+
+      // Convert defaultListSelections from object to array format for database
+      let defaultListSelectionsArray: Array<{panelId: string; itemId: string}> = [];
+      if (menuItem.defaultListSelections) {
+        defaultListSelectionsArray = Object.entries(menuItem.defaultListSelections)
+          .filter(([_, itemId]) => itemId && itemId !== "none" && itemId !== "")
+          .map(([panelId, itemId]) => ({ panelId, itemId: itemId as string }));
+      }
+
       // Build insert object, only including price if it's defined
       const insertData: any = {
         name: menuItem.name,
@@ -493,9 +555,16 @@ export const useMenuItems = () => {
         category_id: menuItem.category,
         sub_category_id: menuItem.subCategoryId,
         image_id: menuItem.imageId,
-        default_toppings: menuItem.defaultToppings,
+        customizer_template_id: menuItem.customizerTemplateId || null,
+        default_toppings: defaultToppingsArray,
+        default_list_selections: defaultListSelectionsArray,
+        available_toppings: menuItem.availableToppings,
+        show_add_to_cart: menuItem.showAddToCart ?? true,
         is_active: menuItem.isActive,
       };
+      
+      console.log('insertData.default_toppings being sent to Supabase:', insertData.default_toppings);
+      console.log('Type check:', Array.isArray(insertData.default_toppings), typeof insertData.default_toppings[0]);
 
       // Only include price if it's defined (since we're moving to size-based pricing)
       if (menuItem.price !== undefined && menuItem.price !== null) {
@@ -538,6 +607,26 @@ export const useMenuItems = () => {
 
   const updateMenuItem = async (id: string, updates: any) => {
     try {
+      // Convert defaultToppings from object to array format for database
+      let defaultToppingsArray: Array<{toppingId: string; amount: "normal" | "extra"}> = [];
+      if (updates.defaultToppings && typeof updates.defaultToppings === 'object') {
+        defaultToppingsArray = Object.entries(updates.defaultToppings)
+          .map(([toppingId, value]: [string, any]) => ({
+            toppingId,
+            amount: value.amount || "normal"
+          }));
+      }
+      console.log('useSupabase updateMenuItem: defaultToppings input:', updates.defaultToppings);
+      console.log('useSupabase updateMenuItem: defaultToppingsArray output:', defaultToppingsArray);
+
+      // Convert defaultListSelections from object to array format for database
+      let defaultListSelectionsArray: Array<{panelId: string; itemId: string}> = [];
+      if (updates.defaultListSelections) {
+        defaultListSelectionsArray = Object.entries(updates.defaultListSelections)
+          .filter(([_, itemId]) => itemId && itemId !== "none" && itemId !== "")
+          .map(([panelId, itemId]) => ({ panelId, itemId: itemId as string }));
+      }
+
       // Build update object, only including price if it's defined
       const updateData: any = {
         name: updates.name,
@@ -545,10 +634,17 @@ export const useMenuItems = () => {
         category_id: updates.category,
         sub_category_id: updates.subCategoryId,
         image_id: updates.imageId,
-        default_toppings: updates.defaultToppings,
+        customizer_template_id: updates.customizerTemplateId || null,
+        default_toppings: defaultToppingsArray,
+        default_list_selections: defaultListSelectionsArray,
+        available_toppings: updates.availableToppings,
+        show_add_to_cart: updates.showAddToCart ?? true,
         is_active: updates.isActive,
         updated_at: new Date().toISOString(),
       };
+      
+      console.log('updateData.default_toppings being sent to Supabase:', updateData.default_toppings);
+      console.log('Type check:', Array.isArray(updateData.default_toppings), typeof updateData.default_toppings[0]);
 
       // Only include price if it's defined (since we're moving to size-based pricing)
       if (updates.price !== undefined && updates.price !== null) {
@@ -645,7 +741,7 @@ export const useToppings = () => {
       const { data, error } = await supabase
         .from(TABLES.TOPPINGS)
         .select("*")
-        .order("name", { ascending: true });
+        .order("display_order", { ascending: true });
 
       if (error) throw error;
 
@@ -666,6 +762,7 @@ export const useToppings = () => {
           price: topping.price,
           category_id: topping.category,
           menu_item_category_id: topping.menuItemCategory,
+          display_order: topping.displayOrder || 0,
           is_active: topping.isActive,
         })
         .select()
@@ -689,6 +786,7 @@ export const useToppings = () => {
         name: updates.name,
         category_id: updates.category,
         menu_item_category_id: updates.menuItemCategory,
+        display_order: updates.displayOrder !== undefined ? updates.displayOrder : 0,
         is_active: updates.isActive,
         updated_at: new Date().toISOString(),
       };
@@ -1320,6 +1418,8 @@ export const useSettings = () => {
       if (data) {
         const transformedSettings = transformSettings(data);
         setSettings(transformedSettings);
+        // Save to localStorage for Cart page and other components
+        localStorage.setItem('restaurantSettings', JSON.stringify(transformedSettings));
         // Apply theme on initial load
         if (transformedSettings.theme) {
           applyTheme(transformedSettings.theme);
@@ -1353,6 +1453,8 @@ export const useSettings = () => {
 
         const transformedSettings = transformSettings(newData);
         setSettings(transformedSettings);
+        // Save to localStorage for Cart page and other components
+        localStorage.setItem('restaurantSettings', JSON.stringify(transformedSettings));
         // Apply default theme
         applyTheme(transformedSettings.theme);
       }
@@ -1404,6 +1506,8 @@ export const useSettings = () => {
 
       const updatedSettings = transformSettings(data);
       setSettings(updatedSettings);
+      // Save to localStorage for Cart page and other components
+      localStorage.setItem('restaurantSettings', JSON.stringify(updatedSettings));
       
       // Apply theme immediately after settings update
       if (updates.theme) {
@@ -2516,7 +2620,7 @@ export const useCustomizerTemplates = () => {
 
   const createCustomizerTemplate = async (template: any) => {
     try {
-      const { data, error } = await supabase
+      const { data, error} = await supabase
         .from(TABLES.CUSTOMIZER_TEMPLATES)
         .insert({
           sub_category_id: template.subCategoryId,

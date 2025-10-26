@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import CustomizerView from "../components/CustomizerView";
 import { Button } from "../components/ui/button";
+import { useCart, CartItem } from "../contexts/CartContext";
 import {
   Card,
   CardContent,
@@ -85,6 +86,12 @@ export default function Order() {
   const { menuItemSizes, loading: menuItemSizesLoading } = useMenuItemSizes();
   const { toppingSizePrices, loading: toppingSizePricesLoading } = useToppingSizePrices();
   const { settings, loading: settingsLoading } = useSettings();
+  const { addItem, items: cartItems, removeItem } = useCart();
+  const navigate = useNavigate();
+  
+  // Check if we're editing an existing cart item
+  const editItemId = searchParams.get("edit");
+  const editingItem = cartItems.find(item => item.id === editItemId) || null;
 
   // Option B: Do not auto-open delivery modal on this page; let header control it
 
@@ -125,9 +132,76 @@ export default function Order() {
     return priceRecord?.price ?? 0;
   }, [menuItemSizes]);
 
-  const buildInitialSelections = useCallback((template: any, menuItem: any, sizeParam: string | null) => {
+  const buildInitialSelections = useCallback((template: any, menuItem: any, sizeParam: string | null, editItem: CartItem | null = null) => {
     const initialSelections: Record<string, any> = {};
     const panels = customizerPanels.filter((p) => p.customizerTemplateId === template.id && p.isActive);
+    
+    // If editing, restore selections from cart item
+    if (editItem && editItem.selections && editItem.selections.length > 0) {
+      // Build a map of panel titles to their selections
+      const selectionsByPanel: Record<string, any> = {};
+      editItem.selections.forEach((sel: any) => {
+        if (sel.panelTitle) {
+          selectionsByPanel[sel.panelTitle] = sel;
+        }
+      });
+      
+      // Restore each panel's selection
+      panels.forEach((panel) => {
+        // For size panels, check the cart item's size field
+        if (panel.panelType === 'size' && editItem.size) {
+          const panelItems = customizerPanelItems.filter((item) => item.customizerPanelId === panel.id && item.isActive);
+          const matchingItem = panelItems.find(item => {
+            const itemName = item.itemType === "custom" ? item.customName : 
+                           item.itemType === "size" ? catSizes.find(s => s.id === item.itemId)?.sizeName :
+                           item.name;
+            return itemName === editItem.size;
+          });
+          
+          if (matchingItem) {
+            // Get price from size-based pricing or custom price
+            const price = matchingItem.itemType === "custom" 
+              ? matchingItem.customPrice || 0 
+              : getSizePrice(menuItem.id, matchingItem.itemId);
+            
+            initialSelections[panel.id] = {
+              itemId: matchingItem.id,
+              name: editItem.size,
+              price: price,
+            };
+          }
+        } else {
+          // For other panels, check selections array
+          const savedSelection = selectionsByPanel[panel.title];
+          if (savedSelection) {
+            // Find the panel item that matches this selection
+            const panelItems = customizerPanelItems.filter((item) => item.customizerPanelId === panel.id && item.isActive);
+            const matchingItem = panelItems.find(item => {
+              const itemName = item.itemType === "custom" ? item.customName : 
+                             item.itemType === "size" ? catSizes.find(s => s.id === item.itemId)?.sizeName :
+                             item.name;
+              return itemName === savedSelection.itemName;
+            });
+            
+            if (matchingItem) {
+              initialSelections[panel.id] = {
+                itemId: matchingItem.id,
+                name: savedSelection.itemName,
+                price: savedSelection.price || 0,
+              };
+            }
+          }
+        }
+      });
+      
+      // Restore toppings
+      if (editItem.toppings && editItem.toppings.length > 0) {
+        initialSelections.toppings = editItem.toppings;
+      }
+      
+      setCustomizerSelections(initialSelections);
+      return;
+    }
     
     panels.forEach((panel) => {
       const panelItems = customizerPanelItems.filter((item) => item.customizerPanelId === panel.id && item.isActive);
@@ -169,20 +243,53 @@ export default function Order() {
             price: price,
           };
         }
-      } else if (panel.panelType === "custom_list" && panelItems.length > 0) {
-        // Select first item by default for list panels
-        const firstItem = panelItems[0];
-        const itemName = firstItem.itemType === "custom" ? firstItem.customName : "";
-        const price = firstItem.itemType === "custom" ? firstItem.customPrice || 0 : 0;
+      } else if (panel.panelType === "list" || panel.panelType === "custom_list") {
+        // Check if there's a default selection for this panel
+        const defaultListSelections = (menuItem as any)?.defaultListSelections || {};
+        const defaultItemId = defaultListSelections[panel.id];
+        
+        
+        let selectedItem = panelItems[0]; // fallback to first item
+        
+        if (defaultItemId) {
+          const defaultItem = panelItems.find(item => item.id === defaultItemId);
+          if (defaultItem) {
+            selectedItem = defaultItem;
+          }
+        }
+        
+        const itemName = selectedItem.itemType === "custom" 
+          ? selectedItem.customName 
+          : selectedItem.name || "";
+        const price = selectedItem.itemType === "custom" ? selectedItem.customPrice || 0 : 0;
+        
         
         initialSelections[panel.id] = {
-          itemId: firstItem.id,
+          itemId: selectedItem.id,
           name: itemName,
           price: price,
         };
-      } else if (panel.panelType === "topping" && menuItem.defaultToppings) {
+      } else if (panel.panelType === "topping" && menuItem?.defaultToppings) {
         // Pre-select default toppings - default toppings are free
-        const defaultToppings = menuItem.defaultToppings.map((toppingId: string) => {
+        // Support both old array format and new object format with amounts
+        const defaultToppingsData = menuItem.defaultToppings;
+        let toppingEntries: Array<{ toppingId: string; amount: "normal" | "extra" }> = [];
+        
+        if (Array.isArray(defaultToppingsData)) {
+          // Old format: array of topping IDs (assume "normal" amount)
+          toppingEntries = defaultToppingsData.map((toppingId: string) => ({
+            toppingId,
+            amount: "normal" as const
+          }));
+        } else if (typeof defaultToppingsData === 'object') {
+          // New format: object with amount info
+          toppingEntries = Object.keys(defaultToppingsData).map(toppingId => ({
+            toppingId,
+            amount: (defaultToppingsData as any)[toppingId]?.amount || "normal"
+          }));
+        }
+        
+        const defaultToppings = toppingEntries.map(({ toppingId, amount }) => {
           const topping = allToppings.find((t) => t.id === toppingId);
           if (topping) {
             return {
@@ -191,8 +298,9 @@ export default function Order() {
               price: 0, // Default toppings are free
               category: topping.category || "",
               menuItemCategory: topping.menuItemCategory || "",
+              displayOrder: topping.displayOrder || 0,
               placement: "whole" as const,
-              amount: "normal" as const,
+              amount: amount, // Use the amount from menu item definition
             };
           }
           return null;
@@ -205,6 +313,21 @@ export default function Order() {
     setCustomizerSelections(initialSelections);
   }, [customizerPanels, customizerPanelItems, catSizes, allToppings, getSizePrice]);
 
+  // Helper function to get template for menu item
+  // Returns the item's assigned template (required for items with customizers)
+  const getTemplateForMenuItem = useCallback((menuItem: any) => {
+    if (!menuItem) return null;
+    
+    // Item must have a template assigned if customizer exists
+    if (menuItem.customizerTemplateId) {
+      return customizerTemplates.find(
+        (t) => t.id === menuItem.customizerTemplateId && t.isActive
+      );
+    }
+    
+    return null;
+  }, [customizerTemplates]);
+
   // Build initial selections when menu item and data are ready
   useEffect(() => {
     if (!currentMenuItem || !menuItemId) return;
@@ -215,15 +338,13 @@ export default function Order() {
     
     const sizeParam = searchParams.get("size");
     
-    const template = customizerTemplates.find(
-      (t) => t.subCategoryId === currentMenuItem.subCategoryId && t.isActive
-    );
+    const template = getTemplateForMenuItem(currentMenuItem);
     
     if (template) {
-      buildInitialSelections(template, currentMenuItem, sizeParam);
+      buildInitialSelections(template, currentMenuItem, sizeParam, editingItem);
       setSelectionsInitialized(true);
     }
-  }, [currentMenuItem, menuItemId, selectionsInitialized, templatesLoading, panelsLoading, itemsLoading, sizesLoading, menuItemSizesLoading, buildInitialSelections]);
+  }, [currentMenuItem, menuItemId, selectionsInitialized, templatesLoading, panelsLoading, itemsLoading, sizesLoading, menuItemSizesLoading, buildInitialSelections, editingItem, getTemplateForMenuItem]);
 
   // Legacy handlers kept for backward compatibility
   const handleToppingChange = (topping: Topping, placement: string | null, amount?: "normal" | "extra") => {
@@ -256,10 +377,175 @@ export default function Order() {
     return pizzaOrder.basePrice + toppingsTotal;
   };
 
+  const handleAddToCart = () => {
+    if (!currentMenuItem) return;
+
+    if (useDynamicCustomizer) {
+      // Base price from non-topping selections
+      const baseTotal = Object.entries(customizerSelections).reduce((sum, [key, sel]: any) => {
+        if (key === 'toppings') return sum;
+        if (sel && typeof sel === 'object' && sel.price) return sum + (sel.price || 0);
+        return sum;
+      }, 0);
+
+      // Determine selected size name and size id for display and size-based topping prices
+      const sizePanel = templatePanels.find(p => p.panelType === 'size');
+      const sizeSelection = sizePanel ? customizerSelections[sizePanel.id] : null;
+      const sizeName: string | undefined = sizeSelection?.name;
+      let categorySizeId: string | null = null;
+      if (sizeSelection?.itemId) {
+        const sizeItem = customizerPanelItems.find(i => i.id === sizeSelection.itemId);
+        if (sizeItem?.itemType === 'size') categorySizeId = sizeItem.itemId;
+      }
+
+      // Helper to extract default topping info (supports both array and object formats)
+      const getDefaultToppingsInfo = (defaultToppingsData: any) => {
+        const ids: string[] = [];
+        const amountsMap: Record<string, "normal" | "extra"> = {};
+        
+        if (Array.isArray(defaultToppingsData)) {
+          defaultToppingsData.forEach((id: string) => {
+            ids.push(id);
+            amountsMap[id] = "normal";
+          });
+        } else if (typeof defaultToppingsData === 'object' && defaultToppingsData !== null) {
+          Object.keys(defaultToppingsData).forEach(id => {
+            ids.push(id);
+            amountsMap[id] = defaultToppingsData[id]?.amount || "normal";
+          });
+        }
+        
+        return { ids, amountsMap };
+      };
+      
+      const { ids: defaultToppingIds, amountsMap: defaultAmounts } = getDefaultToppingsInfo(currentMenuItem?.defaultToppings);
+      const swappableDefaultItems = settings?.swappableDefaultItems ?? true;
+      const halfPriceToppings = settings?.halfPriceToppings ?? true;
+
+      const selectedToppings: any[] = Array.isArray(customizerSelections.toppings)
+        ? customizerSelections.toppings
+        : [];
+
+      // Count default toppings: each default topping (regardless of amount) = 1 free credit
+      let freeRemaining = swappableDefaultItems ? defaultToppingIds.length : 0;
+      const defaultsSelected = selectedToppings.filter((t: any) => defaultToppingIds.includes(t.id));
+      const nonDefaultsSelected = selectedToppings.filter((t: any) => !defaultToppingIds.includes(t.id));
+      const chargeUnitsMap: Record<string, number> = {};
+
+      const allocGroup = (group: any[]) => {
+        group.forEach((t: any) => {
+          const qty = t.amount === 'extra' ? 2 : 1;
+          if (swappableDefaultItems) {
+            if (freeRemaining > 0) {
+              const usedFree = Math.min(freeRemaining, qty);
+              freeRemaining -= usedFree;
+              chargeUnitsMap[t.id] = qty - usedFree;
+            } else {
+              chargeUnitsMap[t.id] = qty;
+            }
+          } else {
+            const isDefault = defaultToppingIds.includes(t.id);
+            chargeUnitsMap[t.id] = isDefault ? (t.amount === 'extra' ? 1 : 0) : (t.amount === 'extra' ? 2 : 1);
+          }
+        });
+      };
+      if (swappableDefaultItems) {
+        allocGroup(defaultsSelected);
+        allocGroup(nonDefaultsSelected);
+      } else {
+        allocGroup(selectedToppings);
+      }
+
+      const toppingsForCart = selectedToppings.map((t: any) => {
+        // Base price with size override
+        let basePrice = t.price || 0;
+        if (categorySizeId && toppingSizePrices.length > 0) {
+          const sizePrice = toppingSizePrices.find(sp => String(sp.toppingId) === String(t.id) && String(sp.categorySizeId) === String(categorySizeId));
+          if (sizePrice) basePrice = sizePrice.price;
+        }
+        let priceMultiplier = 1;
+        if (halfPriceToppings && (t.placement === 'left' || t.placement === 'right')) priceMultiplier = 0.5;
+        const units = chargeUnitsMap[t.id] ?? 0;
+        const displayPrice = units * basePrice * priceMultiplier;
+        return {
+          id: t.id,
+          name: t.name,
+          placement: t.placement,
+          amount: t.amount,
+          price: displayPrice,
+        };
+      });
+
+      // Dynamically collect ALL panel selections (not just crust/sauce)
+      const selections: Array<{panelTitle: string; itemName: string; price?: number}> = [];
+      
+      templatePanels.forEach(panel => {
+        if (panel.panelType === 'list' || panel.panelType === 'custom_list') {
+          const selection = customizerSelections[panel.id];
+          if (selection && selection.name) {
+            selections.push({
+              panelTitle: panel.title || 'Selection',
+              itemName: selection.name,
+              price: selection.price || 0
+            });
+          }
+        }
+      });
+
+      const orderItemToAdd = {
+        menuItemId: String(currentMenuItem.id),
+        name: currentMenuItem.name,
+        price: baseTotal,
+        quantity: 1,
+        size: sizeName,
+        toppings: toppingsForCart,
+        selections: selections,
+      };
+
+      
+      addItem(orderItemToAdd);
+    } else {
+      // Legacy path
+      const baseTotal = pizzaOrder.basePrice || 0;
+      const toppingsForCart = pizzaOrder.toppings.map((t) => {
+        const multiplier = t.amount === 'extra' ? 1.5 : 1;
+        return {
+          id: t.id,
+          name: t.name,
+          placement: t.placement,
+          amount: t.amount,
+          price: (t.price || 0) * multiplier,
+        };
+      });
+      addItem({
+        menuItemId: String(currentMenuItem?.id || ''),
+        name: currentMenuItem?.name || 'Custom Item',
+        price: baseTotal,
+        quantity: 1,
+        size: pizzaOrder.size || undefined,
+        crust: pizzaOrder.crust || undefined,
+        toppings: toppingsForCart,
+      });
+    }
+    
+    // If we're editing an existing item, remove the old one first
+    if (editingItem) {
+      removeItem(editingItem.id);
+      alert('Item updated successfully!');
+    } else {
+      alert('Item added to cart successfully!');
+    }
+    
+    // Navigate back to cart after editing, or stay for new items
+    if (editingItem) {
+      navigate('/cart');
+    }
+  };
+
   // Determine if we should use the dynamic customizer
-  const customizerTemplate = customizerTemplates.find(
-    (t) => t.subCategoryId === subCategoryId && t.isActive
-  );
+  const customizerTemplate = currentMenuItem
+    ? getTemplateForMenuItem(currentMenuItem)
+    : null;
   const useDynamicCustomizer = !!customizerTemplate;
 
   // Get panels and items for the current template
@@ -297,7 +583,28 @@ export default function Order() {
     // Calculate topping prices with new logic
     if (customizerSelections.toppings && Array.isArray(customizerSelections.toppings)) {
       const selectedToppings = customizerSelections.toppings;
-      const defaultToppings = currentMenuItem?.defaultToppings || [];
+      
+      // Helper to extract default topping info (supports both array and object formats)
+      const getDefaultToppingsInfo = (defaultToppingsData: any) => {
+        const ids: string[] = [];
+        const amountsMap: Record<string, "normal" | "extra"> = {};
+        
+        if (Array.isArray(defaultToppingsData)) {
+          defaultToppingsData.forEach((id: string) => {
+            ids.push(id);
+            amountsMap[id] = "normal";
+          });
+        } else if (typeof defaultToppingsData === 'object' && defaultToppingsData !== null) {
+          Object.keys(defaultToppingsData).forEach(id => {
+            ids.push(id);
+            amountsMap[id] = defaultToppingsData[id]?.amount || "normal";
+          });
+        }
+        
+        return { ids, amountsMap };
+      };
+      
+      const { ids: defaultToppingIds } = getDefaultToppingsInfo(currentMenuItem?.defaultToppings);
       const swappableDefaultItems = settings?.swappableDefaultItems ?? true;
       const halfPriceToppings = settings?.halfPriceToppings ?? true;
       
@@ -314,9 +621,9 @@ export default function Order() {
       }
 
       // Swappable logic: allocate free units to default toppings first, then non-defaults
-      let freeRemaining = swappableDefaultItems ? defaultToppings.length : 0;
-      const defaultsSelected = selectedToppings.filter((t: any) => defaultToppings.includes(t.id));
-      const nonDefaultsSelected = selectedToppings.filter((t: any) => !defaultToppings.includes(t.id));
+      let freeRemaining = swappableDefaultItems ? defaultToppingIds.length : 0;
+      const defaultsSelected = selectedToppings.filter((t: any) => defaultToppingIds.includes(t.id));
+      const nonDefaultsSelected = selectedToppings.filter((t: any) => !defaultToppingIds.includes(t.id));
 
       const processGroup = (group: any[]) => {
         group.forEach((topping: any) => {
@@ -351,7 +658,7 @@ export default function Order() {
           } else {
             // Non-swappable: default normal is free (0 units), default extra charges 1 unit;
             // non-default normal charges 1 unit; non-default extra charges 2 units
-            const isDefault = defaultToppings.includes(topping.id);
+            const isDefault = defaultToppingIds.includes(topping.id);
             if (isDefault) {
               chargeableUnits = topping.amount === 'extra' ? 1 : 0;
             } else {
@@ -430,6 +737,7 @@ export default function Order() {
                   menuItemSizes={menuItemSizes}
                   toppingSizePrices={toppingSizePrices}
                   currentMenuItemId={menuItemId}
+                  availableToppings={currentMenuItem?.availableToppings}
                   onSelectionChange={setCustomizerSelections}
                   initialSelections={customizerSelections}
                 />
@@ -464,17 +772,31 @@ export default function Order() {
               <CardHeader>
                 <CardTitle style={{ color: 'var(--card-foreground)' }}>Order Summary</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent>
                 {/* Dynamic Customizer Summary */}
                 {useDynamicCustomizer ? (
                   <>
+                    {/* Menu Item Name */}
+                    {currentMenuItem && (
+                      <h3 className="font-semibold text-md mb-1" style={{ color: 'var(--foreground)' }}>
+                        {currentMenuItem.name}
+                      </h3>
+                    )}
+                    
+                    <div className="space-y-0 mb-4">
                     {Object.entries(customizerSelections).map(([panelId, selection]: [string, any]) => {
                       if (panelId === 'toppings') return null; // Handle toppings separately
                       if (!selection || typeof selection !== 'object') return null;
                       
+                      // Find the panel to get its title
+                      const panel = templatePanels.find(p => p.id === panelId);
+                      const panelTitle = panel?.title || '';
+                      
                       return (
-                        <div key={panelId} className="flex justify-between">
-                          <span style={{ color: 'var(--foreground)' }}>{selection.name}</span>
+                        <div key={panelId} className="flex justify-between text-sm">
+                          <span style={{ color: 'var(--muted-foreground)' }}>
+                            {panelTitle ? `${panelTitle}: ${selection.name}` : selection.name}
+                          </span>
                           {selection.price > 0 && (
                             <span style={{ color: 'var(--foreground)' }}>${selection.price.toFixed(2)}</span>
                           )}
@@ -484,11 +806,24 @@ export default function Order() {
 
                     {/* Toppings */}
                     {customizerSelections.toppings && Array.isArray(customizerSelections.toppings) && customizerSelections.toppings.length > 0 && (
-                      <div className="space-y-2">
-                        <h4 className="font-medium text-sm" style={{ color: 'var(--foreground)' }}>Toppings:</h4>
+                      <div className="mt-3">
+                        <p className="text-sm font-medium mb-1" style={{ color: 'var(--foreground)' }}>Toppings:</p>
+                        <div className="space-y-0">
                         {(() => {
                           const selectedToppings = customizerSelections.toppings;
-                          const defaultToppings = currentMenuItem?.defaultToppings || [];
+                          
+                          // Helper to extract default topping info (supports both array and object formats)
+                          const getDefaultToppingsInfo = (defaultToppingsData: any) => {
+                            const ids: string[] = [];
+                            if (Array.isArray(defaultToppingsData)) {
+                              ids.push(...defaultToppingsData);
+                            } else if (typeof defaultToppingsData === 'object' && defaultToppingsData !== null) {
+                              ids.push(...Object.keys(defaultToppingsData));
+                            }
+                            return ids;
+                          };
+                          
+                          const defaultToppingIds = getDefaultToppingsInfo(currentMenuItem?.defaultToppings);
                           const swappableDefaultItems = settings?.swappableDefaultItems ?? true;
                           const halfPriceToppings = settings?.halfPriceToppings ?? true;
                           
@@ -505,9 +840,9 @@ export default function Order() {
                           }
                           
                           // Compute chargeable units per topping with default-first allocation
-                          let freeRemaining = swappableDefaultItems ? defaultToppings.length : 0;
-                          const defaultsSelected = selectedToppings.filter((t: any) => defaultToppings.includes(t.id));
-                          const nonDefaultsSelected = selectedToppings.filter((t: any) => !defaultToppings.includes(t.id));
+                          let freeRemaining = swappableDefaultItems ? defaultToppingIds.length : 0;
+                          const defaultsSelected = selectedToppings.filter((t: any) => defaultToppingIds.includes(t.id));
+                          const nonDefaultsSelected = selectedToppings.filter((t: any) => !defaultToppingIds.includes(t.id));
                           const chargeUnitsMap: Record<string, number> = {};
 
                           const allocGroup = (group: any[]) => {
@@ -522,7 +857,7 @@ export default function Order() {
                                   chargeUnitsMap[topping.id] = quantity;
                                 }
                               } else {
-                                const isDefault = defaultToppings.includes(topping.id);
+                                const isDefault = defaultToppingIds.includes(topping.id);
                                 chargeUnitsMap[topping.id] = isDefault
                                   ? (topping.amount === 'extra' ? 1 : 0)
                                   : (topping.amount === 'extra' ? 2 : 1);
@@ -570,8 +905,10 @@ export default function Order() {
                             );
                           });
                         })()}
+                        </div>
                       </div>
                     )}
+                    </div>
                   </>
                 ) : (
                   <>
@@ -676,7 +1013,7 @@ export default function Order() {
                 )}
                 
                 {/* Total */}
-                <div className="pt-4" style={{ borderTop: '1px solid var(--border)' }}>
+                <div className="pt-2 mt-2" style={{ borderTop: '1px solid var(--border)' }}>
                   <div className="flex justify-between font-bold text-lg">
                     <span style={{ color: 'var(--foreground)' }}>Total:</span>
                     <span style={{ color: 'var(--primary)' }}>
@@ -687,16 +1024,25 @@ export default function Order() {
 
                 {/* Add to Cart Button */}
                 <Button
+                  className="w-full mt-4"
                   disabled={
                     useDynamicCustomizer 
-                      ? Object.keys(customizerSelections).length === 0
+                      ? (() => {
+                          // Check if required panels have selections
+                          const requiredPanels = templatePanels.filter(p => p.panelType !== 'topping');
+                          const hasRequiredSelections = requiredPanels.every(panel => 
+                            customizerSelections[panel.id] && customizerSelections[panel.id].itemId
+                          );
+                          return !hasRequiredSelections;
+                        })()
                       : !pizzaOrder.size || !pizzaOrder.crust || !pizzaOrder.sauce
                   }
+                  onClick={handleAddToCart}
                 >
-                  Add to Cart
+                  {editingItem ? 'Update Cart' : 'Add to Cart'}
                 </Button>
 
-                <Button variant="outline" className="w-full" asChild>
+                <Button variant="outline" className="w-full mt-2" asChild>
                   <Link to="/menu">Continue Shopping</Link>
                 </Button>
               </CardContent>

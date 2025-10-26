@@ -8,6 +8,7 @@ import "./utils/resizeObserverFix";
 
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { OrderProvider } from "./contexts/OrderContext";
+import { CartProvider } from "./contexts/CartContext";
 import Footer from "./components/Footer";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
@@ -40,6 +41,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 const App = () => (
   <ThemeProvider>
     <OrderProvider>
+      <CartProvider>
       <BrowserRouter
         future={{
           v7_startTransition: true,
@@ -64,6 +66,7 @@ const App = () => (
           </Routes>
         </Layout>
       </BrowserRouter>
+      </CartProvider>
     </OrderProvider>
   </ThemeProvider>
 );

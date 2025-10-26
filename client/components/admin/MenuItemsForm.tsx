@@ -8,43 +8,9 @@ import DeleteButton from "../shared_components/DeleteButton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Plus } from "lucide-react";
 import { Category } from "./MenuCategoriesForm";
+import { MenuItem, ToppingCategory, Topping, CategorySize } from "../../../shared/api";
 
-export interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  subCategoryId?: string;
-  imageId?: string;
-  isActive: boolean;
-  image?: string;
-  defaultToppings?: string[];
-}
-
-export interface ToppingCategory {
-  id: string;
-  name: string;
-  menuItemCategory: string;
-  order: number;
-  isActive: boolean;
-}
-
-export interface Topping {
-  id: string;
-  name: string;
-  price: number;
-  category: string;
-  menuItemCategory: string;
-  isActive: boolean;
-}
-
-export interface CategorySize {
-  id: string;
-  categoryId: string;
-  sizeName: string;
-  displayOrder: number;
-  isActive: boolean;
-}
+// Types imported from shared/api.ts
 
 export interface MenuItemFormProps {
   menuItems: MenuItem[];
@@ -108,14 +74,22 @@ export default function MenuItemForm({
   const handleSaveMenuItem = async (
     menuItemData: any,
     sizePrices: any,
-    defaultToppings: string[],
+    defaultToppings: Record<string, { amount: "normal" | "extra" }>,
+    defaultListSelections?: Record<string, string>,
+    availableToppings?: string[],
   ) => {
     try {
+      console.log('MenuItemsForm: Received defaultToppings:', defaultToppings);
+      console.log('MenuItemsForm: Received defaultListSelections:', defaultListSelections);
+      console.log('MenuItemsForm: Received availableToppings:', availableToppings);
       if (editingMenuItem) {
         // Update existing item
+        console.log('MenuItemsForm: Updating with defaultListSelections:', defaultListSelections);
         await updateMenuItem(editingMenuItem.id, {
           ...menuItemData,
           defaultToppings,
+          defaultListSelections,
+          availableToppings,
         });
 
         // Update size-based pricing
@@ -129,9 +103,12 @@ export default function MenuItemForm({
         }
       } else {
         // Create new item
+        console.log('MenuItemsForm: Creating with defaultListSelections:', defaultListSelections);
         const createdMenuItem = await createMenuItem({
           ...menuItemData,
           defaultToppings,
+          defaultListSelections,
+          availableToppings,
         });
 
         // Create size-based pricing
@@ -200,6 +177,15 @@ export default function MenuItemForm({
     selectedMenuCategory === "all"
       ? menuItems
       : menuItems.filter((item) => item.category === selectedMenuCategory);
+
+  // Group items by category for visual organization
+  const groupedByCategory = categories
+    .filter((c) => c.isActive)
+    .map((category) => ({
+      category,
+      items: menuItems.filter((item) => item.category === category.id),
+    }))
+    .filter((group) => group.items.length > 0); // Only show categories with items
 
   return (
     <div className="space-y-6" style={{ backgroundColor: 'var(--background)' }}>
@@ -275,55 +261,131 @@ export default function MenuItemForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {filteredMenuItems.map((menuItem) => {
-          const menuItemImage = menuItem.imageId
-            ? images.find((img) => img.id === menuItem.imageId)
-            : null;
-          const subTitle = <span className="line-clamp-2">{menuItem.description}</span>;
-          const pricing = <span>{getMenuItemPrice(menuItem)}</span>;
+      {selectedMenuCategory === "all" ? (
+        // Show grouped by category
+        <div className="space-y-8">
+          {groupedByCategory.map((group) => (
+            <div key={group.category.id}>
+              {/* Category Header */}
+              <div className="mb-4 pb-2 border-b-2" style={{ borderColor: 'var(--border)' }}>
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>
+                  {group.category.name}
+                </h3>
+                <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                  {group.items.length} item{group.items.length !== 1 ? 's' : ''}
+                </p>
+              </div>
 
-          return (
-            <ImageCard
-              imageUrl={menuItemImage?.url}
-              alt={menuItemImage?.altText || menuItem.name}
-              title={menuItem.name}
-              subTitle={subTitle}
-              pricing={pricing}
-              isActive={menuItem.isActive}
-              thumbClassName="w-full h-32"
-              rightActions={
-                <>
-                  <ActivationButton
-                    isActive={menuItem.isActive}
-                    onToggle={() => toggleMenuItemStatus(menuItem.id)}
-                    activeTooltip="Deactivate"
-                    inactiveTooltip="Activate"
-                  />
-                  <EditButton
-                    label="Edit Menu Item"
-                    onClick={() => handleEditMenuItem(menuItem)}
-                  />
-                  <DeleteButton
-                    entityTitle="Menu Item"
-                    subjectName={menuItem.name}
-                    tooltipWhenAllowed="Delete Menu Item"
-                    tooltipWhenBlocked="Cannot Delete: Has Related Items"
-                    onConfirm={() => handleDeleteMenuItem(menuItem.id)}
-                  />
-                </>
-              }
-            />
-          );
-        })}
-      </div>
+              {/* Category Items */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {group.items.map((menuItem) => {
+                  const menuItemImage = menuItem.imageId
+                    ? images.find((img) => img.id === menuItem.imageId)
+                    : null;
+                  const subTitle = <span className="line-clamp-2">{menuItem.description}</span>;
+                  const pricing = <span>{getMenuItemPrice(menuItem)}</span>;
 
-      {filteredMenuItems.length === 0 && (
-        <div className="text-center py-12">
-          <p style={{ color: 'var(--muted-foreground)' }}>
-            No menu items found for the selected category.
-          </p>
+                  return (
+                    <ImageCard
+                      key={menuItem.id}
+                      imageUrl={menuItemImage?.url}
+                      alt={menuItemImage?.altText || menuItem.name}
+                      title={menuItem.name}
+                      subTitle={subTitle}
+                      pricing={pricing}
+                      isActive={menuItem.isActive}
+                      thumbClassName="w-full h-32"
+                      rightActions={
+                        <>
+                          <ActivationButton
+                            isActive={menuItem.isActive}
+                            onToggle={() => toggleMenuItemStatus(menuItem.id)}
+                            activeTooltip="Deactivate"
+                            inactiveTooltip="Activate"
+                          />
+                          <EditButton
+                            label="Edit Menu Item"
+                            onClick={() => handleEditMenuItem(menuItem)}
+                          />
+                          <DeleteButton
+                            entityTitle="Menu Item"
+                            subjectName={menuItem.name}
+                            tooltipWhenAllowed="Delete Menu Item"
+                            tooltipWhenBlocked="Cannot Delete: Has Related Items"
+                            onConfirm={() => handleDeleteMenuItem(menuItem.id)}
+                          />
+                        </>
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          {groupedByCategory.length === 0 && (
+            <div className="text-center py-12">
+              <p style={{ color: 'var(--muted-foreground)' }}>
+                No menu items found.
+              </p>
+            </div>
+          )}
         </div>
+      ) : (
+        // Show flat list for specific category
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {filteredMenuItems.map((menuItem) => {
+              const menuItemImage = menuItem.imageId
+                ? images.find((img) => img.id === menuItem.imageId)
+                : null;
+              const subTitle = <span className="line-clamp-2">{menuItem.description}</span>;
+              const pricing = <span>{getMenuItemPrice(menuItem)}</span>;
+
+              return (
+                <ImageCard
+                  key={menuItem.id}
+                  imageUrl={menuItemImage?.url}
+                  alt={menuItemImage?.altText || menuItem.name}
+                  title={menuItem.name}
+                  subTitle={subTitle}
+                  pricing={pricing}
+                  isActive={menuItem.isActive}
+                  thumbClassName="w-full h-32"
+                  rightActions={
+                    <>
+                      <ActivationButton
+                        isActive={menuItem.isActive}
+                        onToggle={() => toggleMenuItemStatus(menuItem.id)}
+                        activeTooltip="Deactivate"
+                        inactiveTooltip="Activate"
+                      />
+                      <EditButton
+                        label="Edit Menu Item"
+                        onClick={() => handleEditMenuItem(menuItem)}
+                      />
+                      <DeleteButton
+                        entityTitle="Menu Item"
+                        subjectName={menuItem.name}
+                        tooltipWhenAllowed="Delete Menu Item"
+                        tooltipWhenBlocked="Cannot Delete: Has Related Items"
+                        onConfirm={() => handleDeleteMenuItem(menuItem.id)}
+                      />
+                    </>
+                  }
+                />
+              );
+            })}
+          </div>
+
+          {filteredMenuItems.length === 0 && (
+            <div className="text-center py-12">
+              <p style={{ color: 'var(--muted-foreground)' }}>
+                No menu items found for the selected category.
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       {/* Add Menu Item Dialog */}

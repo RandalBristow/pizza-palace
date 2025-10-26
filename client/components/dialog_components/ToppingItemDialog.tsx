@@ -14,6 +14,7 @@ export interface Topping {
   price?: number;
   category: string;
   menuItemCategory: string;
+  displayOrder: number;
   isActive: boolean;
 }
 
@@ -53,9 +54,11 @@ export default function ToppingItemDialog({
     name: "",
     menuItemCategory: "",
     category: "",
+    displayOrder: 1,
     isActive: true,
   });
   const [sizePrices, setSizePrices] = useState<Record<string, number>>({});
+  const [inputValues, setInputValues] = useState<Record<string, string>>({});
 
   // Get available sizes for the selected menu category
   const getAvailableSizes = (menuCategoryId: string) => {
@@ -70,16 +73,20 @@ export default function ToppingItemDialog({
         name: topping.name || "",
         menuItemCategory: topping.menuItemCategory || "",
         category: topping.category || "",
+        displayOrder: topping.displayOrder || 1,
         isActive: topping.isActive ?? true,
       });
 
       // Load existing size prices
       const existingPrices: Record<string, number> = {};
+      const existingInputs: Record<string, string> = {};
       const toppingSizes = getToppingSizePrices(topping.id);
       toppingSizes.forEach((tp) => {
         existingPrices[tp.categorySizeId] = tp.price;
+        existingInputs[tp.categorySizeId] = tp.price.toFixed(2);
       });
       setSizePrices(existingPrices);
+      setInputValues(existingInputs);
     } else {
       resetForm();
     }
@@ -110,15 +117,42 @@ export default function ToppingItemDialog({
       name: "",
       menuItemCategory: "",
       category: "",
+      displayOrder: 1,
       isActive: true,
     });
     setSizePrices({});
+    setInputValues({});
   };
 
-  const handleSizePriceChange = (categorySizeId: string, price: string) => {
+  const handleSizePriceChange = (categorySizeId: string, value: string) => {
+    // Allow only numbers and one decimal point while typing
+    const cleanValue = value.replace(/[^\d.]/g, '');
+    
+    // Prevent multiple decimal points
+    const decimalCount = (cleanValue.match(/\./g) || []).length;
+    if (decimalCount > 1) return;
+    
+    // Update the raw input value (what user sees)
+    setInputValues((prev) => ({
+      ...prev,
+      [categorySizeId]: cleanValue,
+    }));
+  };
+
+  const handlePriceBlur = (categorySizeId: string) => {
+    // Format and save the price when user leaves the field
+    const rawValue = inputValues[categorySizeId] || '0';
+    const price = parseFloat(rawValue) || 0;
+    
     setSizePrices((prev) => ({
       ...prev,
-      [categorySizeId]: parseFloat(price) || 0,
+      [categorySizeId]: price,
+    }));
+    
+    // Format the display value
+    setInputValues((prev) => ({
+      ...prev,
+      [categorySizeId]: price.toFixed(2),
     }));
   };
 
@@ -269,6 +303,29 @@ export default function ToppingItemDialog({
             </Select>
           </div>
 
+          <div>
+            <Label
+              htmlFor="displayOrder"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              Display Order
+            </Label>
+            <Input
+              id="displayOrder"
+              type="number"
+              min="1"
+              value={formData.displayOrder}
+              onChange={(e) =>
+                setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 1 })
+              }
+              disabled={!hasName}
+              className="bg-[var(--input)] border-[var(--border)] text-[var(--foreground)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
+            />
+            <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+              Lower numbers appear first in the list
+            </p>
+          </div>
+
           {hasName && hasMenuCategory && hasToppingCategory && (
             <div className="space-y-2 w-full">
               <h3 className="text-sm font-medium mb-1 text-[var(--foreground)]">Size-Based Pricing</h3>
@@ -283,25 +340,39 @@ export default function ToppingItemDialog({
                     {getAvailableSizes(formData.menuItemCategory).map((size) => (
                       <div
                         key={size.id}
-                        className="flex items-center justify-between"
+                        className="flex items-center justify-between py-1"
                       >
-                        <Label className="text-xs min-w-[60px] font-medium text-[var(--foreground)]">
+                        <Label className="text-sm font-medium text-[var(--foreground)]">
                           {size.sizeName}
                         </Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          placeholder="0.00"
-                          className="w-24 h-7 py-0 px-0 text-xs text-right bg-[var(--input)] border-[var(--border)] text-[var(--foreground)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0"
-                          value={
-                            sizePrices[size.id]
-                              ? sizePrices[size.id].toFixed(2)
-                              : ""
-                          }
-                          onChange={(e) =>
-                            handleSizePriceChange(size.id, e.target.value)
-                          }
-                        />
+                        <div className="relative w-32">
+                          <span 
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-sm"
+                            style={{ color: 'var(--muted-foreground)' }}
+                          >
+                            $
+                          </span>
+                          <Input
+                            type="text"
+                            inputMode="decimal"
+                            placeholder="0.00"
+                            className="h-9 pl-6 pr-3 text-sm text-right bg-[var(--input)] border-[var(--border)] text-[var(--foreground)]"
+                            style={{
+                              outline: 'none'
+                            }}
+                            value={inputValues[size.id] || ""}
+                            onChange={(e) =>
+                              handleSizePriceChange(size.id, e.target.value)
+                            }
+                            onFocus={(e) => {
+                              e.target.style.boxShadow = `0 0 0 2px var(--ring)`;
+                            }}
+                            onBlur={(e) => {
+                              e.target.style.boxShadow = 'none';
+                              handlePriceBlur(size.id);
+                            }}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>

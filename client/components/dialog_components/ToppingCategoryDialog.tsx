@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { RequiredFieldLabel } from "../ui/required-field-label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Category } from "../admin/MenuCategoriesForm";
 
@@ -63,7 +63,8 @@ export default function ToppingCategoryDialog({
   const orderValid = Number.isFinite(Number(formData.order)) && Number(formData.order) > 0;
   const canSave = hasName && hasCategory && orderValid;
 
-  const handleSave = async () => {
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
     try {
       await onSave(formData);
       onClose();
@@ -88,6 +89,11 @@ export default function ToppingCategoryDialog({
               ? "Edit Topping Category"
               : "Add New Topping Category"}
           </DialogTitle>
+          <DialogDescription style={{ color: "var(--muted-foreground)" }}>
+            {toppingCategory
+              ? "Update the topping category details below"
+              : "Create a new topping category for menu items"}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSave} className="space-y-4">
           <div>

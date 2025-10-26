@@ -1,77 +1,14 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../components/ui/alert-dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../components/ui/alert-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { useCart, CartItem } from "../contexts/CartContext";
 import { Input } from "../components/ui/input";
-import { ArrowLeft, Plus, Minus, ShoppingCart, CreditCard } from "lucide-react";
+import { Plus, Minus, ShoppingCart, CreditCard, Edit } from "lucide-react";
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  size?: string;
-  crust?: string;
-  toppings?: Array<{
-    name: string;
-    price: number;
-    placement: string;
-  }>;
-  customizations?: string;
-}
-
-const mockCartItems: CartItem[] = [
-  {
-    id: "cart1",
-    name: "Margherita Pizza",
-    price: 15.99,
-    quantity: 1,
-    size: '12"',
-    crust: "Regular",
-    toppings: [
-      { name: "Extra Mozzarella", price: 2.0, placement: "whole" },
-      { name: "Basil", price: 1.5, placement: "whole" },
-    ],
-  },
-  {
-    id: "cart2",
-    name: "House Blend Coffee",
-    price: 2.99,
-    quantity: 2,
-  },
-  {
-    id: "cart3",
-    name: "Supreme Pizza",
-    price: 21.99,
-    quantity: 1,
-    size: '14"',
-    crust: "Thin",
-    toppings: [
-      { name: "Pepperoni", price: 2.0, placement: "left" },
-      { name: "Sausage", price: 2.5, placement: "right" },
-      { name: "Mushrooms", price: 1.5, placement: "whole" },
-    ],
-  },
-];
+// Cart items now come from CartContext
 
 // Get restaurant settings for tax rate
 const getRestaurantSettings = () => {
@@ -88,7 +25,8 @@ const getRestaurantSettings = () => {
 };
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState<CartItem[]>(mockCartItems);
+  const { items: cartItems, updateQuantity: updateCartQuantity, removeItem } = useCart();
+  const navigate = useNavigate();
   const [promoCode, setPromoCode] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<{
     code: string;
@@ -97,6 +35,11 @@ export default function Cart() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [taxRate, setTaxRate] = useState(getRestaurantSettings().taxRate);
+
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Listen for settings updates
   useEffect(() => {
@@ -118,17 +61,13 @@ export default function Cart() {
       setItemToDelete(id);
       setDeleteConfirmOpen(true);
     } else {
-      setCartItems(
-        cartItems.map((item) =>
-          item.id === id ? { ...item, quantity: newQuantity } : item,
-        ),
-      );
+      updateCartQuantity(id, newQuantity);
     }
   };
 
   const confirmDelete = () => {
     if (itemToDelete) {
-      setCartItems(cartItems.filter((item) => item.id !== itemToDelete));
+      removeItem(itemToDelete);
       setItemToDelete(null);
     }
     setDeleteConfirmOpen(false);
@@ -139,11 +78,47 @@ export default function Cart() {
     setDeleteConfirmOpen(false);
   };
 
+  const handleEditItem = (item: CartItem) => {
+    // Navigate to the order customization page with the item's details
+    const editUrl = `/order?item=${item.menuItemId}&size=${item.size || ''}&edit=${item.id}`;
+    navigate(editUrl);
+  };
+
+  const canEditItem = (item: CartItem) => {
+    // Only show edit button for items that went through a customizer
+    // Items with selections definitely have a customizer
+    if (item.selections && item.selections.length > 0) return true;
+    
+    // Otherwise, no edit button (simple items like wings without customizer)
+    return false;
+  };
+
   const calculateItemTotal = (item: CartItem) => {
-    const toppingsTotal = item.toppings
-      ? item.toppings.reduce((sum, topping) => sum + topping.price, 0)
-      : 0;
-    return (item.price + toppingsTotal) * item.quantity;
+    // Calculate from displayed rounded prices to match what customer sees
+    let displayedSubtotal = 0;
+    
+    // Add base price
+    displayedSubtotal += parseFloat(item.price.toFixed(2));
+    
+    // Add selection prices
+    if (item.selections && item.selections.length > 0) {
+      item.selections.forEach((selection) => {
+        if (selection.price && selection.price > 0) {
+          displayedSubtotal += parseFloat(selection.price.toFixed(2));
+        }
+      });
+    }
+    
+    // Add topping prices
+    if (item.toppings && item.toppings.length > 0) {
+      item.toppings.forEach((topping) => {
+        if (topping.price > 0) {
+          displayedSubtotal += parseFloat(topping.price.toFixed(2));
+        }
+      });
+    }
+    
+    return displayedSubtotal * item.quantity;
   };
 
   const calculateSubtotal = () => {
@@ -184,9 +159,8 @@ export default function Cart() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
         <HeaderWithDelivery
-          cart={cartItems}
           breadcrumbs={[
             { label: "Menu", href: "/menu" },
             { label: "Shopping Cart" },
@@ -195,14 +169,21 @@ export default function Cart() {
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <ShoppingCart className="h-20 w-20 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <ShoppingCart className="h-20 w-20 mx-auto mb-4" style={{ color: 'var(--muted-foreground)' }} />
+            <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>
               Your cart is empty
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="mb-8" style={{ color: 'var(--muted-foreground)' }}>
               Add some delicious items from our menu to get started!
             </p>
-            <Button asChild size="lg">
+            <Button 
+              asChild 
+              size="lg"
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)'
+              }}
+            >
               <Link to="/menu">Browse Menu</Link>
             </Button>
           </div>
@@ -212,9 +193,8 @@ export default function Cart() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       <HeaderWithDelivery
-        cart={cartItems}
         breadcrumbs={[
           { label: "Menu", href: "/menu" },
           { label: "Shopping Cart" },
@@ -225,90 +205,183 @@ export default function Cart() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Order Items</h2>
-            {cartItems.map((item) => (
-              <Card key={item.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{item.name}</h3>
-                      {item.size && (
-                        <p className="text-sm text-gray-600">
-                          {item.size} {item.crust} Crust
-                        </p>
-                      )}
-                      {item.toppings && item.toppings.length > 0 && (
-                        <div className="mt-2">
-                          <p className="text-sm font-medium text-gray-700">
-                            Toppings:
-                          </p>
-                          <ul className="text-sm text-gray-600">
-                            {item.toppings.map((topping, index) => (
-                              <li key={index}>
-                                {topping.name} ({topping.placement})
-                                {topping.price > 0 &&
-                                  ` +$${topping.price.toFixed(2)}`}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="flex items-center space-x-3">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
+            {cartItems.map((item) => {
+              // Determine if this item has a customizer breakdown
+              const hasCustomizerBreakdown = (item.selections && item.selections.length > 0) || (item.toppings && item.toppings.length > 0);
+              
+              return (
+                <Card key={item.id} style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg mb-0" style={{ color: 'var(--foreground)' }}>{item.name}</h3>
+                        
+                        {/* Show price breakdown for items with customizers */}
+                        {hasCustomizerBreakdown ? (
+                          (() => {
+                            // Calculate subtotal from displayed rounded prices
+                            let displayedSubtotal = 0;
+                            
+                            // Add base price
+                            if (item.size) {
+                              displayedSubtotal += parseFloat(item.price.toFixed(2));
                             }
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="font-medium">{item.quantity}</span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
+                            
+                            // Add selection prices
+                            if (item.selections && item.selections.length > 0) {
+                              item.selections.forEach((selection) => {
+                                if (selection.price && selection.price > 0) {
+                                  displayedSubtotal += parseFloat(selection.price.toFixed(2));
+                                }
+                              });
                             }
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
+                            
+                            // Add topping prices
+                            if (item.toppings && item.toppings.length > 0) {
+                              item.toppings.forEach((topping) => {
+                                if (topping.price > 0) {
+                                  displayedSubtotal += parseFloat(topping.price.toFixed(2));
+                                }
+                              });
+                            }
+                            
+                            return (
+                              <div className="space-y-0 mb-4">
+                                {/* Size display without price breakdown initially */}
+                                {item.size && (
+                                  <div className="flex justify-between text-sm">
+                                    <span style={{ color: 'var(--muted-foreground)' }}>{item.size}</span>
+                                    <span style={{ color: 'var(--foreground)' }}>${item.price.toFixed(2)}</span>
+                                  </div>
+                                )}
+                                
+                                {/* Selections (Crust, Sauce, etc.) with prices */}
+                                {item.selections && item.selections.length > 0 && (
+                                  <>
+                                    {item.selections.map((selection, index) => {
+                                      const hasPrice = !!(selection.price && selection.price > 0);
+                                      return (
+                                        <div key={index} className="flex justify-between text-sm">
+                                          <span style={{ color: 'var(--muted-foreground)' }}>
+                                            {selection.panelTitle}: {selection.itemName}
+                                          </span>
+                                          {hasPrice && (
+                                            <span style={{ color: 'var(--foreground)' }}>
+                                              ${selection.price.toFixed(2)}
+                                            </span>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </>
+                                )}
+                                
+                                {/* Toppings with individual prices */}
+                                {item.toppings && item.toppings.length > 0 && (
+                                  <div className="mt-3">
+                                    <p className="text-sm font-medium mb-1" style={{ color: 'var(--foreground)' }}>
+                                      {item.toppingCategoryName || 'Toppings'}:
+                                    </p>
+                                    <div className="space-y-0">
+                                      {item.toppings.map((topping, index) => (
+                                        <div key={index} className="flex justify-between text-sm">
+                                          <span style={{ color: 'var(--muted-foreground)' }}>
+                                            {topping.name}
+                                            {topping.placement && topping.placement !== 'whole' && ` (${topping.placement})`}
+                                            {topping.amount === "extra" && " - Extra"}
+                                          </span>
+                                          <span style={{ color: 'var(--foreground)' }}>
+                                            {topping.price > 0 ? `+$${topping.price.toFixed(2)}` : 'Included'}
+                                          </span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Subtotal for this line item (price × quantity) */}
+                                <div className="flex justify-end font-semibold text-md pt-2 space-x-2 mt-2" style={{ borderTop: '1px solid var(--border)' }}>
+                                  <span style={{ color: 'var(--foreground)' }}>Subtotal:</span>
+                                  <span style={{ color: 'var(--foreground)' }}>${(displayedSubtotal * item.quantity).toFixed(2)}</span>
+                                </div>
+                              </div>
+                            );
+                          })()
+                        ) : (
+                          /* Simple items without customizers */
+                          <>
+                            {item.size && (
+                              <p className="text-sm mb-2" style={{ color: 'var(--muted-foreground)' }}>{item.size}</p>
+                            )}
+                          </>
+                        )}
+                        
+                        <div className="flex items-center justify-between mt-4">
+                          <div className="flex items-center space-x-3">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              style={{
+                                color: 'var(--primary)',
+                                borderColor: 'var(--primary)',
+                                backgroundColor: 'var(--card)'
+                              }}
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity - 1)
+                              }
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="font-medium" style={{ color: 'var(--foreground)' }}>{item.quantity}</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              style={{
+                                color: 'var(--primary)',
+                                borderColor: 'var(--primary)',
+                                backgroundColor: 'var(--card)'
+                              }}
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity + 1)
+                              }
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                            {canEditItem(item) && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                style={{
+                                  color: 'var(--primary)',
+                                  borderColor: 'var(--primary)',
+                                  backgroundColor: 'var(--card)'
+                                }}
+                                onClick={() => handleEditItem(item)}
+                                className="ml-2"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="text-right ml-4">
-                      <p className="font-semibold text-lg">
-                        ${calculateItemTotal(item).toFixed(2)}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        $
-                        {(
-                          item.price +
-                          (item.toppings?.reduce(
-                            (sum, t) => sum + t.price,
-                            0,
-                          ) || 0)
-                        ).toFixed(2)}{" "}
-                        each
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Order Summary */}
           <div>
-            <Card className="sticky top-4">
+            <Card className="sticky top-4" style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}>
               <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
+                <CardTitle style={{ color: 'var(--card-foreground)' }}>Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Promo Code */}
                 <div>
-                  <h4 className="font-medium mb-2">Promo Code</h4>
+                  <h4 className="font-medium mb-2" style={{ color: 'var(--foreground)' }}>Promo Code</h4>
                   {appliedPromo ? (
                     <div className="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded">
                       <span className="text-sm font-medium text-green-800">
@@ -319,6 +392,9 @@ export default function Cart() {
                         size="sm"
                         onClick={removePromoCode}
                         className="text-green-600 hover:text-green-700"
+                        style={{
+                          color: '#059669'
+                        }}
                       >
                         Remove
                       </Button>
@@ -329,8 +405,21 @@ export default function Cart() {
                         placeholder="Enter promo code"
                         value={promoCode}
                         onChange={(e) => setPromoCode(e.target.value)}
+                        style={{
+                          backgroundColor: 'var(--card)',
+                          borderColor: 'var(--border)',
+                          color: 'var(--foreground)'
+                        }}
                       />
-                      <Button variant="outline" onClick={applyPromoCode}>
+                      <Button 
+                        variant="outline" 
+                        onClick={applyPromoCode}
+                        style={{
+                          color: 'var(--primary)',
+                          borderColor: 'var(--primary)',
+                          backgroundColor: 'var(--card)'
+                        }}
+                      >
                         Apply
                       </Button>
                     </div>
@@ -338,8 +427,8 @@ export default function Cart() {
                 </div>
 
                 {/* Price Breakdown */}
-                <div className="space-y-2 pt-4 border-t">
-                  <div className="flex justify-between">
+                <div className="space-y-2 pt-4" style={{ borderTop: '1px solid var(--border)' }}>
+                  <div className="flex justify-between" style={{ color: 'var(--foreground)' }}>
                     <span>Subtotal:</span>
                     <span>${calculateSubtotal().toFixed(2)}</span>
                   </div>
@@ -349,18 +438,26 @@ export default function Cart() {
                       <span>-${calculateDiscount().toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
+                  <div className="flex justify-between" style={{ color: 'var(--foreground)' }}>
                     <span>Tax ({taxRate}%):</span>
                     <span>${calculateTax().toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                  <div className="flex justify-between font-bold text-lg pt-2" style={{ borderTop: '1px solid var(--border)', color: 'var(--foreground)' }}>
                     <span>Total:</span>
                     <span>${calculateTotal().toFixed(2)}</span>
                   </div>
                 </div>
 
                 {/* Checkout Button */}
-                <Button className="w-full" size="lg" asChild>
+                <Button 
+                  className="w-full" 
+                  size="lg" 
+                  asChild
+                  style={{
+                    backgroundColor: 'var(--primary)',
+                    color: 'var(--primary-foreground)'
+                  }}
+                >
                   <Link to="/checkout">
                     <CreditCard className="h-4 w-4 mr-2" />
                     Proceed to Checkout
@@ -368,7 +465,7 @@ export default function Cart() {
                 </Button>
 
                 {/* Additional Info */}
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm space-y-1" style={{ color: 'var(--muted-foreground)' }}>
                   <p>• Carry-out only (no delivery)</p>
                   <p>• Estimated prep time: 15-20 minutes</p>
                   <p>• Call (419) 589-7777 for questions</p>
@@ -381,19 +478,31 @@ export default function Cart() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove Item from Cart</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle style={{ color: 'var(--foreground)' }}>Remove Item from Cart</AlertDialogTitle>
+            <AlertDialogDescription style={{ color: 'var(--muted-foreground)' }}>
               Are you sure you want to remove this item from your cart? This
               action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={cancelDelete}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel 
+              onClick={cancelDelete}
+              style={{
+                color: 'var(--foreground)',
+                borderColor: 'var(--border)',
+                backgroundColor: 'var(--card)'
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
+              style={{
+                backgroundColor: 'var(--destructive)',
+                color: 'white'
+              }}
             >
               Remove Item
             </AlertDialogAction>

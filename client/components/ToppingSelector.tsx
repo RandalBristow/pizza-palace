@@ -10,6 +10,8 @@ interface Topping {
   price?: number;
   category: string;
   menuItemCategory: string;
+  displayOrder: number;
+  isActive?: boolean;
 }
 
 interface ToppingCategory {
@@ -28,6 +30,7 @@ interface ToppingSelectorProps {
   toppings: Topping[];
   toppingCategories: ToppingCategory[];
   menuCategoryId: string;
+  availableToppings?: string[];
   selectedToppings?: PizzaTopping[];
   onToppingChange?: (topping: Topping, placement: string | null, amount?: "normal" | "extra") => void;
   readonly?: boolean;
@@ -247,6 +250,7 @@ export default function ToppingSelector({
   toppings,
   toppingCategories,
   menuCategoryId,
+  availableToppings = [],
   selectedToppings = [],
   onToppingChange,
   readonly = false,
@@ -254,24 +258,37 @@ export default function ToppingSelector({
   description = "Choose toppings and specify placement (left half, right half, or whole pizza)",
   showPlacementControls = true,
 }: ToppingSelectorProps) {
-  // Filter topping categories for this menu category
-  const filteredToppingCategories = toppingCategories
-    .filter((tc) => tc.menuItemCategory === menuCategoryId)
-    .sort((a, b) => a.order - b.order);
+  // Filter toppings for this menu category (only active ones for customers)
+  const filteredToppings = toppings.filter((t) => {
+    if (t.menuItemCategory !== menuCategoryId || !t.isActive) return false;
+    
+    // If availableToppings is provided and not empty, only show toppings in that array
+    if (availableToppings && availableToppings.length > 0) {
+      return availableToppings.includes(t.id);
+    }
+    
+    // Otherwise show all active toppings (backward compatibility)
+    return true;
+  });
 
-  // Filter toppings for this menu category
-  const filteredToppings = toppings.filter(
-    (t) => t.menuItemCategory === menuCategoryId
-  );
+  // Filter topping categories - only show if they have at least one active topping
+  const filteredToppingCategories = toppingCategories
+    .filter((tc) => {
+      if (tc.menuItemCategory !== menuCategoryId) return false;
+      // Check if this category has any active toppings
+      const hasActiveToppings = filteredToppings.some(t => t.category === tc.id);
+      return hasActiveToppings;
+    })
+    .sort((a, b) => a.order - b.order);
 
   const [selectedToppingCategory, setSelectedToppingCategory] = useState(
     filteredToppingCategories[0]?.id || ""
   );
 
   // Get toppings for the selected category
-  const categoryToppings = filteredToppings.filter(
-    (t) => t.category === selectedToppingCategory
-  );
+  const categoryToppings = filteredToppings
+    .filter((t) => t.category === selectedToppingCategory)
+    .sort((a, b) => a.displayOrder - b.displayOrder);
 
   if (filteredToppingCategories.length === 0) {
     return (

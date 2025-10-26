@@ -16,6 +16,7 @@ export interface Topping {
   price?: number;
   category: string;
   menuItemCategory: string;
+  displayOrder: number;
   isActive: boolean;
 }
 
@@ -211,13 +212,13 @@ export default function ToppingItemForm({
         </div>
       </div>
 
-      {/* Toppings List */}
+      {/* Toppings List - Table Layout */}
       {filteredToppings.length === 0 ? (
         <div className="text-center py-8">
           <p style={{ color: 'var(--muted-foreground)' }}>No toppings found for the selected category.</p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {categories.map((menuCategory) => {
             const menuCategoryToppings = filteredToppings.filter(
               (topping) => topping.menuItemCategory === menuCategory.id,
@@ -240,55 +241,123 @@ export default function ToppingItemForm({
 
             if (toppingCategoryGroups.length === 0) return null;
 
-            return (
-              <div key={menuCategory.id} className="space-y-4">
-                {toppingCategoryGroups.map(({ toppingCategory, toppings: categoryToppings }) => (
-                  <div key={`${menuCategory.id}-${toppingCategory.id}`} className="rounded-lg p-4" style={{ border: '1px solid var(--border)' }}>
-                    <h4 className="font-semibold text-lg mb-3 flex items-center" style={{ color: 'var(--card-foreground)' }}>
-                      {menuCategory.name}: {toppingCategory.name}
-                    </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                      {categoryToppings.map((topping) => {
-                        const toppingSizes = getToppingSizePrices(topping.id);
-                        const priceList = toppingSizes
-                          .map((ts) => {
-                            const size = categorySizes.find((cs) => cs.id === ts.categorySizeId);
-                            if (!size) return null;
-                            return { label: size.sizeName, value: ts.price };
-                          })
-                          .filter(Boolean) as { label: string; value: number }[];
+            // Get unique sizes for this menu category
+            const menuCategorySizes = categorySizes
+              .filter((size) => size.categoryId === menuCategory.id && size.isActive)
+              .sort((a, b) => a.displayOrder - b.displayOrder);
 
-                        return (
-                          <PriceListCard
-                            key={topping.id}
-                            title={topping.name}
-                            isActive={topping.isActive}
-                            priceList={priceList}
-                            rightActions={
-                              <>
-                                <ActivationButton
-                                  isActive={topping.isActive}
-                                  onToggle={() => toggleToppingStatus(topping.id)}
-                                  activeTooltip="Deactivate"
-                                  inactiveTooltip="Activate"
-                                />
-                                <EditButton
-                                  label="Edit Topping"
-                                  onClick={() => handleEditTopping(topping)}
-                                />
-                                <DeleteButton
-                                  entityTitle="Topping"
-                                  subjectName={topping.name}
-                                  onConfirm={() => handleDeleteTopping(topping.id)}
-                                />
-                              </>
-                            }
-                          />
-                        );
-                      })}
+            return (
+              <div key={menuCategory.id}>
+                {/* Menu Category Header */}
+                <h3 
+                  className="text-lg font-bold mb-4 pb-2 border-b-2"
+                  style={{ 
+                    color: 'var(--primary)',
+                    borderColor: 'var(--primary)',
+                  }}
+                >
+                  {menuCategory.name}
+                </h3>
+
+                {/* Tables Grid for this Category */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {toppingCategoryGroups.map(({ toppingCategory, toppings: categoryToppings }) => (
+                  <div key={`${menuCategory.id}-${toppingCategory.id}`} className="flex flex-col h-full">
+                    <h4 
+                      className="font-semibold text-sm mb-1 px-2 py-1 rounded-t-lg text-center" 
+                      style={{ 
+                        color: 'var(--card-foreground)',
+                        backgroundColor: 'var(--muted)',
+                      }}
+                    >
+                      {toppingCategory.name}
+                    </h4>
+                    <div className="overflow-x-auto rounded-lg flex-1" style={{ border: '1px solid var(--border)' }}>
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr style={{ backgroundColor: 'var(--muted)', borderBottom: '1px solid var(--border)' }}>
+                            <th className="text-left py-1 px-2 font-medium text-xs" style={{ color: 'var(--foreground)', width: '140px' }}>
+                              Name
+                            </th>
+                            {menuCategorySizes.map((size) => (
+                              <th 
+                                key={size.id} 
+                                className="text-center py-1 px-1 font-medium text-xs" 
+                                style={{ color: 'var(--foreground)', width: '70px' }}
+                              >
+                                {size.sizeName}
+                              </th>
+                            ))}
+                            <th className="text-center py-1 px-2 font-medium text-xs" style={{ color: 'var(--foreground)', width: '100px' }}>
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {categoryToppings.map((topping, index) => (
+                            <tr 
+                              key={topping.id}
+                              style={{ 
+                                backgroundColor: index % 2 === 0 ? 'var(--card)' : 'var(--accent)',
+                                borderBottom: '1px solid var(--border)',
+                              }}
+                            >
+                              <td className="py-1 px-2 text-xs" style={{ color: 'var(--foreground)' }}>
+                                <div className="flex items-center gap-2">
+                                  <span 
+                                    className="inline-flex items-center justify-center h-5 min-w-5 px-2 text-xs font-mono tabular-nums rounded-full border"
+                                    style={{
+                                      backgroundColor: 'var(--accent)',
+                                      borderColor: 'var(--border)',
+                                      color: 'var(--accent-foreground)',
+                                    }}
+                                  >
+                                    {topping.displayOrder}
+                                  </span>
+                                  <span className={topping.isActive ? '' : 'opacity-50'}>
+                                    {topping.name}
+                                  </span>
+                                </div>
+                              </td>
+                              {menuCategorySizes.map((size) => {
+                                const price = getToppingPriceForSize(topping.id, size.id);
+                                return (
+                                  <td 
+                                    key={size.id} 
+                                    className="text-center py-1 px-1 font-mono text-xs"
+                                    style={{ color: 'var(--muted-foreground)' }}
+                                  >
+                                    ${price.toFixed(2)}
+                                  </td>
+                                );
+                              })}
+                              <td className="py-1 px-2">
+                                <div className="flex items-center justify-center gap-0.5">
+                                  <ActivationButton
+                                    isActive={topping.isActive}
+                                    onToggle={() => toggleToppingStatus(topping.id)}
+                                    activeTooltip="Deactivate"
+                                    inactiveTooltip="Activate"
+                                  />
+                                  <EditButton
+                                    label="Edit Topping"
+                                    onClick={() => handleEditTopping(topping)}
+                                  />
+                                  <DeleteButton
+                                    entityTitle="Topping"
+                                    subjectName={topping.name}
+                                    onConfirm={() => handleDeleteTopping(topping.id)}
+                                  />
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                ))}
+                  ))}
+                </div>
               </div>
             );
           })}

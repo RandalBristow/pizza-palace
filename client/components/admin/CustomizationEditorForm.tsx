@@ -733,14 +733,16 @@ export default function CustomizationEditorForm({
                 </SelectContent>
               </Select>
             </div>
+            
             <div className="flex items-center gap-2">
               <Checkbox
+                id="isActive"
                 checked={templateForm.isActive}
                 onCheckedChange={(checked) =>
                   setTemplateForm({ ...templateForm, isActive: !!checked })
                 }
               />
-              <Label style={{ color: 'var(--foreground)' }}>Active</Label>
+              <Label htmlFor="isActive" style={{ color: 'var(--foreground)' }}>Active</Label>
             </div>
             <div className="flex gap-2 justify-end">
               <Button 
@@ -978,11 +980,30 @@ export default function CustomizationEditorForm({
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
                   <SelectContent style={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)' }}>
-                    {categorySizes.map((size) => (
-                      <SelectItem key={size.id} value={size.id} style={{ color: 'var(--popover-foreground)' }}>
-                        {size.sizeName}
-                      </SelectItem>
-                    ))}
+                    {(() => {
+                      // Filter sizes by the template's category
+                      const template = customizerTemplates.find(t => t.id === selectedTemplate);
+                      const subCategory = subCategories.find(s => s.id === template?.subCategoryId);
+                      const categoryId = subCategory?.categoryId;
+                      
+                      const filteredSizes = categoryId 
+                        ? categorySizes.filter(size => size.categoryId === categoryId).sort((a, b) => a.displayOrder - b.displayOrder)
+                        : categorySizes.sort((a, b) => a.displayOrder - b.displayOrder);
+                      
+                      if (filteredSizes.length === 0) {
+                        return (
+                          <div className="p-2 text-sm text-center" style={{ color: 'var(--muted-foreground)' }}>
+                            No sizes available for this category
+                          </div>
+                        );
+                      }
+                      
+                      return filteredSizes.map((size) => (
+                        <SelectItem key={size.id} value={size.id} style={{ color: 'var(--popover-foreground)' }}>
+                          {size.sizeName}
+                        </SelectItem>
+                      ));
+                    })()}
                   </SelectContent>
                 </Select>
               </div>

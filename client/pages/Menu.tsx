@@ -4,6 +4,7 @@ import { Button } from "../components/ui/button";
 import DeliverySelection from "../components/DeliverySelection";
 import HeaderWithDelivery from "../components/HeaderWithDelivery";
 import { useOrder } from "../contexts/OrderContext";
+import { useCart } from "../contexts/CartContext";
 import {
   Card,
   CardContent,
@@ -31,8 +32,14 @@ import {
   useMenuItems,
   useImages,
   useCategorySizes,
+  useCategorySizeSubCategories,
   useMenuItemSizes,
   useSubCategories,
+  useToppings,
+  useToppingCategories,
+  useCustomizerPanelItems,
+  useCustomizerPanels,
+  useCustomizerTemplates,
 } from "../hooks/useSupabase";
 
 // Define MenuItem type (adjust fields as needed)
@@ -43,13 +50,14 @@ type MenuItem = {
   category: string;
   subCategoryId?: string;
   imageId?: string;
+  customizerTemplateId?: string;
   price?: number;
   isActive: boolean;
+  showAddToCart?: boolean;
 };
 
 export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [cart, setCart] = useState<any[]>([]);
   const [showDeliverySelection, setShowDeliverySelection] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>(
     {},
@@ -61,6 +69,7 @@ export default function Menu() {
   const { deliveryDetails, setDeliveryDetails, hasDeliveryDetails } =
     useOrder();
   const navigate = useNavigate();
+  const { addItem } = useCart();
 
   // Load data from database
   const { categories: dbCategories, loading: categoriesLoading } =
@@ -70,7 +79,18 @@ export default function Menu() {
     useSubCategories();
   const { images, loading: imagesLoading } = useImages();
   const { categorySizes, loading: categorySizesLoading } = useCategorySizes();
+  const { categorySizeSubCategories, loading: categorySizeSubCategoriesLoading } = useCategorySizeSubCategories();
   const { menuItemSizes, loading: menuItemSizesLoading } = useMenuItemSizes();
+  const { toppings: allToppings, loading: toppingsLoading } = useToppings();
+  const { toppingCategories, loading: toppingCategoriesLoading } = useToppingCategories();
+  const { customizerPanelItems, loading: panelItemsLoading } = useCustomizerPanelItems();
+  const { customizerPanels, loading: panelsLoading } = useCustomizerPanels();
+  const { customizerTemplates, loading: templatesLoading } = useCustomizerTemplates();
+
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Set initial category when data loads
   useEffect(() => {
@@ -130,11 +150,24 @@ export default function Menu() {
     (item) => item.category === selectedCategory && item.isActive,
   );
 
-  // Helper function to get sizes for a category
-  const getCategorySizes = (categoryId: string) => {
-    return categorySizes
-      .filter((size) => size.categoryId === categoryId && size.isActive)
-      .sort((a, b) => a.displayOrder - b.displayOrder);
+  // Helper function to get sizes for a category and sub-category
+  const getCategorySizes = (categoryId: string, subCategoryId?: string) => {
+    let filteredSizes = categorySizes.filter(
+      (size) => size.categoryId === categoryId && size.isActive
+    );
+
+    // If subCategoryId is provided, filter by sub-category associations
+    if (subCategoryId) {
+      const allowedSizeIds = categorySizeSubCategories
+        .filter((assoc) => assoc.subCategoryId === subCategoryId)
+        .map((assoc) => assoc.categorySizeId);
+      
+      filteredSizes = filteredSizes.filter((size) =>
+        allowedSizeIds.includes(size.id)
+      );
+    }
+
+    return filteredSizes.sort((a, b) => a.displayOrder - b.displayOrder);
   };
 
   // Helper function to get menu item size pricing
@@ -164,7 +197,7 @@ export default function Menu() {
 
   // Helper function to get size options for an item
   const getItemSizeOptions = (item: any) => {
-    const categorySizesForItem = getCategorySizes(item.category);
+    const categorySizesForItem = getCategorySizes(item.category, item.subCategoryId);
     const itemSizes = getMenuItemSizes(item.id);
 
     if (categorySizesForItem.length === 0 || itemSizes.length === 0) {
@@ -205,28 +238,105 @@ export default function Menu() {
   const addToCart = (item: MenuItem, size?: string) => {
     const selectedSize = size || getSelectedSize(item.id);
 
+    const performAdd = () => {
+      const sizeOptions = getItemSizeOptions(item);
+      const selectedOption = sizeOptions.find((opt) => opt.size === selectedSize);
+      const price = selectedOption ? selectedOption.price : (item.price ?? 0);
+      
+      // Include default toppings if the item has them
+      const defaultToppings = (item as any).defaultToppings || {};
+      const itemToppings = Object.entries(defaultToppings).map(([toppingId, toppingData]: [string, any]) => {
+        const topping = allToppings.find((t) => t.id === toppingId);
+        if (topping) {
+          return {
+            id: topping.id,
+            name: topping.name,
+            price: 0, // Default toppings are typically free
+            placement: "whole" as const,
+            amount: toppingData?.amount || "normal" as const,
+          };
+        }
+        return null;
+      }).filter(Boolean);
+      
+      // Include default list selections if the item has them
+      const defaultListSelections = (item as any).defaultListSelections || {};
+      const selections: Array<{panelTitle: string; itemName: string; price?: number}> = [];
+      
+      // Convert panel item IDs to selections array with panel titles
+      Object.entries(defaultListSelections).forEach(([panelId, itemId]: [string, string]) => {
+        if (!itemId || itemId === "none") return; // Skip empty selections
+        
+        const panelItem = customizerPanelItems.find(pi => pi.id === itemId);
+        if (panelItem) {
+          const itemName = panelItem.name || panelItem.customName || '';
+          // Find the panel this item belongs to so we can get the panel title
+          const panel = customizerPanels.find(p => p.id === panelItem.customizerPanelId);
+          const panelTitle = panel?.title || 'Selection';
+          
+          selections.push({
+            panelTitle: panelTitle,
+            itemName: itemName,
+            price: panelItem.customPrice || 0
+          });
+        }
+      });
+      
+      // Get topping category name if item has toppings but no selections (no customizer)
+      let toppingCategoryName = undefined;
+      if (itemToppings.length > 0 && selections.length === 0) {
+        // Get the first topping's category
+        const firstToppingId = Object.keys(defaultToppings)[0];
+        const firstTopping = allToppings.find((t) => t.id === firstToppingId);
+        if (firstTopping && firstTopping.category) {
+          const toppingCategory = toppingCategories.find((tc) => tc.id === firstTopping.category);
+          if (toppingCategory) {
+            toppingCategoryName = toppingCategory.name;
+          }
+        }
+      }
+      
+      const itemToAdd = {
+        menuItemId: item.id,
+        name: item.name,
+        price,
+        quantity: 1,
+        size: selectedSize || undefined,
+        toppings: itemToppings,
+        selections: selections,
+        toppingCategoryName: toppingCategoryName,
+      };
+      
+      addItem(itemToAdd);
+    };
+
     if (!hasDeliveryDetails) {
       setPendingAction({
-        action: () => {
-          const cartItem = {
-            ...item,
-            selectedSize: selectedSize,
-            cartId: `${item.id}-${selectedSize || "default"}-${Date.now()}`,
-          };
-          setCart((prev) => [...prev, cartItem]);
-        },
+        action: performAdd,
         type: "addToCart",
       });
       setShowDeliverySelection(true);
       return;
     }
 
-    const cartItem = {
-      ...item,
-      selectedSize: selectedSize,
-      cartId: `${item.id}-${selectedSize || "default"}-${Date.now()}`,
-    };
-    setCart((prev) => [...prev, cartItem]);
+    performAdd();
+  };
+
+  // Check if an item has a customizer template
+  const hasCustomizer = (item: MenuItem) => {
+    if (!item.subCategoryId) return false;
+    
+    // Check if item has specific template assigned
+    if (item.customizerTemplateId) {
+      return customizerTemplates.some(
+        (t) => t.id === item.customizerTemplateId && t.isActive
+      );
+    }
+    
+    // Check if there's any template for the sub-category
+    return customizerTemplates.some(
+      (t) => t.isActive && t.subCategoryId === item.subCategoryId
+    );
   };
 
   const customizeItem = (item: MenuItem, size?: string) => {
@@ -264,7 +374,11 @@ export default function Menu() {
     subCategoriesLoading ||
     imagesLoading ||
     categorySizesLoading ||
-    menuItemSizesLoading
+    categorySizeSubCategoriesLoading ||
+    menuItemSizesLoading ||
+    toppingsLoading ||
+    panelItemsLoading ||
+    panelsLoading
   ) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
@@ -289,7 +403,7 @@ export default function Menu() {
         className="flex flex-col h-full"
         style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', border: '1px solid var(--border)' }}
       >
-        <div className="aspect-video rounded-t-lg overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}>
+        <div className="aspect-[4/3] rounded-t-lg overflow-hidden" style={{ backgroundColor: 'var(--muted)' }}>
           {(() => {
             const menuItemImage = item.imageId
               ? images.find((img) => img.id === item.imageId)
@@ -364,9 +478,60 @@ export default function Menu() {
                   </SelectContent>
                 </Select>
                 <div className="flex space-x-2">
+                  {hasCustomizer(item) && (
+                    <Button
+                      variant="outline"
+                      className={item.showAddToCart !== false ? "flex-1" : "w-full"}
+                      style={{
+                        color: 'var(--primary)',
+                        borderColor: 'var(--primary)',
+                        backgroundColor: 'var(--card)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.backgroundColor = 'var(--accent)';
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.backgroundColor = 'var(--card)';
+                      }}
+                      onClick={() => customizeItem(item)}
+                    >
+                      CUSTOMIZE
+                    </Button>
+                  )}
+                  {item.showAddToCart !== false && (
+                    <Button
+                      className={hasCustomizer(item) ? "flex-1" : "w-full"}
+                      style={{
+                        backgroundColor: 'var(--primary)',
+                        color: 'var(--primary-foreground)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.transform = 'translateY(-1px)';
+                        target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLElement;
+                        target.style.transform = 'translateY(0)';
+                        target.style.boxShadow = 'none';
+                      }}
+                      onClick={() => addToCart(item)}
+                    >
+                      ADD TO ORDER
+                    </Button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex space-x-2">
+                {hasCustomizer(item) && (
                   <Button
                     variant="outline"
-                    className="flex-1"
+                    className={item.showAddToCart !== false ? "flex-1" : "w-full"}
                     style={{
                       color: 'var(--primary)',
                       borderColor: 'var(--primary)',
@@ -385,8 +550,10 @@ export default function Menu() {
                   >
                     CUSTOMIZE
                   </Button>
+                )}
+                {item.showAddToCart !== false && (
                   <Button
-                    className="flex-1"
+                    className={hasCustomizer(item) ? "flex-1" : "w-full"}
                     style={{
                       backgroundColor: 'var(--primary)',
                       color: 'var(--primary-foreground)',
@@ -406,52 +573,7 @@ export default function Menu() {
                   >
                     ADD TO ORDER
                   </Button>
-                </div>
-              </>
-            ) : (
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  style={{
-                    color: 'var(--primary)',
-                    borderColor: 'var(--primary)',
-                    backgroundColor: 'var(--card)',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.backgroundColor = 'var(--accent)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.backgroundColor = 'var(--card)';
-                  }}
-                  onClick={() => customizeItem(item)}
-                >
-                  CUSTOMIZE
-                </Button>
-                <Button
-                  className="flex-1"
-                  style={{
-                    backgroundColor: 'var(--primary)',
-                    color: 'var(--primary-foreground)',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.transform = 'translateY(-1px)';
-                    target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.target as HTMLElement;
-                    target.style.transform = 'translateY(0)';
-                    target.style.boxShadow = 'none';
-                  }}
-                  onClick={() => addToCart(item)}
-                >
-                  ADD TO ORDER
-                </Button>
+                )}
               </div>
             )}
           </div>
@@ -462,9 +584,9 @@ export default function Menu() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
-      <HeaderWithDelivery cart={cart} breadcrumbs={[{ label: "Menu" }]} />
+      <HeaderWithDelivery breadcrumbs={[{ label: "Menu" }]} />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold" style={{ color: 'var(--foreground)' }}>Our Menu</h1>
           <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>
@@ -523,7 +645,7 @@ export default function Menu() {
                   {/* Items without sub-category */}
                   {itemsWithoutSubCategory.length > 0 && (
                     <div>
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {itemsWithoutSubCategory.map((item) =>
                           renderMenuItemCard(item),
                         )}
@@ -542,7 +664,7 @@ export default function Menu() {
                         <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>
                           {subCategory.name}
                         </h2>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                           {subCategoryItems.map((item) =>
                             renderMenuItemCard(item),
                           )}

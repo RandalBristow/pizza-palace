@@ -121,13 +121,13 @@ export default function ImageManagerForm({
   const getThumbnailSize = () => {
     switch (thumbnailSize) {
       case "small":
-        return "w-20 h-20";
+        return "w-20 h-28";
       case "medium":
-        return "w-32 h-32";
+        return "w-32 h-40";
       case "large":
-        return "w-48 h-48";
+        return "w-48 h-56";
       default:
-        return "w-32 h-32";
+        return "w-32 h-40";
     }
   };
 
@@ -244,7 +244,7 @@ export default function ImageManagerForm({
       )}
 
       {/* Images Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-4">
         {filteredImages.map((image) => (
           <ImageCard
             key={image.id}
